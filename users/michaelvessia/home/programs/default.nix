@@ -6,5 +6,6 @@
     ./shell.nix
     ./common.nix
     ./browsers.nix
+    ./ghostty.nix
   ];
 }
