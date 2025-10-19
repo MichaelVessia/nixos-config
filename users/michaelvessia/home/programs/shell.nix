@@ -25,5 +25,10 @@
     shellAliases = {
       vim = "nvim";
     };
+
+    sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
   };
 }
