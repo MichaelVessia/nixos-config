@@ -3,6 +3,7 @@
 {
   imports = [
     ./home/programs
+    ./home/de
   ];
 
   home.username = "michaelvessia";

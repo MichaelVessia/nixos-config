@@ -13,9 +13,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, claude-code, ... }: {
+  outputs = inputs@{ nixpkgs, home-manager, claude-code, plasma-manager, ... }: {
     nixosConfigurations = {
       framework13 = let
         username = "michaelvessia";
@@ -35,6 +40,8 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
+
 
               home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/${username}/home.nix;
