@@ -7,12 +7,10 @@
     inputs.nvf.homeManagerModules.default
     ./picker.nix
     ./snacks.nix
+    ./options.nix
   ];
 
   programs.nvf = {
     enable = true;
-    settings.vim = {
-      vimAlias = true;
-    };
   };
 }
