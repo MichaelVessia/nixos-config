@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 
 {
+  # Symlink ghostty's built-in themes to the config directory
+  home.file.".config/ghostty/themes".source = "${pkgs.ghostty}/share/ghostty/themes";
+
   # Ghostty terminal emulator configuration
   # Using XDG config file management for declarative configuration
   xdg.configFile."ghostty/config".text = ''
@@ -9,7 +12,7 @@
     font-size = 12
 
     # Theme (dark or light)
-    theme = dark:catppuccin-frappe,light:novel
+    theme = dark:catppuccin-frappe,light:Novel
 
     # Background opacity (0.0 to 1.0, where 1.0 is fully opaque)
     background-opacity = 1.0
