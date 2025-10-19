@@ -1,8 +1,8 @@
-{
-  # imports = [
-  # ];
+{ config, lib, ... }:
 
-  config.vim = {
+{
+  programs.nvf.enable = true;
+  programs.nvf.settings.vim = {
     enableLuaLoader = true;
     syntaxHighlighting = true;
     lineNumberMode = "relNumber";
