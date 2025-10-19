@@ -18,9 +18,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    nvf = {
+      url = "github:NotAShelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, claude-code, plasma-manager, ... }: {
+  outputs = inputs@{ nixpkgs, home-manager, claude-code, plasma-manager, nvf, ... }: {
     nixosConfigurations = {
       framework13 = let
         username = "michaelvessia";

@@ -7,5 +7,6 @@
     ./common.nix
     ./browsers.nix
     ./ghostty.nix
+    ./nvf
   ];
 }
