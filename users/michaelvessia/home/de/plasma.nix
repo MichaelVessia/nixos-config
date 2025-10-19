@@ -249,6 +249,7 @@
       "kactivitymanagerdrc"."activities"."af44d9b9-50df-48f8-912f-c828141545ee" = "Default";
       "kactivitymanagerdrc"."main"."currentActivity" = "af44d9b9-50df-48f8-912f-c828141545ee";
       "kded5rc"."Module-device_automounter"."autoload" = false;
+      "kdeglobals"."General"."BrowserApplication" = "brave-browser.desktop";
       "kdeglobals"."General"."TerminalApplication" = "ghostty";
       "kdeglobals"."General"."TerminalService" = "com.mitchellh.ghostty.desktop";
       "kwalletrc"."Wallet"."First Use" = false;
@@ -264,6 +265,18 @@
     };
     dataFile = {
 
+    };
+  };
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "brave-browser.desktop";
+      "x-scheme-handler/http" = "brave-browser.desktop";
+      "x-scheme-handler/https" = "brave-browser.desktop";
+      "x-scheme-handler/about" = "brave-browser.desktop";
+      "x-scheme-handler/unknown" = "brave-browser.desktop";
+      "text/plain" = "nvim.desktop";
     };
   };
 }
