@@ -2,11 +2,12 @@
 
 {
   imports = [
-    ./git.nix
-    ./shell.nix
+    ./browsers
+    ./editors
     ./common.nix
-    ./browsers.nix
     ./ghostty.nix
-    ./nvf
+    ./git.nix
+    ./plasma.nix
+    ./shell.nix
   ];
 }

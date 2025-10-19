@@ -2,8 +2,7 @@
 
 {
   imports = [
-    ./home/programs
-    ./home/de
+    ../../modules/programs
   ];
 
   home.username = "michaelvessia";
