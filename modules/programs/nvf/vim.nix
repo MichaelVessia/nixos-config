@@ -17,7 +17,7 @@
         # mouse
         mouse = "nv";
         mousemodel = "extend";
+        clipboard = "unnamedplus";
       };
-
   };
 }

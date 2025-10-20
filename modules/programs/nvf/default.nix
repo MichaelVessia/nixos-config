@@ -10,6 +10,7 @@ inputs,
     inputs.nvf.homeManagerModules.default
     ./picker.nix
     ./oil.nix
+    ./vim.nix
   ];
 
   programs.nvf = {
@@ -18,14 +19,10 @@ inputs,
     # most settings are documented in the appendix
     settings = {
       vim = {
-        clipboard = {
-          enable = true;
-          registers = "unnamedplus";
-        };
 
         binds = {
           whichKey.enable = true;
-          cheatsheet.enable = true;
+         cheatsheet.enable = true;
         };
         git = {
           enable = true;
