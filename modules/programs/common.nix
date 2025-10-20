@@ -19,19 +19,12 @@
     ripgrep # recursively searches directories for a regex pattern
     jq # A lightweight and flexible command-line JSON processor
     yq-go # yaml processor https://github.com/mikefarah/yq
-    eza # A modern replacement for 'ls'
-    fzf # A command-line fuzzy finder
-    bat # cat replacement
-    eza # ls replacement
     fd # find replacement
-    ripgrep # grep replacement
     ncdu # disk usage
-    atuin # command history
-    zoxide # fuzzy cd
     curl
     wget
-    jq
     git-town
+    # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
 
     # networking tools
     mtr # A network diagnostic tool
