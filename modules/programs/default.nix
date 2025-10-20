@@ -11,6 +11,7 @@
     ./common.nix
     ./ghostty.nix
     ./git.nix
+    ./media.nix
     ./plasma.nix
     ./shell.nix
     ./ssh.nix
