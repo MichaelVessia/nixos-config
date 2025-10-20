@@ -1,8 +1,4 @@
-{
-inputs,
-...
-}:
-{
+{inputs, ...}: {
   imports = [
     inputs.nvf.homeManagerModules.default
     ./picker.nix

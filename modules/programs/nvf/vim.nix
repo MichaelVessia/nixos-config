@@ -6,25 +6,23 @@
       whichKey.enable = true;
       cheatsheet.enable = true;
     };
-    options =
-      let
-        indentWidth = 2;
-      in
-        {
-        autoindent = true;
-        shiftwidth = indentWidth;
-        tabstop = indentWidth;
+    options = let
+      indentWidth = 2;
+    in {
+      autoindent = true;
+      shiftwidth = indentWidth;
+      tabstop = indentWidth;
 
-        # backup & swap
-        backup = false;
-        writebackup = false;
-        swapfile = false;
+      # backup & swap
+      backup = false;
+      writebackup = false;
+      swapfile = false;
 
-        # mouse
-        mouse = "nv";
-        mousemodel = "extend";
-        clipboard = "unnamedplus";
-      };
+      # mouse
+      mouse = "nv";
+      mousemodel = "extend";
+      clipboard = "unnamedplus";
+    };
     enableLuaLoader = true;
     spellcheck = {
       enable = true;

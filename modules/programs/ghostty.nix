@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Symlink ghostty's built-in themes to the config directory
   home.file.".config/ghostty/themes".source = "${pkgs.ghostty}/share/ghostty/themes";
 

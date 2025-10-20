@@ -17,7 +17,7 @@
   programs.plasma = {
     enable = true;
     shortcuts = {
-      "ActivityManager"."switch-to-activity-af44d9b9-50df-48f8-912f-c828141545ee" = [ ];
+      "ActivityManager"."switch-to-activity-af44d9b9-50df-48f8-912f-c828141545ee" = [];
       "KDE Keyboard Layout Switcher"."Switch to Last-Used Keyboard Layout" = "Meta+Alt+L";
       "KDE Keyboard Layout Switcher"."Switch to Next Keyboard Layout" = "Meta+Alt+K";
       "kaccess"."Toggle Screen Reader On and Off" = "Meta+Alt+S";
@@ -41,24 +41,24 @@
       "ksmserver"."Reboot Without Confirmation" = "none,,Reboot Without Confirmation";
       "ksmserver"."Shut Down" = "none,,Shut Down";
       "kwin"."Activate Window Demanding Attention" = "Meta+Ctrl+A";
-      "kwin"."Cycle Overview" = [ ];
-      "kwin"."Cycle Overview Opposite" = [ ];
+      "kwin"."Cycle Overview" = [];
+      "kwin"."Cycle Overview Opposite" = [];
       "kwin"."Decrease Opacity" = "none,,Decrease Opacity of Active Window by 5%";
       "kwin"."Edit Tiles" = "Meta+T";
       "kwin"."Expose" = "Ctrl+F9";
       "kwin"."ExposeAll" = ["Ctrl+F10" "Launch (C),Ctrl+F10" "Launch (C),Toggle Present Windows (All desktops)"];
       "kwin"."ExposeClass" = "Ctrl+F7";
-      "kwin"."ExposeClassCurrentDesktop" = [ ];
+      "kwin"."ExposeClassCurrentDesktop" = [];
       "kwin"."Grid View" = "Meta+G";
       "kwin"."Increase Opacity" = "none,,Increase Opacity of Active Window by 5%";
       "kwin"."Kill Window" = "Meta+Ctrl+Esc";
-      "kwin"."Move Tablet to Next Output" = [ ];
+      "kwin"."Move Tablet to Next Output" = [];
       "kwin"."MoveMouseToCenter" = "Meta+F6";
       "kwin"."MoveMouseToFocus" = "Meta+F5";
-      "kwin"."MoveZoomDown" = [ ];
-      "kwin"."MoveZoomLeft" = [ ];
-      "kwin"."MoveZoomRight" = [ ];
-      "kwin"."MoveZoomUp" = [ ];
+      "kwin"."MoveZoomDown" = [];
+      "kwin"."MoveZoomLeft" = [];
+      "kwin"."MoveZoomRight" = [];
+      "kwin"."MoveZoomUp" = [];
       "kwin"."Overview" = "Meta+W";
       "kwin"."Setup Window Shortcut" = "none,,Setup Window Shortcut";
       "kwin"."Show Desktop" = "Meta+D";
@@ -106,7 +106,7 @@
       "kwin"."Switch to Screen Below" = "none,,Switch to Screen Below";
       "kwin"."Switch to Screen to the Left" = "none,,Switch to Screen to the Left";
       "kwin"."Switch to Screen to the Right" = "none,,Switch to Screen to the Right";
-      "kwin"."Toggle Night Color" = [ ];
+      "kwin"."Toggle Night Color" = [];
       "kwin"."Toggle Window Raise/Lower" = "none,,Toggle Window Raise/Lower";
       "kwin"."Walk Through Windows" = "Alt+Tab";
       "kwin"."Walk Through Windows (Reverse)" = "Alt+Shift+Tab";
@@ -205,17 +205,17 @@
       "mediacontrol"."playpausemedia" = "Media Play";
       "mediacontrol"."previousmedia" = "Media Previous";
       "mediacontrol"."stopmedia" = "Media Stop";
-      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_card" = [ ];
-      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_identity" = [ ];
-      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_login" = [ ];
-      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-generate_password" = [ ];
-      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-lock_vault" = [ ];
-      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-addSite" = [ ];
-      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-switchEngine" = [ ];
-      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-toggle" = [ ];
-      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-quick_clip" = [ ];
-      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-toggle_highlighter" = [ ];
-      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-toggle_reader" = [ ];
+      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_card" = [];
+      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_identity" = [];
+      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-autofill_login" = [];
+      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-generate_password" = [];
+      "org.chromium.Chromium"."2D0DF10AB74920C975907C9F2A4DF438-lock_vault" = [];
+      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-addSite" = [];
+      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-switchEngine" = [];
+      "org.chromium.Chromium"."4E6D04E4C98DD0542044E435315B6191-toggle" = [];
+      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-quick_clip" = [];
+      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-toggle_highlighter" = [];
+      "org.chromium.Chromium"."86134CD2C99992F6C75EF8CE4892F1C9-toggle_reader" = [];
       "org_kde_powerdevil"."Decrease Keyboard Brightness" = "Keyboard Brightness Down";
       "org_kde_powerdevil"."Decrease Screen Brightness" = "Monitor Brightness Down";
       "org_kde_powerdevil"."Decrease Screen Brightness Small" = "Shift+Monitor Brightness Down";
@@ -227,7 +227,7 @@
       "org_kde_powerdevil"."PowerOff" = "Power Off";
       "org_kde_powerdevil"."Sleep" = "Sleep";
       "org_kde_powerdevil"."Toggle Keyboard Backlight" = "Keyboard Light On/Off";
-      "org_kde_powerdevil"."Turn Off Screen" = [ ];
+      "org_kde_powerdevil"."Turn Off Screen" = [];
       "org_kde_powerdevil"."powerProfile" = ["Battery" "Meta+B,Battery" "Meta+B,Switch Power Profile"];
       "plasmashell"."activate application launcher" = ["Meta" "Alt+F1,Meta" "Alt+F1,Activate Application Launcher"];
       "plasmashell"."activate task manager entry 1" = "Meta+1";
@@ -279,7 +279,6 @@
       "plasmanotifyrc"."Applications/signal"."Seen" = true;
     };
     dataFile = {
-
     };
   };
 

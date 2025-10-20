@@ -24,14 +24,24 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, claude-code, plasma-manager, nvf, ... }: {
+  outputs = inputs @ {
+    nixpkgs,
+    home-manager,
+    claude-code,
+    plasma-manager,
+    nvf,
+    ...
+  }: {
     nixosConfigurations = {
       framework13 = let
         username = "michaelvessia";
-	specialArgs = {inherit username; inherit inputs;};
+        specialArgs = {
+          inherit username;
+          inherit inputs;
+        };
       in
         nixpkgs.lib.nixosSystem {
-	  inherit specialArgs;
+          inherit specialArgs;
           system = "x86_64-linux";
 
           modules = [
@@ -48,14 +58,13 @@
                 plasma-manager.homeModules.plasma-manager
               ];
 
-
               home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/${username}/home.nix;
 
               # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
             }
           ];
-      };
+        };
     };
   };
 }
