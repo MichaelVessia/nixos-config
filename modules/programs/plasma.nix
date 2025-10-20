@@ -13,11 +13,12 @@
 #   - Display manager (SDDM)
 #   - System services
 #
+# Use rc2nix via nix run github:nix-community/plasma-manager to generate a file from what changed in the GUI
 {
   programs.plasma = {
     enable = true;
     shortcuts = {
-      "ActivityManager"."switch-to-activity-af44d9b9-50df-48f8-912f-c828141545ee" = [];
+      "ActivityManager"."switch-to-activity-af45d9b9-50df-48f8-912f-c828141545ee" = [];
       "KDE Keyboard Layout Switcher"."Switch to Last-Used Keyboard Layout" = "Meta+Alt+L";
       "KDE Keyboard Layout Switcher"."Switch to Next Keyboard Layout" = "Meta+Alt+K";
       "kaccess"."Toggle Screen Reader On and Off" = "Meta+Alt+S";
@@ -264,13 +265,16 @@
       "kactivitymanagerdrc"."activities"."af44d9b9-50df-48f8-912f-c828141545ee" = "Default";
       "kactivitymanagerdrc"."main"."currentActivity" = "af44d9b9-50df-48f8-912f-c828141545ee";
       "kded5rc"."Module-device_automounter"."autoload" = false;
+      "kcminputrc"."Keyboard"."RepeatDelay" = 200;
+      "kcminputrc"."Keyboard"."RepeatRate" = 40;
       "kdeglobals"."General"."BrowserApplication" = "brave-browser.desktop";
       "kdeglobals"."General"."TerminalApplication" = "ghostty";
       "kdeglobals"."General"."TerminalService" = "com.mitchellh.ghostty.desktop";
       "kwalletrc"."Wallet"."First Use" = false;
       "kwinrc"."Desktops"."Id_1" = "bd220e45-9b26-48a8-a5f6-78ef71b8c442";
-      "kwinrc"."Desktops"."Number" = 9;
-      "kwinrc"."Desktops"."Rows" = 1;
+      "kwinrc"."Desktops"."Number" = 8;
+      "kwinrc"."Desktops"."Rows" = 2;
+      "kwinrc"."Plugins"."slideEnabled" = false;
       "kwinrc"."Tiling"."padding" = 4;
       "kwinrc"."Tiling/61eb5cac-1f1e-53e6-9c57-db4fc8bc9ad6"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.25},{\"width\":0.5},{\"width\":0.25}]}";
       "kwinrc"."Xwayland"."Scale" = 1.35;
