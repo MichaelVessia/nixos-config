@@ -46,7 +46,6 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 plasma-manager.homeModules.plasma-manager
-                nvf.homeManagerModules.default
               ];
 
 

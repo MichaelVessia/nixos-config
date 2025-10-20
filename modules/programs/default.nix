@@ -3,7 +3,7 @@
 {
   imports = [
     ./browsers
-    ./editors
+    ./nvf
     ./common.nix
     ./ghostty.nix
     ./git.nix
