@@ -24,6 +24,7 @@
     curl
     wget
     git-town
+    wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
     # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
 
     # networking tools
