@@ -1,3 +1,18 @@
+# KDE Plasma User Configuration (Home-Manager)
+#
+# This file contains USER-LEVEL Plasma settings:
+#   - Keyboard shortcuts
+#   - Themes and appearance (within plasma-manager)
+#   - Application-specific settings
+#   - Keybinds and custom shortcuts
+#   - Panel configurations
+#   - Widget settings
+#
+# For SYSTEM-LEVEL Plasma settings, see: modules/desktop/plasma.nix
+#   - Enabling Plasma itself (services.desktopManager.plasma6)
+#   - Display manager (SDDM)
+#   - System services
+#
 {
   programs.plasma = {
     enable = true;

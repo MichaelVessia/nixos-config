@@ -6,6 +6,7 @@
 }: {
   imports = [
     ./browsers
+    ./claude-code
     ./nvf
     ./common.nix
     ./ghostty.nix
