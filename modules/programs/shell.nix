@@ -46,7 +46,7 @@
       cat = "bat";
 
       # nixos rebuild alias
-      nrs = "sudo nixos-rebuild switch";
+      reload = "sudo nixos-rebuild switch";
 
       # Verbosity and qol
       cp = "cp -v";
