@@ -1,9 +1,11 @@
-{ config, pkgs, inputs, ... }:
-
 {
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
-
     neofetch
     yazi
 
@@ -19,14 +21,25 @@
     yq-go # yaml processor https://github.com/mikefarah/yq
     eza # A modern replacement for 'ls'
     fzf # A command-line fuzzy finder
+    bat # cat replacement
+    eza # ls replacement
+    fd # find replacement
+    ripgrep # grep replacement
+    ncdu # disk usage
+    atuin # command history
+    zoxide # fuzzy cd
+    curl
+    wget
+    jq
+    git-town
 
     # networking tools
     mtr # A network diagnostic tool
     iperf3
-    dnsutils  # `dig` + `nslookup`
+    dnsutils # `dig` + `nslookup`
     ldns # replacement of `dig`, it provide the command `drill`
     nmap # A utility for network discovery and security auditing
-    ipcalc  # it is a calculator for the IPv4/v6 addresses
+    ipcalc # it is a calculator for the IPv4/v6 addresses
 
     # misc
     file
@@ -52,7 +65,7 @@
     # terminal emulators
     ghostty
 
-    btop  # replacement of htop/nmon
+    btop # replacement of htop/nmon
     iotop # io monitoring
     iftop # network monitoring
 
