@@ -12,5 +12,6 @@
     ./git.nix
     ./plasma.nix
     ./shell.nix
+    ./syncthing.nix
   ];
 }

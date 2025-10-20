@@ -54,6 +54,8 @@
     glow # markdown previewer in terminal
     bitwarden # password manager
     signal-desktop # secure messaging
+    obsidian # note-taking and knowledge management
+    # Note: syncthing is configured as a service in syncthing.nix
 
     # terminal emulators
     ghostty

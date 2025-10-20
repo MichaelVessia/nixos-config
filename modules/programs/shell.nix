@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
@@ -21,6 +23,7 @@
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
 
       # fzf settings - use fd for faster file search
+      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
       export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
@@ -41,6 +44,34 @@
 
       # bat aliases (cat replacement)
       cat = "bat";
+
+      # nixos rebuild alias
+      nrs = "sudo nixos-rebuild switch";
+
+      # Verbosity and qol
+      cp = "cp -v";
+      ddf = "df -h";
+      etc = "erd -H";
+      mkdir = "mkdir -p";
+      mv = "mv -v";
+      rm = "rm -v";
+
+      # Git aliases
+      gaa = "git add -A";
+      ga = "git add";
+      gbd = "git branch --delete";
+      gb = "git branch";
+      gc = "git commit";
+      gcm = "git commit -m";
+      gcob = "git checkout -b";
+      gco = "git checkout";
+      gd = "git diff";
+      gl = "git log";
+      gp = "git push";
+      gph = "git push -u origin HEAD";
+      gs = "git status";
+      gst = "git stash";
+      gstp = "git stash pop";
     };
 
     sessionVariables = {
