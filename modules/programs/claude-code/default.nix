@@ -10,4 +10,11 @@
     source = ./commands;
     recursive = true;
   };
+
+  home.file.".claude/claude-statusline" = {
+    source = ./claude-statusline.sh;
+    executable = true;
+  };
+
+  home.file.".claude/settings.json".source = ./settings.json;
 }
