@@ -11,6 +11,8 @@
     ./hardware-configuration.nix
     # Desktop Environment (change DE in modules/desktop/default.nix)
     ../../modules/desktop
+    # Hardware
+    ../../modules/hardware/printing.nix
   ];
 
   # Bootloader.
@@ -45,26 +47,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable CUPS to print documents.
-  services.printing = {
-    enable = true;
-    drivers = [pkgs.brlaser];
-  };
-
-  hardware.printers = {
-    ensurePrinters = [
-      {
-        name = "Brother_HL-L3270CDW";
-        location = "Home";
-        deviceUri = "ipp://192.168.1.138/ipp";
-        model = "everywhere";
-        ppdOptions = {
-          PageSize = "Letter";
-        };
-      }
-    ];
-    ensureDefaultPrinter = "Brother_HL-L3270CDW";
-  };
+  # Enable CUPS to print documents (configured in modules/hardware/printing.nix)
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
