@@ -8,6 +8,7 @@
     ./plugins.nix
     ./git.nix
     ./terminal.nix
+    ./custom.nix
   ];
 
   programs.nvf.enable = true;

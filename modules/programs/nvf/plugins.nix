@@ -5,6 +5,7 @@
       enable = true;
       setupOpts = {
         gitbrowse.enable = true;
+        notifier.enable = true;
       };
     };
   };
