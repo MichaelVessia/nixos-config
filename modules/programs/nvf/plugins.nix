@@ -6,6 +6,17 @@
       setupOpts = {
         gitbrowse.enable = true;
         notifier.enable = true;
+        dashboard = {
+          enable = true;
+          sections = [
+            {section = "header";}
+            {
+              section = "keys";
+              gap = 1;
+              padding = 1;
+            }
+          ];
+        };
       };
     };
   };
