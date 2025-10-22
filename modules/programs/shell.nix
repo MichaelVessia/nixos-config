@@ -115,4 +115,11 @@
   programs.bat = {
     enable = true;
   };
+
+  # direnv - load/unload environment based on directory
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    nix-direnv.enable = true;
+  };
 }

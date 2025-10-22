@@ -11,4 +11,8 @@
       core.editor = "nvim";
     };
   };
+
+  home.packages = with pkgs; [
+    gh
+  ];
 }

@@ -50,6 +50,7 @@
     # it provides the command `nom` works just like `nix`
     # with more details log output
     nix-output-monitor
+    devbox # portable development environments
 
     # productivity
     glow # markdown previewer in terminal
