@@ -99,6 +99,9 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
+  # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/12th-gen-intel
+  services.fwupd.enable = true;
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

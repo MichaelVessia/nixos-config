@@ -22,6 +22,10 @@
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware = {
+      inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -30,6 +34,7 @@
     claude-code,
     plasma-manager,
     nvf,
+    nixos-hardware,
     ...
   }: {
     nixosConfigurations = {
@@ -46,6 +51,8 @@
 
           modules = [
             ./hosts/framework13/default.nix
+
+            nixos-hardware.nixosModules.framework-12th-gen-intel
 
             # make home-manager as a module of nixos
             # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
