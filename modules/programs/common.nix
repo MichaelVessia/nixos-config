@@ -61,6 +61,7 @@
 
     # terminal emulators
     ghostty
+    tmux
 
     btop # replacement of htop/nmon
     iotop # io monitoring

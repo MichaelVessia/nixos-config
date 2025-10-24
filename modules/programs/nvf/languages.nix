@@ -54,5 +54,14 @@
       lspkind.enable = true;
       trouble.enable = true;
     };
+
+    keymaps = [
+      {
+        key = "<leader>xx";
+        mode = "n";
+        action = "<cmd>Trouble diagnostics toggle<CR>";
+        desc = "Toggle Trouble diagnostics";
+      }
+    ];
   };
 }

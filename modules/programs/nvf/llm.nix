@@ -23,7 +23,7 @@
           -- Use Neovim's built-in clipboard integration
           vim.fn.setreg('+', formatted_snippet)
 
-          Snacks.notify("Context (File, Lines, Snippet) copied to clipboard!")
+          print("Context copied to clipboard!")
       end
     '';
 
