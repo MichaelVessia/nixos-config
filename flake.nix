@@ -41,27 +41,7 @@
     pkgs = nixpkgs.legacyPackages.${system};
   in {
     devShells.${system}.default = pkgs.mkShell {
-      packages = [ pkgs.alejandra ];
-
-      shellHook = ''
-        # Install pre-commit hook
-        mkdir -p .git/hooks
-        cat > .git/hooks/pre-commit << 'EOF'
-#!/usr/bin/env bash
-# Format staged Nix files with alejandra
-
-STAGED_NIX_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.nix$')
-
-if [ -n "$STAGED_NIX_FILES" ]; then
-  echo "Formatting Nix files with alejandra..."
-  echo "$STAGED_NIX_FILES" | xargs nix run nixpkgs#alejandra --
-  echo "$STAGED_NIX_FILES" | xargs git add
-fi
-
-exit 0
-EOF
-        chmod +x .git/hooks/pre-commit
-      '';
+      packages = [pkgs.alejandra];
     };
 
     nixosConfigurations = {
