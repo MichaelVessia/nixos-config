@@ -2,6 +2,7 @@
   imports = [
     inputs.nvf.homeManagerModules.default
     ./binds.nix
+    ./dashboard.nix
     ./git.nix
     ./languages.nix
     ./lua.nix

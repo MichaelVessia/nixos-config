@@ -16,13 +16,19 @@
         key = "<leader>sg";
         mode = "n";
         action = ":FzfLua live_grep<CR>";
-        desc = "Live grep";
+        desc = "Search grep";
+      }
+      {
+        key = "<leader>sr";
+        mode = "n";
+        action = ":FzfLua registers<CR>";
+        desc = "Search Registers";
       }
       {
         key = "<leader>s/";
         mode = "n";
         action = ":FzfLua builtin<CR>";
-        desc = "Builtin pickers";
+        desc = "Search Builtin pickers";
       }
     ];
   };
