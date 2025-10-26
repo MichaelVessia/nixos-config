@@ -11,15 +11,15 @@
   home.username = "michaelvessia";
   home.homeDirectory = "/home/michaelvessia";
 
-  # link the configuration file in current directory to the specified location in home directory
-  # home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
+  # Link scripts to ~/bin
+  home.file."bin" = {
+    source = ../../scripts;
+    recursive = true;
+    executable = true;
+  };
 
-  # link all files in `./scripts` to `~/.config/i3/scripts`
-  # home.file.".config/i3/scripts" = {
-  #   source = ./scripts;
-  #   recursive = true;   # link recursively
-  #   executable = true;  # make all files executable
-  # };
+  # Add ~/bin to PATH
+  home.sessionPath = ["$HOME/bin"];
 
   # encode the file content in nix configuration file directly
   # home.file.".xxx".text = ''
