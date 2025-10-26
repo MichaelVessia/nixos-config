@@ -46,22 +46,5 @@
       lua.enable = true;
       python.enable = true;
     };
-
-    lsp = {
-      enable = true;
-      formatOnSave = true;
-      #otter-nvim.enable = true;
-      lspkind.enable = true;
-      trouble.enable = true;
-    };
-
-    keymaps = [
-      {
-        key = "<leader>xx";
-        mode = "n";
-        action = "<cmd>Trouble diagnostics toggle<CR>";
-        desc = "Toggle Trouble diagnostics";
-      }
-    ];
   };
 }
