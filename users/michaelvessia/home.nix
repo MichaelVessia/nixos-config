@@ -11,12 +11,26 @@
   home.username = "michaelvessia";
   home.homeDirectory = "/home/michaelvessia";
 
-  # Link scripts to ~/bin
-  home.file."bin" = {
-    source = ../../scripts;
-    recursive = true;
-    executable = true;
-  };
+  # Link scripts to ~/bin (flattened)
+  home.file = let
+    scriptsDir = ../../scripts;
+    scriptFiles = [
+      "file-management/mkcd"
+      "file-management/mksh"
+      "file-management/scratch"
+      "file-management/tempd"
+      "process-management/pidkill"
+      "process-management/portkill"
+    ];
+  in
+    builtins.listToAttrs (map (scriptPath: {
+        name = "bin/${builtins.baseNameOf scriptPath}";
+        value = {
+          source = scriptsDir + "/${scriptPath}";
+          executable = true;
+        };
+      })
+      scriptFiles);
 
   # Add ~/bin to PATH
   home.sessionPath = ["$HOME/bin"];

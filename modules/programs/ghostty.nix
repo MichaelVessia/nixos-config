@@ -60,5 +60,8 @@
     keybind = ctrl+j=goto_split:down
     keybind = ctrl+k=goto_split:up
     keybind = ctrl+l=goto_split:right
+
+    # Window management
+    keybind = ctrl+a>w=close_window
   '';
 }

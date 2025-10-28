@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+if [ $# -ne 1 ]; then
+    echo "Usage: pidkill <process-name-or-pid>"
+    exit 1
+fi
+
+INPUT="$1"
+
+# Check if input is a number (PID) or process name
+if [[ "$INPUT" =~ ^[0-9]+$ ]]; then
+    PID="$INPUT"
+else
+    # Find PID by process name
+    PID=$(pgrep -f "$INPUT" | head -n1 || true)
+
+    if [ -z "$PID" ]; then
+        echo "No process found matching: $INPUT"
+        exit 1
+    fi
+fi
+
+echo "Targeting process $PID"
+
+# Try SIGTERM (15) - polite request to terminate
+if kill -15 "$PID" 2>/dev/null; then
+    echo "Sent SIGTERM (15)..."
+    sleep 2
+
+    # Check if still running
+    if ! kill -0 "$PID" 2>/dev/null; then
+        echo "Process terminated gracefully"
+        exit 0
+    fi
+fi
+
+# Try SIGINT (2) - interrupt
+if kill -2 "$PID" 2>/dev/null; then
+    echo "Sent SIGINT (2)..."
+    sleep 2
+
+    if ! kill -0 "$PID" 2>/dev/null; then
+        echo "Process interrupted"
+        exit 0
+    fi
+fi
+
+# Try SIGHUP (1) - hangup
+if kill -1 "$PID" 2>/dev/null; then
+    echo "Sent SIGHUP (1)..."
+    sleep 2
+
+    if ! kill -0 "$PID" 2>/dev/null; then
+        echo "Process hung up"
+        exit 0
+    fi
+fi
+
+# Final resort: SIGKILL (9) - force kill
+if kill -9 "$PID" 2>/dev/null; then
+    echo "Sent SIGKILL (9) - force killed"
+    exit 0
+else
+    echo "Failed to kill process $PID"
+    exit 1
+fi
