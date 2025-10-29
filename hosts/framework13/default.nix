@@ -72,7 +72,7 @@
   users.users.michaelvessia = {
     isNormalUser = true;
     description = "Michael Vessia";
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = ["networkmanager" "wheel" "docker"];
   };
 
   # Allow unfree packages
@@ -101,6 +101,9 @@
 
   # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/12th-gen-intel
   services.fwupd.enable = true;
+
+  # Enable Docker
+  virtualisation.docker.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

@@ -21,6 +21,9 @@
           };
         };
       };
+      preview = {
+        glow.enable = true;
+      };
     };
 
     keymaps = [
