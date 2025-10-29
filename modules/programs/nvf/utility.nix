@@ -22,18 +22,24 @@
         };
       };
       preview = {
-        glow.enable = true;
+        glow = {
+          # good for inline
+          enable = true;
+          mappings = {
+            openPreview = "<leader>pi";
+          };
+        };
+        markdownPreview.enable = true;
       };
     };
 
     keymaps = [
-      # {
-      #   key = "-";
-      #   desc = "Open oil-nvim interactive file explorer float.";
-      #   mode = "n";
-      #   lua = true;
-      #   action = "require('oil').open_float";
-      # }
+      {
+        key = "<leader>po";
+        desc = "Open markdown preview";
+        mode = "n";
+        action = ":MarkdownPreview<CR>";
+      }
       {
         key = "-";
         desc = "Open oil-nvim interactive file explorer buffer.";
