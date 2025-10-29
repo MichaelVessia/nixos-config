@@ -41,6 +41,11 @@
           type = "prettier";
           package = pkgs.nodePackages.prettier;
         };
+        lsp = {
+          enable = true;
+          server = "ts_ls";
+        };
+        extraDiagnostics.enable = true;
       };
       go.enable = true;
       lua.enable = true;

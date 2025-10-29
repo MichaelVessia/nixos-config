@@ -4,7 +4,28 @@
       enable = true;
       formatOnSave = true;
       lspkind.enable = true;
-      lspconfig.enable = true;
+      lspconfig = {
+        enable = true;
+        sources.ts-effect-lsp = ''
+          lspconfig.ts_ls.setup {
+            capabilities = capabilities;
+            on_attach = default_on_attach;
+            root_dir = require('lspconfig.util').root_pattern('package.json', 'tsconfig.json');
+            init_options = {
+              preferences = {
+                importModuleSpecifierPreference = 'relative'
+              }
+            };
+            on_new_config = function(new_config, new_root_dir)
+              -- Use workspace TypeScript for @effect/language-service plugin
+              local workspace_ts = new_root_dir .. "/node_modules/typescript/lib"
+              if vim.fn.isdirectory(workspace_ts) == 1 then
+                new_config.cmd = { "typescript-language-server", "--stdio", "--tsserver-path=" .. workspace_ts }
+              end
+            end;
+          }
+        '';
+      };
       trouble.enable = true;
     };
 
