@@ -19,15 +19,6 @@
             padding = 3;
             border = "rounded";
           };
-          keymaps = [
-            {
-              key = "-";
-              desc = "Open oil-nvim interactive file explorer buffer.";
-              mode = "n";
-              lua = true;
-              action = "require('oil').open";
-            }
-          ];
         };
       };
       preview = {
@@ -52,15 +43,6 @@
           explorer.enable = true;
           image.enable = true;
           notifier.enable = true;
-          keymaps = [
-            {
-              key = "<leader>e";
-              desc = "Explorer";
-              mode = "n";
-              lua = true;
-              action = "lua Snacks.explorer()";
-            }
-          ];
         };
       };
     };
@@ -71,6 +53,20 @@
         desc = "Open markdown preview";
         mode = "n";
         action = ":MarkdownPreview<CR>";
+      }
+      {
+        key = "-";
+        desc = "Open oil-nvim interactive file explorer buffer.";
+        mode = "n";
+        lua = true;
+        action = "require('oil').open";
+      }
+      {
+        key = "<leader>e";
+        desc = "Explorer";
+        mode = "n";
+        lua = true;
+        action = "function() Snacks.explorer() end";
       }
     ];
   };

@@ -16,6 +16,9 @@
       mouse = "nv";
       mousemodel = "extend";
       clipboard = "unnamedplus";
+
+      # ui
+      winborder = "single";
     };
   };
 }
