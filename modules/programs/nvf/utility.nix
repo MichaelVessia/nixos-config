@@ -19,6 +19,15 @@
             padding = 3;
             border = "rounded";
           };
+          keymaps = [
+            {
+              key = "-";
+              desc = "Open oil-nvim interactive file explorer buffer.";
+              mode = "n";
+              lua = true;
+              action = "require('oil').open";
+            }
+          ];
         };
       };
       preview = {
@@ -29,23 +38,39 @@
             openPreview = "<leader>pi";
           };
         };
-        markdownPreview.enable = true;
+        markdownPreview = {
+          enable = true;
+        };
+      };
+
+      snacks-nvim = {
+        enable = true;
+        setupOpts = {
+          picker.enable = false; # Using fzf-lua
+
+          bigfile.enable = true;
+          explorer.enable = true;
+          image.enable = true;
+          notifier.enable = true;
+          keymaps = [
+            {
+              key = "<leader>e";
+              desc = "Explorer";
+              mode = "n";
+              lua = true;
+              action = "lua Snacks.explorer()";
+            }
+          ];
+        };
       };
     };
-
+    # Keymaps that it wouldnt let me define inline with the plugin
     keymaps = [
       {
         key = "<leader>po";
         desc = "Open markdown preview";
         mode = "n";
         action = ":MarkdownPreview<CR>";
-      }
-      {
-        key = "-";
-        desc = "Open oil-nvim interactive file explorer buffer.";
-        mode = "n";
-        lua = true;
-        action = "require('oil').open";
       }
     ];
   };

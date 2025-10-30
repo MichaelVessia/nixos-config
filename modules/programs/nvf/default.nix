@@ -9,13 +9,13 @@
     ./lsp.nix
     ./options.nix
     ./picker.nix
-    ./plugins.nix
     ./statusline.nix
     ./terminal.nix
     ./theme.nix
     ./ui.nix
     ./utility.nix
     ./vim.nix
+    ./find-and-replace.nix
   ];
 
   programs.nvf.enable = true;

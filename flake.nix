@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # home-manager, used for managing user configuration
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -30,6 +31,7 @@
 
   outputs = inputs @ {
     nixpkgs,
+    nixpkgs-unstable,
     home-manager,
     claude-code,
     plasma-manager,
@@ -39,6 +41,7 @@
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
+    pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
   in {
     devShells.${system}.default = pkgs.mkShell {
       packages = [pkgs.alejandra];
@@ -50,6 +53,7 @@
         specialArgs = {
           inherit username;
           inherit inputs;
+          inherit pkgs-unstable;
         };
       in
         nixpkgs.lib.nixosSystem {

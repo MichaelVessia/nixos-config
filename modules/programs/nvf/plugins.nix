@@ -1,4 +1,0 @@
-{
-  programs.nvf.settings.vim = {
-  };
-}
