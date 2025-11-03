@@ -14,6 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
+    opencode.url = "github:AodhanHayter/opencode-flake";
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,6 +35,7 @@
     nixpkgs-unstable,
     home-manager,
     claude-code,
+    opencode,
     plasma-manager,
     nvf,
     nixos-hardware,
