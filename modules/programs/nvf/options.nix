@@ -19,6 +19,9 @@
 
       # ui
       winborder = "single";
+
+      # completion
+      completeopt = "menu,preview";
     };
   };
 }
