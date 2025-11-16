@@ -13,7 +13,21 @@
         "<S-Tab>" = ["fallback"];
       };
     };
-    formatter.conform-nvim.enable = true;
+    formatter.conform-nvim = {
+      enable = true;
+      setupOpts = {
+        formatters_by_ft = {
+          typescript = [
+            "biome"
+            "eslint_d"
+          ];
+          javascript = [
+            "biome"
+            "eslint_d"
+          ];
+        };
+      };
+    };
     diagnostics = {
       enable = true;
       nvim-lint.enable = true;
