@@ -14,6 +14,12 @@
       };
     };
     formatter.conform-nvim.enable = true;
-    diagnostics.nvim-lint.enable = true;
+    diagnostics = {
+      enable = true;
+      nvim-lint.enable = true;
+      config = {
+        virtual_text = true;
+      };
+    };
   };
 }

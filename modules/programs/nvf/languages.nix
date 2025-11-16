@@ -50,5 +50,18 @@
       lua.enable = true;
       python.enable = true;
     };
+    formatter.conform-nvim = {
+      enable = true;
+      setupOpts = {
+        formatters_by_ft = {
+          typescript = [
+            "biome"
+          ];
+          javascript = [
+            "biome"
+          ];
+        };
+      };
+    };
   };
 }
