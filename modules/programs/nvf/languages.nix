@@ -38,8 +38,7 @@
       ts = {
         enable = true;
         format = {
-          type = "prettier";
-          package = pkgs.nodePackages.prettier;
+          type = "biome";
         };
         lsp = {
           enable = true;
