@@ -16,7 +16,9 @@
     ./utility.nix
     ./vim.nix
     ./find-and-replace.nix
+    ./neotest.nix
   ];
 
   programs.nvf.enable = true;
+  programs.nvf.enableManpages = true;
 }

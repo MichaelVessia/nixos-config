@@ -22,7 +22,7 @@
     };
     nvf = {
       url = "github:NotAShelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-hardware = {
       inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
