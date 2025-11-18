@@ -12,6 +12,8 @@
       "file-management/mksh"
       "file-management/scratch"
       "file-management/tempd"
+      "nixos/clean-nix-history"
+      "nixos/reload"
       "process-management/pidkill"
       "process-management/portkill"
     ];
