@@ -1,13 +1,19 @@
 {
+  lib,
   config,
   pkgs,
+  pkgs-unstable,
   ...
 }: {
-  # Symlink ghostty's built-in themes to the config directory
-  home.file.".config/ghostty/themes".source = "${pkgs.ghostty}/share/ghostty/themes";
-
   # Ghostty terminal emulator configuration
-  # Using XDG config file management for declarative configuration
+  # Linux: installed via nix, macOS: installed via Homebrew
+
+  # Symlink ghostty's built-in themes to the config directory (Linux only)
+  home.file.".config/ghostty/themes" = lib.mkIf pkgs.stdenv.isLinux {
+    source = "${pkgs-unstable.ghostty}/share/ghostty/themes";
+  };
+
+  # Shared config file for both platforms
   xdg.configFile."ghostty/config".text = ''
     # Font configuration
     font-family = JetBrains Mono

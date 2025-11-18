@@ -1,9 +1,11 @@
 {
+  lib,
   config,
   pkgs,
   ...
 }: {
-  programs.brave = {
+  # Brave browser - macOS uses Homebrew
+  programs.brave = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
     extensions = [
       {id = "cnjifjpddelmedmihgijeibhnjfabmlf";} # Obsidian Web Clipper

@@ -1,7 +1,14 @@
-{pkgs, ...}: {
-  home.packages = with pkgs; [
-    pinta
-    spotify
-    yt-dlp
-  ];
+{
+  lib,
+  pkgs,
+  ...
+}: {
+  home.packages = with pkgs;
+    [
+      spotify
+      yt-dlp
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      pinta
+    ];
 }

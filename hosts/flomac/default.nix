@@ -44,7 +44,7 @@
 
     # Mac App Store apps (requires mas)
     masApps = {
-      "Xcode" = 497799835;
+      # "Xcode" = 497799835; # Too large, install manually if needed
       "Amphetamine" = 937984704;
     };
   };
@@ -52,6 +52,7 @@
   # System configuration
   system = {
     stateVersion = 5;
+    primaryUser = username;
     defaults = {
       # Dock settings
       dock = {
@@ -82,25 +83,9 @@
     };
   };
 
-  # Enable nix-daemon
-  services.nix-daemon.enable = true;
-
   # Nix configuration
-  nix = {
-    settings = {
-      experimental-features = ["nix-command" "flakes"];
-      auto-optimise-store = true;
-    };
-    gc = {
-      automatic = true;
-      interval = {
-        Weekday = 0;
-        Hour = 2;
-        Minute = 0;
-      };
-      options = "--delete-older-than 30d";
-    };
-  };
+  # Using Determinate Nix, so disable nix-darwin's Nix management
+  nix.enable = false;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

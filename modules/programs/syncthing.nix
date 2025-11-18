@@ -1,8 +1,10 @@
 {
+  lib,
   config,
   pkgs,
   ...
-}: {
+}:
+lib.mkIf pkgs.stdenv.isLinux {
   # Syncthing - continuous file synchronization
   # Web UI: http://localhost:8384
   # Note: You'll need to pair this device with your other devices through the web UI

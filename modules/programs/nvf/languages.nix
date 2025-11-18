@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   programs.nvf.settings.vim = {
     languages = {
       enableDAP = false;
@@ -26,7 +30,7 @@
           package = pkgs.nixd;
         };
       };
-      csharp.enable = true;
+      csharp.enable = false;
       yaml.enable = true;
       markdown.enable = true;
       bash.enable = true;

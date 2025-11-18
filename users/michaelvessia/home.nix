@@ -7,6 +7,7 @@
   imports = [
     ../common.nix
     ../../modules/programs
+    ../../modules/programs/plasma.nix
   ];
 
   home.username = "michaelvessia";

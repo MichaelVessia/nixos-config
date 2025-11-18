@@ -1,86 +1,87 @@
 {
+  lib,
   config,
   pkgs,
+  pkgs-unstable,
   inputs,
   ...
 }: {
   # Packages that should be installed to the user profile.
-  home.packages = with pkgs; [
-    inputs.opencode.packages.${pkgs.system}.default
-    fastfetch
-    yazi
+  home.packages = with pkgs;
+    [
+      fastfetch
+      yazi
 
-    # archives
-    zip
-    xz
-    unzip
-    p7zip
+      # archives
+      zip
+      xz
+      unzip
+      p7zip
 
-    # utils
-    ripgrep # recursively searches directories for a regex pattern
-    jq # A lightweight and flexible command-line JSON processor
-    yq-go # yaml processor https://github.com/mikefarah/yq
-    fd # find replacement
-    ncdu # disk usage
-    curl
-    wget
-    git-town
-    wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
-    # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
+      # utils
+      ripgrep # recursively searches directories for a regex pattern
+      jq # A lightweight and flexible command-line JSON processor
+      yq-go # yaml processor https://github.com/mikefarah/yq
+      fd # find replacement
+      ncdu # disk usage
+      curl
+      wget
+      git-town
+      # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
 
-    # networking tools
-    mtr # A network diagnostic tool
-    iperf3
-    dnsutils # `dig` + `nslookup`
-    ldns # replacement of `dig`, it provide the command `drill`
-    nmap # A utility for network discovery and security auditing
-    ipcalc # it is a calculator for the IPv4/v6 addresses
+      # networking tools
+      mtr # A network diagnostic tool
+      iperf3
+      dnsutils # `dig` + `nslookup`
+      ldns # replacement of `dig`, it provide the command `drill`
+      nmap # A utility for network discovery and security auditing
+      ipcalc # it is a calculator for the IPv4/v6 addresses
 
-    # misc
-    file
-    which
-    tree
-    gnused
-    gnutar
-    gawk
-    zstd
-    gnupg
+      # misc
+      file
+      which
+      tree
+      gnused
+      gnutar
+      gawk
+      zstd
+      gnupg
 
-    # nix related
-    #
-    # it provides the command `nom` works just like `nix`
-    # with more details log output
-    nix-output-monitor
-    devbox # portable development environments
+      # nix related
+      #
+      # it provides the command `nom` works just like `nix`
+      # with more details log output
+      nix-output-monitor
+      devbox # portable development environments
 
-    # productivity
-    glow # markdown previewer in terminal
-    bitwarden # password manager
-    signal-desktop # secure messaging
-    obsidian # note-taking and knowledge management
-    # Note: syncthing is configured as a service in syncthing.nix
+      # productivity
+      glow # markdown previewer in terminal
+      bitwarden # password manager
+      obsidian # note-taking and knowledge management
+      # Note: syncthing is configured as a service in syncthing.nix
 
-    # terminal emulators
-    ghostty
-    tmux
+      # terminal emulators
+      tmux
 
-    btop # replacement of htop/nmon
-    iotop # io monitoring
-    iftop # network monitoring
-    lazydocker # terminal UI for docker
+      btop # replacement of htop/nmon
+      lazydocker # terminal UI for docker
+      lsof # list open files
 
-    # system call monitoring
-    strace # system call monitoring
-    ltrace # library call monitoring
-    lsof # list open files
-
-    # system tools
-    sysstat
-    lm_sensors # for `sensors` command
-    ethtool
-    pciutils # lspci
-    usbutils # lsusb
-
-    inputs.claude-code.packages.${pkgs.system}.default
-  ];
+      inputs.claude-code.packages.${pkgs.system}.default
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      inputs.opencode.packages.${pkgs.system}.default
+      pkgs-unstable.ghostty # terminal emulator (macOS uses Homebrew)
+      signal-desktop # secure messaging
+      wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
+      iotop # io monitoring
+      iftop # network monitoring
+      strace # system call monitoring
+      ltrace # library call monitoring
+      sysstat
+      lm_sensors # for `sensors` command
+      ethtool
+      pciutils # lspci
+      usbutils # lsusb
+    ];
 }

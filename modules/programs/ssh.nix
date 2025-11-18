@@ -1,4 +1,5 @@
 {
+  lib,
   config,
   pkgs,
   ...
@@ -22,6 +23,6 @@
     };
   };
 
-  # Enable SSH agent service
-  services.ssh-agent.enable = true;
+  # Enable SSH agent service (Linux only)
+  services.ssh-agent.enable = lib.mkDefault pkgs.stdenv.isLinux;
 }
