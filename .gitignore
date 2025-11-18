@@ -1,2 +1,6 @@
 .direnv/
 result
+
+# Secrets
+.secrets.env
+secrets.env

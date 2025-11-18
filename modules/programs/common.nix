@@ -68,9 +68,9 @@
       lsof # list open files
 
       inputs.claude-code.packages.${pkgs.system}.default
+      pkgs-unstable.opencode # AI coding agent
     ]
     ++ lib.optionals stdenv.isLinux [
-      inputs.opencode.packages.${pkgs.system}.default
       pkgs-unstable.ghostty # terminal emulator (macOS uses Homebrew)
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
