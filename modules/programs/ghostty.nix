@@ -53,19 +53,24 @@
     # Additional tab shortcuts with leader
     keybind = ctrl+a>c=new_tab
     keybind = ctrl+a>x=close_tab
-    keybind = ctrl+a>h=move_tab:-1
-    keybind = ctrl+a>l=move_tab:1
+    keybind = ctrl+a>left=move_tab:-1
+    keybind = ctrl+a>right=move_tab:1
     keybind = ctrl+a>p=previous_tab
     keybind = ctrl+a>n=next_tab
     keybind = ctrl+a>t=toggle_tab_overview
-    keybind = ctrl+a>-=new_split:down
-    keybind = ctrl+a>shift+\=new_split:right
+
+    # Split creation (vim-style)
+    keybind = ctrl+a>h=new_split:left
+    keybind = ctrl+a>j=new_split:down
+    keybind = ctrl+a>k=new_split:up
+    keybind = ctrl+a>l=new_split:right
 
     # Split navigation
     keybind = ctrl+h=goto_split:left
     keybind = ctrl+j=goto_split:down
     keybind = ctrl+k=goto_split:up
     keybind = ctrl+l=goto_split:right
+    keybind = ctrl+f=toggle_split_zoom
 
     # Window management
     keybind = ctrl+a>w=close_window
