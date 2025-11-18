@@ -9,6 +9,6 @@
     ../../modules/programs
   ];
 
-  home.username = "michaelvessia";
-  home.homeDirectory = "/home/michaelvessia";
+  home.username = "michael.vessia";
+  home.homeDirectory = "/Users/michael.vessia";
 }

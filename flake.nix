@@ -13,6 +13,11 @@
       # to avoid problems caused by different versions of nixpkgs.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # nix-darwin for macOS system management
+    darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     claude-code.url = "github:sadjow/claude-code-nix";
     opencode.url = "github:AodhanHayter/opencode-flake";
     plasma-manager = {
@@ -34,6 +39,7 @@
     nixpkgs,
     nixpkgs-unstable,
     home-manager,
+    darwin,
     claude-code,
     opencode,
     plasma-manager,
@@ -82,6 +88,38 @@
               home-manager.users.${username} = import ./users/${username}/home.nix;
 
               # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
+            }
+          ];
+        };
+    };
+
+    darwinConfigurations = {
+      flomac = let
+        username = "michael.vessia";
+        system = "aarch64-darwin";
+        specialArgs = {
+          inherit username;
+          inherit inputs;
+          pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+        };
+      in
+        darwin.lib.darwinSystem {
+          inherit system;
+          inherit specialArgs;
+
+          modules = [
+            ./hosts/flomac/default.nix
+
+            # make home-manager as a module of nix-darwin
+            # so that home-manager configuration will be deployed automatically when executing `darwin-rebuild switch`
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username}/home.nix;
             }
           ];
         };

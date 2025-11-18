@@ -16,6 +16,11 @@
 # Use rc2nix via nix run github:nix-community/plasma-manager to generate a file from what changed in the GUI
 # From I have extracted things that I have manually set, to be persisted here
 {
+  lib,
+  pkgs,
+  ...
+}:
+lib.mkIf pkgs.stdenv.isLinux {
   programs.plasma = {
     enable = true;
     shortcuts = {
