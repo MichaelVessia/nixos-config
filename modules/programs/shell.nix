@@ -78,6 +78,7 @@
       EDITOR = "nvim";
       VISUAL = "nvim";
       NIXOS_CONFIG = "$HOME/nixos-config";
+      TMPDIR = "$HOME/.cache/tmp";
     };
   };
 
@@ -142,6 +143,7 @@
       EDITOR = "nvim";
       VISUAL = "nvim";
       NIXOS_CONFIG = "$HOME/nixos-config";
+      TMPDIR = "$HOME/.cache/tmp";
     };
   };
 
