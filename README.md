@@ -19,7 +19,7 @@ Or manually:
 sudo nixos-rebuild switch --flake .#framework13
 
 # macOS (nix-darwin)
-darwin-rebuild switch --flake .#flomac
+sudo darwin-rebuild switch --flake .#flomac
 ```
 
 ## Directory Structure
