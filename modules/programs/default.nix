@@ -16,5 +16,6 @@
     ./shell.nix
     ./ssh.nix
     ./syncthing.nix
+    ./zed.nix
   ];
 }
