@@ -77,6 +77,7 @@
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
+      NIXOS_CONFIG = "$HOME/nixos-config";
     };
   };
 
@@ -140,6 +141,7 @@
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
+      NIXOS_CONFIG = "$HOME/nixos-config";
     };
   };
 

@@ -3,18 +3,17 @@ set -e
 set -u
 set -o pipefail
 
-# Find the config directory by looking for flake.nix
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# Use NIXOS_CONFIG env var, fallback to default location
+CONFIG_DIR="${NIXOS_CONFIG:-$HOME/nixos-config}"
 
 # Get hostname for flake selector
 HOSTNAME=$(hostname -s)
 
 # Detect platform and run appropriate rebuild command
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS with nix-darwin
+    # macOS with nix-darwin (requires sudo)
     echo "Rebuilding nix-darwin configuration for $HOSTNAME..."
-    darwin-rebuild switch --flake "$CONFIG_DIR#$HOSTNAME"
+    sudo darwin-rebuild switch --flake "$CONFIG_DIR#$HOSTNAME"
 else
     # NixOS
     echo "Rebuilding NixOS configuration for $HOSTNAME..."
