@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  pkgs-unstable,
+  ...
+}: {
   imports = [
     inputs.nvf.homeManagerModules.default
     ./binds.nix

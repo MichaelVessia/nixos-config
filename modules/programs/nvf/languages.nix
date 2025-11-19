@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  pkgs-unstable,
   ...
 }: {
   programs.nvf.settings.vim = {
@@ -39,6 +40,7 @@
         enable = true;
         format = {
           type = "biome";
+          package = pkgs-unstable.biome;
         };
       };
       html.enable = true;
@@ -48,6 +50,7 @@
         treesitter.enable = true;
         format = {
           type = "biome";
+          package = pkgs-unstable.biome;
         };
         lsp = {
           enable = true;
