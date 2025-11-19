@@ -43,6 +43,8 @@ lib.mkIf pkgs.stdenv.isLinux {
         "Window to Desktop 7" = "Meta+&";
         "Window to Desktop 8" = "Meta+*";
         "Window to Desktop 9" = "Meta+(";
+        "Walk Through Windows of Current Application" = "Meta+`";
+        "Walk Through Windows of Current Application (Reverse)" = "Meta+Shift+`";
       };
     };
 
