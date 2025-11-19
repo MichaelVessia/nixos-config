@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash(git checkout --branch:*), Bash(git add:*), Bash(git status:*), Bash(git push:*), Bash(git commit:*), Bash(gh pr create:*)
 description: Commit, push, and open a draft PR
 ---
 
@@ -16,8 +15,8 @@ Based on the above changes:
 
 1. Create a new branch if on main. If provided as an argument, include the JIRA
    ticket in the branch name
-2. Create a single commit with an appropriate message. DO NOT include any Claude
-   attribution or "Generated with Claude Code" text in the commit message.
+2. Create a single commit with an appropriate message. DO NOT include any
+   opencode attribution or "Generated with opencode" text in the commit message.
 3. Push the branch to origin
 4. Create a pull request using `gh pr create --draft`. Ensure the PR title
    adheres to conventional commits format
@@ -28,3 +27,4 @@ Based on the above changes:
    do all of the above steps in a single message using multiple tool calls. Do
    not use any other tools or do anything else. Do not send any other text or
    messages besides these tool calls.
+

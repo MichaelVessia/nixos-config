@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+# Use NIXOS_CONFIG env var, fallback to default location
+CONFIG_DIR="${NIXOS_CONFIG:-$HOME/nixos-config}"
+
+# Get hostname for flake selector
+HOSTNAME=$(hostname -s)
+
+# Update flake inputs
+echo "Updating flake inputs..."
+cd "$CONFIG_DIR"
+nix flake update
+
+# Detect platform and run appropriate rebuild command
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS with nix-darwin (requires sudo)
+    echo "Rebuilding nix-darwin configuration for $HOSTNAME..."
+    sudo darwin-rebuild switch --flake "$CONFIG_DIR#$HOSTNAME"
+else
+    # NixOS
+    echo "Rebuilding NixOS configuration for $HOSTNAME..."
+    sudo nixos-rebuild switch --flake "$CONFIG_DIR#$HOSTNAME"
+fi

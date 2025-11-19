@@ -1,7 +1,5 @@
 ---
-allowed-tools: Bash(git diff:*), Bash(git status:*)
 description: Generate a conventional commit message for staged changes
-model: claude-haiku-4-5
 ---
 
 ## Context
@@ -20,8 +18,9 @@ Requirements:
 2. Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build
 3. Keep subject line under 50 characters
 4. Include a body if changes are complex (wrap at 72 characters)
-5. DO NOT include any Claude attribution or "Generated with Claude Code" text
+5. DO NOT include any opencode attribution or "Generated with opencode" text
 6. Only output the commit message - nothing else
 
 You MUST do this in a single message. Do not use any other tools besides reading
 the diffs. Do not commit anything.
+
