@@ -12,7 +12,7 @@ Follow these steps precisely:
 1. Determine today's date in YYYY-MM-DD format.
 2. Check if `~/notes/YYYY-MM-DD.md` exists; if not, create it with a header
    `# Journal YYYY-MM-DD`.
-3. Append a new timestamped entry: `## HH:MM - $ARGUMENTS`
+3. Append a new timestamped entry: `## HH:MM` followed by the content of $ARGUMENTS as plain text on the next line(s)
 4. Confirm successful addition by echoing the full path and entry.
 
 Notes:
