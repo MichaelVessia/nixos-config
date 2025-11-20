@@ -30,6 +30,24 @@
         action = ":FzfLua builtin<CR>";
         desc = "Search Builtin pickers";
       }
+      {
+        key = "<leader>sw";
+        mode = "n";
+        action = ":FzfLua grep_cword<CR>";
+        desc = "Search word under cursor";
+      }
+      {
+        key = "<leader>sw";
+        mode = "x";
+        action = ":FzfLua grep_visual<CR>";
+        desc = "Search visual selection";
+      }
+      {
+        key = "<leader>sW";
+        mode = "n";
+        action = ":FzfLua grep_cWORD<CR>";
+        desc = "Search WORD under cursor";
+      }
     ];
   };
 }
