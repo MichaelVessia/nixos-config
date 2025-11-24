@@ -20,7 +20,7 @@
     font-size = 12
 
     # Theme (dark or light)
-    theme = dark:catppuccin-frappe,light:Novel
+    theme = dark:Catppuccin Frappe,light:Novel
 
     # Background opacity (0.0 to 1.0, where 1.0 is fully opaque)
     background-opacity = 1.0

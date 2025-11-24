@@ -8,25 +8,36 @@
   # Link scripts to ~/bin (flattened)
   home.file = let
     scriptsDir = ../scripts;
-    scriptFiles = [
-      "file-management/mkcd"
-      "file-management/mksh"
-      "file-management/scratch"
-      "file-management/tempd"
-      "nixos/clean-nix-history"
-      "nixos/reload"
-      "process-management/pidkill"
-      "process-management/portkill"
-    ];
+    # Recursively find all executable files in scripts directory
+    findScripts = dir: let
+      contents = builtins.readDir dir;
+      names = builtins.attrNames contents;
+      results =
+        map (
+          name: let
+            path = dir + "/${name}";
+            type = contents.${name};
+          in
+            if type == "directory"
+            then findScripts path
+            else if type == "regular" && builtins.substring 0 1 name != "."
+            then [path]
+            else []
+        )
+        names;
+      flattened = builtins.concatLists results;
+    in
+      flattened;
+    allScripts = findScripts scriptsDir;
   in
     builtins.listToAttrs (map (scriptPath: {
         name = "bin/${builtins.baseNameOf scriptPath}";
         value = {
-          source = scriptsDir + "/${scriptPath}";
+          source = scriptPath;
           executable = true;
         };
       })
-      scriptFiles);
+      allScripts);
 
   # Add ~/bin to PATH
   home.sessionPath = ["$HOME/bin"];
