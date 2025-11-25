@@ -58,6 +58,7 @@
       glow # markdown previewer in terminal
       bitwarden # password manager
       obsidian # note-taking and knowledge management
+      dbeaver-bin # database management tool
       # Note: syncthing is configured as a service in syncthing.nix
 
       # terminal emulators
