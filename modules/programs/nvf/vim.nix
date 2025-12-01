@@ -3,16 +3,10 @@
     viAlias = false;
     vimAlias = true;
     enableLuaLoader = true;
-    autocomplete.blink-cmp.enable = true;
-    autocomplete.blink-cmp.setupOpts = {
-      keymap = {
-        preset = "default";
-        "<C-n>" = ["select_next"];
-        "<C-p>" = ["select_prev"];
-        "<Tab>" = ["fallback"];
-        "<S-Tab>" = ["fallback"];
-      };
-    };
+    # TODO: Switch back to blink-cmp when macOS arm64 build issue is fixed
+    # Current issue: blink-cmp-fuzzy fails to link Lua symbols on macOS arm64
+    # Tracked at: https://github.com/Saghen/blink.cmp/issues/652
+    autocomplete.nvim-cmp.enable = true;
     formatter.conform-nvim = {
       enable = true;
       setupOpts = {
