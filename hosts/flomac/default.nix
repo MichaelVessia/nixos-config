@@ -16,9 +16,15 @@
       cleanup = "uninstall";
     };
 
+    # Third-party taps
+    taps = [
+      "steveyegge/beads"
+    ];
+
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
+      "bd" # Beads - AI coding assistant
     ];
 
     # GUI Applications (casks)

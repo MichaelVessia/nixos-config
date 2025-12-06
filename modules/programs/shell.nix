@@ -23,7 +23,7 @@
     enableCompletion = true;
     # TODO add your custom bashrc here
     bashrcExtra = ''
-      export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
+      export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
@@ -92,7 +92,7 @@
     syntaxHighlighting.enable = true;
 
     initContent = ''
-      export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
+      export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
