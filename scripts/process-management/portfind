@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+if [ $# -ne 1 ]; then
+    echo "Usage: portfind <port>"
+    exit 1
+fi
+
+PORT="$1"
+
+echo "Processes on port $PORT:"
+lsof -i :"$PORT" 2>/dev/null || echo "No process found on port $PORT"

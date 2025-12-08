@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+# Show recent generations
+echo "Recent generations:"
+sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -10
+echo ""
+
+read -p "Rollback to previous generation? [y/N] " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    sudo nixos-rebuild switch --rollback
+    echo "Rollback complete"
+else
+    echo "Aborted"
+fi

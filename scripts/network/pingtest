@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+echo "Testing connectivity..."
+
+# Test basic internet
+if ping -c 1 -W 2 1.1.1.1 &>/dev/null; then
+    echo "✓ Internet reachable (1.1.1.1)"
+else
+    echo "✗ No internet connection"
+    exit 1
+fi
+
+# Test DNS
+if ping -c 1 -W 2 google.com &>/dev/null; then
+    echo "✓ DNS working (google.com)"
+else
+    echo "✗ DNS not resolving"
+    exit 1
+fi
+
+echo "All checks passed"

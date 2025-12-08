@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+# Show what will be undone
+echo "Changes that will be discarded:"
+git status --short
+
+if [ -z "$(git status --porcelain)" ]; then
+    echo "Nothing to undo - working tree clean"
+    exit 0
+fi
+
+echo ""
+read -p "Discard all changes? [y/N] " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    git reset --hard
+    echo "All changes discarded"
+else
+    echo "Aborted"
+fi

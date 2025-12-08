@@ -29,6 +29,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    beads.url = "github:steveyegge/beads";
   };
 
   outputs = inputs @ {
@@ -40,6 +41,7 @@
     plasma-manager,
     nvf,
     nixos-hardware,
+    beads,
     ...
   }: let
     system = "x86_64-linux";

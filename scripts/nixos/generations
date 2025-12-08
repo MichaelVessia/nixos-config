@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+LINES="${1:-10}"
+
+echo "System generations (last $LINES):"
+sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -"$LINES"
+
+echo ""
+echo "Current generation:"
+readlink /nix/var/nix/profiles/system

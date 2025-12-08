@@ -70,6 +70,7 @@
       lsof # list open files
 
       inputs.claude-code.packages.${pkgs.system}.default
+      inputs.beads.packages.${pkgs.system}.default # bd - AI-friendly issue tracker
       pkgs-unstable.opencode # AI coding agent
     ]
     ++ lib.optionals stdenv.isLinux [
