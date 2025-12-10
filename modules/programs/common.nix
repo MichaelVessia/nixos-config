@@ -27,6 +27,7 @@
       curl
       wget
       git-town
+      jira-cli-go # Jira CLI
       # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
 
       # networking tools

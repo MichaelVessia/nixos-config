@@ -16,6 +16,6 @@
     ./shell.nix
     ./ssh.nix
     ./syncthing.nix
-    ./zed.nix
+    # ./zed.nix  # disabled - takes too long to build from source
   ];
 }
