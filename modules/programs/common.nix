@@ -58,7 +58,7 @@
 
       # productivity
       glow # markdown previewer in terminal
-      bitwarden # password manager
+      bitwarden-desktop # password manager
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
       openai-whisper # speech recognition

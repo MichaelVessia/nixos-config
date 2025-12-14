@@ -25,10 +25,9 @@
         enable = true;
         extraDiagnostics.enable = true;
         treesitter.enable = true;
-        format.type = "alejandra";
+        format.type = ["alejandra"];
         lsp = {
           server = "nixd";
-          package = pkgs.nixd;
         };
       };
       csharp.enable = false;
@@ -39,8 +38,7 @@
       css = {
         enable = true;
         format = {
-          type = "biome";
-          package = pkgs-unstable.biome;
+          type = ["biome"];
         };
       };
       html.enable = true;
@@ -49,12 +47,11 @@
         enable = true;
         treesitter.enable = true;
         format = {
-          type = "biome";
-          package = pkgs-unstable.biome;
+          type = ["biome"];
         };
         lsp = {
           enable = true;
-          server = "ts_ls";
+          server = ["ts_ls"];
         };
         extraDiagnostics.enable = true;
       };
