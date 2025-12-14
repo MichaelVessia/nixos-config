@@ -30,6 +30,7 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     beads.url = "github:steveyegge/beads";
+    opencode.url = "github:sst/opencode";
   };
 
   outputs = inputs @ {
@@ -42,6 +43,7 @@
     nvf,
     nixos-hardware,
     beads,
+    opencode,
     ...
   }: let
     system = "x86_64-linux";

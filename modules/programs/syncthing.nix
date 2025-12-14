@@ -11,6 +11,6 @@ lib.mkIf pkgs.stdenv.isLinux {
   # by exchanging device IDs and configuring shared folders
   services.syncthing = {
     enable = true;
-    tray.enable = true; # Enable system tray icon
+    tray.enable = false; # Disable - syncthing daemon already has tray icon
   };
 }

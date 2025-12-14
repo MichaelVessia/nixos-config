@@ -73,7 +73,7 @@
 
       inputs.claude-code.packages.${pkgs.system}.default
       inputs.beads.packages.${pkgs.system}.default # bd - AI-friendly issue tracker
-      pkgs-unstable.opencode # AI coding agent
+      inputs.opencode.packages.${pkgs.system}.default # AI coding agent
     ]
     ++ lib.optionals stdenv.isLinux [
       pkgs-unstable.ghostty # terminal emulator (macOS uses Homebrew)
