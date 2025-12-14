@@ -5,9 +5,9 @@
 }: {
   programs.git = {
     enable = true;
-    userName = "Michael Vessia";
-    userEmail = "michael@vessia.net";
-    extraConfig = {
+    settings = {
+      user.name = "Michael Vessia";
+      user.email = "michael@vessia.net";
       core.editor = "nvim";
     };
   };

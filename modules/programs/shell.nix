@@ -40,6 +40,10 @@
     shellAliases = {
       vim = "nvim";
 
+      # AI tools
+      c = "claude";
+      oc = "opencode";
+
       # eza aliases (ls replacement)
       ls = "eza";
       ll = "eza -l";
@@ -122,6 +126,10 @@
 
     shellAliases = {
       vim = "nvim";
+
+      # AI tools
+      c = "claude";
+      oc = "opencode";
 
       # eza aliases (ls replacement)
       ls = "eza";

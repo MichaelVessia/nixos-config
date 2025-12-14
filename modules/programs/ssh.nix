@@ -7,14 +7,15 @@
   # SSH configuration
   programs.ssh = {
     enable = true;
-
-    # SSH configuration options
-    extraConfig = ''
-      AddKeysToAgent yes
-    '';
+    enableDefaultConfig = false;
 
     # Host-specific configurations
     matchBlocks = {
+      "*" = {
+        extraOptions = {
+          AddKeysToAgent = "yes";
+        };
+      };
       "github.com" = {
         hostname = "github.com";
         user = "git";

@@ -18,7 +18,7 @@
       typst = {
         enable = true;
         extensions.typst-preview-nvim.enable = true;
-        format.type = "typstyle";
+        format.type = ["typstyle"];
         treesitter.enable = true;
       };
       nix = {
@@ -27,7 +27,7 @@
         treesitter.enable = true;
         format.type = ["alejandra"];
         lsp = {
-          server = "nixd";
+          servers = ["nixd"];
         };
       };
       csharp.enable = false;
@@ -51,7 +51,7 @@
         };
         lsp = {
           enable = true;
-          server = ["ts_ls"];
+          servers = ["ts_ls"];
         };
         extraDiagnostics.enable = true;
       };
