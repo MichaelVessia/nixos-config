@@ -53,6 +53,7 @@
       # it provides the command `nom` works just like `nix`
       # with more details log output
       nix-output-monitor
+      nh # nix helper - better CLI for nixos-rebuild/darwin-rebuild
       devbox # portable development environments
 
       # productivity

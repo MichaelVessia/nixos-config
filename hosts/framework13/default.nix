@@ -109,6 +109,14 @@
   # Enable Docker
   virtualisation.docker.enable = true;
 
+  # nh - nix helper for better CLI experience
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 7d --keep 3";
+    flake = "/home/michaelvessia/nixos-config";
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

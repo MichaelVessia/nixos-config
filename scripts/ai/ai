@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+if [ $# -lt 1 ]; then
+    echo "Usage: ai <prompt>"
+    exit 1
+fi
+
+CACHE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/opencode-free-model"
+CACHE_TTL=86400  # 24 hours
+
+get_free_model() {
+    curl -s https://models.dev/api.json | jq -r '
+      .opencode.models | to_entries[]
+      | select(.value.cost.input == 0)
+      | "opencode/\(.key)"
+    ' | head -1
+}
+
+# Check cache: exists, not empty, and less than TTL seconds old
+if [ -f "$CACHE_FILE" ] && [ -s "$CACHE_FILE" ]; then
+    cache_age=$(($(date +%s) - $(stat -c %Y "$CACHE_FILE")))
+    if [ "$cache_age" -lt "$CACHE_TTL" ]; then
+        MODEL=$(cat "$CACHE_FILE")
+    fi
+fi
+
+# Fetch if not cached
+if [ -z "${MODEL:-}" ]; then
+    MODEL=$(get_free_model)
+    if [ -n "$MODEL" ]; then
+        mkdir -p "$(dirname "$CACHE_FILE")"
+        echo "$MODEL" > "$CACHE_FILE"
+    else
+        MODEL="big-pickle"  # fallback
+    fi
+fi
+
+opencode run -m "$MODEL" "$*"

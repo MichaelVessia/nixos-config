@@ -24,6 +24,7 @@
     # TODO add your custom bashrc here
     bashrcExtra = ''
       export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
+      export NH_FLAKE="$HOME/nixos-config"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
@@ -75,6 +76,19 @@
       gs = "git status";
       gst = "git stash";
       gstp = "git stash pop";
+
+      # NH (nix helper) aliases - platform-aware
+      # NixOS
+      nrs = "nh os switch"; # rebuild and switch (NixOS)
+      nrt = "nh os test"; # test build (reverts on reboot)
+      nrb = "nh os boot"; # build, activate on next boot
+      ngen = "nh os generations"; # list generations
+      nroll = "nh os rollback"; # rollback to previous
+      # macOS (nix-darwin)
+      nds = "nh darwin switch"; # rebuild and switch (darwin)
+      # Cross-platform
+      nrc = "nh clean all"; # garbage collect
+      nsearch = "nh search"; # search packages
     };
 
     sessionVariables = {
@@ -82,6 +96,7 @@
       VISUAL = "nvim";
       NIXOS_CONFIG = "$HOME/nixos-config";
       TMPDIR = "$HOME/.cache/tmp";
+      NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
     };
   };
 
@@ -93,6 +108,7 @@
 
     initContent = ''
       export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
+      export NH_FLAKE="$HOME/nixos-config"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
@@ -143,6 +159,19 @@
       gs = "git status";
       gst = "git stash";
       gstp = "git stash pop";
+
+      # NH (nix helper) aliases - platform-aware
+      # NixOS
+      nrs = "nh os switch"; # rebuild and switch (NixOS)
+      nrt = "nh os test"; # test build (reverts on reboot)
+      nrb = "nh os boot"; # build, activate on next boot
+      ngen = "nh os generations"; # list generations
+      nroll = "nh os rollback"; # rollback to previous
+      # macOS (nix-darwin)
+      nds = "nh darwin switch"; # rebuild and switch (darwin)
+      # Cross-platform
+      nrc = "nh clean all"; # garbage collect
+      nsearch = "nh search"; # search packages
     };
 
     sessionVariables = {
@@ -150,6 +179,7 @@
       VISUAL = "nvim";
       NIXOS_CONFIG = "$HOME/nixos-config";
       TMPDIR = "$HOME/.cache/tmp";
+      NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
     };
   };
 
