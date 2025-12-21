@@ -23,6 +23,15 @@
 lib.mkIf pkgs.stdenv.isLinux {
   programs.plasma = {
     enable = true;
+
+    hotkeys.commands = {
+      shout = {
+        name = "Shout Speech-to-Text";
+        key = "Meta+/";
+        command = "shout";
+      };
+    };
+
     shortcuts = {
       kwin = {
         "Switch to Desktop 1" = "Meta+1";

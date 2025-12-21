@@ -61,7 +61,7 @@
       bitwarden-desktop # password manager
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
-      openai-whisper # speech recognition
+      # Note: whisper-cpp is configured in transcribe.nix and shout.nix
       # Note: syncthing is configured as a service in syncthing.nix
 
       # terminal emulators

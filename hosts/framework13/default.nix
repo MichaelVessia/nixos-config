@@ -57,13 +57,32 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
+    wireplumber = {
+      enable = true;
+      extraConfig = {
+        # Force duplex profile (output + input) for built-in audio
+        "50-alsa-config" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [{"device.name" = "alsa_card.pci-0000_00_1f.3";}];
+              actions = {
+                update-props = {
+                  "api.acp.auto-profile" = false;
+                  "device.profile" = "output:analog-stereo+input:analog-stereo";
+                };
+              };
+            }
+          ];
+        };
+      };
+    };
   };
+
+  # Audio tools for debugging
+  environment.systemPackages = with pkgs; [
+    pavucontrol
+    alsa-utils
+  ];
 
   # Enable Bluetooth
   hardware.bluetooth.enable = true;
@@ -76,7 +95,7 @@
   users.users.michaelvessia = {
     isNormalUser = true;
     description = "Michael Vessia";
-    extraGroups = ["networkmanager" "wheel" "docker"];
+    extraGroups = ["networkmanager" "wheel" "docker" "ydotool"];
   };
 
   # Allow unfree packages
@@ -108,6 +127,9 @@
 
   # Enable Docker
   virtualisation.docker.enable = true;
+
+  # ydotool for keyboard/mouse automation (used by shout)
+  programs.ydotool.enable = true;
 
   # nh - nix helper for better CLI experience
   programs.nh = {
