@@ -18,7 +18,7 @@
         VOICE_NOTES_DIR="$HOME/second_brain/VoiceNotes"
         RECORDINGS_DIR="$VOICE_NOTES_DIR/Recordings"
         TRANSCRIPTIONS_DIR="$VOICE_NOTES_DIR/Transcriptions"
-        WHISPER_CLI="${pkgs.whisper-cpp}/bin/whisper-cpp"
+        WHISPER_CLI="${pkgs.whisper-cpp}/bin/whisper-cli"
         WHISPER_MODEL="${whisperModel}"
 
         # Ensure directories exist
