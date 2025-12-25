@@ -76,6 +76,7 @@
     keybind = ctrl+k=goto_split:up
     keybind = ctrl+l=goto_split:right
     keybind = ctrl+f=toggle_split_zoom
+    keybind = ctrl+a>q=close_surface
 
     # Window management
     keybind = ctrl+a>w=close_window
