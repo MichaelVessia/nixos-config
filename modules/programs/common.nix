@@ -76,7 +76,6 @@
       inputs.opencode.packages.${pkgs.system}.default # AI coding agent
     ]
     ++ lib.optionals stdenv.isLinux [
-      pkgs-unstable.ghostty # terminal emulator (macOS uses Homebrew)
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       iotop # io monitoring

@@ -2,15 +2,20 @@
   lib,
   config,
   pkgs,
-  pkgs-unstable,
+  inputs,
   ...
 }: {
-  # Ghostty terminal emulator configuration
+  # Ghostty terminal emulator configuration (nightly from flake)
   # Linux: installed via nix, macOS: installed via Homebrew
+
+  # Install ghostty nightly from flake (Linux only - macOS uses Homebrew)
+  home.packages = lib.mkIf pkgs.stdenv.isLinux [
+    inputs.ghostty.packages.${pkgs.system}.default
+  ];
 
   # Symlink ghostty's built-in themes to the config directory (Linux only)
   home.file.".config/ghostty/themes" = lib.mkIf pkgs.stdenv.isLinux {
-    source = "${pkgs-unstable.ghostty}/share/ghostty/themes";
+    source = "${inputs.ghostty.packages.${pkgs.system}.default}/share/ghostty/themes";
   };
 
   # Shared config file for both platforms

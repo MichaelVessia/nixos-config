@@ -31,6 +31,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     beads.url = "github:steveyegge/beads";
     opencode.url = "github:sst/opencode";
+    ghostty.url = "github:ghostty-org/ghostty";
   };
 
   outputs = inputs @ {
@@ -44,6 +45,7 @@
     nixos-hardware,
     beads,
     opencode,
+    ghostty,
     ...
   }: let
     system = "x86_64-linux";

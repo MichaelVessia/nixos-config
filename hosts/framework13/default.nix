@@ -102,7 +102,12 @@
   nixpkgs.config.allowUnfree = true;
 
   # Enable the Flakes feature and the accompanying new nix command-line tool
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+    # Ghostty cachix cache for nightly builds
+    extra-substituters = ["https://ghostty.cachix.org"];
+    extra-trusted-public-keys = ["ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="];
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
