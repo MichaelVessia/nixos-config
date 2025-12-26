@@ -133,6 +133,9 @@
   # Enable Docker
   virtualisation.docker.enable = true;
 
+  # Tailscale VPN
+  services.tailscale.enable = true;
+
   # ydotool for keyboard/mouse automation (used by shout)
   programs.ydotool.enable = true;
 
