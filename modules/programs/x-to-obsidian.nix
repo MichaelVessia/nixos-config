@@ -1,5 +1,10 @@
 # X to Obsidian - background server for Chrome extension
 #
+# Requires:
+#   - Repo cloned at ~/Projects/x-to-obsidian
+#   - .env file with VAULT_PATH, LLM_PROVIDER, API keys (see .env.example)
+#   - `bun install` run in the repo
+#
 # Commands:
 #   systemctl --user status x-to-obsidian   # check status
 #   systemctl --user restart x-to-obsidian  # restart
