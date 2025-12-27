@@ -19,6 +19,7 @@
     ./syncthing.nix
     ./transcribe.nix
     ./x-to-obsidian.nix
+    ./basalt.nix
     # ./zed.nix  # disabled - takes too long to build from source
   ];
 }
