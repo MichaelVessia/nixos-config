@@ -33,6 +33,7 @@
     opencode.url = "github:sst/opencode";
     ghostty.url = "github:ghostty-org/ghostty";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
+    fmcal.url = "github:MichaelVessia/fmcal";
   };
 
   outputs = inputs @ {
