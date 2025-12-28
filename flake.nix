@@ -32,6 +32,7 @@
     beads.url = "github:steveyegge/beads";
     opencode.url = "github:sst/opencode";
     ghostty.url = "github:ghostty-org/ghostty";
+    x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
   };
 
   outputs = inputs @ {
