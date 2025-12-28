@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+# Update a specific flake input and optionally restart a user service
+# Usage: update-flake-input <input-name> [-s service-name]
+
+CONFIG_DIR="${NIXOS_CONFIG:-$HOME/nixos-config}"
+
+usage() {
+    echo "Usage: update-flake-input <input-name> [-s service-name]"
+    echo ""
+    echo "Examples:"
+    echo "  update-flake-input x-to-obsidian -s x-to-obsidian"
+    echo "  update-flake-input nixpkgs"
+    exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+    usage
+fi
+
+INPUT_NAME="$1"
+shift
+
+SERVICE_NAME=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -s|--service)
+            SERVICE_NAME="$2"
+            shift 2
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+cd "$CONFIG_DIR"
+
+echo "Updating flake input: $INPUT_NAME..."
+nix flake update "$INPUT_NAME"
+
+echo "Rebuilding system..."
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    nh darwin switch
+else
+    nh os switch
+fi
+
+if [[ -n "$SERVICE_NAME" ]]; then
+    echo "Restarting service: $SERVICE_NAME..."
+    systemctl --user restart "$SERVICE_NAME"
+    systemctl --user status "$SERVICE_NAME" --no-pager
+fi
+
+echo "Done!"
