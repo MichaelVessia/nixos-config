@@ -295,11 +295,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1766933657,
-        "narHash": "sha256-hc9Qhlroj5/Cvt0R7XCVaRoW7t7JYt7oXvCv92aQCKM=",
+        "lastModified": 1766943610,
+        "narHash": "sha256-X87AardkQTRmYCyI9PJh4k7B3az1X/YRv8iwnHwK4GM=",
         "owner": "MichaelVessia",
         "repo": "fmcal",
-        "rev": "488da832f19594eafc50b3c987c9111494711c67",
+        "rev": "9b62340f47190212e95b00e2fb51eeeec2924297",
         "type": "github"
       },
       "original": {
