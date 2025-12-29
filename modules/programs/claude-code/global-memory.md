@@ -1,8 +1,22 @@
-Be extremely concise. Sacrifice grammar for the sake of concision.
-When making a plan, list any unresolved questions at the end, if any.
-Make small changes that compile and pass tests
-Never disable tests, always fix them.
-Never commit code that doesn't compile unless explicitly instructed otherwise.
-Never use --no-verify to bypass commit hooks unless explicitly instructed otherwise.
-If a program is missing, use `nix run nixpkgs#<package>` to run it temporarily.
-No backwards compatibility. Prefer simplest change over migration-friendly code. Readability > keeping old interfaces.
+# Communication
+
+- Be extremely concise. Sacrifice grammar for concision.
+- When planning, list unresolved questions at the end.
+
+# Code Quality
+
+- Make small changes that compile and pass tests.
+- Never disable tests—fix them.
+- Never commit code that doesn't compile unless explicitly instructed.
+
+# Git
+
+- Never use `--no-verify` to bypass commit hooks unless explicitly instructed.
+
+# Environment
+
+- Missing program? Use `nix run nixpkgs#<package>`.
+
+# Design Philosophy
+
+- No backwards compatibility. Simplest change > migration-friendly code. Readability > old interfaces.
