@@ -16,5 +16,10 @@
     executable = true;
   };
 
+  home.file.".claude/claude-notify" = {
+    source = ./claude-notify.sh;
+    executable = true;
+  };
+
   home.file.".claude/settings.json".source = ./settings.json;
 }

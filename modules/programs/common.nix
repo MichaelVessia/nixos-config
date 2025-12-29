@@ -19,6 +19,7 @@
       p7zip
 
       # utils
+      python3 # needed for claude-code plugins (hookify)
       ripgrep # recursively searches directories for a regex pattern
       jq # A lightweight and flexible command-line JSON processor
       yq-go # yaml processor https://github.com/mikefarah/yq
