@@ -5,3 +5,4 @@ Never disable tests, always fix them.
 Never commit code that doesn't compile unless explicitly instructed otherwise.
 Never use --no-verify to bypass commit hooks unless explicitly instructed otherwise.
 If a program is missing, use `nix run nixpkgs#<package>` to run it temporarily.
+No backwards compatibility. Prefer simplest change over migration-friendly code. Readability > keeping old interfaces.

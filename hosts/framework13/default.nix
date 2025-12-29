@@ -147,6 +147,9 @@
     flake = "/home/michaelvessia/nixos-config";
   };
 
+  # Steam gaming client
+  programs.steam.enable = true;
+
   # nix-ld - run dynamically linked binaries (e.g., workerd for Cloudflare dev)
   programs.nix-ld.enable = true;
 
