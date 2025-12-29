@@ -2,7 +2,7 @@
 # Play notification sound (cross-platform)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    afplay /System/Library/Sounds/Glass.aiff 2>/dev/null &
+    for i in 1 2 3; do afplay /System/Library/Sounds/Glass.aiff 2>/dev/null; done &
 else
-    pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
+    for i in 1 2 3; do pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null; done &
 fi

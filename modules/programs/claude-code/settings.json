@@ -12,11 +12,22 @@
   "hooks": {
     "Notification": [
       {
-        "matcher": "idle_prompt",
+        "matcher": "permission_prompt",
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/claude-notify"
+            "command": "$HOME/.claude/claude-alert"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/claude-alert"
           }
         ]
       }

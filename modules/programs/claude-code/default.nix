@@ -21,5 +21,10 @@
     executable = true;
   };
 
+  home.file.".claude/claude-alert" = {
+    source = ./claude-alert.sh;
+    executable = true;
+  };
+
   home.file.".claude/settings.json".source = ./settings.json;
 }
