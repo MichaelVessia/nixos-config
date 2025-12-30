@@ -48,11 +48,13 @@ See [CLI-REFERENCE.md](CLI-REFERENCE.md) for full command documentation.
 
 ## Examples
 
+**Important:** Flags must come BEFORE positional arguments (query text).
+
 **"Find my tax documents from 2023"**
 ```bash
 search "tax 2023"
-# or with filters:
-search --tag=tax --after=2023-01-01 --before=2024-01-01
+# or with filters (flags before query):
+search --tag tax --after 2023-01-01 --before 2024-01-01
 ```
 
 **"What's in my inbox?"**

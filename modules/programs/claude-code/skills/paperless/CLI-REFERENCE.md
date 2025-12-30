@@ -1,8 +1,17 @@
 # paperless-cli Reference
 
+**Important:** All flags must come BEFORE positional arguments:
+```bash
+# Correct
+paperless-cli search --after 2024-01-01 -t Medical "query"
+
+# Wrong - fails with "unknown argument"
+paperless-cli search "query" --after 2024-01-01
+```
+
 ## search [query]
 
-Full-text search. Query optional if using filters.
+Full-text search. Query optional if using filters. Flags must precede the query.
 
 **Flags:**
 - `--tag, -t <name>` - Filter by tag (repeatable)
