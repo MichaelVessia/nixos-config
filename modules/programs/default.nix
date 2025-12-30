@@ -20,6 +20,7 @@
     ./transcribe.nix
     ./x-to-obsidian.nix
     ./basalt.nix
+    ./beads-viewer.nix
     ./fmcal.nix
     # ./zed.nix  # disabled - takes too long to build from source
   ];
