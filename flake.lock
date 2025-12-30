@@ -781,11 +781,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1767062903,
-        "narHash": "sha256-HtiydagYTziaMvQRVfjDNfhRLLlwKOFEuuGx+pz7NlU=",
+        "lastModified": 1767066138,
+        "narHash": "sha256-qEzDgPYEnbNOaR1g9Gm6OZ1U/KqGq+vrMEVXt/GL5dQ=",
         "owner": "MichaelVessia",
         "repo": "paperless-cli",
-        "rev": "8c777b58624729e29dd6dbf969f541e91574b758",
+        "rev": "981327fd8fc34665481c6b54bab898299cc1259b",
         "type": "github"
       },
       "original": {
