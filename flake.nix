@@ -34,6 +34,7 @@
     ghostty.url = "github:ghostty-org/ghostty";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
+    paperless-cli.url = "github:MichaelVessia/paperless-cli";
   };
 
   outputs = inputs @ {

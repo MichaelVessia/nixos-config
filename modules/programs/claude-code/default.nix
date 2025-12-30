@@ -11,6 +11,11 @@
     recursive = true;
   };
 
+  home.file.".claude/skills" = {
+    source = ./skills;
+    recursive = true;
+  };
+
   home.file.".claude/claude-statusline" = {
     source = ./claude-statusline.sh;
     executable = true;

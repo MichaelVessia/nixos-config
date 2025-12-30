@@ -22,6 +22,7 @@
     ./basalt.nix
     ./beads-viewer.nix
     ./fmcal.nix
+    ./paperless-cli.nix
     # ./zed.nix  # disabled - takes too long to build from source
   ];
 }
