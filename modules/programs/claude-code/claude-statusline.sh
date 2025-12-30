@@ -15,9 +15,13 @@ usage=$(echo "$input" | jq '.context_window.current_usage')
 if [ "$usage" != "null" ] && [ "$context_size" -gt 0 ] 2>/dev/null; then
   # Include input_tokens + cache tokens for actual context usage
   current_tokens=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
-  context_pct=$((current_tokens * 100 / context_size))
+  if [ "$current_tokens" != "null" ] && [ "$current_tokens" -ge 0 ] 2>/dev/null; then
+    context_pct=$((current_tokens * 100 / context_size))
+  else
+    context_pct="-"
+  fi
 else
-  context_pct=""
+  context_pct="-"
 fi
 
 # Get git branch if in a git repo (using -C to avoid cd)
@@ -65,20 +69,19 @@ short_model=$(echo "$model_name" | sed 's/^claude-//' | sed 's/-[0-9]\{8\}$//')
 
 # Build status line: Model → Project → Branch → Context%
 row1=$(pl_segment $C_MAGENTA $C_BLACK "$short_model" $C_YELLOW)
+# Format context display (add % only if it's a number)
+if [ "$context_pct" = "-" ]; then
+  context_display="$context_pct"
+else
+  context_display="${context_pct}%"
+fi
+
 if [ -n "$branch" ]; then
   row1="${row1}$(pl_segment $C_YELLOW $C_BLACK "$dir_name" $C_GREEN)"
-  if [ -n "$context_pct" ]; then
-    row1="${row1}$(pl_segment $C_GREEN $C_BLACK "$branch" $C_CYAN)"
-    row1="${row1}$(pl_segment_end $C_CYAN $C_BLACK "${context_pct}%")"
-  else
-    row1="${row1}$(pl_segment_end $C_GREEN $C_BLACK "$branch")"
-  fi
+  row1="${row1}$(pl_segment $C_GREEN $C_BLACK "$branch" $C_CYAN)"
+  row1="${row1}$(pl_segment_end $C_CYAN $C_BLACK "$context_display")"
 else
-  if [ -n "$context_pct" ]; then
-    row1="${row1}$(pl_segment $C_YELLOW $C_BLACK "$dir_name" $C_CYAN)"
-    row1="${row1}$(pl_segment_end $C_CYAN $C_BLACK "${context_pct}%")"
-  else
-    row1="${row1}$(pl_segment_end $C_YELLOW $C_BLACK "$dir_name")"
-  fi
+  row1="${row1}$(pl_segment $C_YELLOW $C_BLACK "$dir_name" $C_CYAN)"
+  row1="${row1}$(pl_segment_end $C_CYAN $C_BLACK "$context_display")"
 fi
 printf "%b\n" "$row1"
