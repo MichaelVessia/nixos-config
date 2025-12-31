@@ -42,6 +42,8 @@
 
       # AI tools
       c = "claude";
+      cr = "claude --resume";
+      cy = "claude --dangerously-skip-permissions";
       oc = "opencode";
 
       # eza aliases (ls replacement)
@@ -129,6 +131,8 @@
 
       # AI tools
       c = "claude";
+      cr = "claude --resume";
+      cy = "claude --dangerously-skip-permissions";
       oc = "opencode";
 
       # eza aliases (ls replacement)
