@@ -39,7 +39,7 @@ Add a project entry to ~/Projects/vessiadotnet/src/pages/projects.astro.
    - Use Catppuccin Mocha colors (lavender: #cba6f7, text: #cdd6f4, surface: #313244)
    - Simple geometric/iconic design
 
-5. **Add entry** to projects.astro in appropriate position (similar projects grouped)
+5. **Add entry** to projects.astro at the TOP of the array (reverse chronological order - newest first)
 
 6. **Commit and push** to vessiadotnet repo
 
