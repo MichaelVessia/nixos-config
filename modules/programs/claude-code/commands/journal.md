@@ -1,24 +1,46 @@
 ---
-allowed-tools: Bash
-description: Add timestamped entry to today's journal
+allowed-tools: AskUserQuestion, Bash
+description: End-of-day 5-minute checkin (Physical, Mind, Craft, Presence)
 model: claude-haiku-4-5
 ---
 
-Create or append to today's journal file in `~/notes` (Obsidian vault). Intended for daily logging of activities, summaries, or notes.
+Run a quick end-of-day checkin using the AskUserQuestion tool, then log to Obsidian.
 
-Arguments: $ARGUMENTS
+## Step 1: Ask Questions
 
-If arguments provided, use them as the entry content. If no arguments or arguments reference conversation context (e.g., "summarize what we did", "the error above"), use the conversation context to generate the entry.
+Use AskUserQuestion to ask ALL 4 questions at once:
 
-Follow these steps precisely:
+1. **Physical** - How was your body today?
+   - Options: Hard (pushed yourself), Easy (comfortable), Rest (recovery day)
 
-1. Determine today's date in YYYY-MM-DD format.
-2. Check if `~/notes/YYYY-MM-DD.md` exists; if not, create it with a header `# Journal YYYY-MM-DD`.
-3. Append a new timestamped entry: `## HH:MM` followed by the entry content as plain text on the next line(s)
-4. Confirm successful addition by echoing the full path and entry.
+2. **Mind** - How was your mental state?
+   - Options: Clear (focused, calm), Cluttered (scattered, noisy)
 
-Notes:
+3. **Craft** - How was your work quality?
+   - Options: Leverage (high-impact work), Noise (busy but not impactful)
 
-- Use Markdown syntax for all content.
-- Ensure `~/notes` is a symlink to your full Google Drive Obsidian path.
-- Designed for daily journaling of sessions, fixes, or thoughts.
+4. **Presence** - How present were you?
+   - Options: Present (engaged, aware), Distracted (pulled away, unfocused)
+
+Frame it as: "No judgment. Just data."
+
+## Step 2: Log Entry
+
+After receiving answers, append to `~/notes/YYYY-MM-DD.md`:
+
+```markdown
+## HH:MM - Daily Checkin
+
+#daily-checkin
+
+| Pillar | State |
+|--------|-------|
+| Physical | [answer] |
+| Mind | [answer] |
+| Craft | [answer] |
+| Presence | [answer] |
+```
+
+If user selected "Other" and provided custom text for any pillar, include that text.
+
+Create the file with `# Journal YYYY-MM-DD` header if it doesn't exist.
