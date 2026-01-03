@@ -31,5 +31,10 @@
     executable = true;
   };
 
+  home.file.".claude/claude-sleep-inhibit" = {
+    source = ./claude-sleep-inhibit.sh;
+    executable = true;
+  };
+
   home.file.".claude/settings.json".source = ./settings.json;
 }

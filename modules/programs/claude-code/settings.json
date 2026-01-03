@@ -10,6 +10,17 @@
     "command": "$HOME/.claude/claude-statusline"
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/claude-sleep-inhibit start"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "permission_prompt",
@@ -28,6 +39,17 @@
           {
             "type": "command",
             "command": "$HOME/.claude/claude-alert"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/claude-sleep-inhibit stop"
           }
         ]
       }
