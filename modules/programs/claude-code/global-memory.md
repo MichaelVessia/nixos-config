@@ -8,6 +8,8 @@
 - Make small changes that compile and pass tests.
 - Never disable tests—fix them.
 - Never commit code that doesn't compile unless explicitly instructed.
+- **Never compromise type safety**: No `any`, no non-null assertion operator (`!`), no type assertions (`as Type`).
+- **Abstractions**: Consciously constrained, pragmatically parameterised, doggedly documented.
 
 # Git
 
