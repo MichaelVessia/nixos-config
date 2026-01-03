@@ -4,7 +4,7 @@ description: Create a new markdown note in Obsidian knowledge base
 model: claude-haiku-4-5
 ---
 
-Create a new `.md` file in `~/notes` (Obsidian vault).\
+Create a new `.md` file in your Obsidian vault.\
 Intended for quick archiving of chat context, ideas, or research summaries —
 especially when used with `/dump-context`.
 
@@ -13,7 +13,7 @@ Follow these steps precisely:
 1. Generate a filename based on the provided title or, if none given, the
    current timestamp.\
    Example: `2025-10-16T12-30-00-my-note.md`
-2. Save the file under `~/notes/`.
+2. Save the file to `~/obsidian/Notes/`.
 3. Add a header containing:
    - `# <title>`
    - `date: <ISO8601 timestamp>`
@@ -25,5 +25,4 @@ Notes:
 
 - Use Markdown syntax for all content.
 - Prefer concise titles with no spaces — they become filenames.
-- Ensure `~/notes` is a symlink to your full Google Drive Obsidian path.
 - Designed to work alongside `/dump-context` for persistent knowledge capture.

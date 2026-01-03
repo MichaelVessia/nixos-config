@@ -15,7 +15,7 @@
         set -u
         set -o pipefail
 
-        VOICE_NOTES_DIR="$HOME/second_brain/VoiceNotes"
+        VOICE_NOTES_DIR="$HOME/obsidian/VoiceNotes"
         RECORDINGS_DIR="$VOICE_NOTES_DIR/Recordings"
         TRANSCRIPTIONS_DIR="$VOICE_NOTES_DIR/Transcriptions"
         WHISPER_CLI="${pkgs.whisper-cpp}/bin/whisper-cli"

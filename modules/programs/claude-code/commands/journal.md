@@ -26,7 +26,7 @@ Frame it as: "No judgment. Just data."
 
 ## Step 2: Log Entry
 
-After receiving answers, append to `~/notes/YYYY-MM-DD.md`:
+After receiving answers, append to `~/obsidian/Notes/YYYY-MM-DD.md`:
 
 ```markdown
 ## HH:MM - Daily Checkin
