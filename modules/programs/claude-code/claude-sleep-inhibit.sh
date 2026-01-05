@@ -11,8 +11,8 @@ start() {
         exit 0
     fi
 
-    # Start inhibitor in background
-    systemd-inhibit --what=sleep:idle --who="claude-code" --why="$LOCKNAME" sleep infinity &
+    # Start inhibitor in background, fully detached with no inherited fds
+    systemd-inhibit --what=sleep:idle --who="claude-code" --why="$LOCKNAME" sleep infinity </dev/null >/dev/null 2>&1 &
     echo $! > "$PIDFILE"
 }
 
