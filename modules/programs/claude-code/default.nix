@@ -36,5 +36,10 @@
     executable = true;
   };
 
+  home.file.".claude/ralph" = {
+    source = ./ralph.sh;
+    executable = true;
+  };
+
   home.file.".claude/settings.json".source = ./settings.json;
 }
