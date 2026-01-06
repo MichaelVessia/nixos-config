@@ -16,6 +16,7 @@
       push.default = "current";
       pull.rebase = false;
       diff.tool = "critique";
+      difftool.prompt = false;
       difftool.critique.cmd = ''critique difftool "$LOCAL" "$REMOTE"'';
     };
   };
