@@ -33,6 +33,7 @@ Find recent notes in `~/obsidian/Notes/`:
 
 Read the found notes and extract:
 - Uncompleted tasks (lines starting with `- [ ]`)
+- Completed PR/issue items (lines with `- [x]` containing GitHub links like `repo#123`)
 - Key context or summaries
 
 ## Step 3: Create Daily Note
@@ -53,15 +54,15 @@ Use the time from `date '+%H:%M'` output for the header (not model-generated tim
 
 ### Assigned Issues
 - [ ] [repo#123](https://github.com/org/repo/issues/123): issue title
-(or "None" if empty)
+(Exclude items checked off in previous notes. "None" if empty after filtering.)
 
 ### PRs to Review
 - [ ] [repo#456](https://github.com/org/repo/pull/456): pr title
-(or "None" if empty)
+(Exclude items checked off in previous notes. "None" if empty after filtering.)
 
 ### My Open PRs
 - [repo#789](https://github.com/org/repo/pull/789): pr title
-(or "None" if empty)
+(Exclude items checked off in previous notes. "None" if empty after filtering.)
 ```
 
 ## Guidelines
@@ -69,5 +70,6 @@ Use the time from `date '+%H:%M'` output for the header (not model-generated tim
 - Keep output minimal and scannable
 - Use checkboxes for actionable items
 - Omit empty sections or mark as "None"
+- Filter out PRs/issues that were checked off (`- [x]`) in previous notes (match by `repo#number`)
 - Create file with `# Journal YYYY-MM-DD` header if it doesn't exist
 - Confirm creation by echoing the file path
