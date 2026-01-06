@@ -69,6 +69,9 @@
       tmux
 
       btop # replacement of htop/nmon
+      (pkgs.writeShellScriptBin "critique" ''
+        exec ${pkgs.bun}/bin/bunx critique "$@"
+      '') # git diff viewer
       lazydocker # terminal UI for docker
       lsof # list open files
 
