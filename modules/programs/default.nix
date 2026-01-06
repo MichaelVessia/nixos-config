@@ -23,6 +23,9 @@
     ./beads-viewer.nix
     ./fmcal.nix
     ./paperless-cli.nix
+    ./karabiner.nix
+    ./hammerspoon.nix
+    ./raycast.nix
     # ./zed.nix  # disabled - takes too long to build from source
   ];
 }

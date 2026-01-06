@@ -3,6 +3,7 @@
   pkgs,
   ...
 }: let
+  inherit (pkgs) stdenv;
   # Download whisper model (base.en - 142MB, English-only, more accurate)
   whisperModel = pkgs.fetchurl {
     url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin";
@@ -50,6 +51,7 @@
         echo $! > "$STATE_FILE"
     fi
   '';
-in {
-  home.packages = [shout];
-}
+in
+  lib.mkIf stdenv.isLinux {
+    home.packages = [shout];
+  }
