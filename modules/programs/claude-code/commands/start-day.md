@@ -11,14 +11,17 @@ Create today's daily note with GitHub work items and recent vault context.
 Run these `gh api` queries (all repos):
 
 ```bash
-# Assigned issues
-gh api 'search/issues?q=assignee:@me+is:open+is:issue' --jq '.items[] | "\(.repository_url | split("/") | .[-1])#\(.number): \(.title)"'
+# Assigned issues (with links)
+gh api 'search/issues?q=assignee:@me+is:open+is:issue' --jq '.items[] | "[\(.repository_url | split("/") | .[-1])#\(.number)](\(.html_url)): \(.title)"'
 
-# PRs requesting your review
-gh api 'search/issues?q=review-requested:@me+is:open+is:pr' --jq '.items[] | "\(.repository_url | split("/") | .[-1])#\(.number): \(.title)"'
+# PRs requesting your review (with links)
+gh api 'search/issues?q=review-requested:@me+is:open+is:pr' --jq '.items[] | "[\(.repository_url | split("/") | .[-1])#\(.number)](\(.html_url)): \(.title)"'
 
-# Your open PRs
-gh api 'search/issues?q=author:@me+is:open+is:pr' --jq '.items[] | "\(.repository_url | split("/") | .[-1])#\(.number): \(.title)"'
+# Your open PRs (with links)
+gh api 'search/issues?q=author:@me+is:open+is:pr' --jq '.items[] | "[\(.repository_url | split("/") | .[-1])#\(.number)](\(.html_url)): \(.title)"'
+
+# Get current time for header
+date '+%H:%M'
 ```
 
 ## Step 2: Gather Recent Notes
@@ -34,28 +37,31 @@ Read the found notes and extract:
 
 ## Step 3: Create Daily Note
 
-Create or append to `~/obsidian/Notes/YYYY-MM-DD.md`:
+Create or append to `~/obsidian/Notes/YYYY-MM-DD.md`.
+
+Use the time from `date '+%H:%M'` output for the header (not model-generated time).
 
 ```markdown
 ## HH:MM - Start Day
 
 #start-day
 
+### Carryover TODOs
+- [ ] task from previous notes
+- [ ] another incomplete task
+(or "None" if no uncompleted tasks found)
+
 ### Assigned Issues
-- [ ] repo#123: issue title
+- [ ] [repo#123](https://github.com/org/repo/issues/123): issue title
 (or "None" if empty)
 
 ### PRs to Review
-- [ ] repo#456: pr title
+- [ ] [repo#456](https://github.com/org/repo/pull/456): pr title
 (or "None" if empty)
 
 ### My Open PRs
-- repo#789: pr title
+- [repo#789](https://github.com/org/repo/pull/789): pr title
 (or "None" if empty)
-
-### Recent Context
-> Uncompleted tasks or summary from recent notes
-> (or "Fresh start" if nothing relevant)
 ```
 
 ## Guidelines
