@@ -72,6 +72,9 @@
       (pkgs.writeShellScriptBin "critique" ''
         exec ${pkgs.bun}/bin/bunx critique "$@"
       '') # git diff viewer
+      (pkgs.writeShellScriptBin "datadog-cli" ''
+        exec ${pkgs.bun}/bin/bunx @ctdio/datadog-cli "$@"
+      '') # datadog CLI
       lazydocker # terminal UI for docker
       lsof # list open files
 
