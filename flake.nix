@@ -35,6 +35,7 @@
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
+    subq.url = "github:MichaelVessia/subq";
   };
 
   outputs = inputs @ {
