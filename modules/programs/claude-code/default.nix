@@ -41,5 +41,10 @@
     executable = true;
   };
 
+  home.file.".claude/git-safety-guard" = {
+    source = ./git-safety-guard.py;
+    executable = true;
+  };
+
   home.file.".claude/settings.json".source = ./settings.json;
 }
