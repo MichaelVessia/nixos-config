@@ -21,6 +21,15 @@
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
       };
+      "proxmox" = {
+        hostname = "192.168.1.200";
+        user = "root";
+      };
+      "nas" = {
+        hostname = "192.168.1.176";
+        user = "michaelvessia";
+        port = 8222;
+      };
     };
   };
 
