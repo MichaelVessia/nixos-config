@@ -70,10 +70,12 @@
 
       btop # replacement of htop/nmon
       (pkgs.writeShellScriptBin "critique" ''
-        exec ${pkgs.bun}/bin/bunx critique "$@"
+        export PATH="${pkgs.bun}/bin:$PATH"
+        exec bunx critique "$@"
       '') # git diff viewer
       (pkgs.writeShellScriptBin "datadog" ''
-        exec ${pkgs.bun}/bin/bunx @ctdio/datadog-cli "$@"
+        export PATH="${pkgs.bun}/bin:$PATH"
+        exec bunx @ctdio/datadog-cli "$@"
       '') # datadog CLI
       lazydocker # terminal UI for docker
       lsof # list open files
