@@ -1,0 +1,143 @@
+WEBVTT
+
+00:00.000 --> 00:08.320
+Hey, so I wanted to show using Claude code to write Cypress tests.
+
+00:09.040 --> 00:16.840
+And the reason I want to show this is because, you know, we've all said lately that we don't have time to write automated tests.
+
+00:16.840 --> 00:31.480
+And I do believe that between, you know, feature work, bug fixes and just keeping prod online, you know, through the wrestling season, you know, things like test coverage keep getting pushed down in the priority list.
+
+00:32.940 --> 00:35.200
+But, you know, we're spending a lot of time fixing bugs.
+
+00:35.320 --> 00:40.680
+There's regressions, stuff that would have been caught with a good end to end test suite.
+
+00:40.680 --> 00:47.640
+So we're paying the same, you know, time penalty just on the back end instead of the front end.
+
+00:49.000 --> 00:51.660
+You know, the other issue is Cypress itself.
+
+00:52.980 --> 00:59.100
+We have historically used Cypress, but our team doesn't really have a lot of experience with Cypress today.
+
+00:59.800 --> 01:02.900
+So there's kind of a friction there and a learning curve.
+
+01:02.900 --> 01:10.340
+They have to figure out selectors and, you know, async stuff and all the other Cypress best practices.
+
+01:10.920 --> 01:15.400
+And that's all friction that just makes it easier to not write the tests.
+
+01:16.160 --> 01:22.580
+So in a former life, I was a front end developer and I wrote some Cypress tests, but I don't really remember too much.
+
+01:23.140 --> 01:29.980
+To be honest, I know the general structure, but I definitely don't remember like the exact syntax, so to say.
+
+01:29.980 --> 01:32.800
+But thankfully, Claude does.
+
+01:33.480 --> 01:40.580
+So I've basically just taken a screenshot of our schedule page and given that to Claude.
+
+01:41.940 --> 01:47.880
+The details of my prompting don't really matter, I guess, but I gave it a screenshot.
+
+01:47.880 --> 02:01.640
+I told it about Cypress testing library, which is like a, I don't know, just a library that gives like some better Cypress hooks or whatever you want to call them.
+
+02:02.300 --> 02:06.060
+And then I also gave it just some like guiding principles.
+
+02:06.060 --> 02:17.320
+I gave it this link from Kent C. Dodds of JavaScript fame, just about, I don't know, some philosophy about how to write good end-to-end tests.
+
+02:17.660 --> 02:23.000
+I think I gave it this and maybe, yeah, this was the big quote that I wanted Claude to embody.
+
+02:23.000 --> 02:34.640
+So anyway, after giving it that and the screenshot, it did a pretty good job of generating an entire schedule Cypress suite.
+
+02:35.700 --> 02:38.580
+And it does not one-shot it, right?
+
+02:38.580 --> 02:45.700
+So I'm showing this error here that I ran into because it does make mistakes.
+
+02:46.700 --> 02:52.700
+This is not a panacea or whatever you call it.
+
+02:52.780 --> 02:55.960
+But you can see it does run the tests.
+
+02:56.300 --> 02:59.760
+And like this one I was showing in particular because it's failing.
+
+02:59.760 --> 03:02.640
+And I'm going to try and have Claude fix this.
+
+03:04.240 --> 03:08.800
+And I figured I'd just show like some of the ways I might iterate on it.
+
+03:08.900 --> 03:13.540
+Because obviously it's cool to say that you can generate like an entire Cypress suite.
+
+03:13.740 --> 03:15.160
+But what happens when it doesn't work?
+
+03:15.780 --> 03:17.640
+So there might be a better way to do this.
+
+03:17.700 --> 03:22.180
+But I was just taking like the assertion errors and copying these over to Claude.
+
+03:22.180 --> 03:35.580
+And pasting it and saying, I don't know, that this is failing, please fix, right?
+
+03:35.900 --> 03:40.640
+And I don't know that it will actually work.
+
+03:40.760 --> 03:45.320
+That's the fun part of doing demos with non-deterministic software.
+
+03:45.320 --> 03:52.900
+But it got me, I don't know, 20 different Cypress tests.
+
+03:53.000 --> 03:56.820
+It wrote a bunch of helpers for itself to avoid code duplication.
+
+03:57.840 --> 04:02.900
+And it's written tests for like all the different bits of our schedule.
+
+04:03.160 --> 04:07.340
+So I had it write tests for like the various filters.
+
+04:07.460 --> 04:08.540
+That's what I was showing there.
+
+04:08.960 --> 04:12.500
+Searching, you know, clicking through all of this stuff.
+
+04:12.500 --> 04:16.860
+Making sure that like these counts align.
+
+04:17.800 --> 04:20.560
+Going into the calendar, it manipulates all that.
+
+04:21.920 --> 04:25.580
+So that's just going to allow us to iterate on this stuff, you know,
+
+04:25.620 --> 04:27.440
+with the confidence of an end-to-end test suite.
+
+04:27.700 --> 04:32.360
+And, you know, minimal friction for having to have written it.
+
+04:33.160 --> 04:38.340
+So hopefully we can do a lot more of this and beef up the test suite there.
+

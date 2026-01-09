@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash, Read
+allowed-tools: Bash, Read, mcp__atlassian__atlassianUserInfo, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getAccessibleAtlassianResources, mcp__google-calendar__gcal_list_events
 description: Generate a daily kickoff note with GitHub context and recent vault activity
 model: claude-haiku-4-5
 ---
@@ -19,57 +19,85 @@ gh api 'search/issues?q=review-requested:@me+is:open+is:pr' --jq '.items[] | "[\
 
 # Your open PRs (with links)
 gh api 'search/issues?q=author:@me+is:open+is:pr' --jq '.items[] | "[\(.repository_url | split("/") | .[-1])#\(.number)](\(.html_url)): \(.title)"'
-
-# Get current time for header
-date '+%H:%M'
 ```
 
-## Step 2: Gather Recent Notes
+## Step 2: Gather Jira Data
+
+Use the Atlassian MCP to fetch Jira tickets assigned to the user:
+
+1. Get user info with `atlassianUserInfo` to get accountId
+2. Get cloud resources with `getAccessibleAtlassianResources` to get cloudId
+3. Search for assigned issues with `searchJiraIssuesUsingJql`:
+   - JQL: `assignee = currentUser() AND status != Done ORDER BY priority DESC`
+   - Format as:
+     `- [ ] [KEY-123](https://flocasts.atlassian.net/browse/KEY-123): title`
+
+## Step 3: Gather Google Calendar Meetings
+
+Use the Google Calendar MCP to fetch today's meetings:
+
+1. Call `gcal_list_events` with:
+   - `time_min`: today at 00:00 (ISO 8601 format)
+   - `time_max`: today at 23:59 (ISO 8601 format)
+   - `max_results`: 20
+2. Format each meeting as:
+   `- [ ] HH:MM - Event summary`
+3. Sort by start time
+
+## Step 4: Gather Recent Notes
 
 Find recent notes in `~/obsidian/Notes/`:
 
-**Daily notes** (YYYY-MM-DD.md): last 3 days
-**Other notes**: last 3 days if Monday, otherwise yesterday only
+**Daily notes** (YYYY-MM-DD.md): last 3 days **Other notes**: last 3 days if
+Monday, otherwise yesterday only
 
 Read the found notes and extract:
-- Uncompleted tasks (lines starting with `- [ ]`)
-- Completed PR/issue items (lines with `- [x]` containing GitHub links like `repo#123`)
-- Key context or summaries
 
-## Step 3: Create Daily Note
+- Uncompleted tasks (lines starting with `- [ ]`) from TODOs sections
+- Completed PR/issue items (lines with `- [x]` containing GitHub links like
+  `repo#123`)
+
+## Step 5: Create Daily Note
 
 Create or append to `~/obsidian/Notes/YYYY-MM-DD.md`.
 
-Use the time from `date '+%H:%M'` output for the header (not model-generated time).
-
 ```markdown
-## HH:MM - Start Day
+## Start Day
 
 #start-day
 
-### Carryover TODOs
+### Meetings
+
+- [ ] HH:MM - Meeting from Google Calendar
+
+### TODOs
+
 - [ ] task from previous notes
 - [ ] another incomplete task
-(or "None" if no uncompleted tasks found)
 
-### Assigned Issues
-- [ ] [repo#123](https://github.com/org/repo/issues/123): issue title
-(Exclude items checked off in previous notes. "None" if empty after filtering.)
+### Jira Tickets
+
+- [ ] [KEY-123](https://flocasts.atlassian.net/browse/KEY-123): ticket title
+      (Exclude items checked off in previous notes. "None" if empty after
+      filtering.)
 
 ### PRs to Review
-- [ ] [repo#456](https://github.com/org/repo/pull/456): pr title
-(Exclude items checked off in previous notes. "None" if empty after filtering.)
+
+- [ ] [repo#456](https://github.com/org/repo/pull/456): pr title (Exclude items
+      checked off in previous notes. "None" if empty after filtering.)
 
 ### My Open PRs
-- [repo#789](https://github.com/org/repo/pull/789): pr title
-(Exclude items checked off in previous notes. "None" if empty after filtering.)
+
+- [repo#789](https://github.com/org/repo/pull/789): pr title (Exclude items
+  checked off in previous notes. "None" if empty after filtering.)
 ```
 
 ## Guidelines
 
 - Keep output minimal and scannable
-- Use checkboxes for actionable items
+- Use checkboxes for actionable items (except My Open PRs, no checkbox needed)
 - Omit empty sections or mark as "None"
-- Filter out PRs/issues that were checked off (`- [x]`) in previous notes (match by `repo#number`)
+- Filter out PRs/issues that were checked off (`- [x]`) in previous notes (match
+  by `repo#number`)
 - Create file with `# Journal YYYY-MM-DD` header if it doesn't exist
 - Confirm creation by echoing the file path
