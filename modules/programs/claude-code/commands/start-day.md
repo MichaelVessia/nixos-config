@@ -37,9 +37,9 @@ Use the Atlassian MCP to fetch Jira tickets assigned to the user:
 Use the Google Calendar MCP to fetch today's meetings:
 
 1. Call `gcal_list_events` with:
-   - `time_min`: today at 00:00 (ISO 8601 format)
-   - `time_max`: today at 23:59 (ISO 8601 format)
-   - `max_results`: 20
+   - `timeMin`: today at 00:00 (RFC3339 without timezone, e.g., 2026-01-09T00:00:00)
+   - `timeMax`: today at 23:59 (RFC3339 without timezone, e.g., 2026-01-09T23:59:59)
+   - `maxResults`: 20
 2. Format each meeting as:
    `- [ ] HH:MM - Event summary`
 3. Sort by start time
