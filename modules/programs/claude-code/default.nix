@@ -16,6 +16,11 @@
     recursive = true;
   };
 
+  home.file.".claude/agents" = {
+    source = ./agents;
+    recursive = true;
+  };
+
   home.file.".claude/claude-statusline" = {
     source = ./claude-statusline.sh;
     executable = true;
