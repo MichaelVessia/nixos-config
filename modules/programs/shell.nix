@@ -54,6 +54,7 @@
 
       # zoxide aliases (cd replacement)
       cd = "z";
+      cdls = "zoxide query --list | fzf --header 'Choose directory'";
 
       # bat aliases (cat replacement)
       cat = "bat";
@@ -143,6 +144,7 @@
 
       # zoxide aliases (cd replacement)
       cd = "z";
+      cdls = "zoxide query --list | fzf --header 'Choose directory'";
 
       # bat aliases (cat replacement)
       cat = "bat";
