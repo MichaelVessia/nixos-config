@@ -62,7 +62,7 @@
       bitwarden-desktop # password manager
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
-      # Note: whisper-cpp is configured in transcribe.nix and shout.nix
+      # Note: whisper-cpp is configured in transcribe.nix
       # Note: syncthing is configured as a service in syncthing.nix
 
       # terminal emulators
@@ -87,6 +87,7 @@
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
+      dotool # uinput-based input simulation (for Handy speech-to-text on Plasma)
       iotop # io monitoring
       iftop # network monitoring
       strace # system call monitoring

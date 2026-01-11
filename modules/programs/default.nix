@@ -14,7 +14,6 @@
     ./git.nix
     ./media.nix
     ./shell.nix
-    ./shout.nix
     ./ssh.nix
     ./syncthing.nix
     ./transcribe.nix

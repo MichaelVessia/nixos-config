@@ -95,7 +95,7 @@
   users.users.michaelvessia = {
     isNormalUser = true;
     description = "Michael Vessia";
-    extraGroups = ["networkmanager" "wheel" "docker" "ydotool"];
+    extraGroups = ["networkmanager" "wheel" "docker" "ydotool" "input"];
   };
 
   # Allow unfree packages
@@ -136,7 +136,7 @@
   # Tailscale VPN
   services.tailscale.enable = true;
 
-  # ydotool for keyboard/mouse automation (used by shout)
+  # ydotool for keyboard/mouse automation
   programs.ydotool.enable = true;
 
   # nh - nix helper for better CLI experience
@@ -152,6 +152,41 @@
 
   # nix-ld - run dynamically linked binaries (e.g., workerd for Cloudflare dev)
   programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    # Libraries for Handy speech-to-text AppImage
+    alsa-lib
+    openssl
+    gtk3
+    webkitgtk_4_1
+    libayatana-appindicator
+    librsvg
+    glib
+    gdk-pixbuf
+    cairo
+    pango
+    libsoup_3
+    fribidi
+    harfbuzz
+    fontconfig
+    freetype
+    libGL
+    xorg.libX11
+    xorg.libxcb
+    xorg.libXcomposite
+    xorg.libXdamage
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXrandr
+    xorg.libXcursor
+    xorg.libXi
+    xorg.libXrender
+    xorg.libXtst
+    libxkbcommon
+    mesa
+    libgbm
+    libdrm
+    vulkan-loader
+  ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
