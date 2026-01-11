@@ -42,7 +42,7 @@
   };
 
   home.file.".claude/ralph" = {
-    source = ./ralph.sh;
+    source = ../../../scripts/ai/ralph.sh;
     executable = true;
   };
 
