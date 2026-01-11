@@ -9,23 +9,22 @@ fi
 for ((i=1; i<=$1; i++)); do
   echo "Iteration $i"
   echo "--------------------------------"
-  result=$(claude --permission-mode acceptEdits -p "@plans/prd.json @progress.txt \
+
+  claude --permission-mode acceptEdits -p "@plans/prd.json @plans/progress.txt \
 1. Find the highest-priority feature to work on and work only on that feature. \
 This should be the one YOU decide has the highest priority - not necessarily the first in the list. \
 2. Run typecheck and tests to verify the implementation. \
-3. Update the PRD with the work that was done. \
-4. Append your progress to the progress.txt file. \
-Use this to leave a note for the next person working in the codebase. \
+3. After completing a user story, set its \`passes: true\` in plans/prd.json and add notes describing what was done. \
+4. Append your progress to plans/progress.txt. Use this to leave a note for the next person working in the codebase. \
 5. Make a git commit of that feature. \
 ONLY WORK ON A SINGLE FEATURE. \
-If, while implementing the feature, you notice the PRD is complete, output <promise>COMPLETE</promise>. \
-")
+If all features are complete, create a file called plans/.complete \
+"
 
-  echo "$result"
-
-  if [[ "$result" == *"<promise>COMPLETE</promise>"* ]]; then
+  if [ -f "plans/.complete" ]; then
+    rm -f "plans/.complete"
     echo "PRD complete, exiting."
-    tt notify "CVM PRD complete after $i iterations"
+    notify-send "Ralph" "PRD complete after $i iterations"
     exit 0
   fi
 done
