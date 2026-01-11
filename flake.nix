@@ -29,7 +29,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    beads.url = "github:steveyegge/beads";
     opencode.url = "github:sst/opencode";
     ghostty.url = "github:ghostty-org/ghostty";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
@@ -47,7 +46,6 @@
     plasma-manager,
     nvf,
     nixos-hardware,
-    beads,
     opencode,
     ghostty,
     ...
