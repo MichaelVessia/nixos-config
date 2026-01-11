@@ -41,11 +41,6 @@
     executable = true;
   };
 
-  home.file.".claude/ralph" = {
-    source = ../../../scripts/ai/ralph.sh;
-    executable = true;
-  };
-
   home.file.".claude/git-safety-guard" = {
     source = ./git-safety-guard.py;
     executable = true;
