@@ -12,6 +12,7 @@
     ./common.nix
     ./ghostty.nix
     ./git.nix
+    ./handy.nix
     ./media.nix
     ./shell.nix
     ./ssh.nix

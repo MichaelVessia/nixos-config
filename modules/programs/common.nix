@@ -87,7 +87,7 @@
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
-      dotool # uinput-based input simulation (for Handy speech-to-text on Plasma)
+      # Note: ydotool is enabled via programs.ydotool and used by Handy for text input
       iotop # io monitoring
       iftop # network monitoring
       strace # system call monitoring
