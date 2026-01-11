@@ -81,7 +81,6 @@
       lsof # list open files
 
       inputs.claude-code.packages.${pkgs.system}.default
-      inputs.beads.packages.${pkgs.system}.default # bd - AI-friendly issue tracker
       inputs.opencode.packages.${pkgs.system}.default # AI coding agent
       (pkgs.writeShellScriptBin "ralph-loop" (builtins.readFile ../../scripts/ai/ralph-loop.sh))
       (pkgs.writeShellScriptBin "ralph-once" (builtins.readFile ../../scripts/ai/ralph-once.sh))
