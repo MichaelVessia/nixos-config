@@ -1,14 +1,13 @@
 #!/bin/bash
 set -e
 
-claude --permission-mode acceptEdits "@plans/prd.json @progress.txt \
+claude --permission-mode acceptEdits "@plans/prd.json @plans/progress.txt \
 1. Find the highest-priority feature to work on and work only on that feature. \
 This should be the one YOU decide has the highest priority - not necessarily the first in the list. \
-2. Check that the types check via typecheck command and that the tests pass via test command. See @package.json for the appropriate scripts. \
-3. Update the PRD with the work that was done. \
-4. Append your progress to the progress.txt file. \
-Use this to leave a note for the next person working in the codebase. \
+2. Run typecheck and tests to verify the implementation. \
+3. After completing a user story, set its \`passes: true\` in plans/prd.json and add notes describing what was done. \
+4. Append your progress to plans/progress.txt. Use this to leave a note for the next person working in the codebase. \
 5. Make a git commit of that feature. \
 ONLY WORK ON A SINGLE FEATURE. \
-If, while implementing the feature, you notice the PRD is complete, output <promise>COMPLETE</promise>. \
+If all features are complete, create a file called plans/.complete \
 "

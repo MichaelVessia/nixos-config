@@ -10,7 +10,8 @@ for ((i=1; i<=$1; i++)); do
   echo "Iteration $i"
   echo "--------------------------------"
 
-  claude --permission-mode acceptEdits -p "@plans/prd.json @plans/progress.txt \
+  result=$(claude --permission-mode acceptEdits -p "@plans/prd.json @plans/progress.txt \
+IMPORTANT: Never use AskUserQuestion. Make autonomous decisions. If uncertain, pick the simplest approach and document your reasoning in progress.txt. \
 1. Find the highest-priority feature to work on and work only on that feature. \
 This should be the one YOU decide has the highest priority - not necessarily the first in the list. \
 2. Run typecheck and tests to verify the implementation. \
@@ -19,7 +20,8 @@ This should be the one YOU decide has the highest priority - not necessarily the
 5. Make a git commit of that feature. \
 ONLY WORK ON A SINGLE FEATURE. \
 If all features are complete, create a file called plans/.complete \
-"
+")
+  echo "$result"
 
   if [ -f "plans/.complete" ]; then
     rm -f "plans/.complete"
