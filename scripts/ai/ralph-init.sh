@@ -18,7 +18,12 @@ echo "Creating Ralph scaffolding..."
 
 mkdir -p "$RALPH_DIR/scripts"
 mkdir -p ".ralph"
-echo ".ralph/" >> .gitignore 2>/dev/null || true
+
+# Add .ralph/ to git excludes (local, doesn't modify .gitignore)
+GIT_DIR=$(git rev-parse --git-dir)
+if ! grep -q "^\.ralph/$" "$GIT_DIR/info/exclude" 2>/dev/null; then
+  echo ".ralph/" >> "$GIT_DIR/info/exclude"
+fi
 
 # ralph.sh - main loop script
 cat > "$RALPH_DIR/ralph.sh" << 'RALPH_SH'
