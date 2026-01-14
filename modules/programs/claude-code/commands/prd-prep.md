@@ -98,9 +98,29 @@ After approval, write `ralph/prd.json`:
   "created_at": "{today YYYY-MM-DD}",
   "updated_at": "{today YYYY-MM-DD}",
   "specs_dir": "docs/specs/",
-  "available_specs": ["{SPEC_FILE.md}"],
+  "available_specs": ["{SPEC_FILE.md}", "..."],
   "technology": {
-    "{tech}": { "notes": "{what it's used for}" }
+    "{tech_name}": {
+      "version": "^X.Y.Z",
+      "packages": ["{package1}", "{package2}"],
+      "notes": "{what it's used for, important caveats}"
+    }
+  },
+  "reference_repos": {
+    "{lib_name}": "{path/to/source/}"
+  },
+  "testing_policy": {
+    "mandatory": "EVERY story MUST include tests. A story is NOT complete without passing tests.",
+    "ui_changes": "{how to test UI changes}",
+    "api_changes": "{how to test API changes}",
+    "verification": "{command to run before marking complete}",
+    "no_exceptions": "Do NOT mark a story as complete if tests are missing or failing."
+  },
+  "ui_patterns": {
+    "state_management": "{pattern for state}",
+    "styling": "{styling approach}",
+    "data_fetching": "{how to fetch data}",
+    "forms": "{form patterns}"
   },
   "stories": [
     {
@@ -109,16 +129,28 @@ After approval, write `ralph/prd.json`:
       "epic": "{Epic Name}",
       "title": "{Short imperative title}",
       "description": "{What needs to be done, context}",
-      "acceptance_criteria": [
-        "{Specific verifiable criterion}"
-      ],
       "specs": ["{SPEC_FILE.md}"],
+      "acceptance_criteria": [
+        "{Specific verifiable criterion}",
+        "TESTS: {specific test requirement}"
+      ],
+      "technical_details": {
+        "files": ["{path/to/file1.ts}", "{path/to/file2.ts}"],
+        "pattern": "{implementation approach}"
+      },
       "status": "pending",
       "estimated_complexity": "small|medium|large"
     }
   ]
 }
 ```
+
+**Field Notes:**
+- `technology`: Include version, packages array, and notes for each tech
+- `reference_repos`: Optional, map library names to source paths if available
+- `testing_policy`: Required, define test expectations for each layer
+- `ui_patterns`: Optional for UI projects, omit for backend-only
+- `technical_details` in stories: List specific files to create/modify, patterns to follow
 
 ### 6. Validation
 
