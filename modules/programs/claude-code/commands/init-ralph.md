@@ -4,23 +4,22 @@ description: Set up Ralph autonomous agent structure in a repository
 
 # Initialize Ralph
 
-Set up the plans/ directory structure for Ralph autonomous agent workflows.
+Run the ralph-init.sh script to scaffold the Ralph autonomous agent structure.
 
-## Steps
+```bash
+ralph-init.sh
+```
 
-1. **Create plans directory**:
-   ```bash
-   mkdir -p plans
-   ```
+This creates:
 
-2. **Add plans/ to .gitignore** (if not already present):
-   - Read `.gitignore` if it exists
-   - Add `plans/` entry if missing
-   - Create `.gitignore` with `plans/` if file doesn't exist
+- `ralph/` directory with ralph.sh loop script
+- `ralph/prd.json` template for stories
+- `ralph/RALPH_PROMPT.md` prompt template
+- `ralph/scripts/` with ci-check, prd-status, prd-update utilities
+- `.ralph/` directory (gitignored) for logs
 
-3. **Verify setup**:
-   ```bash
-   ls -la plans/
-   ```
+After running, tell the user to:
 
-4. **Summary**: Confirm plans/ directory created and gitignored. Mention user can now use `/ralph-prep` to generate prd.json files for Ralph runs.
+1. Edit `ralph/prd.json` with their stories
+2. Edit `ralph/scripts/ci-check.sh` with their CI commands
+3. Use `/ralph-prep` to help populate prd.json from a spec
