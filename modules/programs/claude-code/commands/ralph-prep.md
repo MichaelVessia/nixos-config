@@ -44,7 +44,7 @@ Questions (multi-select where appropriate):
 
 ### 3. Generate Spec Skeleton
 
-Create `docs/specs/{FEATURE_NAME}.md` with structure:
+Create `specs/{FEATURE_NAME}.md` with structure:
 
 ```markdown
 # {Feature Name} Spec
@@ -86,7 +86,7 @@ Invoke the spec-interview skill to flesh out the skeleton:
 
 ```
 Skill: spec-interview
-Args: docs/specs/{FEATURE_NAME}.md
+Args: specs/{FEATURE_NAME}.md
 ```
 
 Wait for spec-interview to complete its interview process.
@@ -109,7 +109,7 @@ Convert the completed spec to prd.json:
 
 ```
 Skill: prd-prep
-Args: docs/specs/{FEATURE_NAME}.md
+Args: specs/{FEATURE_NAME}.md
 ```
 
 ### 7. Final Summary
@@ -117,7 +117,7 @@ Args: docs/specs/{FEATURE_NAME}.md
 ```
 Ralph preparation complete!
 
-Spec: docs/specs/{FEATURE_NAME}.md
+Spec: specs/{FEATURE_NAME}.md
 PRD: ralph/prd.json ({N} stories)
 
 First story: {id} - {title}
@@ -132,7 +132,7 @@ Commands:
 
 If user cancels during spec creation:
 - Save partial progress
-- Inform user they can resume with `/spec-interview docs/specs/{file}.md`
+- Inform user they can resume with `/spec-interview specs/{file}.md`
 
 If prd.json already exists:
 ```

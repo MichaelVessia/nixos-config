@@ -27,7 +27,7 @@ fi
 
 # ralph.sh - main loop script
 cat > "$RALPH_DIR/ralph.sh" << 'RALPH_SH'
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Ralph Loop - Long-running AI coding agent orchestrator
 #
@@ -762,7 +762,7 @@ PROGRESS
 
 # scripts/ci-check.sh
 cat > "$RALPH_DIR/scripts/ci-check.sh" << 'CI_CHECK'
-#!/bin/bash
+#!/usr/bin/env bash
 # CI Check Script for Ralph Loop
 # Customize this for your project's CI commands
 
@@ -818,7 +818,7 @@ CI_CHECK
 
 # scripts/prd-status.sh
 cat > "$RALPH_DIR/scripts/prd-status.sh" << 'PRD_STATUS'
-#!/bin/bash
+#!/usr/bin/env bash
 # PRD Status Script - Shows current progress
 
 PRD_FILE="${1:-ralph/prd.json}"
@@ -889,7 +889,7 @@ PRD_STATUS
 
 # scripts/prd-update.sh
 cat > "$RALPH_DIR/scripts/prd-update.sh" << 'PRD_UPDATE'
-#!/bin/bash
+#!/usr/bin/env bash
 # PRD Update Script - Updates a story's status
 
 PRD_FILE="ralph/prd.json"
@@ -928,7 +928,7 @@ PRD_UPDATE
 
 # scripts/stream-filter.sh
 cat > "$RALPH_DIR/scripts/stream-filter.sh" << 'STREAM_FILTER'
-#!/bin/bash
+#!/usr/bin/env bash
 # Stream Filter for Claude JSON output
 
 BLUE='\033[0;34m'
