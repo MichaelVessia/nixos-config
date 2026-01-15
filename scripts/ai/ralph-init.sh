@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ralph-init: Scaffold a Ralph autonomous coding agent setup in the current directory
 set -e
 
