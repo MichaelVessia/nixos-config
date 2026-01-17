@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# TTS script - sends announcements via Home Assistant
+# Usage: tts "message" [speaker]
+# Speakers: living-room (default), backyard, garage, all
+
+set -e
+
+source ~/.secrets.env
+
+MESSAGE="${1:-}"
+SPEAKER="${2:-living-room}"
+
+if [[ -z "$MESSAGE" ]]; then
+  echo "Usage: tts \"message\" [speaker]"
+  echo "Speakers: living-room (default), backyard, garage, all"
+  exit 1
+fi
+
+if [[ -z "$HA_TOKEN" ]]; then
+  echo "Error: HA_TOKEN not set in ~/.secrets.env"
+  exit 1
+fi
+
+# Map speaker argument to input_select value
+case "$SPEAKER" in
+living-room | living | lr)
+  SPEAKER_VALUE="Living Room"
+  ;;
+backyard | back | by)
+  SPEAKER_VALUE="Backyard"
+  ;;
+garage | gar)
+  SPEAKER_VALUE="Garage"
+  ;;
+all)
+  SPEAKER_VALUE="All Zones"
+  ;;
+*)
+  echo "Unknown speaker: $SPEAKER"
+  echo "Valid options: living-room, backyard, garage, all"
+  exit 1
+  ;;
+esac
+
+# Set the speaker
+curl -s -X POST \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"entity_id\": \"input_select.tts_speaker\", \"option\": \"$SPEAKER_VALUE\"}" \
+  "$HA_URL/api/services/input_select/select_option" >/dev/null
+
+# Set the message
+curl -s -X POST \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"entity_id\": \"input_text.tts_message\", \"value\": \"$MESSAGE\"}" \
+  "$HA_URL/api/services/input_text/set_value" >/dev/null
+
+# Trigger the script
+curl -s -X POST \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"entity_id\": \"script.send_custom_tts\"}" \
+  "$HA_URL/api/services/script/turn_on" >/dev/null
+
+echo "TTS sent to $SPEAKER_VALUE: $MESSAGE"
