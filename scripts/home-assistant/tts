@@ -21,6 +21,15 @@ if [[ -z "$HA_TOKEN" ]]; then
   exit 1
 fi
 
+# Get current values to restore later
+ORIGINAL_SPEAKER=$(curl -s \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  "$HA_URL/api/states/input_select.tts_speaker" | jq -r '.state')
+
+ORIGINAL_ONKYO_SOURCE=$(curl -s \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  "$HA_URL/api/states/media_player.tx_nr595" | jq -r '.attributes.source')
+
 # Map speaker argument to input_select value
 case "$SPEAKER" in
 living-room | living | lr)
@@ -64,3 +73,31 @@ curl -s -X POST \
   "$HA_URL/api/services/script/turn_on" >/dev/null
 
 echo "TTS sent to $SPEAKER_VALUE: $MESSAGE"
+
+# Wait for TTS script to complete
+while true; do
+  SCRIPT_STATE=$(curl -s \
+    -H "Authorization: Bearer $HA_TOKEN" \
+    "$HA_URL/api/states/script.send_custom_tts" | jq -r '.state')
+  if [[ "$SCRIPT_STATE" == "off" ]]; then
+    break
+  fi
+  sleep 1
+done
+
+# Restore original values
+if [[ -n "$ORIGINAL_SPEAKER" && "$ORIGINAL_SPEAKER" != "null" ]]; then
+  curl -s -X POST \
+    -H "Authorization: Bearer $HA_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"entity_id\": \"input_select.tts_speaker\", \"option\": \"$ORIGINAL_SPEAKER\"}" \
+    "$HA_URL/api/services/input_select/select_option" >/dev/null
+fi
+
+if [[ -n "$ORIGINAL_ONKYO_SOURCE" && "$ORIGINAL_ONKYO_SOURCE" != "null" ]]; then
+  curl -s -X POST \
+    -H "Authorization: Bearer $HA_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"entity_id\": \"media_player.tx_nr595\", \"source\": \"$ORIGINAL_ONKYO_SOURCE\"}" \
+    "$HA_URL/api/services/media_player/select_source" >/dev/null
+fi
