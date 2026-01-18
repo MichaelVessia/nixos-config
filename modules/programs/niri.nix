@@ -30,10 +30,25 @@ in
     home.file."Pictures/Screenshots/.keep".text = "";
     home.file."Videos/.keep".text = "";
 
+    # Noctalia wallpaper config
+    home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
+      defaultWallpaper = "${config.home.homeDirectory}/Pictures/Wallpapers/wallhaven_n6pd6q.jpg";
+    };
+
     # Noctalia shell configuration
     programs.noctalia-shell = {
       enable = true;
       package = null; # Use the package from home.packages to avoid IPC issues
+      settings = {
+        colorSchemes = {
+          predefinedScheme = "Catppuccin";
+          darkMode = true;
+        };
+        location = {
+          name = "New York";
+          useFahrenheit = true;
+        };
+      };
       plugins = {
         sources = [
           {
@@ -172,9 +187,7 @@ in
 
         # Spawn programs at startup
         spawn-at-startup = [
-          # Wallpaper (you can change this path)
-          {command = ["swaybg" "-i" "${config.home.homeDirectory}/.config/wallpaper.png" "-m" "fill"];}
-          # Noctalia shell (bar, notifications, launcher, lock screen, power menu)
+          # Noctalia shell (bar, notifications, launcher, lock screen, power menu, wallpaper)
           {command = ["noctalia-shell"];}
           # Authentication agent
           {command = ["${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"];}

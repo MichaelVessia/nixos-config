@@ -13,7 +13,6 @@
   environment.systemPackages = with pkgs; [
     niri-unstable
     xwayland-satellite
-    swaybg
     swaylock
     swayidle
     brightnessctl
