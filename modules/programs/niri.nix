@@ -34,6 +34,17 @@ in
       # Noctalia shell (unified bar, notifications, launcher, lock screen, power menu)
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
 
+      # Clipboard
+      wl-clipboard
+      cliphist
+
+      # Screenshot tools
+      grim
+      slurp
+
+      # Notifications
+      libnotify
+
       # System tray applets
       networkmanagerapplet
       blueman
