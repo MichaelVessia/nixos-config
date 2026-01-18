@@ -19,6 +19,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Enable aarch64 emulation for cross-compiling Pi images
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
+
   networking.hostName = "framework13"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

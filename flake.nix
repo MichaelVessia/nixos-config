@@ -38,6 +38,7 @@
   };
 
   outputs = inputs @ {
+    self,
     nixpkgs,
     nixpkgs-unstable,
     home-manager,
@@ -98,7 +99,20 @@
             }
           ];
         };
+
+      tts-pi = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          nixos-hardware.nixosModules.raspberry-pi-3
+          ./hosts/tts-pi/default.nix
+          # Include SD image support
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+        ];
+      };
     };
+
+    # SD card image for tts-pi
+    images.tts-pi = self.nixosConfigurations.tts-pi.config.system.build.sdImage;
 
     darwinConfigurations = {
       flomac = let
