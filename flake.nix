@@ -31,6 +31,11 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     opencode.url = "github:sst/opencode";
     ghostty.url = "github:ghostty-org/ghostty";
+    niri.url = "github:sodiboo/niri-flake";
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
@@ -49,6 +54,8 @@
     nixos-hardware,
     opencode,
     ghostty,
+    niri,
+    noctalia,
     ...
   }: let
     system = "x86_64-linux";
@@ -90,6 +97,7 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 plasma-manager.homeModules.plasma-manager
+                niri.homeModules.niri
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;
