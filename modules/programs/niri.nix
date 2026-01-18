@@ -22,12 +22,9 @@ in
       systemdTargets = ["graphical-session.target"];
     };
 
-    # Clipboard persistence - fixes focus-change paste issue
-    services.wl-clip-persist = {
-      enable = true;
-      clipboardType = "regular";
-      systemdTargets = ["graphical-session.target"];
-    };
+    # Clipboard persistence disabled - conflicts with cliphist causing race conditions
+    # cliphist provides sufficient persistence through its history feature
+    services.wl-clip-persist.enable = false;
 
     # Packages needed for niri desktop environment
     home.packages = with pkgs; [
@@ -385,6 +382,9 @@ in
           "Mod+Shift+C".action.spawn = ["niri" "msg" "action" "reload-config"];
           "Mod+Shift+Q".action.quit = [];
           "Mod+Shift+Slash".action.show-hotkey-overlay = [];
+
+          # Restart noctalia-shell (for when bar disappears)
+          "Mod+Ctrl+Shift+N".action.spawn = ["sh" "-c" "pkill -x noctalia-shell; noctalia-shell"];
         };
 
         # Animations

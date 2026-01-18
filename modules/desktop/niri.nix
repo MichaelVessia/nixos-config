@@ -18,7 +18,6 @@
     swayidle
     brightnessctl
     playerctl
-    wl-clip-persist
     nautilus
   ];
 
