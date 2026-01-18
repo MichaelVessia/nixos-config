@@ -21,8 +21,16 @@
     nautilus
   ];
 
-  # Register niri as a session for SDDM
-  services.displayManager.sessionPackages = [pkgs.niri-unstable];
+  # Greetd display manager with tuigreet
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+        user = "greeter";
+      };
+    };
+  };
 
   # Portal configuration for screen sharing
   xdg.portal = {

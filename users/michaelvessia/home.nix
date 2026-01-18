@@ -8,7 +8,6 @@
   imports = [
     ../common.nix
     ../../modules/programs
-    ../../modules/programs/plasma.nix
     ../../modules/programs/niri.nix
   ];
 
