@@ -75,7 +75,6 @@
     keybind = ctrl+j=goto_split:down
     keybind = ctrl+k=goto_split:up
     keybind = ctrl+l=goto_split:right
-    keybind = ctrl+f=open_search
     keybind = ctrl+a>q=close_surface
 
     # Window management
