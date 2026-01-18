@@ -98,6 +98,7 @@
               home-manager.sharedModules = [
                 plasma-manager.homeModules.plasma-manager
                 niri.homeModules.niri
+                noctalia.homeModules.default
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;

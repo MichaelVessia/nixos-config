@@ -26,6 +26,35 @@ in
     # cliphist provides sufficient persistence through its history feature
     services.wl-clip-persist.enable = false;
 
+    # Ensure screenshot/recording directories exist
+    home.file."Pictures/Screenshots/.keep".text = "";
+    home.file."Videos/.keep".text = "";
+
+    # Noctalia shell configuration
+    programs.noctalia-shell = {
+      enable = true;
+      package = null; # Use the package from home.packages to avoid IPC issues
+      plugins = {
+        sources = [
+          {
+            enabled = true;
+            name = "Official Noctalia Plugins";
+            url = "https://github.com/noctalia-dev/noctalia-plugins";
+          }
+        ];
+        states = {
+          screen-recorder = {
+            enabled = true;
+            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+          };
+          keybind-cheatsheet = {
+            enabled = true;
+            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+          };
+        };
+      };
+    };
+
     # Packages needed for niri desktop environment
     home.packages = with pkgs; [
       # Noctalia shell (unified bar, notifications, launcher, lock screen, power menu)
@@ -35,9 +64,10 @@ in
       wl-clipboard
       cliphist
 
-      # Screenshot tools
+      # Screenshot/recording tools
       grim
       slurp
+      gpu-screen-recorder # for noctalia screen recorder plugin
 
       # Notifications
       libnotify
@@ -329,10 +359,11 @@ in
           "Mod+G".action.center-column = [];
 
           # ================
-          # SCREENSHOTS
+          # SCREENSHOTS & RECORDING
           # ================
           "Print".action.screenshot = [];
           "Shift+Print".action.screenshot-window = [];
+          "Ctrl+Shift+4".action.spawn = ["sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"Screenshot from $(date +'%Y-%m-%d %H-%M-%S').png\" && notify-send 'Screenshot saved'"];
 
           # ================
           # MEDIA KEYS
@@ -381,10 +412,11 @@ in
           "Mod+C".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "clipboard"];
           "Mod+Shift+C".action.spawn = ["niri" "msg" "action" "reload-config"];
           "Mod+Shift+Q".action.quit = [];
+          "Mod+Slash".action.spawn = ["noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"];
           "Mod+Shift+Slash".action.show-hotkey-overlay = [];
 
           # Restart noctalia-shell (for when bar disappears)
-          "Mod+Ctrl+Shift+N".action.spawn = ["sh" "-c" "pkill -x noctalia-shell; noctalia-shell"];
+          "Mod+Ctrl+Shift+N".action.spawn = ["sh" "-c" "pkill -9 quickshell; noctalia-shell"];
         };
 
         # Animations
