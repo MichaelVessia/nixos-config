@@ -1,6 +1,7 @@
 .direnv/
 .opencode/
 result
+result-*
 *.img
 
 # Secrets

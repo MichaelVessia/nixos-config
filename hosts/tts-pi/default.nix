@@ -48,7 +48,12 @@
   };
 
   # Enable flakes
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+    # Accept unsigned paths for remote deploys
+    trusted-users = ["root" "pi"];
+    require-sigs = false;
+  };
 
   # Allow unfree packages (for firmware)
   nixpkgs.config.allowUnfree = true;
@@ -95,7 +100,7 @@
   environment.etc."tts/tts.sh" = {
     mode = "0755";
     text = ''
-      #!/bin/bash
+      #!/run/current-system/sw/bin/bash
       MESSAGE="$1"
       if [ -z "$MESSAGE" ]; then
           echo "Usage: $0 \"message to speak\""
