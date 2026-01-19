@@ -132,10 +132,22 @@ in
         # Output (monitor) configuration - Framework 13
         outputs = lib.mkMerge [
           (lib.mkIf (hostname == "framework13") {
+            "DP-2" = {
+              position = {
+                x = 0;
+                y = 0;
+              };
+            };
+            "DP-1" = {
+              position = {
+                x = 2560;
+                y = 0;
+              };
+            };
             "eDP-1" = {
               scale = 1.5;
               position = {
-                x = 0;
+                x = 5120;
                 y = 0;
               };
             };
@@ -205,22 +217,6 @@ in
           GDK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
           XDG_CURRENT_DESKTOP = "niri";
-        };
-
-        # Workspaces configuration
-        workspaces = let
-          primaryOutput = "eDP-1";
-        in {
-          "1" = {open-on-output = primaryOutput;};
-          "2" = {open-on-output = primaryOutput;};
-          "3" = {open-on-output = primaryOutput;};
-          "4" = {open-on-output = primaryOutput;};
-          "5" = {open-on-output = primaryOutput;};
-          "6" = {open-on-output = primaryOutput;};
-          "7" = {open-on-output = primaryOutput;};
-          "8" = {open-on-output = primaryOutput;};
-          "9" = {open-on-output = primaryOutput;};
-          "10" = {open-on-output = primaryOutput;};
         };
 
         # Window rules
@@ -376,7 +372,8 @@ in
           # ================
           "Print".action.screenshot = [];
           "Shift+Print".action.screenshot-window = [];
-          "Ctrl+Shift+4".action.spawn = ["sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"Screenshot from $(date +'%Y-%m-%d %H-%M-%S').png\" && notify-send 'Screenshot saved'"];
+          "Ctrl+Shift+4".action.spawn = ["sh" "-c" "grim -g \"$(slurp)\" - | wl-copy && notify-send 'Screenshot copied'"];
+          "Ctrl+Shift+5".action.spawn = ["noctalia-shell" "ipc" "call" "plugin:screen-recorder" "toggle"];
 
           # ================
           # MEDIA KEYS

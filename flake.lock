@@ -910,11 +910,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1768778850,
-        "narHash": "sha256-7D1v4Sy8oYOW4zZ+sn6Fd5vBkM9Lt4tYQDi0bi3kkJc=",
+        "lastModified": 1768781940,
+        "narHash": "sha256-jC02xxaiS1wg2wkuIkNXaF7VkVQ+d1IQmZqVPcYmpmI=",
         "owner": "sst",
         "repo": "opencode",
-        "rev": "e81bb86795c062dae736568c9c4a4426e8fe9474",
+        "rev": "bee2f654090f92f607fbf4f7d1ff669ae76ede39",
         "type": "github"
       },
       "original": {
@@ -943,29 +943,6 @@
         "type": "github"
       }
     },
-    "plasma-manager": {
-      "inputs": {
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1767662275,
-        "narHash": "sha256-d5Q1GmQ+sW1Bt8cgDE0vOihzLaswsm8cSdg8124EqXE=",
-        "owner": "nix-community",
-        "repo": "plasma-manager",
-        "rev": "51816be33a1ff0d4b22427de83222d5bfa96d30e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "plasma-manager",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "claude-code": "claude-code",
@@ -981,7 +958,6 @@
         "nvf": "nvf",
         "opencode": "opencode",
         "paperless-cli": "paperless-cli",
-        "plasma-manager": "plasma-manager",
         "subq": "subq",
         "x-to-obsidian": "x-to-obsidian"
       }

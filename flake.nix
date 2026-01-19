@@ -19,11 +19,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
     nvf = {
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -49,7 +44,6 @@
     home-manager,
     darwin,
     claude-code,
-    plasma-manager,
     nvf,
     nixos-hardware,
     opencode,
@@ -96,7 +90,6 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
-                plasma-manager.homeModules.plasma-manager
                 niri.homeModules.niri
                 noctalia.homeModules.default
               ];
