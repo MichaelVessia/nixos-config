@@ -32,7 +32,7 @@ in
 
     # Noctalia wallpaper config
     home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
-      defaultWallpaper = "${config.home.homeDirectory}/Pictures/Wallpapers/wallhaven_n6pd6q.jpg";
+      defaultWallpaper = "${config.home.homeDirectory}/Pictures/Wallpapers/wallhaven-polllj.jpg";
     };
 
     # Noctalia shell configuration
