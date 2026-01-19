@@ -5,10 +5,10 @@
 }: {
   programs.git = {
     enable = true;
-    aliases = {
-      d = "difftool";
-    };
     settings = {
+      alias = {
+        d = "difftool";
+      };
       user.name = "Michael Vessia";
       user.email = "michael@vessia.net";
       core.editor = "nvim";
