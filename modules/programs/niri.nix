@@ -13,6 +13,11 @@
     if osConfig != null
     then osConfig.networking.hostName
     else null;
+
+  wallpaper = pkgs.fetchurl {
+    url = "https://w.wallhaven.cc/full/po/wallhaven-polllj.jpg";
+    hash = "sha256-mijhZOGKGwFF2CjcOtol5kGwsYIdMOYQMf7Im02RqqE=";
+  };
 in
   lib.mkIf pkgs.stdenv.isLinux {
     # Clipboard services via Home Manager (systemd-managed)
@@ -32,7 +37,7 @@ in
 
     # Noctalia wallpaper config
     home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
-      defaultWallpaper = "${config.home.homeDirectory}/Pictures/Wallpapers/wallhaven-polllj.jpg";
+      defaultWallpaper = "${wallpaper}";
     };
 
     # Noctalia shell configuration

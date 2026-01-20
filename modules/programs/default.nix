@@ -23,6 +23,7 @@
     ./beads-viewer.nix
     ./fmcal.nix
     ./paperless-cli.nix
+    ./hass-cli.nix
     ./subq.nix
     ./karabiner.nix
     ./hammerspoon.nix

@@ -30,6 +30,10 @@
         user = "michaelvessia";
         port = 8222;
       };
+      "homeassistant" = {
+        hostname = "192.168.1.227";
+        user = "hassio";
+      };
     };
   };
 
