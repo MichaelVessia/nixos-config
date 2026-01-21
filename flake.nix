@@ -24,7 +24,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    opencode.url = "github:sst/opencode";
     ghostty.url = "github:ghostty-org/ghostty";
     niri.url = "github:sodiboo/niri-flake";
     noctalia = {
@@ -46,7 +45,6 @@
     claude-code,
     nvf,
     nixos-hardware,
-    opencode,
     ghostty,
     niri,
     noctalia,

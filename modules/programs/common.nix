@@ -81,7 +81,7 @@
       lsof # list open files
 
       inputs.claude-code.packages.${pkgs.system}.default
-      inputs.opencode.packages.${pkgs.system}.default # AI coding agent
+      opencode # AI coding agent (from nixpkgs)
       (pkgs.writeShellScriptBin "ralph-init" (builtins.readFile ../../scripts/ai/ralph-init.sh))
     ]
     ++ lib.optionals stdenv.isLinux [
