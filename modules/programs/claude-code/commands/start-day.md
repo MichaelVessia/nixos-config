@@ -32,6 +32,14 @@ Use the Atlassian MCP to fetch Jira tickets assigned to the user:
    - Format as:
      `- [ ] [KEY-123](https://flocasts.atlassian.net/browse/KEY-123): title`
 
+**Fallback**: If the Atlassian MCP fails, use the Jira REST API with curl:
+
+```bash
+curl -s -u "$(jira me):$JIRA_API_TOKEN" \
+  "https://flocasts.atlassian.net/rest/api/3/search/jql?jql=assignee%3DcurrentUser()%20AND%20status%21%3DDone%20ORDER%20BY%20priority%20DESC&fields=key,summary" \
+  | jq -r '.issues[] | "- [ ] [\(.key)](https://flocasts.atlassian.net/browse/\(.key)): \(.fields.summary)"'
+```
+
 ## Step 3: Gather Google Calendar Meetings
 
 Use the Google Calendar MCP to fetch today's meetings:
