@@ -7,6 +7,12 @@
 
     # Declare secrets here (must match keys in secrets/framework13.yaml)
     secrets.test_secret = {};
+    secrets.paperless_url = {
+      owner = "michaelvessia";
+    };
+    secrets.paperless_token = {
+      owner = "michaelvessia";
+    };
 
     # More examples - uncomment and add your own
     # secrets.example_api_key = {};
@@ -28,10 +34,12 @@
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
-  # Option 1: Export secrets as env vars in shell
+  # Export secrets as env vars in shell
   # ──────────────────────────────────────────────────────────────────────────────
+  # Note: Shell exports are in modules/programs/shell.nix (home-manager manages zsh)
+  # Example for NixOS-managed zsh:
   # programs.zsh.interactiveShellInit = ''
-  #   export EXAMPLE_API_KEY="$(cat ${config.sops.secrets.example_api_key.path} 2>/dev/null)"
+  #   export MY_SECRET="$(cat ${config.sops.secrets.my_secret.path} 2>/dev/null)"
   # '';
 
   # ──────────────────────────────────────────────────────────────────────────────

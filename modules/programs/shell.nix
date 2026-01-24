@@ -32,6 +32,10 @@
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 
+      # sops-nix secrets (NixOS only)
+      [ -f /run/secrets/paperless_url ] && export PAPERLESS_URL="$(cat /run/secrets/paperless_url)"
+      [ -f /run/secrets/paperless_token ] && export PAPERLESS_TOKEN="$(cat /run/secrets/paperless_token)"
+
       # Source secrets if file exists
       [ -f ~/.secrets.env ] && source ~/.secrets.env
     '';
@@ -122,6 +126,10 @@
       export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+
+      # sops-nix secrets (macOS path)
+      [ -f "$HOME/.config/sops-nix/secrets/paperless_url" ] && export PAPERLESS_URL="$(cat "$HOME/.config/sops-nix/secrets/paperless_url")"
+      [ -f "$HOME/.config/sops-nix/secrets/paperless_token" ] && export PAPERLESS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/paperless_token")"
 
       # Source secrets if file exists
       [ -f ~/.secrets.env ] && source ~/.secrets.env
