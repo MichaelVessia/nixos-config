@@ -6,31 +6,15 @@
     age.keyFile = "/home/michaelvessia/.config/sops/age/keys.txt";
 
     # Declare secrets here (must match keys in secrets/framework13.yaml)
-    secrets.test_secret = {};
-    secrets.paperless_url = {
-      owner = "michaelvessia";
-    };
-    secrets.paperless_token = {
-      owner = "michaelvessia";
-    };
-
-    # More examples - uncomment and add your own
-    # secrets.example_api_key = {};
-    # secrets.example_password = {
-    #   owner = "michaelvessia";
-    #   mode = "0400";
-    # };
-    # secrets.example_ssh_key = {
-    #   path = "/home/michaelvessia/.ssh/deploy_key";
-    #   owner = "michaelvessia";
-    #   mode = "0600";
-    # };
-
-    # Template example: combine multiple secrets into an env file
-    # templates."example-env".content = ''
-    #   API_KEY=${config.sops.placeholder.example_api_key}
-    #   PASSWORD=${config.sops.placeholder.example_password}
-    # '';
+    secrets.paperless_url.owner = "michaelvessia";
+    secrets.paperless_token.owner = "michaelvessia";
+    secrets.x_to_obsidian_vault_path.owner = "michaelvessia";
+    secrets.x_to_obsidian_llm_provider.owner = "michaelvessia";
+    secrets.x_to_obsidian_google_api_key.owner = "michaelvessia";
+    secrets.fmcal_username.owner = "michaelvessia";
+    secrets.fmcal_password.owner = "michaelvessia";
+    secrets.hass_server.owner = "michaelvessia";
+    secrets.hass_token.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────

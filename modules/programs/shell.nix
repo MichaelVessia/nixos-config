@@ -35,9 +35,13 @@
       # sops-nix secrets (NixOS only)
       [ -f /run/secrets/paperless_url ] && export PAPERLESS_URL="$(cat /run/secrets/paperless_url)"
       [ -f /run/secrets/paperless_token ] && export PAPERLESS_TOKEN="$(cat /run/secrets/paperless_token)"
-
-      # Source secrets if file exists
-      [ -f ~/.secrets.env ] && source ~/.secrets.env
+      [ -f /run/secrets/x_to_obsidian_vault_path ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat /run/secrets/x_to_obsidian_vault_path)"
+      [ -f /run/secrets/x_to_obsidian_llm_provider ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat /run/secrets/x_to_obsidian_llm_provider)"
+      [ -f /run/secrets/x_to_obsidian_google_api_key ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat /run/secrets/x_to_obsidian_google_api_key)"
+      [ -f /run/secrets/fmcal_username ] && export FMCAL_USERNAME="$(cat /run/secrets/fmcal_username)"
+      [ -f /run/secrets/fmcal_password ] && export FMCAL_PASSWORD="$(cat /run/secrets/fmcal_password)"
+      [ -f /run/secrets/hass_server ] && export HASS_SERVER="$(cat /run/secrets/hass_server)"
+      [ -f /run/secrets/hass_token ] && export HASS_TOKEN="$(cat /run/secrets/hass_token)"
     '';
 
     # set some aliases, feel free to add more or remove some
@@ -130,9 +134,13 @@
       # sops-nix secrets (macOS path)
       [ -f "$HOME/.config/sops-nix/secrets/paperless_url" ] && export PAPERLESS_URL="$(cat "$HOME/.config/sops-nix/secrets/paperless_url")"
       [ -f "$HOME/.config/sops-nix/secrets/paperless_token" ] && export PAPERLESS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/paperless_token")"
-
-      # Source secrets if file exists
-      [ -f ~/.secrets.env ] && source ~/.secrets.env
+      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_vault_path" ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_vault_path")"
+      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_llm_provider" ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_llm_provider")"
+      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_google_api_key" ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_google_api_key")"
+      [ -f "$HOME/.config/sops-nix/secrets/fmcal_username" ] && export FMCAL_USERNAME="$(cat "$HOME/.config/sops-nix/secrets/fmcal_username")"
+      [ -f "$HOME/.config/sops-nix/secrets/fmcal_password" ] && export FMCAL_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/fmcal_password")"
+      [ -f "$HOME/.config/sops-nix/secrets/hass_server" ] && export HASS_SERVER="$(cat "$HOME/.config/sops-nix/secrets/hass_server")"
+      [ -f "$HOME/.config/sops-nix/secrets/hass_token" ] && export HASS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/hass_token")"
     '';
 
     shellAliases = {

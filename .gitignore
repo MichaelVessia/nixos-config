@@ -4,10 +4,6 @@ result
 result-*
 *.img
 
-# Secrets
-.secrets.env
-secrets.env
-
 # sops-nix safety (prevent accidental plaintext commits)
 *.decrypted
 *.decrypted.*
