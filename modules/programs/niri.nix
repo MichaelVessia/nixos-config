@@ -53,6 +53,29 @@ in
           name = "New York";
           useFahrenheit = true;
         };
+        bar = {
+          position = "top";
+          widgets = {
+            left = [
+              {id = "Launcher";}
+              {id = "Workspace";}
+            ];
+            center = [
+              {id = "Clock";}
+            ];
+            right = [
+              {
+                id = "Tray";
+                pinned = ["*handy*" "tray-icon tray app"];
+              }
+              {id = "SystemMonitor";}
+              {id = "Volume";}
+              {id = "Brightness";}
+              {id = "Battery";}
+              {id = "ControlCenter";}
+            ];
+          };
+        };
       };
       plugins = {
         sources = [
@@ -83,6 +106,7 @@ in
       # Clipboard
       wl-clipboard
       cliphist
+      wtype # for Handy paste on Wayland
 
       # Screenshot/recording tools
       grim
@@ -277,6 +301,8 @@ in
           "Mod+E".action.spawn = "nautilus";
           "Mod+Space".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
           "Mod+Semicolon".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "emoji"];
+          # Handy transcription toggle (Alt+` with swap)
+          "Mod+Grave".action.spawn = ["pkill" "-USR2" "handy"];
 
           # ================
           # WINDOW CONTROLS
