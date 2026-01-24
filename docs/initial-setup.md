@@ -34,3 +34,33 @@ SSH keys are stored in your password manager and need to be retrieved on new mac
 
 Note: The public key should already be added to GitHub. If setting up a
 completely new key, add it at https://github.com/settings/keys
+
+## Age Key Setup (for sops-nix secrets)
+
+The age key is used to decrypt secrets managed by sops-nix.
+
+1. **Copy your age key from an existing machine**:
+   ```bash
+   # From existing machine
+   scp ~/.config/sops/age/keys.txt user@newmachine:.config/sops/age/keys.txt
+   ```
+
+   Or manually:
+   ```bash
+   mkdir -p ~/.config/sops/age
+   chmod 700 ~/.config/sops/age
+
+   # Paste the key content, then press Ctrl+D
+   cat > ~/.config/sops/age/keys.txt
+   chmod 600 ~/.config/sops/age/keys.txt
+   ```
+
+2. **Verify it works**:
+   ```bash
+   cd ~/nixos-config
+   nix develop
+   sops secrets/framework13.yaml  # should open decrypted
+   ```
+
+Note: The age key is stored in your password manager alongside SSH keys.
+Without it, you cannot edit or decrypt secrets.
