@@ -7,6 +7,7 @@
   imports = [
     ../common.nix
     ../../modules/programs
+    ../../modules/secrets/flomac.nix
   ];
 
   home.username = "michael.vessia";

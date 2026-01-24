@@ -34,6 +34,10 @@
     fmcal.url = "github:MichaelVessia/fmcal";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -48,6 +52,7 @@
     ghostty,
     niri,
     noctalia,
+    sops-nix,
     ...
   }: let
     system = "x86_64-linux";
@@ -58,7 +63,16 @@
   in {
     devShells = forAllSystems (system: {
       default = nixpkgs.legacyPackages.${system}.mkShell {
-        packages = [nixpkgs.legacyPackages.${system}.alejandra];
+        packages = with nixpkgs.legacyPackages.${system}; [
+          alejandra
+          lefthook
+          sops
+          age
+          ssh-to-age
+        ];
+        shellHook = ''
+          lefthook install
+        '';
       };
     });
 
@@ -77,8 +91,10 @@
 
           modules = [
             ./hosts/framework13/default.nix
+            ./modules/secrets
 
             nixos-hardware.nixosModules.framework-12th-gen-intel
+            sops-nix.nixosModules.sops
 
             # make home-manager as a module of nixos
             # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
@@ -104,8 +120,9 @@
         system = "aarch64-linux";
         modules = [
           nixos-hardware.nixosModules.raspberry-pi-3
+          sops-nix.nixosModules.sops
           ./hosts/tts-pi/default.nix
-          # Include SD image support
+          ./modules/secrets/tts-pi.nix
           "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
         ];
       };
@@ -138,6 +155,9 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [
+                sops-nix.homeManagerModules.sops
+              ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/${username}/home.nix;

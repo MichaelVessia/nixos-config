@@ -1,0 +1,36 @@
+# sops-nix configuration
+# See: https://github.com/Mic92/sops-nix
+
+keys:
+  # Your personal key (decrypts everything)
+  - &user_michael age14mfcaveszy5fqknkj50t3axa4prvgnf5qy8qmnn7qxy4jsherqssm9qfcr
+
+  # tts-pi host key (derived from SSH host key)
+  - &host_tts_pi age1myyasn6yljaqxxf2fwm3c8v7rt9ys0pf9l0002hv9c83je8acelq2mhr9y
+
+creation_rules:
+  # Framework13 secrets
+  - path_regex: secrets/framework13\.yaml$
+    key_groups:
+      - age:
+          - *user_michael
+
+  # Flomac secrets (macOS)
+  - path_regex: secrets/flomac\.yaml$
+    key_groups:
+      - age:
+          - *user_michael
+
+  # TTS Pi secrets
+  - path_regex: secrets/tts-pi\.yaml$
+    key_groups:
+      - age:
+          - *user_michael
+          - *host_tts_pi
+
+  # Shared secrets
+  - path_regex: secrets/common\.yaml$
+    key_groups:
+      - age:
+          - *user_michael
+          - *host_tts_pi

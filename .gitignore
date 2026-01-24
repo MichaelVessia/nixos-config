@@ -7,3 +7,11 @@ result-*
 # Secrets
 .secrets.env
 secrets.env
+
+# sops-nix safety (prevent accidental plaintext commits)
+*.decrypted
+*.decrypted.*
+*.plain
+*.plain.*
+*-plaintext.yaml
+*-plaintext.json

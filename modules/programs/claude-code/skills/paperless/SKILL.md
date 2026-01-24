@@ -10,74 +10,35 @@ Interact with Paperless-ngx document management system via CLI.
 
 ## Setup
 
-Environment: `~/.secrets.env` (PAPERLESS_URL, PAPERLESS_TOKEN) - loaded by wrapper
+Environment: `~/.secrets.env` (PAPERLESS_URL, PAPERLESS_TOKEN) - loaded by
+wrapper.
 
-Run commands via:
-```bash
-paperless-cli <command>
-```
+## CLI Discovery
 
-## Commands Reference
+Run `paperless-cli --help` to see available commands. Run
+`paperless-cli <command> --help` for detailed usage of any command.
 
-See [CLI-REFERENCE.md](CLI-REFERENCE.md) for full command documentation.
+## Capabilities
 
-### Quick Reference
+The CLI supports:
 
-| Command | Purpose |
-|---------|---------|
-| `search [query]` | Full-text search with filters |
-| `list` | Recent documents, `--inbox` for inbox |
-| `get <id>` | Document details and content |
-| `download <id>` | Download original file |
-| `edit <id>` | Edit title/correspondent/type |
-| `similar <id>` | Find similar documents |
-| `add-tag <id> <tag>` | Add tag to document |
-| `remove-tag <id> <tag>` | Remove tag from document |
-| `tags` | List all tags |
-| `correspondents` | List all correspondents |
-| `types` | List all document types |
-| `stats` | System statistics |
+- **Search**: Full-text search with filters (date ranges, tags, correspondents)
+- **Browse**: List recent documents, inbox items
+- **Read**: Get document details and extracted text content
+- **Organize**: Add/remove tags, edit metadata (title, correspondent, type)
+- **Find related**: Discover similar documents
+- **Download**: Save original files locally
+- **Metadata**: List tags, correspondents, document types, stats
 
 ## Workflow
 
-1. Start with `search` or `list` to find documents
-2. Use `get <id>` to read full content
-3. Use `add-tag`/`remove-tag` to organize
-4. Use `similar <id>` to find related documents
-5. Use `download <id>` to save original files
+1. Search or list to find documents
+2. Get document by ID to read full content
+3. Add/remove tags to organize
+4. Find similar documents for related items
+5. Download originals when needed
 
-## Examples
+## Notes
 
-**Important:** Flags must come BEFORE positional arguments (query text).
-
-**"Find my tax documents from 2023"**
-```bash
-search "tax 2023"
-# or with filters (flags before query):
-search --tag tax --after 2023-01-01 --before 2024-01-01
-```
-
-**"What's in my inbox?"**
-```bash
-list --inbox
-```
-
-**"Show me that W-2"**
-```bash
-get 1234
-```
-
-**"Tag document 1234 as reviewed"**
-```bash
-add-tag 1234 reviewed --create
-```
-
-**"Find similar documents to this receipt"**
-```bash
-similar 1234
-```
-
-**"Download that PDF"**
-```bash
-download 1234
-```
+- Flags must come BEFORE positional arguments
+- Document IDs are integers returned from search/list results
