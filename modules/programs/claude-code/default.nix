@@ -226,9 +226,40 @@
   dcgConfig = {
     packs = {
       enabled = [
+        # Core
         "core.git"
         "strict_git"
         "core.filesystem"
+        # Cloud & CDN
+        "cloud.aws"
+        "storage.s3"
+        "dns.cloudflare"
+        "apigateway.aws"
+        # Containers & Orchestration
+        "containers.docker"
+        "kubernetes.kubectl"
+        "kubernetes.helm"
+        # Databases
+        "database.postgresql"
+        "database.redis"
+        "database.sqlite"
+        # Infrastructure
+        "infrastructure.terraform"
+        # CI/CD
+        "cicd.github_actions"
+        # Monitoring
+        "monitoring.datadog"
+        # Messaging
+        "messaging.sqs_sns"
+        # Search
+        "search.opensearch"
+        # Remote Access
+        "remote.ssh"
+        "remote.scp"
+        # Payments
+        "payment.stripe"
+        # Feature Flags
+        "featureflags.launchdarkly"
       ];
     };
     agents = {
