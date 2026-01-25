@@ -19,6 +19,7 @@
       p7zip
 
       # utils
+      bun
       python3 # needed for claude-code plugins (hookify)
       ripgrep # recursively searches directories for a regex pattern
       jq # A lightweight and flexible command-line JSON processor
@@ -82,7 +83,7 @@
 
       inputs.claude-code.packages.${pkgs.system}.default
       opencode # AI coding agent (from nixpkgs)
-      (pkgs.callPackage ./ralph { })
+      (pkgs.callPackage ./ralph {})
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging

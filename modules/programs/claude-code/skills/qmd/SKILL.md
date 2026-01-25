@@ -1,12 +1,25 @@
 ---
 name: qmd
-description: Local semantic search for docs, notes, knowledge bases. Use when the user asks to search their notes, find documents, query their knowledge base, or needs context from their local markdown files.
+description: |
+  Local semantic search for docs, notes, knowledge bases. INVOKE THIS SKILL when user:
+  - Asks to "search my notes/docs/vault/obsidian"
+  - Wants to "find" something in their knowledge base
+  - Says "what did I write about X"
+  - Asks "do I have notes on X"
+  - Needs context from their local markdown files
+  - Mentions "qmd" directly
+  - Asks about journal entries, meeting notes, or personal documentation
+  Trigger phrases: "search notes", "find in docs", "search obsidian", "what do my notes say", "look in my vault"
 allowed-tools: Bash, Read
 ---
 
 # qmd - Local Document Search
 
 Semantic + full-text search across local markdown docs using local LLMs.
+
+## When to Use
+
+Use qmd when the user wants to search their personal notes, documentation, or knowledge base. This includes Obsidian vaults, markdown notes directories, and any indexed collections.
 
 ## Search Commands
 
@@ -73,3 +86,12 @@ qmd search "meeting notes" -c work
 2. Use `qmd query` for best search quality (uses LLM reranking)
 3. Use `--full` when you need complete document content
 4. Use `qmd get` to retrieve specific documents by path or ID
+
+## Quick Start for Common Requests
+
+| User says | Run this |
+|-----------|----------|
+| "search my notes for X" | `qmd query "X"` |
+| "what did I write about X" | `qmd query --full "X"` |
+| "find meeting notes about X" | `qmd search -c obsidian "meeting X"` |
+| "show me my notes on X" | `qmd query -n 3 --full "X"` |

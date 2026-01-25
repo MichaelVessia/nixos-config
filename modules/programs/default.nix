@@ -25,7 +25,7 @@
     ./paperless-cli.nix
     ./hass-cli.nix
     ./subq.nix
-    ./qmd.nix
+    ./qmd
     ./karabiner.nix
     ./hammerspoon.nix
     ./raycast.nix
