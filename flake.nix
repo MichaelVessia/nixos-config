@@ -34,6 +34,7 @@
     fmcal.url = "github:MichaelVessia/fmcal";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
+    qmd.url = "github:tobi/qmd";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

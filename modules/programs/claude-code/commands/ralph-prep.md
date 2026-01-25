@@ -9,7 +9,11 @@ Orchestrate complete Ralph preparation: spec creation, interview, and prd.json g
 
 ## Arguments
 
-`$ARGUMENTS` should be a short feature name (e.g., "auth-refactor", "integration-tests")
+The user provides a feature description. Extract a short kebab-case name from it for file naming.
+
+Examples: auth-refactor, integration-tests, spotify-integration
+
+User input: $ARGUMENTS
 
 ## Steps
 

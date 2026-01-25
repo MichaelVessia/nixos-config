@@ -4,10 +4,10 @@ description: Set up Ralph autonomous agent structure in a repository
 
 # Initialize Ralph
 
-Run the ralph-init.sh script to scaffold the Ralph autonomous agent structure.
+Run `ralph-init` to scaffold the Ralph autonomous agent structure.
 
 ```bash
-ralph-init.sh
+ralph-init
 ```
 
 This creates:

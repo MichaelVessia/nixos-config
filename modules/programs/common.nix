@@ -82,7 +82,7 @@
 
       inputs.claude-code.packages.${pkgs.system}.default
       opencode # AI coding agent (from nixpkgs)
-      (pkgs.writeShellScriptBin "ralph-init" (builtins.readFile ../../scripts/ai/ralph-init.sh))
+      (pkgs.callPackage ./ralph { })
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
