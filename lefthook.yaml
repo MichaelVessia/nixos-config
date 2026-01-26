@@ -1,5 +1,8 @@
 pre-commit:
   commands:
+    format-nix:
+      glob: "*.nix"
+      run: alejandra {staged_files} && git add {staged_files}
     check-sops-encryption:
       glob: "secrets/*.yaml"
       run: ./scripts/check-sops-encryption.sh {staged_files}

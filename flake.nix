@@ -72,7 +72,7 @@
           ssh-to-age
         ];
         shellHook = ''
-          lefthook install --force
+          lefthook install
         '';
       };
     });
