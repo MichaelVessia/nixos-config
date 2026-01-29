@@ -41,6 +41,33 @@ jira issue assign PROJ-123 "email@example.com"
 jira issue link PROJ-123 PROJ-456 "blocks"
 ```
 
+## Editing Issues with Long Descriptions
+
+**IMPORTANT**: Do NOT use stdin piping (`echo "..." | jira issue edit -b -`). It is unreliable and may result in empty or corrupted descriptions.
+
+For multi-line descriptions, use command substitution with a temp file:
+
+```bash
+# Write description to temp file first
+cat > /tmp/issue-desc.md << 'EOF'
+## Summary
+Multi-line description here...
+
+## Details
+- Item 1
+- Item 2
+EOF
+
+# Then edit using command substitution
+jira issue edit PROJ-123 -b "$(cat /tmp/issue-desc.md)" --no-input
+```
+
+For short single-line edits, inline strings work fine:
+
+```bash
+jira issue edit PROJ-123 -b "Short description" --no-input
+```
+
 ## When User Shares Jira URL
 
 Extract the ticket key from URLs like `https://company.atlassian.net/browse/PROJ-123` and run:

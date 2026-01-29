@@ -25,6 +25,7 @@
     bashrcExtra = ''
       export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
       export NH_FLAKE="$HOME/nixos-config"
+      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
@@ -124,6 +125,7 @@
     initContent = ''
       export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
       export NH_FLAKE="$HOME/nixos-config"
+      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
       # fzf settings - use fd for faster file search
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
@@ -141,6 +143,11 @@
       [ -f "$HOME/.config/sops-nix/secrets/fmcal_password" ] && export FMCAL_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/fmcal_password")"
       [ -f "$HOME/.config/sops-nix/secrets/hass_server" ] && export HASS_SERVER="$(cat "$HOME/.config/sops-nix/secrets/hass_server")"
       [ -f "$HOME/.config/sops-nix/secrets/hass_token" ] && export HASS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/hass_token")"
+      [ -f "$HOME/.config/sops-nix/secrets/flocasts_npm_token" ] && export FLOCASTS_NPM_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/flocasts_npm_token")"
+      [ -f "$HOME/.config/sops-nix/secrets/github_token" ] && export GITHUB_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/github_token")"
+      [ -f "$HOME/.config/sops-nix/secrets/jira_api_token" ] && export JIRA_API_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/jira_api_token")"
+      [ -f "$HOME/.config/sops-nix/secrets/dd_app_key" ] && export DD_APP_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_app_key")"
+      [ -f "$HOME/.config/sops-nix/secrets/dd_api_key" ] && export DD_API_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_api_key")"
     '';
 
     shellAliases = {

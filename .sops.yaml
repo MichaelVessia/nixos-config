@@ -2,8 +2,11 @@
 # See: https://github.com/Mic92/sops-nix
 
 keys:
-  # Your personal key (decrypts everything)
-  - &user_michael age14mfcaveszy5fqknkj50t3axa4prvgnf5qy8qmnn7qxy4jsherqssm9qfcr
+  # Framework13 key
+  - &user_michael_framework13 age14mfcaveszy5fqknkj50t3axa4prvgnf5qy8qmnn7qxy4jsherqssm9qfcr
+
+  # Flomac key (macOS)
+  - &user_michael_flomac age1plsygq83qvax8s7qq0vywsm29qc32q2kdlpgh6j6eqn7hpvszghsl325ee
 
   # tts-pi host key (derived from SSH host key)
   - &host_tts_pi age1myyasn6yljaqxxf2fwm3c8v7rt9ys0pf9l0002hv9c83je8acelq2mhr9y
@@ -13,24 +16,25 @@ creation_rules:
   - path_regex: secrets/framework13\.yaml$
     key_groups:
       - age:
-          - *user_michael
+          - *user_michael_framework13
 
   # Flomac secrets (macOS)
   - path_regex: secrets/flomac\.yaml$
     key_groups:
       - age:
-          - *user_michael
+          - *user_michael_flomac
 
   # TTS Pi secrets
   - path_regex: secrets/tts-pi\.yaml$
     key_groups:
       - age:
-          - *user_michael
+          - *user_michael_framework13
           - *host_tts_pi
 
-  # Shared secrets
+  # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$
     key_groups:
       - age:
-          - *user_michael
+          - *user_michael_framework13
+          - *user_michael_flomac
           - *host_tts_pi

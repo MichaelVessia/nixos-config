@@ -5,18 +5,10 @@
     # Age key location on macOS
     age.keyFile = "/Users/michael.vessia/.config/sops/age/keys.txt";
 
-    # Example secrets - uncomment and add your own
-    # secrets.example_api_key = {};
-    # secrets.example_password = {
-    #   mode = "0400";
-    # };
+    secrets.flocasts_npm_token = {};
+    secrets.github_token = {};
+    secrets.jira_api_token = {};
+    secrets.dd_app_key = {};
+    secrets.dd_api_key = {};
   };
-
-  # ──────────────────────────────────────────────────────────────────────────────
-  # Export secrets as env vars in shell (home-manager)
-  # Secrets are at: ~/.config/sops-nix/secrets/<name>
-  # ──────────────────────────────────────────────────────────────────────────────
-  # programs.zsh.initExtra = ''
-  #   export EXAMPLE_API_KEY="$(cat ${config.sops.secrets.example_api_key.path} 2>/dev/null)"
-  # '';
 }
