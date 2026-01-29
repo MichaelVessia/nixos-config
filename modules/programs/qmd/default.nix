@@ -22,25 +22,31 @@
   };
 
   # Runtime libs for node-llama-cpp prebuilt binaries
-  runtimeLibs = [
-    pkgs.sqlite
-    pkgs.stdenv.cc.cc.lib
-    pkgs.glibc # for glibc detection by node-llama-cpp
-  ];
+  runtimeLibs =
+    [
+      pkgs.sqlite
+      pkgs.stdenv.cc.cc.lib
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      pkgs.glibc # for glibc detection by node-llama-cpp (Linux only)
+    ];
 
   qmd = pkgs.stdenv.mkDerivation {
     pname = "qmd";
     version = "1.0.0";
     src = qmdSrc;
 
-    nativeBuildInputs = [
-      bun2nix'.hook
-      pkgs.makeBinaryWrapper
-      pkgs.autoPatchelfHook
-    ];
+    nativeBuildInputs =
+      [
+        bun2nix'.hook
+        pkgs.makeBinaryWrapper
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        pkgs.autoPatchelfHook
+      ];
 
-    # Ignore CUDA/Vulkan/musl deps - we only need CPU support
-    autoPatchelfIgnoreMissingDeps = [
+    # Ignore CUDA/Vulkan/musl deps - we only need CPU support (Linux only)
+    autoPatchelfIgnoreMissingDeps = lib.optionals pkgs.stdenv.isLinux [
       "libcudart.so.*"
       "libcublas.so.*"
       "libcuda.so.*"
