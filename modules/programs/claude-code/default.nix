@@ -194,33 +194,58 @@
 
   # Destructive Command Guard - blocks dangerous commands for AI agents
   # https://github.com/Dicklesworthstone/destructive_command_guard
-  dcg = pkgs.stdenv.mkDerivation rec {
-    pname = "destructive-command-guard";
+  dcg = let
     version = "0.2.15";
+    platform =
+      {
+        x86_64-linux = {
+          target = "x86_64-unknown-linux-gnu";
+          sha256 = "9995596fddc65d686875fc04a8d2c47d0dd4b21b42e33d7dbd3c5d2d2dd9bb6a";
+        };
+        aarch64-linux = {
+          target = "aarch64-unknown-linux-gnu";
+          sha256 = "da71dfe727fc0390df32d36c3766b78b658606c87de888cde1aea72eea17d2d4";
+        };
+        x86_64-darwin = {
+          target = "x86_64-apple-darwin";
+          sha256 = "808b76b49497757a0614ac8bf6a1aeb792c575dfaa691a8e8852305cca8d1ff0";
+        };
+        aarch64-darwin = {
+          target = "aarch64-apple-darwin";
+          sha256 = "e205a9090dd0defa5b93af4e0c9f555623da760b07da30b6aa4619056922251e";
+        };
+      }
+      .${
+        pkgs.stdenv.hostPlatform.system
+      };
+  in
+    pkgs.stdenv.mkDerivation {
+      pname = "destructive-command-guard";
+      inherit version;
 
-    src = pkgs.fetchurl {
-      url = "https://github.com/Dicklesworthstone/destructive_command_guard/releases/download/v${version}/dcg-x86_64-unknown-linux-gnu.tar.xz";
-      sha256 = "9995596fddc65d686875fc04a8d2c47d0dd4b21b42e33d7dbd3c5d2d2dd9bb6a";
+      src = pkgs.fetchurl {
+        url = "https://github.com/Dicklesworthstone/destructive_command_guard/releases/download/v${version}/dcg-${platform.target}.tar.xz";
+        sha256 = platform.sha256;
+      };
+
+      nativeBuildInputs = [pkgs.xz];
+
+      unpackPhase = ''
+        tar -xf $src
+      '';
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp dcg $out/bin/
+        chmod +x $out/bin/dcg
+      '';
+
+      meta = {
+        description = "High-performance hook for AI agents that blocks destructive commands";
+        homepage = "https://github.com/Dicklesworthstone/destructive_command_guard";
+        platforms = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+      };
     };
-
-    nativeBuildInputs = [pkgs.xz];
-
-    unpackPhase = ''
-      tar -xf $src
-    '';
-
-    installPhase = ''
-      mkdir -p $out/bin
-      cp dcg $out/bin/
-      chmod +x $out/bin/dcg
-    '';
-
-    meta = {
-      description = "High-performance hook for AI agents that blocks destructive commands";
-      homepage = "https://github.com/Dicklesworthstone/destructive_command_guard";
-      platforms = ["x86_64-linux"];
-    };
-  };
 
   # dcg config as Nix attrset
   dcgConfig = {
