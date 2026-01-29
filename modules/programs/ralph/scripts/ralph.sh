@@ -41,6 +41,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Configuration
+export DCG_BYPASS=1
 RALPH_DIR="ralph"
 PRD_FILE="$RALPH_DIR/prd.json"
 PROGRESS_FILE="$RALPH_DIR/progress.txt"
