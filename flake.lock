@@ -962,11 +962,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1769596492,
-        "narHash": "sha256-FLakwmWRbg4qmPeQF7aj3G4t2Pkkh5ogFNocE/TKWh4=",
+        "lastModified": 1769673640,
+        "narHash": "sha256-5UuILObF93YTV+DlLmYP/lCrsX12S6dZBJgbNezrZ+M=",
         "owner": "NotAShelf",
         "repo": "nvf",
-        "rev": "1481131ee9d4098b2981879c6dc92a3a6c984883",
+        "rev": "39813f03226d0c603a85458d2bdf27e947b593da",
         "type": "github"
       },
       "original": {
