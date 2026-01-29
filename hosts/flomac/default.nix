@@ -191,6 +191,7 @@
 
   # Environment variables
   environment.systemPackages = with pkgs; [
+    coreutils # provides gtimeout, gdate, etc.
     vim
   ];
 }
