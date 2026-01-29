@@ -5,6 +5,9 @@
     # Age key location on macOS
     age.keyFile = "/Users/michael.vessia/.config/sops/age/keys.txt";
 
+    # Fix: launchd agent needs PATH for getconf
+    environment.PATH = "/usr/bin:/bin";
+
     secrets.flocasts_npm_token = {};
     secrets.github_token = {};
     secrets.jira_api_token = {};
