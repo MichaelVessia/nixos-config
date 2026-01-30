@@ -437,11 +437,11 @@
     "flocasts-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1769749082,
-        "narHash": "sha256-y9nidQeSuQ8IViQFaHyCKb1IGU0ShYGdJA7TW/qEeEQ=",
+        "lastModified": 1769752104,
+        "narHash": "sha256-00I2ke83XDbTTT/jzaCmpZIhlCKj5Q4IPqq+7wTXpqU=",
         "ref": "refs/heads/master",
-        "rev": "4993ef78051cc2eee56dba182fdac30931fec23d",
-        "revCount": 23,
+        "rev": "d86539588a7bf2bee858ac35efcb63c57cb67eca",
+        "revCount": 25,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/agent-skills.git"
       },

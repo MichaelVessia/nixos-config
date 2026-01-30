@@ -509,37 +509,39 @@ in {
 
   programs.agent-skills = {
     enable = true;
-    sources.personal.path = ./skills;
+    sources =
+      {
+        personal.path = ./skills;
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        flocasts = {
+          path = inputs.flocasts-skills;
+          subdir = "skills";
+        };
+      };
     skills.enableAll = true;
     targets = {
-      # Only deploy to Claude; disable others
-      # Use "link" structure so home.file symlinks coexist with flocasts skills
       claude = {
-        dest = "${config.home.homeDirectory}/.claude/skills";
-        structure = "link";
+        dest = "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills";
+        structure = "symlink-tree";
       };
       codex.enable = false;
       opencode.enable = false;
     };
   };
 
-  home.file =
-    {
-      ".claude/CLAUDE.md".source = ./global-memory.md;
-      ".claude/agents" = {
-        source = ./agents;
-        recursive = true;
-      };
-      ".claude/settings.json".text = builtins.toJSON settings;
-    }
-    // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      # Flocasts skills (darwin only) - added via home.file to avoid duplicate ID conflicts
-      ".claude/skills/datadog".source = "${inputs.flocasts-skills}/skills/datadog";
-      ".claude/skills/jira".source = "${inputs.flocasts-skills}/skills/jira";
-      ".claude/skills/k8s-debug".source = "${inputs.flocasts-skills}/skills/k8s-debug";
-      ".claude/skills/plan-jira".source = "${inputs.flocasts-skills}/skills/plan-jira";
+  home.file = {
+    ".claude/CLAUDE.md".source = ./global-memory.md;
+    ".claude/agents" = {
+      source = ./agents;
+      recursive = true;
     };
+    ".claude/settings.json".text = builtins.toJSON settings;
+  };
 
-  # dcg (destructive command guard) config
+  # dcg (destructive command guard) in PATH for manual use
+  home.packages = [dcg];
+
+  # dcg config
   xdg.configFile."dcg/config.toml".source = (pkgs.formats.toml {}).generate "dcg-config.toml" dcgConfig;
 }
