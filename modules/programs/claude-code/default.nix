@@ -509,9 +509,16 @@ in {
 
   programs.agent-skills = {
     enable = true;
-    sources.personal = {
-      path = ./skills;
-    };
+    sources =
+      {
+        personal.path = ./skills;
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        flocasts = {
+          path = inputs.flocasts-skills;
+          subdir = "skills";
+        };
+      };
     skills.enableAll = true;
     targets = {
       # Only deploy to Claude; disable others

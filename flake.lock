@@ -434,6 +434,22 @@
         "type": "github"
       }
     },
+    "flocasts-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769749082,
+        "narHash": "sha256-y9nidQeSuQ8IViQFaHyCKb1IGU0ShYGdJA7TW/qEeEQ=",
+        "ref": "refs/heads/master",
+        "rev": "4993ef78051cc2eee56dba182fdac30931fec23d",
+        "revCount": 23,
+        "type": "git",
+        "url": "ssh://git@github.com/flocasts/agent-skills.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/flocasts/agent-skills.git"
+      }
+    },
     "fmcal": {
       "inputs": {
         "bun2nix": "bun2nix_2",
@@ -1043,6 +1059,7 @@
         "bun2nix": "bun2nix",
         "claude-code": "claude-code",
         "darwin": "darwin",
+        "flocasts-skills": "flocasts-skills",
         "fmcal": "fmcal",
         "ghostty": "ghostty",
         "home-manager": "home-manager_3",

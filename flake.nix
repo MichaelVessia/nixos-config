@@ -43,6 +43,10 @@
       url = "github:Kyure-A/agent-skills-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flocasts-skills = {
+      url = "git+ssh://git@github.com/flocasts/agent-skills.git";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
