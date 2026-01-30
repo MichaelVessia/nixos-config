@@ -519,7 +519,12 @@ in {
           subdir = "skills";
         };
       };
-    skills.enableAll = true;
+    skills = {
+      # Enable all personal skills
+      enableAll = ["personal"];
+      # From flocasts, only enable non-duplicates (personal has commit-all, commit-and-push, draft-pr)
+      enable = lib.optionals pkgs.stdenv.isDarwin ["datadog" "jira" "k8s-debug" "plan-jira"];
+    };
     targets = {
       # Only deploy to Claude; disable others
       claude = {
