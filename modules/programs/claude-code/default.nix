@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: let
   # Wrapped scripts with explicit deps
@@ -504,17 +505,26 @@
     };
   };
 in {
+  imports = [inputs.agent-skills-nix.homeManagerModules.default];
+
+  programs.agent-skills = {
+    enable = true;
+    sources.personal = {
+      path = ./skills;
+    };
+    skills.enableAll = true;
+    targets = {
+      # Only deploy to Claude; disable others
+      claude = {
+        dest = "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills";
+        structure = "symlink-tree";
+      };
+      codex.enable = false;
+      opencode.enable = false;
+    };
+  };
+
   home.file.".claude/CLAUDE.md".source = ./global-memory.md;
-
-  home.file.".claude/commands" = {
-    source = ./commands;
-    recursive = true;
-  };
-
-  home.file.".claude/skills" = {
-    source = ./skills;
-    recursive = true;
-  };
 
   home.file.".claude/agents" = {
     source = ./agents;

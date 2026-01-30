@@ -39,6 +39,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agent-skills-nix = {
+      url = "github:Kyure-A/agent-skills-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -54,6 +58,7 @@
     niri,
     noctalia,
     sops-nix,
+    agent-skills-nix,
     ...
   }: let
     system = "x86_64-linux";
