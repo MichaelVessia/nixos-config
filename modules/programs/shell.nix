@@ -271,10 +271,11 @@
       # Kill pane
       bind x kill-pane
 
-      # Maximize pane
+      # Maximize/zoom pane (toggle)
       unbind z
       unbind m
       bind m resize-pane -Z
+      bind z resize-pane -Z
 
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
@@ -323,7 +324,7 @@
       set-window-option -g automatic-rename off
 
       # Help popup (prefix + ?)
-      bind ? display-popup -E -w 60 -h 30 '\
+      bind ? display-popup -E -w 60 -h 32 '\
         echo "tmux cheatsheet (press q to close)" && \
         echo "" && \
         echo "SESSIONS" && \
@@ -340,7 +341,8 @@
         echo "  prefix -     split vertical" && \
         echo "  C-h/j/k/l    navigate (works in nvim)" && \
         echo "  prefix x     kill pane" && \
-        echo "  prefix m     maximize/restore" && \
+        echo "  prefix z/m   zoom/maximize toggle" && \
+        echo "  prefix ]/[   rotate panes cw/ccw" && \
         echo "  prefix arrows resize panes" && \
         echo "" && \
         echo "COPY MODE" && \
