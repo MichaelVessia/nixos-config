@@ -43,6 +43,9 @@
       [ -f /run/secrets/fmcal_password ] && export FMCAL_PASSWORD="$(cat /run/secrets/fmcal_password)"
       [ -f /run/secrets/hass_server ] && export HASS_SERVER="$(cat /run/secrets/hass_server)"
       [ -f /run/secrets/hass_token ] && export HASS_TOKEN="$(cat /run/secrets/hass_token)"
+      [ -f /run/secrets/freshrss_api_user ] && export FRESHRSS_API_USER="$(cat /run/secrets/freshrss_api_user)"
+      [ -f /run/secrets/freshrss_api_password ] && export FRESHRSS_API_PASSWORD="$(cat /run/secrets/freshrss_api_password)"
+      [ -f /run/secrets/freshrss_url ] && export FRESHRSS_URL="$(cat /run/secrets/freshrss_url)"
     '';
 
     # set some aliases, feel free to add more or remove some
@@ -148,6 +151,9 @@
       [ -f "$HOME/.config/sops-nix/secrets/jira_api_token" ] && export JIRA_API_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/jira_api_token")"
       [ -f "$HOME/.config/sops-nix/secrets/dd_app_key" ] && export DD_APP_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_app_key")"
       [ -f "$HOME/.config/sops-nix/secrets/dd_api_key" ] && export DD_API_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_api_key")"
+      [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_user" ] && export FRESHRSS_API_USER="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_user")"
+      [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_password" ] && export FRESHRSS_API_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_password")"
+      [ -f "$HOME/.config/sops-nix/secrets/freshrss_url" ] && export FRESHRSS_URL="$(cat "$HOME/.config/sops-nix/secrets/freshrss_url")"
     '';
 
     shellAliases = {

@@ -15,6 +15,9 @@
     secrets.fmcal_password.owner = "michaelvessia";
     secrets.hass_server.owner = "michaelvessia";
     secrets.hass_token.owner = "michaelvessia";
+    secrets.freshrss_api_user.owner = "michaelvessia";
+    secrets.freshrss_api_password.owner = "michaelvessia";
+    secrets.freshrss_url.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
