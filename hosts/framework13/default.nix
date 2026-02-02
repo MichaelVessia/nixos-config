@@ -94,12 +94,16 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.michaelvessia = {
     isNormalUser = true;
     description = "Michael Vessia";
     extraGroups = ["networkmanager" "wheel" "docker" "ydotool" "input"];
+    shell = pkgs.zsh;
   };
+
+  # Enable zsh system-wide (required for login shell)
+  programs.zsh.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

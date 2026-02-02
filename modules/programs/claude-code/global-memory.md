@@ -1,3 +1,15 @@
+# Memory Routing
+
+Read relevant detail files based on task:
+
+| Task Type | Detail File |
+|-----------|-------------|
+| TypeScript work | [typescript.md](./memory/typescript.md) |
+| Testing | [testing.md](./memory/testing.md) |
+| Nix/Environment | [nix-environment.md](./memory/nix-environment.md) |
+
+---
+
 # Communication
 
 - Be extremely concise. Sacrifice grammar for concision.
@@ -9,7 +21,7 @@
 # Code Quality & Processes
 
 - Make small changes that compile and pass tests.
-- Never disable tests—fix them.
+- Never disable tests, fix them.
 - Never commit code that doesn't compile unless explicitly instructed.
 - **Never compromise type safety**: No `any`, no non-null assertion operator
   (`!`), no type assertions (`as Type`).
@@ -56,15 +68,11 @@
 - AST-first where it helps. Prefer ast-grep for tree-safe edits when it is
   better than regex.
 
-  # Final Handoff
+# Final Handoff
 
 Before finishing a task:
 
 - Confirm all touched tests or commands were run and passed (list them if
   asked). Summarize changes with file and line references.
 - Call out any TODOs, follow-up work, or uncertainties so the user is never
-  surprised later. TypeScript
-- In TypeScript codebases NEVER, EVER use `any` we are better than that. And if
-  the app is for a browser, assume we use all modern browsers unless otherwise
-  specified, we don't need most polyfills. Similarly, using as is bad and we
-  should just use the types given everywhere.
+  surprised later.

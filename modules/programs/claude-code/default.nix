@@ -532,6 +532,10 @@ in {
 
   home.file = {
     ".claude/CLAUDE.md".source = ./global-memory.md;
+    ".claude/memory" = {
+      source = ./memory;
+      recursive = true;
+    };
     ".claude/agents" = {
       source = ./agents;
       recursive = true;

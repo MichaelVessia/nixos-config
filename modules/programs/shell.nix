@@ -6,7 +6,6 @@
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
     # custom settings
     settings = {
@@ -15,129 +14,6 @@
       gcloud.disabled = true;
       line_break.disabled = true;
       package.disabled = true;
-    };
-  };
-
-  programs.bash = {
-    enable = true;
-    enableCompletion = true;
-    # TODO add your custom bashrc here
-    bashrcExtra = ''
-      export PATH="/opt/homebrew/bin:$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.bun/bin"
-      export NH_FLAKE="$HOME/nixos-config"
-      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-
-      # fzf settings - use fd for faster file search
-      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
-      export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-      export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-      export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-
-      # sops-nix secrets (NixOS only)
-      [ -f /run/secrets/paperless_url ] && export PAPERLESS_URL="$(cat /run/secrets/paperless_url)"
-      [ -f /run/secrets/paperless_token ] && export PAPERLESS_TOKEN="$(cat /run/secrets/paperless_token)"
-      [ -f /run/secrets/x_to_obsidian_vault_path ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat /run/secrets/x_to_obsidian_vault_path)"
-      [ -f /run/secrets/x_to_obsidian_llm_provider ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat /run/secrets/x_to_obsidian_llm_provider)"
-      [ -f /run/secrets/x_to_obsidian_google_api_key ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat /run/secrets/x_to_obsidian_google_api_key)"
-      [ -f /run/secrets/fmcal_username ] && export FMCAL_USERNAME="$(cat /run/secrets/fmcal_username)"
-      [ -f /run/secrets/fmcal_password ] && export FMCAL_PASSWORD="$(cat /run/secrets/fmcal_password)"
-      [ -f /run/secrets/hass_server ] && export HASS_SERVER="$(cat /run/secrets/hass_server)"
-      [ -f /run/secrets/hass_token ] && export HASS_TOKEN="$(cat /run/secrets/hass_token)"
-      [ -f /run/secrets/freshrss_api_user ] && export FRESHRSS_API_USER="$(cat /run/secrets/freshrss_api_user)"
-      [ -f /run/secrets/freshrss_api_password ] && export FRESHRSS_API_PASSWORD="$(cat /run/secrets/freshrss_api_password)"
-      [ -f /run/secrets/freshrss_url ] && export FRESHRSS_URL="$(cat /run/secrets/freshrss_url)"
-
-      # Unbind C-j and C-l so tmux can use them for pane navigation
-      if [[ $- == *i* ]]; then
-        bind -r '\C-j'
-        bind -r '\C-l'
-      fi
-
-      # tmux session picker (fzf)
-      ta() {
-        if [ -z "$TMUX" ]; then
-          local session
-          session=$(tmux ls -F '#{session_name}: #{session_windows} windows (#{session_attached} attached)' 2>/dev/null | fzf --header 'Attach to session' | cut -d: -f1)
-          [ -n "$session" ] && tmux attach -t "$session"
-        else
-          echo "Already in tmux"
-        fi
-      }
-    '';
-
-    # set some aliases, feel free to add more or remove some
-    shellAliases = {
-      vim = "nvim";
-
-      # AI tools
-      c = "claude";
-      cr = "claude --resume";
-      cy = "claude --dangerously-skip-permissions";
-      oc = "opencode";
-
-      # eza aliases (ls replacement)
-      ls = "eza";
-      ll = "eza -l";
-      la = "eza -la";
-      lt = "eza --tree";
-
-      # zoxide aliases (cd replacement)
-      cd = "z";
-      cdls = "zoxide query --list | fzf --header 'Choose directory'";
-
-      # bat aliases (cat replacement)
-      cat = "bat";
-
-      # Verbosity and qol
-      cp = "cp -v";
-      ddf = "df -h";
-      etc = "erd -H";
-      mkdir = "mkdir -p";
-      mv = "mv -v";
-      rm = "rm -v";
-
-      # Git aliases
-      gaa = "git add -A";
-      ga = "git add";
-      gbd = "git branch --delete";
-      gb = "git branch";
-      gc = "git commit";
-      gcm = "git commit -m";
-      gcob = "git checkout -b";
-      gco = "git checkout";
-      gd = "git diff";
-      gl = "git log";
-      gp = "git push";
-      gph = "git push -u origin HEAD";
-      gs = "git status";
-      gst = "git stash";
-      gstp = "git stash pop";
-
-      # NH (nix helper) aliases - platform-aware
-      # NixOS
-      nrs = "nh os switch"; # rebuild and switch (NixOS)
-      nrt = "nh os test"; # test build (reverts on reboot)
-      nrb = "nh os boot"; # build, activate on next boot
-      ngen = "nh os generations"; # list generations
-      nroll = "nh os rollback"; # rollback to previous
-      # macOS (nix-darwin)
-      nds = "nh darwin switch"; # rebuild and switch (darwin)
-      # Cross-platform
-      nrc = "nh clean all"; # garbage collect
-      nsearch = "nh search"; # search packages
-
-      # tmux aliases
-      tls = "tmux ls"; # list sessions
-      tn = "tmux new -s"; # new session (usage: tn myname)
-      tk = "tmux kill-session -t"; # kill session
-    };
-
-    sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-      NIXOS_CONFIG = "$HOME/nixos-config";
-      TMPDIR = "$HOME/.cache/tmp";
-      NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
     };
   };
 
@@ -158,28 +34,42 @@
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 
-      # sops-nix secrets (macOS path)
-      [ -f "$HOME/.config/sops-nix/secrets/paperless_url" ] && export PAPERLESS_URL="$(cat "$HOME/.config/sops-nix/secrets/paperless_url")"
-      [ -f "$HOME/.config/sops-nix/secrets/paperless_token" ] && export PAPERLESS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/paperless_token")"
-      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_vault_path" ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_vault_path")"
-      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_llm_provider" ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_llm_provider")"
-      [ -f "$HOME/.config/sops-nix/secrets/x_to_obsidian_google_api_key" ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat "$HOME/.config/sops-nix/secrets/x_to_obsidian_google_api_key")"
-      [ -f "$HOME/.config/sops-nix/secrets/fmcal_username" ] && export FMCAL_USERNAME="$(cat "$HOME/.config/sops-nix/secrets/fmcal_username")"
-      [ -f "$HOME/.config/sops-nix/secrets/fmcal_password" ] && export FMCAL_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/fmcal_password")"
-      [ -f "$HOME/.config/sops-nix/secrets/hass_server" ] && export HASS_SERVER="$(cat "$HOME/.config/sops-nix/secrets/hass_server")"
-      [ -f "$HOME/.config/sops-nix/secrets/hass_token" ] && export HASS_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/hass_token")"
-      [ -f "$HOME/.config/sops-nix/secrets/flocasts_npm_token" ] && export FLOCASTS_NPM_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/flocasts_npm_token")"
-      [ -f "$HOME/.config/sops-nix/secrets/github_token" ] && export GITHUB_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/github_token")"
-      [ -f "$HOME/.config/sops-nix/secrets/jira_api_token" ] && export JIRA_API_TOKEN="$(cat "$HOME/.config/sops-nix/secrets/jira_api_token")"
-      [ -f "$HOME/.config/sops-nix/secrets/dd_app_key" ] && export DD_APP_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_app_key")"
-      [ -f "$HOME/.config/sops-nix/secrets/dd_api_key" ] && export DD_API_KEY="$(cat "$HOME/.config/sops-nix/secrets/dd_api_key")"
-      [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_user" ] && export FRESHRSS_API_USER="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_user")"
-      [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_password" ] && export FRESHRSS_API_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_password")"
-      [ -f "$HOME/.config/sops-nix/secrets/freshrss_url" ] && export FRESHRSS_URL="$(cat "$HOME/.config/sops-nix/secrets/freshrss_url")"
+      # sops-nix secrets (platform-aware: NixOS uses /run/secrets/, macOS uses ~/.config/sops-nix/secrets/)
+      SECRETS_DIR="/run/secrets"
+      [ -d "$HOME/.config/sops-nix/secrets" ] && SECRETS_DIR="$HOME/.config/sops-nix/secrets"
+
+      [ -f "$SECRETS_DIR/paperless_url" ] && export PAPERLESS_URL="$(cat "$SECRETS_DIR/paperless_url")"
+      [ -f "$SECRETS_DIR/paperless_token" ] && export PAPERLESS_TOKEN="$(cat "$SECRETS_DIR/paperless_token")"
+      [ -f "$SECRETS_DIR/x_to_obsidian_vault_path" ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat "$SECRETS_DIR/x_to_obsidian_vault_path")"
+      [ -f "$SECRETS_DIR/x_to_obsidian_llm_provider" ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat "$SECRETS_DIR/x_to_obsidian_llm_provider")"
+      [ -f "$SECRETS_DIR/x_to_obsidian_google_api_key" ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_google_api_key")"
+      [ -f "$SECRETS_DIR/fmcal_username" ] && export FMCAL_USERNAME="$(cat "$SECRETS_DIR/fmcal_username")"
+      [ -f "$SECRETS_DIR/fmcal_password" ] && export FMCAL_PASSWORD="$(cat "$SECRETS_DIR/fmcal_password")"
+      [ -f "$SECRETS_DIR/hass_server" ] && export HASS_SERVER="$(cat "$SECRETS_DIR/hass_server")"
+      [ -f "$SECRETS_DIR/hass_token" ] && export HASS_TOKEN="$(cat "$SECRETS_DIR/hass_token")"
+      [ -f "$SECRETS_DIR/freshrss_api_user" ] && export FRESHRSS_API_USER="$(cat "$SECRETS_DIR/freshrss_api_user")"
+      [ -f "$SECRETS_DIR/freshrss_api_password" ] && export FRESHRSS_API_PASSWORD="$(cat "$SECRETS_DIR/freshrss_api_password")"
+      [ -f "$SECRETS_DIR/freshrss_url" ] && export FRESHRSS_URL="$(cat "$SECRETS_DIR/freshrss_url")"
+      [ -f "$SECRETS_DIR/flocasts_npm_token" ] && export FLOCASTS_NPM_TOKEN="$(cat "$SECRETS_DIR/flocasts_npm_token")"
+      [ -f "$SECRETS_DIR/github_token" ] && export GITHUB_TOKEN="$(cat "$SECRETS_DIR/github_token")"
+      [ -f "$SECRETS_DIR/jira_api_token" ] && export JIRA_API_TOKEN="$(cat "$SECRETS_DIR/jira_api_token")"
+      [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
+      [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
       # Unbind C-j and C-l so tmux can use them for pane navigation
       bindkey -r "^J"
       bindkey -r "^L"
+
+      # tmux session picker (fzf)
+      ta() {
+        if [ -z "$TMUX" ]; then
+          local session
+          session=$(tmux ls -F '#{session_name}: #{session_windows} windows (#{session_attached} attached)' 2>/dev/null | fzf --header 'Attach to session' | cut -d: -f1)
+          [ -n "$session" ] && tmux attach -t "$session"
+        else
+          echo "Already in tmux"
+        fi
+      }
     '';
 
     shellAliases = {
@@ -260,7 +150,6 @@
   # atuin - magical shell history
   programs.atuin = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
     settings = {
       auto_sync = true;
@@ -272,21 +161,18 @@
   # zoxide - smarter cd command
   programs.zoxide = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
   };
 
   # fzf - fuzzy finder
   programs.fzf = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
   };
 
   # eza - modern ls replacement
   programs.eza = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
     git = true;
     icons = "auto";
@@ -300,7 +186,6 @@
   # direnv - load/unload environment based on directory
   programs.direnv = {
     enable = true;
-    enableBashIntegration = true;
     enableZshIntegration = true;
     nix-direnv.enable = true;
   };
@@ -415,6 +300,10 @@
       bind -T copy-mode-vi 'C-v' send-keys -X rectangle-toggle
       bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
       bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
+
+      # Rotate panes
+      bind ] rotate-window -D
+      bind [ rotate-window -U
 
       # Pane navigation in copy mode
       bind -T copy-mode-vi 'C-h' select-pane -L
