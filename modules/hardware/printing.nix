@@ -1,8 +1,16 @@
 # Printing Configuration
-{pkgs, ...}: {
-  services.printing = {
-    enable = true;
-    drivers = [pkgs.brlaser];
+{...}: {
+  services.printing.enable = true;
+
+  # ensure-printers runs at boot before network/printer is ready
+  # Add network dependency and retry logic
+  systemd.services.ensure-printers = {
+    after = ["network-online.target"];
+    wants = ["network-online.target"];
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
   };
 
   hardware.printers = {

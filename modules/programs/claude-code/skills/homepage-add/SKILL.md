@@ -80,18 +80,38 @@ Homepage uses Dashboard Icons. Common patterns:
 4. If multiple non-system ports, ask user which one
 5. Read current config: `ssh proxmox "pct exec 103 -- cat /opt/homepage/config/services.yaml"`
 6. Ask user which section to add to (Utilities is default for most services)
-7. Add the entry to the config
+7. Add the entry to the config (see Card Ordering section for placement)
 8. Write back: pipe content to `ssh proxmox "pct exec 103 -- tee /opt/homepage/config/services.yaml > /dev/null"`
 9. Verify: `ssh proxmox "pct exec 103 -- grep -A6 <ServiceName> /opt/homepage/config/services.yaml"`
 10. Tell user to refresh Homepage
 
 ## Existing Sections
 
-From the current config:
+From the current config (ordered by card height):
 - Infrastructure (Proxmox, Unifi, Synology)
-- Documents & Books (Paperless, BookLore, Calibre)
-- Utilities (Syncthing, AdGuard, Caddy, UptimeKuma, Home Assistant, Tailscale, N8N)
+- Documents & Books (Paperless, Calibre-web | BookLore, Calibre, Brother) - 2 columns
+- Utilities (Syncthing, AdGuard, Caddy, UptimeKuma, Home Assistant, FreshRSS | Tailscale, N8N)
 - Media (JellySeerr, Radarr, Sonarr, Prowlarr, SABnzbd, Jellyfin)
+
+The `|` indicates where widget cards end and no-widget cards begin.
+
+## Card Ordering (Minimize Whitespace)
+
+Cards with widgets are taller than cards without. Homepage uses row-based layout, so mixing heights creates whitespace gaps.
+
+**Rule: Group cards by height within each section.**
+
+1. Cards WITH widgets go first (tall cards together)
+2. Cards WITHOUT widgets go at the end (short cards together)
+
+Example for Utilities (8 items, 3 columns):
+- Row 1: Syncthing, AdGuard, Caddy (all have widgets)
+- Row 2: UptimeKuma, Home Assistant, FreshRSS (all have widgets)
+- Row 3: Tailscale, N8N (both no widget, same height)
+
+When adding a new service:
+- If it has a widget, insert it after the last widget card (before the no-widget cards)
+- If it has no widget, append it at the end of the section
 
 ## Notes
 
