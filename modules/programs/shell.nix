@@ -273,4 +273,149 @@
     enableZshIntegration = true;
     nix-direnv.enable = true;
   };
+
+  # tmux - terminal multiplexer for persistent sessions
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+    baseIndex = 1;
+    historyLimit = 50000;
+    keyMode = "vi";
+    plugins = with pkgs.tmuxPlugins; [
+      {
+        plugin = catppuccin;
+        extraConfig = ''
+          set -g @catppuccin_flavor 'mocha'
+          set -g @catppuccin_window_status_style "rounded"
+          set -g @catppuccin_status_modules_right "directory session"
+        '';
+      }
+      {
+        plugin = resurrect;
+        extraConfig = ''
+          set -g @resurrect-strategy-nvim 'session'
+          set -g @resurrect-capture-pane-contents 'on'
+        '';
+      }
+      {
+        plugin = continuum;
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-save-interval '10'
+        '';
+      }
+    ];
+    extraConfig = ''
+      # Prefix: Ctrl+;
+      unbind C-b
+      set -g prefix C-\;
+      bind \; send-prefix
+
+      # Reduce escape-time for vim mode switching
+      set -s escape-time 0
+
+      # Increase message display duration
+      set -g display-time 4000
+
+      # Refresh status more often
+      set -g status-interval 5
+
+      # 256 color and extended keys support
+      set -g default-terminal "tmux-256color"
+      set -s extended-keys on
+      set -as terminal-features 'xterm*:extkeys'
+
+      # Emacs keys in command prompt
+      set -g status-keys emacs
+
+      # Focus events for terminals that support them
+      set -g focus-events on
+
+      # Better multi-monitor support
+      setw -g aggressive-resize on
+
+      # Pane resizing with vim-like keys
+      bind -r - resize-pane -D 2
+      bind -r = resize-pane -U 2
+      bind -r ] resize-pane -R 2
+      bind -r [ resize-pane -L 2
+
+      # Equalize panes
+      bind -r DC select-layout tiled
+
+      # Splits preserving current path
+      unbind %
+      unbind '"'
+      bind \\ split-window -h -c "#{pane_current_path}"
+      bind Enter split-window -v -c "#{pane_current_path}"
+      bind c new-window -c "#{pane_current_path}"
+
+      # Kill pane
+      bind x kill-pane
+
+      # Maximize pane
+      unbind z
+      unbind m
+      bind m resize-pane -Z
+
+      # Reload config
+      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
+
+      # Copy mode with vim-like keybindings
+      bind v copy-mode
+      bind -T copy-mode-vi q send-keys -X cancel
+      bind -T copy-mode-vi v send-keys -X begin-selection
+      bind -T copy-mode-vi V send-keys -X select-line
+      bind -T copy-mode-vi Escape send-keys -X clear-selection
+      bind -T copy-mode-vi 'C-v' send-keys -X rectangle-toggle
+      bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
+      bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
+
+      # Pane navigation in copy mode
+      bind -T copy-mode-vi 'C-h' select-pane -L
+      bind -T copy-mode-vi 'C-j' select-pane -D
+      bind -T copy-mode-vi 'C-k' select-pane -U
+      bind -T copy-mode-vi 'C-l' select-pane -R
+
+      # Status bar at top
+      set-option -g status-position top
+
+      # Renumber windows when one is closed
+      set-option -g renumber-windows on
+      set-window-option -g pane-base-index 1
+
+      # Help popup (prefix + ?)
+      bind ? display-popup -E -w 60 -h 30 '\
+        echo "tmux cheatsheet (press q to close)" && \
+        echo "" && \
+        echo "SESSIONS" && \
+        echo "  prefix d     detach" && \
+        echo "  prefix s     list sessions" && \
+        echo "" && \
+        echo "WINDOWS" && \
+        echo "  prefix c     new window" && \
+        echo "  prefix n/p   next/prev window" && \
+        echo "  prefix 0-9   jump to window" && \
+        echo "" && \
+        echo "PANES" && \
+        echo "  prefix \\     split horizontal" && \
+        echo "  prefix Enter split vertical" && \
+        echo "  prefix x     kill pane" && \
+        echo "  prefix m     maximize/restore" && \
+        echo "  prefix -/=   resize up/down" && \
+        echo "  prefix [/]   resize left/right" && \
+        echo "" && \
+        echo "COPY MODE" && \
+        echo "  prefix v     enter copy mode" && \
+        echo "  v/V          select / line select" && \
+        echo "  y            copy to clipboard" && \
+        echo "  q            exit copy mode" && \
+        echo "" && \
+        echo "OTHER" && \
+        echo "  prefix r     reload config" && \
+        echo "  prefix ?     this help" && \
+        echo "" && \
+        read -n 1'
+    '';
+  };
 }
