@@ -64,17 +64,15 @@
     keybind = ctrl+a>n=next_tab
     keybind = ctrl+a>t=toggle_tab_overview
 
-    # Split creation (vim-style)
-    keybind = ctrl+a>h=new_split:left
-    keybind = ctrl+a>j=new_split:down
-    keybind = ctrl+a>k=new_split:up
-    keybind = ctrl+a>l=new_split:right
+    # Split creation (matches tmux)
+    keybind = ctrl+a>backslash=new_split:right
+    keybind = ctrl+a>minus=new_split:down
 
-    # Split navigation
-    keybind = ctrl+h=goto_split:left
-    keybind = ctrl+j=goto_split:down
-    keybind = ctrl+k=goto_split:up
-    keybind = ctrl+l=goto_split:right
+    # Split navigation (with leader to not conflict with nvim/tmux)
+    keybind = ctrl+a>shift+h=goto_split:left
+    keybind = ctrl+a>shift+j=goto_split:down
+    keybind = ctrl+a>shift+k=goto_split:up
+    keybind = ctrl+a>shift+l=goto_split:right
     keybind = ctrl+a>q=close_surface
 
     # Window management

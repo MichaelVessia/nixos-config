@@ -46,6 +46,23 @@
       [ -f /run/secrets/freshrss_api_user ] && export FRESHRSS_API_USER="$(cat /run/secrets/freshrss_api_user)"
       [ -f /run/secrets/freshrss_api_password ] && export FRESHRSS_API_PASSWORD="$(cat /run/secrets/freshrss_api_password)"
       [ -f /run/secrets/freshrss_url ] && export FRESHRSS_URL="$(cat /run/secrets/freshrss_url)"
+
+      # Unbind C-j and C-l so tmux can use them for pane navigation
+      if [[ $- == *i* ]]; then
+        bind -r '\C-j'
+        bind -r '\C-l'
+      fi
+
+      # tmux session picker (fzf)
+      ta() {
+        if [ -z "$TMUX" ]; then
+          local session
+          session=$(tmux ls -F '#{session_name}: #{session_windows} windows (#{session_attached} attached)' 2>/dev/null | fzf --header 'Attach to session' | cut -d: -f1)
+          [ -n "$session" ] && tmux attach -t "$session"
+        else
+          echo "Already in tmux"
+        fi
+      }
     '';
 
     # set some aliases, feel free to add more or remove some
@@ -108,6 +125,11 @@
       # Cross-platform
       nrc = "nh clean all"; # garbage collect
       nsearch = "nh search"; # search packages
+
+      # tmux aliases
+      tls = "tmux ls"; # list sessions
+      tn = "tmux new -s"; # new session (usage: tn myname)
+      tk = "tmux kill-session -t"; # kill session
     };
 
     sessionVariables = {
@@ -154,6 +176,10 @@
       [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_user" ] && export FRESHRSS_API_USER="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_user")"
       [ -f "$HOME/.config/sops-nix/secrets/freshrss_api_password" ] && export FRESHRSS_API_PASSWORD="$(cat "$HOME/.config/sops-nix/secrets/freshrss_api_password")"
       [ -f "$HOME/.config/sops-nix/secrets/freshrss_url" ] && export FRESHRSS_URL="$(cat "$HOME/.config/sops-nix/secrets/freshrss_url")"
+
+      # Unbind C-j and C-l so tmux can use them for pane navigation
+      bindkey -r "^J"
+      bindkey -r "^L"
     '';
 
     shellAliases = {
@@ -215,6 +241,11 @@
       # Cross-platform
       nrc = "nh clean all"; # garbage collect
       nsearch = "nh search"; # search packages
+
+      # tmux aliases
+      tls = "tmux ls"; # list sessions
+      tn = "tmux new -s"; # new session (usage: tn myname)
+      tk = "tmux kill-session -t"; # kill session
     };
 
     sessionVariables = {
@@ -288,6 +319,8 @@
           set -g @catppuccin_flavor 'mocha'
           set -g @catppuccin_window_status_style "rounded"
           set -g @catppuccin_status_modules_right "directory session"
+          set -g @catppuccin_window_text " #W "
+          set -g @catppuccin_window_current_text " #W "
         '';
       }
       {
@@ -335,10 +368,10 @@
       setw -g aggressive-resize on
 
       # Pane resizing with vim-like keys
-      bind -r - resize-pane -D 2
-      bind -r = resize-pane -U 2
-      bind -r ] resize-pane -R 2
-      bind -r [ resize-pane -L 2
+      bind -r Down resize-pane -D 2
+      bind -r Up resize-pane -U 2
+      bind -r Right resize-pane -R 2
+      bind -r Left resize-pane -L 2
 
       # Equalize panes
       bind -r DC select-layout tiled
@@ -347,7 +380,7 @@
       unbind %
       unbind '"'
       bind \\ split-window -h -c "#{pane_current_path}"
-      bind Enter split-window -v -c "#{pane_current_path}"
+      bind - split-window -v -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
 
       # Kill pane
@@ -360,6 +393,18 @@
 
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
+
+      # smart-splits.nvim integration (pane navigation)
+      bind-key -n C-h if -F "#{@pane-is-vim}" 'send-keys C-h' 'select-pane -L'
+      bind-key -n C-j if -F "#{@pane-is-vim}" 'send-keys C-j' 'select-pane -D'
+      bind-key -n C-k if -F "#{@pane-is-vim}" 'send-keys C-k' 'select-pane -U'
+      bind-key -n C-l if -F "#{@pane-is-vim}" 'send-keys C-l' 'select-pane -R'
+
+      # smart-splits.nvim resizing
+      bind-key -n M-h if -F "#{@pane-is-vim}" 'send-keys M-h' 'resize-pane -L 3'
+      bind-key -n M-j if -F "#{@pane-is-vim}" 'send-keys M-j' 'resize-pane -D 3'
+      bind-key -n M-k if -F "#{@pane-is-vim}" 'send-keys M-k' 'resize-pane -U 3'
+      bind-key -n M-l if -F "#{@pane-is-vim}" 'send-keys M-l' 'resize-pane -R 3'
 
       # Copy mode with vim-like keybindings
       bind v copy-mode
@@ -384,6 +429,10 @@
       set-option -g renumber-windows on
       set-window-option -g pane-base-index 1
 
+      # Don't auto-rename windows (keeps manual names)
+      set-option -g allow-rename off
+      set-window-option -g automatic-rename off
+
       # Help popup (prefix + ?)
       bind ? display-popup -E -w 60 -h 30 '\
         echo "tmux cheatsheet (press q to close)" && \
@@ -399,11 +448,11 @@
         echo "" && \
         echo "PANES" && \
         echo "  prefix \\     split horizontal" && \
-        echo "  prefix Enter split vertical" && \
+        echo "  prefix -     split vertical" && \
+        echo "  C-h/j/k/l    navigate (works in nvim)" && \
         echo "  prefix x     kill pane" && \
         echo "  prefix m     maximize/restore" && \
-        echo "  prefix -/=   resize up/down" && \
-        echo "  prefix [/]   resize left/right" && \
+        echo "  prefix arrows resize panes" && \
         echo "" && \
         echo "COPY MODE" && \
         echo "  prefix v     enter copy mode" && \

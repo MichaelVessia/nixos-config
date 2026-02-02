@@ -21,6 +21,7 @@
     ./vim.nix
     ./find-and-replace.nix
     ./neotest.nix
+    ./tmux.nix
   ];
 
   programs.nvf.enable = true;
