@@ -118,6 +118,7 @@
       gs = "git status";
       gst = "git stash";
       gstp = "git stash pop";
+      gup = "git checkout $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') && git pull";
 
       # NH (nix helper) aliases - platform-aware
       # NixOS
@@ -240,8 +241,9 @@
 
       # 256 color and extended keys support
       set -g default-terminal "tmux-256color"
-      set -s extended-keys on
+      set -s extended-keys always
       set -as terminal-features 'xterm*:extkeys'
+      set -as terminal-features 'ghostty:extkeys'
 
       # Emacs keys in command prompt
       set -g status-keys emacs
