@@ -299,6 +299,10 @@
   settings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     model = "opus";
+    attribution = {
+      commit = "";
+      pr = "";
+    };
     enabledPlugins = {
       "hookify@claude-plugins-official" = true;
       "pr-review-toolkit@claude-plugins-official" = true;
