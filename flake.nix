@@ -18,8 +18,7 @@
       url = "github:lnl7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    claude-code.url = "github:sadjow/claude-code-nix";
-    codex-cli.url = "github:sadjow/codex-cli-nix";
+    llm-agents.url = "github:numtide/llm-agents.nix";
     nvf = {
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -56,7 +55,7 @@
     nixpkgs-unstable,
     home-manager,
     darwin,
-    claude-code,
+    llm-agents,
     nvf,
     nixos-hardware,
     ghostty,

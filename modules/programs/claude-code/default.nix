@@ -295,6 +295,10 @@
     };
   };
 
+  # Agent instructions: shared base + Claude-specific overlay
+  sharedInstructions = builtins.readFile ./shared-instructions.md;
+  claudeOverlay = builtins.readFile ./claude-overlay.md;
+
   # Settings as Nix attrset
   settings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
@@ -529,13 +533,23 @@ in {
         dest = "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills";
         structure = "symlink-tree";
       };
-      codex.enable = false;
-      opencode.enable = false;
+      codex = {
+        enable = true;
+        dest = "$HOME/.agents/skills";
+        structure = "symlink-tree";
+      };
+      opencode = {
+        enable = true;
+        dest = "$HOME/.config/opencode/skills";
+        structure = "symlink-tree";
+      };
     };
   };
 
   home.file = {
-    ".claude/CLAUDE.md".source = ./global-memory.md;
+    ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
+    ".codex/AGENTS.md".text = sharedInstructions;
+    ".config/opencode/AGENTS.md".text = sharedInstructions;
     ".claude/memory" = {
       source = ./memory;
       recursive = true;

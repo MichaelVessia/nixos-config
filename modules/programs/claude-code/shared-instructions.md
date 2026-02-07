@@ -1,20 +1,7 @@
-# Memory Routing
-
-Read relevant detail files based on task:
-
-| Task Type | Detail File |
-|-----------|-------------|
-| TypeScript work | [typescript.md](./memory/typescript.md) |
-| Testing | [testing.md](./memory/testing.md) |
-| Nix/Environment | [nix-environment.md](./memory/nix-environment.md) |
-
----
-
 # Communication
 
 - Be extremely concise. Sacrifice grammar for concision.
-- When planning, ask unresolved questions at the end using the AskUserQuestion
-  tool.
+- When planning, ask unresolved questions before starting work.
 - Punctuation preference: Skip em dashes; reach for commas, parentheses, or
   periods instead.
 

@@ -82,9 +82,9 @@
       lazydocker # terminal UI for docker
       lsof # list open files
 
-      inputs.claude-code.packages.${pkgs.system}.default
-      inputs.codex-cli.packages.${pkgs.system}.default # OpenAI Codex CLI coding agent
-      opencode # AI coding agent (from nixpkgs)
+      inputs.llm-agents.packages.${pkgs.system}.claude-code
+      inputs.llm-agents.packages.${pkgs.system}.codex
+      inputs.llm-agents.packages.${pkgs.system}.opencode
       (pkgs.callPackage ./ralph {})
     ]
     ++ lib.optionals stdenv.isLinux [
