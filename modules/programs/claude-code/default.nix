@@ -535,7 +535,7 @@ in {
       };
       codex = {
         enable = true;
-        dest = "$HOME/.agents/skills";
+        dest = "$HOME/.codex/skills";
         structure = "symlink-tree";
       };
       opencode = {

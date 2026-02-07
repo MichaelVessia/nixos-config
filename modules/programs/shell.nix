@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{...}: {
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
@@ -56,20 +52,6 @@
       [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
       [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
-      # Unbind C-j and C-l so tmux can use them for pane navigation
-      bindkey -r "^J"
-      bindkey -r "^L"
-
-      # tmux session picker (fzf)
-      ta() {
-        if [ -z "$TMUX" ]; then
-          local session
-          session=$(tmux ls -F '#{session_name}: #{session_windows} windows (#{session_attached} attached)' 2>/dev/null | fzf --header 'Attach to session' | cut -d: -f1)
-          [ -n "$session" ] && tmux attach -t "$session"
-        else
-          echo "Already in tmux"
-        fi
-      }
     '';
 
     shellAliases = {
@@ -135,10 +117,11 @@
       nrc = "nh clean all"; # garbage collect
       nsearch = "nh search"; # search packages
 
-      # tmux aliases
-      tls = "tmux ls"; # list sessions
-      tn = "tmux new -s"; # new session (usage: tn myname)
-      tk = "tmux kill-session -t"; # kill session
+      # zellij aliases
+      zls = "zellij list-sessions"; # list sessions
+      zn = "zellij --session"; # new session (usage: zn myname)
+      za = "zellij attach"; # attach to session
+      zk = "zellij kill-session"; # kill session
     };
 
     sessionVariables = {
@@ -191,175 +174,5 @@
     enable = true;
     enableZshIntegration = true;
     nix-direnv.enable = true;
-  };
-
-  # tmux - terminal multiplexer for persistent sessions
-  programs.tmux = {
-    enable = true;
-    mouse = true;
-    baseIndex = 1;
-    historyLimit = 50000;
-    keyMode = "vi";
-    plugins = with pkgs.tmuxPlugins; [
-      {
-        plugin = catppuccin;
-        extraConfig = ''
-          set -g @catppuccin_flavor 'mocha'
-          set -g @catppuccin_window_status_style "rounded"
-          set -g @catppuccin_status_modules_right "directory session"
-          set -g @catppuccin_window_text " #W "
-          set -g @catppuccin_window_current_text " #W "
-        '';
-      }
-      {
-        plugin = resurrect;
-        extraConfig = ''
-          set -g @resurrect-strategy-nvim 'session'
-          set -g @resurrect-capture-pane-contents 'on'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-save-interval '10'
-        '';
-      }
-    ];
-    extraConfig = ''
-      # Prefix: Ctrl+;
-      unbind C-b
-      set -g prefix C-\;
-      bind \; send-prefix
-
-      # Reduce escape-time for vim mode switching
-      set -s escape-time 0
-
-      # Increase message display duration
-      set -g display-time 4000
-
-      # Refresh status more often
-      set -g status-interval 5
-
-      # 256 color and extended keys support
-      set -g default-terminal "tmux-256color"
-      set -s extended-keys always
-      set -as terminal-features 'xterm*:extkeys'
-      set -as terminal-features 'ghostty:extkeys'
-
-      # Emacs keys in command prompt
-      set -g status-keys emacs
-
-      # Focus events for terminals that support them
-      set -g focus-events on
-
-      # Better multi-monitor support
-      setw -g aggressive-resize on
-
-      # Pane resizing with vim-like keys
-      bind -r Down resize-pane -D 2
-      bind -r Up resize-pane -U 2
-      bind -r Right resize-pane -R 2
-      bind -r Left resize-pane -L 2
-
-      # Equalize panes
-      bind -r DC select-layout tiled
-
-      # Splits preserving current path
-      unbind %
-      unbind '"'
-      bind \\ split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
-      bind c new-window -c "#{pane_current_path}"
-
-      # Kill pane
-      bind x kill-pane
-
-      # Maximize/zoom pane (toggle)
-      unbind z
-      unbind m
-      bind m resize-pane -Z
-      bind z resize-pane -Z
-
-      # Reload config
-      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
-
-      # smart-splits.nvim integration (pane navigation)
-      bind-key -n C-h if -F "#{@pane-is-vim}" 'send-keys C-h' 'select-pane -L'
-      bind-key -n C-j if -F "#{@pane-is-vim}" 'send-keys C-j' 'select-pane -D'
-      bind-key -n C-k if -F "#{@pane-is-vim}" 'send-keys C-k' 'select-pane -U'
-      bind-key -n C-l if -F "#{@pane-is-vim}" 'send-keys C-l' 'select-pane -R'
-
-      # smart-splits.nvim resizing
-      bind-key -n M-h if -F "#{@pane-is-vim}" 'send-keys M-h' 'resize-pane -L 3'
-      bind-key -n M-j if -F "#{@pane-is-vim}" 'send-keys M-j' 'resize-pane -D 3'
-      bind-key -n M-k if -F "#{@pane-is-vim}" 'send-keys M-k' 'resize-pane -U 3'
-      bind-key -n M-l if -F "#{@pane-is-vim}" 'send-keys M-l' 'resize-pane -R 3'
-
-      # Copy mode with vim-like keybindings
-      bind v copy-mode
-      bind -T copy-mode-vi q send-keys -X cancel
-      bind -T copy-mode-vi v send-keys -X begin-selection
-      bind -T copy-mode-vi V send-keys -X select-line
-      bind -T copy-mode-vi Escape send-keys -X clear-selection
-      bind -T copy-mode-vi 'C-v' send-keys -X rectangle-toggle
-      bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
-      bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
-
-      # Rotate panes
-      bind ] rotate-window -D
-      bind [ rotate-window -U
-
-      # Pane navigation in copy mode
-      bind -T copy-mode-vi 'C-h' select-pane -L
-      bind -T copy-mode-vi 'C-j' select-pane -D
-      bind -T copy-mode-vi 'C-k' select-pane -U
-      bind -T copy-mode-vi 'C-l' select-pane -R
-
-      # Status bar at top
-      set-option -g status-position top
-
-      # Renumber windows when one is closed
-      set-option -g renumber-windows on
-      set-window-option -g pane-base-index 1
-
-      # Don't auto-rename windows (keeps manual names)
-      set-option -g allow-rename off
-      set-window-option -g automatic-rename off
-
-      # Help popup (prefix + ?)
-      bind ? display-popup -E -w 60 -h 32 '\
-        echo "tmux cheatsheet (press q to close)" && \
-        echo "" && \
-        echo "SESSIONS" && \
-        echo "  prefix d     detach" && \
-        echo "  prefix s     list sessions" && \
-        echo "" && \
-        echo "WINDOWS" && \
-        echo "  prefix c     new window" && \
-        echo "  prefix n/p   next/prev window" && \
-        echo "  prefix 0-9   jump to window" && \
-        echo "" && \
-        echo "PANES" && \
-        echo "  prefix \\     split horizontal" && \
-        echo "  prefix -     split vertical" && \
-        echo "  C-h/j/k/l    navigate (works in nvim)" && \
-        echo "  prefix x     kill pane" && \
-        echo "  prefix z/m   zoom/maximize toggle" && \
-        echo "  prefix ]/[   rotate panes cw/ccw" && \
-        echo "  prefix arrows resize panes" && \
-        echo "" && \
-        echo "COPY MODE" && \
-        echo "  prefix v     enter copy mode" && \
-        echo "  v/V          select / line select" && \
-        echo "  y            copy to clipboard" && \
-        echo "  q            exit copy mode" && \
-        echo "" && \
-        echo "OTHER" && \
-        echo "  prefix r     reload config" && \
-        echo "  prefix ?     this help" && \
-        echo "" && \
-        read -n 1'
-    '';
   };
 }

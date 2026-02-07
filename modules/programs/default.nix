@@ -15,6 +15,7 @@
     ./handy.nix
     ./media.nix
     ./shell.nix
+    ./zellij.nix
     ./ssh.nix
     ./syncthing.nix
     ./transcribe.nix
