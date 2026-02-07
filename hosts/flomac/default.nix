@@ -34,6 +34,7 @@
       "bruno"
       "chatgpt"
       "claude"
+      "codex-app"
       "figma"
       "ghostty"
       "hammerspoon"

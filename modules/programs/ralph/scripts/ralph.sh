@@ -2,11 +2,10 @@
 
 # Ralph Loop - Long-running AI coding agent orchestrator
 #
-# Usage: ./ralph/ralph.sh [--model MODEL] [--ci-model MODEL] [max_iterations]
+# Usage: ./ralph/ralph.sh [--model MODEL] [max_iterations]
 #
 # Options:
-#   --model MODEL     Claude model for story work (sonnet, opus, haiku). Default: opus
-#   --ci-model MODEL  Claude model for CI error fixing. Default: sonnet
+#   --model MODEL     Claude model (sonnet, opus, haiku). Default: opus
 #
 # This script runs Claude Code in a loop, having it work through
 # a PRD of user stories until all are complete or max iterations reached.
@@ -18,19 +17,12 @@ set -e
 
 # Parse arguments
 MODEL="opus"
-CI_MODEL="sonnet"
 MAX_ITERATIONS=10
-MODEL_EXPLICIT=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --model)
       MODEL="$2"
-      MODEL_EXPLICIT=true
-      shift 2
-      ;;
-    --ci-model)
-      CI_MODEL="$2"
       shift 2
       ;;
     *)
@@ -330,14 +322,9 @@ run_iteration() {
   local prompt_file="$OUTPUT_DIR/iteration_${iteration}_prompt.md"
   echo "$prompt" >"$prompt_file"
 
-  local current_model="$MODEL"
-  if [ "$MODEL_EXPLICIT" = false ] && [ -f "$OUTPUT_DIR/ci_errors.txt" ] && [ -s "$OUTPUT_DIR/ci_errors.txt" ]; then
-    current_model="$CI_MODEL"
-    log "INFO" "Using CI model ($CI_MODEL) for error fixing"
-  fi
-  local agent_cmd="$AGENT_CMD_BASE --model $current_model"
+  local agent_cmd="$AGENT_CMD_BASE --model $MODEL"
 
-  log "INFO" "Running Claude Code agent (model: $current_model)..."
+  log "INFO" "Running Claude Code agent (model: $MODEL)..."
   echo ""
 
   if cat "$prompt_file" | $agent_cmd --print --output-format stream-json 2>&1 | tee "$output_file" | ./$RALPH_DIR/scripts/stream-filter.sh; then
@@ -387,7 +374,7 @@ run_iteration() {
 main() {
   log "INFO" "=========================================="
   log "INFO" "Starting Ralph Loop"
-  log "INFO" "Model: $MODEL (CI fixes: $CI_MODEL)"
+  log "INFO" "Model: $MODEL"
   log "INFO" "Max iterations: $MAX_ITERATIONS"
   log "INFO" "PRD file: $PRD_FILE"
   log "INFO" "=========================================="

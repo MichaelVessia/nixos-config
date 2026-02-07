@@ -83,6 +83,7 @@
       lsof # list open files
 
       inputs.claude-code.packages.${pkgs.system}.default
+      inputs.codex-cli.packages.${pkgs.system}.default # OpenAI Codex CLI coding agent
       opencode # AI coding agent (from nixpkgs)
       (pkgs.callPackage ./ralph {})
     ]
