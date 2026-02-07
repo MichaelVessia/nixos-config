@@ -62,7 +62,7 @@
       cr = "claude --resume";
       cy = "claude --dangerously-skip-permissions";
       co = "codex";
-      coy = "codex --yolo";
+      coy = "codex --full-auto";
       oc = "opencode";
 
       # eza aliases (ls replacement)
