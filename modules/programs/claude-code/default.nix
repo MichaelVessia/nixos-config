@@ -88,14 +88,18 @@
     '';
   };
 
+  alertSound = ./sounds/teleport.ogg;
+
   claude-alert = pkgs.writeShellApplication {
     name = "claude-alert";
-    runtimeInputs = lib.optionals pkgs.stdenv.isLinux [pkgs.pipewire];
+    runtimeInputs =
+      lib.optionals pkgs.stdenv.isLinux [pkgs.pipewire]
+      ++ lib.optionals pkgs.stdenv.isDarwin [pkgs.ffmpeg];
     text = ''
       if [[ "$(uname -s)" == "Darwin" ]]; then
-        afplay /System/Library/Sounds/Glass.aiff 2>/dev/null &
+        ffplay -nodisp -autoexit -loglevel quiet ${alertSound} 2>/dev/null &
       else
-        pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/bell.oga 2>/dev/null &
+        pw-play ${alertSound} 2>/dev/null &
       fi
     '';
   };
