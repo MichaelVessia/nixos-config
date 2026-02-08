@@ -530,17 +530,17 @@ in {
     skills.enableAll = true;
     targets = {
       claude = {
-        dest = "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills";
+        dest = "$HOME/.agents/skills";
         structure = "symlink-tree";
       };
       codex = {
         enable = true;
-        dest = "$HOME/.codex/skills";
+        dest = "$HOME/.agents/skills";
         structure = "symlink-tree";
       };
       opencode = {
         enable = true;
-        dest = "$HOME/.config/opencode/skills";
+        dest = "$HOME/.agents/skills";
         structure = "symlink-tree";
       };
     };
@@ -550,6 +550,9 @@ in {
     ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
     ".codex/AGENTS.md".text = sharedInstructions;
     ".config/opencode/AGENTS.md".text = sharedInstructions;
+    ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
+    ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
+    ".config/opencode/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
     ".claude/memory" = {
       source = ./memory;
       recursive = true;

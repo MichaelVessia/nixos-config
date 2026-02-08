@@ -10,7 +10,6 @@ To do this, follow these steps precisely:
 
 1. Launch a haiku agent to check if any of the following are true:
    - The pull request is closed
-   - The pull request is a draft
    - The pull request does not need code review (e.g. automated PR, trivial change that is obviously correct)
    - Claude has already commented on this PR (check `gh pr view <PR> --comments` for comments left by claude)
 
