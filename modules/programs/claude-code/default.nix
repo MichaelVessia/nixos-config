@@ -516,6 +516,17 @@
       ];
     };
   };
+
+  codexConfig = {
+    personality = "pragmatic";
+    model = "gpt-5.3-codex";
+    model_reasoning_effort = "high";
+    mcp_servers = {
+      atlassian = {
+        url = "https://mcp.atlassian.com/v1/mcp";
+      };
+    };
+  };
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
@@ -553,6 +564,7 @@ in {
   home.file = {
     ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
     ".codex/AGENTS.md".text = sharedInstructions;
+    ".codex/config.toml".source = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
     ".config/opencode/AGENTS.md".text = sharedInstructions;
     ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
     ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
