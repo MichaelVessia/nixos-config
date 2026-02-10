@@ -3,6 +3,55 @@
     enable = true;
   };
 
+  xdg.configFile."zellij/layouts/default.kdl".text = ''
+    layout {
+      pane
+
+      swap_tiled_layout name="vertical" {
+        tab max_panes=5 {
+          pane split_direction="vertical" {
+            pane
+            pane { children; }
+          }
+        }
+        tab max_panes=8 {
+          pane split_direction="vertical" {
+            pane { children; }
+            pane { pane; pane; pane; pane; }
+          }
+        }
+      }
+
+      swap_tiled_layout name="horizontal" {
+        tab max_panes=5 {
+          pane
+          pane
+        }
+      }
+
+      swap_tiled_layout name="grid" {
+        tab max_panes=2 {
+          pane split_direction="vertical" {
+            pane
+            pane
+          }
+        }
+        tab max_panes=5 {
+          pane split_direction="vertical" {
+            pane split_direction="horizontal" {
+              pane
+              pane
+            }
+            pane split_direction="horizontal" {
+              pane
+              pane
+            }
+          }
+        }
+      }
+    }
+  '';
+
   xdg.configFile."zellij/config.kdl".text = ''
     // Catppuccin Mocha theme
     theme "catppuccin-mocha"
@@ -97,6 +146,9 @@
         // Rename tab / pane (, and . like vim buffers)
         bind "," { SwitchToMode "RenameTab"; TabNameInput 0; }
         bind "." { SwitchToMode "RenamePane"; PaneNameInput 0; }
+
+        // Cycle layout (grid, vertical, horizontal, etc.)
+        bind "Space" { NextSwapLayout; SwitchToMode "Normal"; }
 
         // Move pane in direction (prefix + Shift-hjkl)
         bind "H" { MovePane "Left"; SwitchToMode "Normal"; }

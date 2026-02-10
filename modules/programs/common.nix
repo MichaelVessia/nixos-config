@@ -75,10 +75,7 @@
         export PATH="${pkgs.bun}/bin:$PATH"
         exec bunx critique "$@"
       '') # git diff viewer
-      (pkgs.writeShellScriptBin "datadog" ''
-        export PATH="${pkgs.bun}/bin:$PATH"
-        exec bunx @ctdio/datadog-cli "$@"
-      '') # datadog CLI
+      (pkgs.callPackage ./pup {}) # Datadog API CLI
       lazydocker # terminal UI for docker
       lsof # list open files
 
