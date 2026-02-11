@@ -422,15 +422,16 @@
     "flocasts-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1770497133,
-        "narHash": "sha256-WhdxoXXcwQbGe7oQchBZi2nmCu25ecrghlm05Tu25II=",
-        "ref": "refs/heads/master",
-        "rev": "1c82752881f9481ec45be01a4b0864ee6fee2b3c",
-        "revCount": 35,
+        "lastModified": 1770736700,
+        "narHash": "sha256-HUGkIShkeZknDChbMs61+ILxqn6eCwcmRCJfVDHvc6M=",
+        "ref": "feat/datadog-pup-migration",
+        "rev": "e9d4088a17c388f1971626db18866feb28b8fb3b",
+        "revCount": 38,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/agent-skills.git"
       },
       "original": {
+        "ref": "feat/datadog-pup-migration",
         "type": "git",
         "url": "ssh://git@github.com/flocasts/agent-skills.git"
       }

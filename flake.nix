@@ -44,7 +44,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flocasts-skills = {
-      url = "git+ssh://git@github.com/flocasts/agent-skills.git";
+      url = "git+ssh://git@github.com/flocasts/agent-skills.git?ref=feat/datadog-pup-migration";
       flake = false;
     };
   };
