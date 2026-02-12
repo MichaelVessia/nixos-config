@@ -83,6 +83,8 @@
       inputs.llm-agents.packages.${pkgs.system}.codex
       inputs.llm-agents.packages.${pkgs.system}.opencode
       (pkgs.callPackage ./ralph {})
+      (pkgs.callPackage ./sidecar {}) # TUI companion for CLI coding agents
+      (pkgs.callPackage ./td {}) # task tracking for AI coding sessions (used by sidecar)
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
