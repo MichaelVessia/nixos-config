@@ -10,5 +10,6 @@
     ]
     ++ lib.optionals stdenv.isLinux [
       pinta
+      telegram-desktop
     ];
 }
