@@ -119,19 +119,26 @@
   claude-sleep-inhibit = pkgs.writeShellApplication {
     name = "claude-sleep-inhibit";
     runtimeInputs =
-      [pkgs.coreutils]
-      ++ lib.optionals pkgs.stdenv.isLinux [pkgs.systemd];
+      [pkgs.coreutils pkgs.util-linux]
+      ++ lib.optionals pkgs.stdenv.isLinux [pkgs.systemd pkgs.procps];
     text = ''
       PIDFILE="/tmp/claude-sleep-inhibit.pid"
+      LOCKFILE="/tmp/claude-sleep-inhibit.lock"
       LOCKNAME="Claude Code session"
       OS="$(uname -s)"
 
       start_linux() {
-        if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-          exit 0
-        fi
-        systemd-inhibit --what=sleep:idle --who="claude-code" --why="$LOCKNAME" sleep infinity </dev/null >/dev/null 2>&1 &
-        echo $! > "$PIDFILE"
+        (
+          flock 9
+          if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+            exit 0
+          fi
+          # Pidfile stale or missing, clean up any orphaned inhibitors
+          pkill -f "systemd-inhibit.*--who=claude-code" 2>/dev/null || true
+          rm -f "$PIDFILE"
+          systemd-inhibit --what=sleep:idle --who="claude-code" --why="$LOCKNAME" sleep infinity </dev/null >/dev/null 2>&1 &
+          echo $! > "$PIDFILE"
+        ) 9>"$LOCKFILE"
       }
 
       start_darwin() {
@@ -139,13 +146,14 @@
       }
 
       stop_linux() {
-        if [ -f "$PIDFILE" ]; then
-          pid=$(cat "$PIDFILE")
-          if kill -0 "$pid" 2>/dev/null; then
-            kill "$pid" 2>/dev/null
+        (
+          flock 9
+          if [ -f "$PIDFILE" ]; then
+            pid=$(cat "$PIDFILE")
+            kill "$pid" 2>/dev/null || true
+            rm -f "$PIDFILE"
           fi
-          rm -f "$PIDFILE"
-        fi
+        ) 9>"$LOCKFILE"
       }
 
       stop_darwin() {
