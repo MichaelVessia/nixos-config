@@ -320,7 +320,6 @@
       pr = "";
     };
     enabledPlugins = {
-      "hookify@claude-plugins-official" = true;
       "pr-review-toolkit@claude-plugins-official" = true;
     };
     statusLine = {
