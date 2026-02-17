@@ -504,7 +504,9 @@
     personality = "pragmatic";
     model = "gpt-5.3-codex";
     model_reasoning_effort = "high";
-    status_line = ["model" "context-remaining" "git-branch"];
+    tui = {
+      status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
+    };
     mcp_servers = {
       atlassian = {
         url = "https://mcp.atlassian.com/v1/mcp";
@@ -533,6 +535,8 @@
       };
     };
   };
+
+  codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
@@ -570,7 +574,6 @@ in {
   home.file = {
     ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
     ".codex/AGENTS.md".text = sharedInstructions;
-    ".codex/config.toml".source = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
     ".config/opencode/AGENTS.md".text = sharedInstructions;
     ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
     ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
@@ -585,6 +588,11 @@ in {
     };
     ".claude/settings.json".text = builtins.toJSON settings;
   };
+
+  # Copy codex config as a regular file (not symlink) so codex can read it
+  home.activation.codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
+  '';
 
   # dcg (destructive command guard) in PATH for manual use
   home.packages = [dcg];
