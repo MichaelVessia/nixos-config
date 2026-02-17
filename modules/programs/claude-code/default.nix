@@ -10,20 +10,15 @@
     name = "claude-statusline";
     runtimeInputs = [pkgs.jq pkgs.git pkgs.coreutils];
     text = ''
-      # Read JSON input from stdin
       input=$(cat)
 
-      # Extract model information
       model_name=$(echo "$input" | jq -r '.model.id // "unknown"')
-
-      # Extract directory information
       cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 
-      # Extract context usage
+      # Context usage
       context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
       usage=$(echo "$input" | jq '.context_window.current_usage')
       if [ "$usage" != "null" ] && [ "$context_size" -gt 0 ] 2>/dev/null; then
-        # Include input_tokens + cache tokens for actual context usage
         current_tokens=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
         if [ "$current_tokens" != "null" ] && [ "$current_tokens" -ge 0 ] 2>/dev/null; then
           context_pct=$((current_tokens * 100 / context_size))
@@ -34,57 +29,38 @@
         context_pct="-"
       fi
 
-      # Get git branch if in a git repo (using -C to avoid cd)
       branch=$(git -C "$cwd" branch --show-current 2>/dev/null || true)
-
-      # Get basename of directory
       dir_name=$(basename "$cwd")
+      user_host="$(whoami)@$(hostname -s)"
 
-      # Powerline arrow character (U+E0B0)
-      PL_ARROW=""
-
-      # Powerline segment: bg color, fg color, text, next segment's bg color
-      pl_segment() {
-        local bg=$1 fg=$2 text=$3 next_bg=$4
-        printf "\033[48;5;%dm\033[38;5;%dm %s \033[48;5;%dm\033[38;5;%dm%s" \
-          "$bg" "$fg" "$text" "$next_bg" "$bg" "$PL_ARROW"
-      }
-
-      # Final powerline segment
-      pl_segment_end() {
-        local bg=$1 fg=$2 text=$3
-        printf "\033[48;5;%dm\033[38;5;%dm %s \033[0m\033[38;5;%dm%s\033[0m" \
-          "$bg" "$fg" "$text" "$bg" "$PL_ARROW"
-      }
-
-      # Color definitions (256-color palette)
-      C_MAGENTA=5 # Model
-      C_YELLOW=3  # Project
-      C_GREEN=2   # Branch
-      C_CYAN=6    # Context
-      C_BLACK=0   # Dark text
-
-      # Shorten model name (e.g., "claude-sonnet-4-5-20250929" -> "sonnet-4-5")
+      # Shorten model name (e.g., "claude-opus-4-6-20250929" -> "Opus 4.6")
       short_model=$(echo "$model_name" | sed 's/^claude-//' | sed 's/-[0-9]\{8\}$//')
+      # Capitalize and dot-separate version: "opus-4-6" -> "Opus 4.6"
+      short_model=$(echo "$short_model" | sed 's/^\(.\)/\U\1/' | sed 's/-\([0-9]\)/.\1/g' | sed 's/\./ /' )
 
-      # Build status line: Model -> Project -> Branch -> Context%
-      row1=$(pl_segment $C_MAGENTA $C_BLACK "$short_model" $C_YELLOW)
-      # Format context display (add % only if it's a number)
+      # Colors
+      C_CYAN="\033[36m"
+      C_WHITE="\033[37m"
+      C_MAGENTA="\033[35m"
+      C_RED="\033[31m"
+      C_GREEN="\033[32m"
+      C_RESET="\033[0m"
+
+      # Format context
       if [ "$context_pct" = "-" ]; then
-        context_display="$context_pct"
+        ctx_display="-"
       else
-        context_display="''${context_pct}%"
+        ctx_display="''${context_pct}% ctx"
       fi
 
+      # Build: user@host in project    branch | Model | N% ctx
+      line="''${C_CYAN}''${user_host}''${C_WHITE} in ''${C_MAGENTA}''${dir_name}"
       if [ -n "$branch" ]; then
-        row1="''${row1}$(pl_segment $C_YELLOW $C_BLACK "$dir_name" $C_GREEN)"
-        row1="''${row1}$(pl_segment $C_GREEN $C_BLACK "$branch" $C_CYAN)"
-        row1="''${row1}$(pl_segment_end $C_CYAN $C_BLACK "$context_display")"
-      else
-        row1="''${row1}$(pl_segment $C_YELLOW $C_BLACK "$dir_name" $C_CYAN)"
-        row1="''${row1}$(pl_segment_end $C_CYAN $C_BLACK "$context_display")"
+        line="''${line}    ''${C_RED}''${branch}"
       fi
-      printf "%b\n" "$row1"
+      line="''${line} ''${C_WHITE}| ''${C_WHITE}''${short_model} ''${C_WHITE}| ''${C_GREEN}''${ctx_display}''${C_RESET}"
+
+      printf "%b\n" "$line"
     '';
   };
 
@@ -528,9 +504,32 @@
     personality = "pragmatic";
     model = "gpt-5.3-codex";
     model_reasoning_effort = "high";
+    status_line = ["model" "context-remaining" "git-branch"];
     mcp_servers = {
       atlassian = {
         url = "https://mcp.atlassian.com/v1/mcp";
+      };
+    };
+    otel = {
+      environment = "dev";
+      log_user_prompt = false;
+      exporter = {
+        otlp-http = {
+          endpoint = "https://http-intake.logs.datadoghq.com/v1/logs";
+          protocol = "binary";
+          headers = {
+            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
+          };
+        };
+      };
+      trace_exporter = {
+        otlp-http = {
+          endpoint = "https://otlp.datadoghq.com/v1/traces";
+          protocol = "binary";
+          headers = {
+            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
+          };
+        };
       };
     };
   };
