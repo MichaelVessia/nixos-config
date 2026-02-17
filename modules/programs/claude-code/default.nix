@@ -12,55 +12,49 @@
     text = ''
       input=$(cat)
 
-      model_name=$(echo "$input" | jq -r '.model.id // "unknown"')
       cwd=$(echo "$input" | jq -r '.workspace.current_dir')
+      model=$(echo "$input" | jq -r '.model.display_name')
+      output_style=$(echo "$input" | jq -r '.output_style.name // "default"')
+      current_dir=$(basename "$cwd")
 
-      # Context usage
-      context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
-      usage=$(echo "$input" | jq '.context_window.current_usage')
-      if [ "$usage" != "null" ] && [ "$context_size" -gt 0 ] 2>/dev/null; then
-        current_tokens=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
-        if [ "$current_tokens" != "null" ] && [ "$current_tokens" -ge 0 ] 2>/dev/null; then
-          context_pct=$((current_tokens * 100 / context_size))
+      # Git: green  for clean, yellow  for dirty
+      git_info=""
+      if git -C "$cwd" --no-optional-locks rev-parse --git-dir > /dev/null 2>&1; then
+        branch=$(git -C "$cwd" --no-optional-locks rev-parse --abbrev-ref HEAD 2>/dev/null)
+        if [[ -n $(git -C "$cwd" --no-optional-locks status --porcelain 2>/dev/null) ]]; then
+          git_info=$(printf "\033[33m  %s\033[0m" "$branch")
         else
-          context_pct="-"
+          git_info=$(printf "\033[32m  %s\033[0m" "$branch")
         fi
-      else
-        context_pct="-"
       fi
 
-      branch=$(git -C "$cwd" branch --show-current 2>/dev/null || true)
-      dir_name=$(basename "$cwd")
-      user_host="$(whoami)@$(hostname -s)"
-
-      # Shorten model name (e.g., "claude-opus-4-6-20250929" -> "Opus 4.6")
-      short_model=$(echo "$model_name" | sed 's/^claude-//' | sed 's/-[0-9]\{8\}$//')
-      # Capitalize and dot-separate version: "opus-4-6" -> "Opus 4.6"
-      short_model=$(echo "$short_model" | sed 's/^\(.\)/\U\1/' | sed 's/-\([0-9]\)/.\1/g' | sed 's/\./ /' )
-
-      # Colors
-      C_CYAN="\033[36m"
-      C_WHITE="\033[37m"
-      C_MAGENTA="\033[35m"
-      C_RED="\033[31m"
-      C_GREEN="\033[32m"
-      C_RESET="\033[0m"
-
-      # Format context
-      if [ "$context_pct" = "-" ]; then
-        ctx_display="-"
-      else
-        ctx_display="''${context_pct}% ctx"
+      # Context: green < 50%, yellow < 75%, red >= 75%
+      context_info=""
+      usage=$(echo "$input" | jq '.context_window.current_usage')
+      if [ "$usage" != "null" ]; then
+        current=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
+        size=$(echo "$input" | jq '.context_window.context_window_size')
+        pct=$((current * 100 / size))
+        if [ "$pct" -lt 50 ]; then
+          color="\033[32m"
+        elif [ "$pct" -lt 75 ]; then
+          color="\033[33m"
+        else
+          color="\033[31m"
+        fi
+        context_info=$(printf " \033[2m|\033[0m ''${color}%d%%\033[0m ctx" "$pct")
       fi
 
-      # Build: user@host in project    branch | Model | N% ctx
-      line="''${C_CYAN}''${user_host}''${C_WHITE} in ''${C_MAGENTA}''${dir_name}"
-      if [ -n "$branch" ]; then
-        line="''${line}    ''${C_RED}''${branch}"
-      fi
-      line="''${line} ''${C_WHITE}| ''${C_WHITE}''${short_model} ''${C_WHITE}| ''${C_GREEN}''${ctx_display}''${C_RESET}"
+      hostname=$(hostname -s)
 
-      printf "%b\n" "$line"
+      # Output style (only if not default)
+      style_info=""
+      if [ "$output_style" != "default" ]; then
+        style_info=$(printf " \033[2m|\033[0m \033[36m%s\033[0m" "$output_style")
+      fi
+
+      printf "\033[32m%s\033[0m@\033[34m%s\033[0m in \033[36m%s\033[0m%s \033[2m|\033[0m \033[35m%s\033[0m%s%s" \
+        "$USER" "$hostname" "$current_dir" "''${git_info:+ $git_info}" "$model" "$style_info" "$context_info"
     '';
   };
 
