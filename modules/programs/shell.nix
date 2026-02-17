@@ -52,6 +52,20 @@
       [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
       [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
+      # AI agent telemetry -> Datadog (shared key for Claude Code + Codex)
+      if [ -f "$SECRETS_DIR/dd_telemetry_api_key" ]; then
+        export DD_TELEMETRY_API_KEY="$(cat "$SECRETS_DIR/dd_telemetry_api_key")"
+        # Claude Code OTEL
+        export CLAUDE_CODE_ENABLE_TELEMETRY=1
+        export OTEL_LOGS_EXPORTER=otlp
+        export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL="http/protobuf"
+        export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="https://http-intake.logs.datadoghq.com/v1/logs"
+        export OTEL_EXPORTER_OTLP_HEADERS="dd-api-key=$DD_TELEMETRY_API_KEY"
+        export OTEL_METRICS_EXPORTER=otlp
+        export OTEL_EXPORTER_OTLP_METRICS_PROTOCOL="http/protobuf"
+        export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="https://otlp.datadoghq.com/v1/metrics"
+      fi
+
     '';
 
     shellAliases = {
