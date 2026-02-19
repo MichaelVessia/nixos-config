@@ -46,6 +46,7 @@
       "raycast"
       "shottr"
       "superwhisper"
+      "tailscale"
       "yaak"
       "zoom"
     ];
