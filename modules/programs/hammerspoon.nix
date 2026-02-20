@@ -13,6 +13,18 @@ lib.mkIf pkgs.stdenv.isDarwin {
     end)
     hs.alert.show("Hammerspoon config loaded")
 
+    -- Cmd+Shift+C: grab clipboard screenshot and send to claude-casino
+    hs.hotkey.bind({"cmd", "shift"}, "C", function()
+      local task = hs.task.new("/bin/zsh", function(exitCode, stdout, stderr)
+        if exitCode == 0 then
+          hs.alert.show("Screenshot sent")
+        else
+          hs.alert.show("screensend failed: " .. (stderr or ""))
+        end
+      end, {"-l", "-c", "screensend"})
+      task:start()
+    end)
+
     --[[
     -- Move window to space: BROKEN on macOS Sequoia (15.x)
     -- See: https://github.com/Hammerspoon/hammerspoon/issues/3698
