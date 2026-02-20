@@ -72,7 +72,12 @@
         fi
         ssh claude-casino 'mkdir -p /tmp/screenshots' 2>/dev/null
         scp -q "$tmp" claude-casino:/tmp/screenshots/
-        echo "/tmp/screenshots/screenshot-''${ts}.png"
+        local remote_path="/tmp/screenshots/screenshot-''${ts}.png"
+        echo "$remote_path"
+        case "$(uname -s)" in
+          Darwin) echo -n "$remote_path" | pbcopy ;;
+          Linux)  echo -n "$remote_path" | wl-copy ;;
+        esac
         rm "$tmp"
       }
 
