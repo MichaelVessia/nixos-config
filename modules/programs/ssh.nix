@@ -38,6 +38,13 @@
         hostname = "192.168.1.249";
         user = "openclaw";
       };
+      "claude-casino" = {
+        hostname = "100.86.122.24";
+        user = "cc";
+        setEnv = {
+          TERM = "xterm-256color";
+        };
+      };
     };
   };
 
