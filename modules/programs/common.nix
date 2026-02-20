@@ -87,6 +87,9 @@
       (pkgs.callPackage ./sidecar {}) # TUI companion for CLI coding agents
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions (used by sidecar)
     ]
+    ++ lib.optionals stdenv.isDarwin [
+      pngpaste # grab images from clipboard
+    ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
