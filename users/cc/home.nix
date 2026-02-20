@@ -18,6 +18,8 @@
     ../../modules/programs/basalt.nix
   ];
 
+  programs.claude-code.sleepInhibitor.enable = false;
+
   home.username = "cc";
   home.homeDirectory = "/home/cc";
 }

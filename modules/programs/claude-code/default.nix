@@ -5,6 +5,8 @@
   inputs,
   ...
 }: let
+  cfg = config.programs.claude-code;
+
   # Wrapped scripts with explicit deps
   claude-statusline = pkgs.writeShellApplication {
     name = "claude-statusline";
@@ -297,26 +299,29 @@
       command = "${claude-statusline}/bin/claude-statusline";
     };
     hooks = {
-      PreToolUse = [
-        {
-          matcher = "";
-          hooks = [
-            {
-              type = "command";
-              command = "${claude-sleep-inhibit}/bin/claude-sleep-inhibit start";
-            }
-          ];
-        }
-        {
-          matcher = "Bash";
-          hooks = [
-            {
-              type = "command";
-              command = "${dcg}/bin/dcg";
-            }
-          ];
-        }
-      ];
+      PreToolUse =
+        lib.optionals cfg.sleepInhibitor.enable [
+          {
+            matcher = "";
+            hooks = [
+              {
+                type = "command";
+                command = "${claude-sleep-inhibit}/bin/claude-sleep-inhibit start";
+              }
+            ];
+          }
+        ]
+        ++ [
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "${dcg}/bin/dcg";
+              }
+            ];
+          }
+        ];
       Notification = [
         {
           matcher = "permission_prompt";
@@ -339,7 +344,7 @@
           ];
         }
       ];
-      Stop = [
+      Stop = lib.optionals cfg.sleepInhibitor.enable [
         {
           matcher = "";
           hooks = [
@@ -534,63 +539,73 @@
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
-  programs.agent-skills = {
-    enable = true;
-    sources =
-      {
-        personal.path = ./skills;
-      }
-      // lib.optionalAttrs pkgs.stdenv.isDarwin {
-        flocasts = {
-          path = inputs.flocasts-skills;
-          subdir = "skills";
+  options.programs.claude-code = {
+    sleepInhibitor.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Whether to enable the sleep inhibitor hook for Claude Code";
+    };
+  };
+
+  config = {
+    programs.agent-skills = {
+      enable = true;
+      sources =
+        {
+          personal.path = ./skills;
+        }
+        // lib.optionalAttrs pkgs.stdenv.isDarwin {
+          flocasts = {
+            path = inputs.flocasts-skills;
+            subdir = "skills";
+          };
+        };
+      skills.enableAll = true;
+      targets = {
+        claude = {
+          dest = "$HOME/.agents/skills";
+          structure = "symlink-tree";
+        };
+        codex = {
+          enable = true;
+          dest = "$HOME/.agents/skills";
+          structure = "symlink-tree";
+        };
+        opencode = {
+          enable = true;
+          dest = "$HOME/.agents/skills";
+          structure = "symlink-tree";
         };
       };
-    skills.enableAll = true;
-    targets = {
-      claude = {
-        dest = "$HOME/.agents/skills";
-        structure = "symlink-tree";
-      };
-      codex = {
-        enable = true;
-        dest = "$HOME/.agents/skills";
-        structure = "symlink-tree";
-      };
-      opencode = {
-        enable = true;
-        dest = "$HOME/.agents/skills";
-        structure = "symlink-tree";
-      };
     };
+
+    home.file = {
+      ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
+      ".codex/AGENTS.md".text = sharedInstructions;
+      ".config/opencode/AGENTS.md".text = sharedInstructions;
+      ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
+      ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
+      ".config/opencode/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
+      ".claude/memory" = {
+        source = ./memory;
+        recursive = true;
+      };
+      ".claude/agents" = {
+        source = ./agents;
+        recursive = true;
+      };
+      ".claude/settings.json".text = builtins.toJSON settings;
+    };
+
+    # Copy codex config as a regular file (not symlink) so codex can read it
+    home.activation.codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
+    '';
+
+    # dcg (destructive command guard) in PATH for manual use
+    home.packages = [dcg];
+
+    # dcg config
+    xdg.configFile."dcg/config.toml".source = (pkgs.formats.toml {}).generate "dcg-config.toml" dcgConfig;
   };
-
-  home.file = {
-    ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
-    ".codex/AGENTS.md".text = sharedInstructions;
-    ".config/opencode/AGENTS.md".text = sharedInstructions;
-    ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-    ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-    ".config/opencode/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-    ".claude/memory" = {
-      source = ./memory;
-      recursive = true;
-    };
-    ".claude/agents" = {
-      source = ./agents;
-      recursive = true;
-    };
-    ".claude/settings.json".text = builtins.toJSON settings;
-  };
-
-  # Copy codex config as a regular file (not symlink) so codex can read it
-  home.activation.codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
-  '';
-
-  # dcg (destructive command guard) in PATH for manual use
-  home.packages = [dcg];
-
-  # dcg config
-  xdg.configFile."dcg/config.toml".source = (pkgs.formats.toml {}).generate "dcg-config.toml" dcgConfig;
 }
