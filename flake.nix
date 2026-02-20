@@ -133,6 +133,34 @@
           "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
         ];
       };
+
+      claude-casino = let
+        username = "cc";
+        specialArgs = {
+          inherit username;
+          inherit inputs;
+          inherit pkgs-unstable;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+
+          modules = [
+            ./hosts/claude-casino
+            sops-nix.nixosModules.sops
+
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username}/home.nix;
+            }
+          ];
+        };
     };
 
     # SD card image for tts-pi
