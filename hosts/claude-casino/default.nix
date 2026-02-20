@@ -1,10 +1,15 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
     ./hardware-configuration.nix
+  ];
+
+  environment.systemPackages = [
+    inputs.ghostty.packages.${pkgs.system}.terminfo
   ];
 
   boot.loader.grub.enable = true;
