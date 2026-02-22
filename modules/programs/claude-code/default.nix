@@ -296,7 +296,7 @@
     };
     statusLine = {
       type = "command";
-      command = "${claude-statusline}/bin/claude-statusline";
+      command = "claude-statusline";
     };
     hooks = {
       PreToolUse =
@@ -306,7 +306,7 @@
             hooks = [
               {
                 type = "command";
-                command = "${claude-sleep-inhibit}/bin/claude-sleep-inhibit start";
+                command = "claude-sleep-inhibit start";
               }
             ];
           }
@@ -317,7 +317,7 @@
             hooks = [
               {
                 type = "command";
-                command = "${dcg}/bin/dcg";
+                command = "dcg";
               }
             ];
           }
@@ -328,7 +328,7 @@
           hooks = [
             {
               type = "command";
-              command = "${claude-alert}/bin/claude-alert";
+              command = "claude-alert";
             }
           ];
         }
@@ -339,7 +339,7 @@
           hooks = [
             {
               type = "command";
-              command = "${claude-alert}/bin/claude-alert";
+              command = "claude-alert";
             }
           ];
         }
@@ -350,7 +350,7 @@
           hooks = [
             {
               type = "command";
-              command = "${claude-sleep-inhibit}/bin/claude-sleep-inhibit stop";
+              command = "claude-sleep-inhibit stop";
             }
           ];
         }
@@ -536,6 +536,7 @@
   };
 
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
+  claudeSettingsFile = pkgs.writeText "claude-settings.json" (builtins.toJSON settings);
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
@@ -594,16 +595,22 @@ in {
         source = ./agents;
         recursive = true;
       };
-      ".claude/settings.json".text = builtins.toJSON settings;
     };
 
-    # Copy codex config as a regular file (not symlink) so codex can read it
+    # Copy Codex and Claude configs as regular files (not symlinks)
     home.activation.codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
+      rm -f "$HOME/.claude/settings.json"
+      install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
     '';
 
-    # dcg (destructive command guard) in PATH for manual use
-    home.packages = [dcg];
+    # Claude helper binaries + dcg in PATH for hooks and manual use
+    home.packages = [
+      claude-statusline
+      claude-alert
+      claude-sleep-inhibit
+      dcg
+    ];
 
     # dcg config
     xdg.configFile."dcg/config.toml".source = (pkgs.formats.toml {}).generate "dcg-config.toml" dcgConfig;

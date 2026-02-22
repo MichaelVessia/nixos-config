@@ -26,6 +26,7 @@
     ./paperless-cli.nix
     ./hass-cli.nix
     ./subq.nix
+    ./takopi
     ./qmd
     ./karabiner.nix
     ./hammerspoon.nix
