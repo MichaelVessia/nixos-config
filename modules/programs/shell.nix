@@ -56,31 +56,6 @@
       [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
       [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
-      # Send clipboard screenshot to claude-casino
-      screensend() {
-        local ts
-        ts=$(date +%Y%m%d-%H%M%S)
-        local tmp="/tmp/screenshot-''${ts}.png"
-        case "$(uname -s)" in
-          Darwin) pngpaste "$tmp" ;;
-          Linux)  wl-paste --type image/png > "$tmp" ;;
-        esac
-        if [ ! -s "$tmp" ]; then
-          echo "No image in clipboard"
-          rm -f "$tmp"
-          return 1
-        fi
-        ssh claude-casino 'mkdir -p /tmp/screenshots' 2>/dev/null
-        scp -q "$tmp" claude-casino:/tmp/screenshots/
-        local remote_path="/tmp/screenshots/screenshot-''${ts}.png"
-        echo "$remote_path"
-        case "$(uname -s)" in
-          Darwin) echo -n "$remote_path" | pbcopy ;;
-          Linux)  echo -n "$remote_path" | wl-copy ;;
-        esac
-        rm "$tmp"
-      }
-
       # AI agent telemetry -> Datadog (shared key for Claude Code + Codex)
       if [ -f "$SECRETS_DIR/dd_telemetry_api_key" ]; then
         export DD_TELEMETRY_API_KEY="$(cat "$SECRETS_DIR/dd_telemetry_api_key")"
