@@ -34,9 +34,9 @@
         hostname = "192.168.1.227";
         user = "hassio";
       };
-      "debian" = {
-        hostname = "192.168.1.249";
-        user = "openclaw";
+      "takopi" = {
+        hostname = "192.168.1.174";
+        user = "debian";
       };
       "claude-casino" = {
         hostname = "100.86.122.24";

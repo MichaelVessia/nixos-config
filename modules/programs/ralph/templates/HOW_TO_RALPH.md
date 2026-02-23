@@ -1,147 +1,92 @@
 # How to Ralph
 
-Quick guide to running autonomous coding tasks with Ralph.
+Ralph now supports a `cruster`-style autonomous loop with a required focus prompt
+and two agent variants:
+
+- `./ralph/ralph-auto-claude.sh`
+- `./ralph/ralph-auto-codex.sh`
 
 ## Prerequisites
 
-- Claude Code CLI installed (`claude` command available)
-- `jq` installed for JSON parsing
-- Stories defined in `ralph/prd.json`
+- Agent CLI installed:
+  - `claude` for Claude variant
+  - `codex` for Codex variant
+- `jq` installed
+- `ralph/ralph-auto-claude.jsonc` configured
+- `ralph/ralph-auto-codex.jsonc` configured
+- Specs directory exists (default: `docs/prds`)
 
 ## Quick Start
 
 ```bash
-# 1. Check what's in the queue
-./ralph/scripts/prd-status.sh
+# 1. Configure loop
+$EDITOR ralph/ralph-auto-claude.jsonc
+$EDITOR ralph/ralph-auto-codex.jsonc
 
-# 2. Start the loop
-./ralph/ralph.sh
+# 2. Run Claude variant
+./ralph/ralph-auto-claude.sh "implement authentication MVP"
+
+# 3. Or run Codex variant
+./ralph/ralph-auto-codex.sh "implement authentication MVP"
 ```
 
-That's it. Ralph picks the next pending story and starts working.
+## Focus Mode
 
-## Commands
+Focus prompt is required. Agent must:
 
-| Command                                       | Description                         |
-| --------------------------------------------- | ----------------------------------- |
-| `./ralph/ralph.sh`                            | Run loop (default 10 iterations)    |
-| `./ralph/ralph.sh 50`                         | Run loop with custom max iterations |
-| `./ralph/scripts/prd-status.sh`               | Show PRD progress and next story    |
-| `./ralph/scripts/prd-update.sh <id> <status>` | Manually update story status        |
-| `./ralph/scripts/ci-check.sh`                 | Run CI checks manually              |
+1. Work only on the focus topic
+2. Complete one task per iteration
+3. Update specs as it works
+4. Signal:
+  - `TASK_COMPLETE: <summary>` for one completed task
+  - `NOTHING_LEFT_TO_DO` when focus is complete
+
+## Options
+
+```bash
+./ralph/ralph-auto-claude.sh "<focus>" [options]
+./ralph/ralph-auto-codex.sh "<focus>" [options]
+```
+
+Supported options:
+
+- `--config <path>`: alternate config file
+- `--skip-checks`: skip CI checks
+- `--max-iterations <n>`: stop after `n` iterations (`0` = unlimited)
+- `--judge`: run judge pass when agent says `NOTHING_LEFT_TO_DO`
+- `--judge-first`: judge before main loop
+
+## Config File
+
+`ralph/ralph-auto-claude.jsonc` and `ralph/ralph-auto-codex.jsonc` fields:
+
+- `specsDir`: markdown specs directory
+- `model`: agent model
+- `variant`: agent variant/profile
+- `commitPrefix`: git commit prefix
+- `checks`: required post-task CI commands
+- `commands` (optional): extra command reference for prompt
+
+## CI Checks
+
+Checks run after each `TASK_COMPLETE`.
+
+- If checks pass: Ralph commits changes
+- If checks fail: changes stay in working tree for next iteration
+
+## Judge Mode
+
+Judge mode validates completion when agent says `NOTHING_LEFT_TO_DO`:
+
+- `MORE_WORK_TO_DO` resumes loop
+- `ALL_WORK_DONE` exits loop
 
 ## Monitoring
 
 ```bash
-# Watch progress in real-time
-tail -f ralph/progress.txt
+# Tail loop log
+tail -f .ralph-auto/ralph-auto.log
 
-# Check PRD status
-./ralph/scripts/prd-status.sh
-
-# View agent output for iteration N
-cat .ralph/iteration_N_output.txt
+# Check recent automated commits
+git log --oneline -5 --grep="Ralph-Auto"
 ```
-
-## Running Overnight
-
-```bash
-# Run in background with logging
-nohup ./ralph/ralph.sh 100 > ralph-output.log 2>&1 &
-
-# Check if still running
-ps aux | grep ralph
-
-# Stop if needed
-pkill -f ralph.sh
-```
-
-## Story Lifecycle
-
-```
-pending -> in_progress -> complete
-                       \> blocked (if stuck)
-```
-
-Ralph automatically:
-
-1. Picks first pending story
-2. Marks it `in_progress`
-3. Runs Claude Code with the story prompt
-4. Runs CI checks when Claude signals `STORY_COMPLETE`
-5. Commits if CI passes, marks `complete`
-6. Moves to next story
-
-## Rollback
-
-Each story = one atomic commit. Rollback is easy:
-
-```bash
-# See Ralph commits
-git log --oneline --grep="Ralph-Iteration"
-
-# Undo last story
-git revert HEAD
-
-# Undo specific story
-git log --oneline --grep="Story: 1.2.0" | head -1 | cut -d' ' -f1 | xargs git revert
-
-# Reset story status after rollback
-./ralph/scripts/prd-update.sh 1.2.0 pending
-```
-
-## Adding Stories
-
-Edit `ralph/prd.json` directly:
-
-```json
-{
-  "id": "2.1.0",
-  "phase": "Feature",
-  "epic": "New Feature",
-  "title": "Implement the thing",
-  "description": "Detailed description of what to build",
-  "acceptance_criteria": ["Criterion 1", "Criterion 2"],
-  "specs": ["RELEVANT_SPEC.md"],
-  "status": "pending",
-  "estimated_complexity": "medium"
-}
-```
-
-ID format: `phase.epic.story` (e.g., 1.2.3 = phase 1, epic 2, story 3)
-
-Complexity: `small`, `medium`, `large`
-
-## Troubleshooting
-
-**Agent gets stuck:**
-
-```bash
-./ralph/scripts/prd-update.sh <id> blocked
-# Add note to ralph/progress.txt explaining why
-# Restart loop - it will skip blocked stories
-```
-
-**CI keeps failing:**
-
-```bash
-# Check what's failing
-./ralph/scripts/ci-check.sh
-
-# Fix manually, then restart
-./ralph/ralph.sh
-```
-
-**Context window issues:**
-
-- Break large stories into smaller ones
-- Keep acceptance criteria focused
-
-## Files
-
-| File              | Purpose                            |
-| ----------------- | ---------------------------------- |
-| `prd.json`        | Stories and status                 |
-| `progress.txt`    | Log of completed work              |
-| `RALPH_PROMPT.md` | Prompt template sent to agent      |
-| `.ralph/`         | Logs and debug output (gitignored) |

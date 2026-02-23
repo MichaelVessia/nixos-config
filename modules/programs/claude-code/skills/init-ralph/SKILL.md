@@ -13,14 +13,15 @@ ralph-init
 
 This creates:
 
-- `ralph/` directory with ralph.sh loop script
-- `ralph/prd.json` template for stories
-- `ralph/RALPH_PROMPT.md` prompt template
-- `ralph/scripts/` with ci-check, prd-status, prd-update utilities
-- `.ralph/` directory (gitignored) for logs
+- `ralph/` directory with auto-loop scripts
+- `ralph/ralph-auto-claude.jsonc` config file
+- `ralph/ralph-auto-codex.jsonc` config file
+- `ralph/scripts/` with ci-check and stream filtering utilities
+- `.ralph-auto/` output directory (gitignored) during runs
 
 After running, tell the user to:
 
-1. Edit `ralph/prd.json` with their stories
-2. Edit `ralph/scripts/ci-check.sh` with their CI commands
-3. Use `/ralph-prep` to help populate prd.json from a spec
+1. Edit `ralph/ralph-auto-claude.jsonc` and `ralph/ralph-auto-codex.jsonc`
+2. Ensure specs exist in `docs/prds/`
+3. Run `./ralph/ralph-auto-claude.sh "<focus prompt>"` or `./ralph/ralph-auto-codex.sh "<focus prompt>"`
+4. Optionally use `--judge` / `--judge-first` for completion validation

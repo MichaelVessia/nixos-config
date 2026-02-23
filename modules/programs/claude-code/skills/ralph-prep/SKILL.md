@@ -1,12 +1,12 @@
 ---
 name: ralph-prep
-description: Full Ralph preparation workflow - create spec skeleton, interview to flesh out, generate prd.json. Triggers on "ralph prep", "prep ralph", "prepare for ralph", "set up ralph for".
+description: Full Ralph preparation workflow - create spec skeleton, interview to flesh out, and generate docs PRD for Ralph auto-loop. Triggers on "ralph prep", "prep ralph", "prepare for ralph", "set up ralph for".
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion, Skill
 ---
 
 # Ralph Prep - Full Preparation Workflow
 
-Orchestrate complete Ralph preparation: spec creation, interview, and prd.json generation.
+Orchestrate complete Ralph preparation: spec creation, interview, and docs PRD generation for auto-loop execution.
 
 ## Arguments
 
@@ -99,22 +99,23 @@ Wait for spec-interview to complete its interview process.
 ### 5. Verify Ralph Infrastructure
 
 Check ralph setup exists:
-- `ralph/ralph.sh` executable
-- `ralph/RALPH_PROMPT.md` exists
-- `ralph/scripts/` helpers exist
+- `ralph/ralph-auto-claude.sh` executable
+- `ralph/ralph-auto-codex.sh` executable
+- `ralph/ralph-auto-claude.jsonc` exists
+- `ralph/ralph-auto-codex.jsonc` exists
 
 If missing, inform user:
 ```
 Ralph infrastructure not found. See ralph/HOW_TO_RALPH.md for setup.
 ```
 
-### 6. Call prd-prep
+### 6. Call write-a-prd
 
-Convert the completed spec to prd.json:
+Convert the completed spec to a docs PRD:
 
 ```
-Skill: prd-prep
-Args: specs/{FEATURE_NAME}.md
+Skill: write-a-prd
+Args: specs/{FEATURE_NAME}.md docs
 ```
 
 ### 7. Final Summary
@@ -123,14 +124,12 @@ Args: specs/{FEATURE_NAME}.md
 Ralph preparation complete!
 
 Spec: specs/{FEATURE_NAME}.md
-PRD: ralph/prd.json ({N} stories)
-
-First story: {id} - {title}
+PRD: docs/prds/{FEATURE_NAME}.md
 
 Commands:
-- ./ralph/scripts/prd-status.sh  # View status
-- ./ralph/ralph.sh               # Start loop
-- ./ralph/ralph.sh 20            # Run 20 iterations
+- ./ralph/ralph-auto-claude.sh "implement {FEATURE_NAME}"      # Start auto loop (Claude)
+- ./ralph/ralph-auto-codex.sh "implement {FEATURE_NAME}"       # Start auto loop (Codex)
+- ./ralph/ralph-auto-claude.sh "implement {FEATURE_NAME}" --judge
 ```
 
 ## Error Handling
@@ -138,13 +137,3 @@ Commands:
 If user cancels during spec creation:
 - Save partial progress
 - Inform user they can resume with `/spec-interview specs/{file}.md`
-
-If prd.json already exists:
-```
-AskUserQuestion:
-ralph/prd.json already exists ({N} stories). What to do?
-Options:
-- "Replace with new PRD"
-- "Add stories to existing PRD"
-- "Cancel"
-```

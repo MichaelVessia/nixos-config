@@ -6,14 +6,13 @@
   jq,
   git,
 }:
-
 stdenvNoCC.mkDerivation {
   pname = "ralph";
   version = "1.0.0";
 
   src = ./.;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [makeWrapper];
 
   dontBuild = true;
 
@@ -22,18 +21,17 @@ stdenvNoCC.mkDerivation {
 
     # Install scripts (these get copied to target repos)
     mkdir -p $out/share/ralph/scripts
-    cp scripts/ralph.sh $out/share/ralph/scripts/
+    cp scripts/ralph-auto-core.sh $out/share/ralph/scripts/
+    cp scripts/ralph-auto-claude.sh $out/share/ralph/scripts/
+    cp scripts/ralph-auto-codex.sh $out/share/ralph/scripts/
     cp scripts/ci-check.sh $out/share/ralph/scripts/
-    cp scripts/prd-status.sh $out/share/ralph/scripts/
-    cp scripts/prd-update.sh $out/share/ralph/scripts/
     cp scripts/stream-filter.sh $out/share/ralph/scripts/
 
     # Install templates
     mkdir -p $out/share/ralph/templates
-    cp templates/RALPH_PROMPT.md $out/share/ralph/templates/
     cp templates/HOW_TO_RALPH.md $out/share/ralph/templates/
-    cp templates/prd.json $out/share/ralph/templates/
-    cp templates/progress.txt $out/share/ralph/templates/
+    cp templates/ralph-auto-claude.jsonc $out/share/ralph/templates/
+    cp templates/ralph-auto-codex.jsonc $out/share/ralph/templates/
 
     # Create ralph-init with paths substituted
     mkdir -p $out/bin
@@ -44,7 +42,7 @@ stdenvNoCC.mkDerivation {
 
     # Wrap ralph-init with runtime dependencies
     wrapProgram $out/bin/ralph-init \
-      --prefix PATH : ${lib.makeBinPath [ jq git ]}
+      --prefix PATH : ${lib.makeBinPath [jq git]}
 
     runHook postInstall
   '';
