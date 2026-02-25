@@ -1,27 +1,27 @@
 {
   lib,
-  buildGoModule,
+  rustPlatform,
   fetchFromGitHub,
 }:
-buildGoModule rec {
+rustPlatform.buildRustPackage rec {
   pname = "pup";
-  version = "0.3.0";
+  version = "0.22.4";
 
   src = fetchFromGitHub {
-    owner = "DataDog";
+    owner = "datadog-labs";
     repo = "pup";
-    rev = version;
-    hash = "sha256-VzFU55VKlocvX5TBI04hOLrEeYNb5Wc8Br/ykaAUntA=";
+    rev = "v${version}";
+    hash = "sha256-nDjfwM8+REyaStrjvxz1pW/8wMW/eW5e7UJKW4mBvCc=";
   };
 
-  vendorHash = "sha256-Va6CwpykKeqFVqLxFeWkUbNprK5187STGqCFAyGs3CM=";
+  cargoHash = "sha256-cmiJL98ygIZXgvCr5derxg7fy+NXTiKKsmerXM1mJQ0=";
 
-  # Tests require filesystem and keychain access unavailable in the Nix sandbox
+  # Tests rely on runtime environment and network-adjacent behavior
   doCheck = false;
 
   meta = {
     description = "CLI wrapper for Datadog APIs";
-    homepage = "https://github.com/DataDog/pup";
+    homepage = "https://github.com/datadog-labs/pup";
     license = lib.licenses.asl20;
     mainProgram = "pup";
   };
