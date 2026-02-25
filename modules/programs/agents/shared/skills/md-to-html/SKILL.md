@@ -13,7 +13,7 @@ Converts markdown files to self-contained, styled HTML optimized for copying int
 Run the script via bunx:
 
 ```bash
-bunx ~/nixos-config/modules/programs/claude-code/skills/md-to-html/md-to-html.ts "<markdown-file>"
+bunx ~/nixos-config/modules/programs/agents/shared/skills/md-to-html/md-to-html.ts "<markdown-file>"
 ```
 
 ## What it does

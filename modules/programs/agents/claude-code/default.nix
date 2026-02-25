@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }: let
   cfg = config.programs.claude-code;
@@ -280,7 +279,7 @@
   };
 
   # Agent instructions: shared base + Claude-specific overlay
-  sharedInstructions = builtins.readFile ./shared-instructions.md;
+  sharedInstructions = builtins.readFile ../shared/instructions.md;
   claudeOverlay = builtins.readFile ./claude-overlay.md;
 
   # Settings as Nix attrset
@@ -499,47 +498,8 @@
     };
   };
 
-  codexConfig = {
-    personality = "pragmatic";
-    model = "gpt-5.3-codex";
-    model_reasoning_effort = "high";
-    tui = {
-      status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
-    };
-    mcp_servers = {
-      atlassian = {
-        url = "https://mcp.atlassian.com/v1/mcp";
-      };
-    };
-    otel = {
-      environment = "dev";
-      log_user_prompt = false;
-      exporter = {
-        otlp-http = {
-          endpoint = "https://http-intake.logs.datadoghq.com/v1/logs";
-          protocol = "binary";
-          headers = {
-            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
-          };
-        };
-      };
-      trace_exporter = {
-        otlp-http = {
-          endpoint = "https://otlp.datadoghq.com/v1/traces";
-          protocol = "binary";
-          headers = {
-            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
-          };
-        };
-      };
-    };
-  };
-
-  codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
   claudeSettingsFile = pkgs.writeText "claude-settings.json" (builtins.toJSON settings);
 in {
-  imports = [inputs.agent-skills-nix.homeManagerModules.default];
-
   options.programs.claude-code = {
     sleepInhibitor.enable = lib.mkOption {
       type = lib.types.bool;
@@ -549,46 +509,10 @@ in {
   };
 
   config = {
-    programs.agent-skills = {
-      enable = true;
-      sources =
-        {
-          personal.path = ./skills;
-        }
-        // lib.optionalAttrs pkgs.stdenv.isDarwin {
-          flocasts = {
-            path = inputs.flocasts-skills;
-            subdir = "skills";
-          };
-        };
-      skills.enableAll = true;
-      targets = {
-        claude = {
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
-        };
-        codex = {
-          enable = true;
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
-        };
-        opencode = {
-          enable = true;
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
-        };
-      };
-    };
-
     home.file = {
       ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
-      ".codex/AGENTS.md".text = sharedInstructions;
-      ".config/opencode/AGENTS.md".text = sharedInstructions;
-      ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-      ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-      ".config/opencode/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
       ".claude/memory" = {
-        source = ./memory;
+        source = ../shared/memory;
         recursive = true;
       };
       ".claude/agents" = {
@@ -597,9 +521,8 @@ in {
       };
     };
 
-    # Copy Codex and Claude configs as regular files (not symlinks)
-    home.activation.codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
+    # Copy Claude config as a regular file (not symlink)
+    home.activation.claudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       rm -f "$HOME/.claude/settings.json"
       install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
     '';

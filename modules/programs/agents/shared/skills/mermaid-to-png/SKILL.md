@@ -13,7 +13,7 @@ Extracts mermaid diagrams from markdown files, renders them to PNGs, and inserts
 Run the script via bunx:
 
 ```bash
-bunx ~/nixos-config/modules/programs/claude-code/skills/mermaid-to-png/mermaid-to-png.ts "<markdown-file>"
+bunx ~/nixos-config/modules/programs/agents/shared/skills/mermaid-to-png/mermaid-to-png.ts "<markdown-file>"
 ```
 
 ## What it does

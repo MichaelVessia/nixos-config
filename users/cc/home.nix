@@ -7,7 +7,7 @@
 }: {
   imports = [
     ../common.nix
-    ../../modules/programs/claude-code
+    ../../modules/programs/agents
     ../../modules/programs/nvf
     ../../modules/programs/common.nix
     ../../modules/programs/git.nix
