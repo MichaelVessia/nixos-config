@@ -2,7 +2,7 @@
 name: commit-message
 description: Generate a conventional commit message for staged changes
 allowed-tools: Bash(git diff:*), Bash(git status:*)
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 ---
 
 ## Context

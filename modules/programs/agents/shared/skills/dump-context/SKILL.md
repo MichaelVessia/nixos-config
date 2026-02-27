@@ -1,7 +1,7 @@
 ---
 name: dump-context
 description: Summarize current context and write to a markdown file
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 ---
 
 ## Your task

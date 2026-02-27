@@ -2,7 +2,7 @@
 name: journal
 description: End-of-day 5-minute checkin (Physical, Mind, Craft, Presence)
 allowed-tools: AskUserQuestion, Bash
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 ---
 
 Run a quick end-of-day checkin using the AskUserQuestion tool, then log to Obsidian.

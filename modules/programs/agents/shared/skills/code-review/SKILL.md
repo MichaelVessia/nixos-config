@@ -8,7 +8,7 @@ Provide a code review for the given pull request.
 
 To do this, follow these steps precisely:
 
-1. Launch a haiku agent to check if any of the following are true:
+1. Launch a sonnet agent to check if any of the following are true:
    - The pull request is closed
    - The pull request does not need code review (e.g. automated PR, trivial change that is obviously correct)
    - Claude has already commented on this PR (check `gh pr view <PR> --comments` for comments left by claude)
@@ -17,7 +17,7 @@ To do this, follow these steps precisely:
 
 Note: Still review Claude generated PR's.
 
-2. Launch a haiku agent to return a list of file paths (not their contents) for all relevant CLAUDE.md files including:
+2. Launch a sonnet agent to return a list of file paths (not their contents) for all relevant CLAUDE.md files including:
    - The root CLAUDE.md file, if it exists
    - Any CLAUDE.md files in directories containing files modified by the pull request
 

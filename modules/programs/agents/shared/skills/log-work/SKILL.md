@@ -2,7 +2,7 @@
 name: log-work
 description: Log work activity to today's journal
 allowed-tools: Bash
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 ---
 
 Create or append to today's journal file in your Obsidian vault. Intended for daily logging of activities, summaries, or notes.

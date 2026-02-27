@@ -2,7 +2,7 @@
 name: commit-and-push
 description: Commit changes and push to remote
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git push:*), Bash(git commit:*)
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 ---
 
 ## Context
