@@ -2,11 +2,11 @@
 name: prfix
 description: |
   Autonomously fix a pull request by resolving relevant failing PR checks, then
-  addressing PR comments one by one with subagent validation. Use when user
-  says "prfix", "fix PR checks", "address PR feedback", or asks to clean up a
-  PR end to end. For each accepted fix, commit and push. After comment fixes,
-  invoke the gh-comment skill to post what changed.
-allowed-tools: Bash(gh *), Bash(git *), Bash(claude *), Bash(npm test*), Bash(bun test*), Bash(pnpm test*), Bash(yarn test*), Read, Edit, Write, Glob, Grep, TodoWrite, Task(codex)
+  addressing PR comments one by one. Use when user says "prfix", "fix PR
+  checks", "address PR feedback", or asks to clean up a PR end to end. For
+  each accepted fix, commit and push. After comment fixes, invoke the
+  gh-comment skill to post what changed.
+allowed-tools: Bash(gh *), Bash(git *), Bash(npm test*), Bash(bun test*), Bash(pnpm test*), Bash(yarn test*), Read, Edit, Write, Glob, Grep, TodoWrite
 ---
 
 # prfix
@@ -44,26 +44,22 @@ Execute this flow fully, stop only if blocked.
    - Use clear commit message, no AI attribution text.
 5. Re-query PR checks. Continue until no relevant failures remain.
 
-## 3) Address PR comments with subagent per comment
+## 3) Address PR comments
 
 1. Gather comments:
    - PR conversation comments (`gh pr view --json comments,reviews`).
    - Inline review comments (`gh api repos/{owner}/{repo}/pulls/<PR>/comments --paginate`).
 2. Create todo list with one item per comment (include author, file:line, body).
-3. Process comments one by one. For each comment, invoke a subagent to decide:
+3. Process comments one by one. For each comment, evaluate:
    - Is the feedback correct?
    - Is it actionable and worth addressing now?
    - What exact change should be made?
-4. Subagent policy:
-   - If running in Claude, use `Task(codex)` subagent.
-   - If running in Codex, use `claude --print` as subagent.
-   - Subagent returns: `address=true|false`, rationale, and concrete patch plan.
-5. If `address=true`:
+4. If addressing:
    - Implement fix.
    - Run targeted tests/checks.
    - Commit and push.
    - Record short change summary for reply.
-6. If `address=false`:
+5. If not addressing:
    - Record concise rationale for reply.
 
 ## 4) Reply on PR via gh-comment skill
@@ -82,7 +78,7 @@ Keep replies factual and brief.
 Complete only when all are true:
 
 - No relevant failing PR checks remain.
-- Every gathered PR comment has been evaluated via subagent.
+- Every gathered PR comment has been evaluated.
 - Accepted comments have fixes committed and pushed.
 - PR replies were posted through `gh-comment`.
 
