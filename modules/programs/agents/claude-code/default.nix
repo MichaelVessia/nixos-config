@@ -4,8 +4,6 @@
   lib,
   ...
 }: let
-  cfg = config.programs.claude-code;
-
   # Wrapped scripts with explicit deps
   claude-statusline = pkgs.writeShellApplication {
     name = "claude-statusline";
@@ -84,95 +82,6 @@
       else
         pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
       fi
-    '';
-  };
-
-  claude-sleep-inhibit = pkgs.writeShellApplication {
-    name = "claude-sleep-inhibit";
-    runtimeInputs =
-      [pkgs.coreutils pkgs.util-linux]
-      ++ lib.optionals pkgs.stdenv.isLinux [pkgs.systemd pkgs.procps];
-    text = ''
-      PIDFILE="/tmp/claude-sleep-inhibit.pid"
-      LOCKFILE="/tmp/claude-sleep-inhibit.lock"
-      LOCKNAME="Claude Code session"
-      OS="$(uname -s)"
-
-      start_linux() {
-        (
-          flock 9
-          if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-            exit 0
-          fi
-          # Pidfile stale or missing, clean up any orphaned inhibitors
-          pkill -f "systemd-inhibit.*--who=claude-code" 2>/dev/null || true
-          rm -f "$PIDFILE"
-          systemd-inhibit --what=sleep:idle --who="claude-code" --why="$LOCKNAME" sleep infinity </dev/null >/dev/null 2>&1 &
-          echo $! > "$PIDFILE"
-        ) 9>"$LOCKFILE"
-      }
-
-      start_darwin() {
-        osascript -e 'tell application "Amphetamine" to start new session' >/dev/null 2>&1
-      }
-
-      stop_linux() {
-        (
-          flock 9
-          if [ -f "$PIDFILE" ]; then
-            pid=$(cat "$PIDFILE")
-            kill "$pid" 2>/dev/null || true
-            rm -f "$PIDFILE"
-          fi
-        ) 9>"$LOCKFILE"
-      }
-
-      stop_darwin() {
-        osascript -e 'tell application "Amphetamine" to end session' >/dev/null 2>&1
-      }
-
-      status_linux() {
-        if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-          echo "active"
-          exit 0
-        else
-          echo "inactive"
-          exit 1
-        fi
-      }
-
-      status_darwin() {
-        if osascript -e 'tell application "Amphetamine" to return session is active' 2>/dev/null | grep -q "true"; then
-          echo "active"
-          exit 0
-        else
-          echo "inactive"
-          exit 1
-        fi
-      }
-
-      case "$OS" in
-        Linux)
-          case "''${1:-}" in
-            start)  start_linux ;;
-            stop)   stop_linux ;;
-            status) status_linux ;;
-            *)      echo "Usage: $0 {start|stop|status}" >&2; exit 1 ;;
-          esac
-          ;;
-        Darwin)
-          case "''${1:-}" in
-            start)  start_darwin ;;
-            stop)   stop_darwin ;;
-            status) status_darwin ;;
-            *)      echo "Usage: $0 {start|stop|status}" >&2; exit 1 ;;
-          esac
-          ;;
-        *)
-          echo "Unsupported OS: $OS" >&2
-          exit 1
-          ;;
-      esac
     '';
   };
 
@@ -298,41 +207,16 @@
       command = "claude-statusline";
     };
     hooks = {
-      PreToolUse =
-        lib.optionals cfg.sleepInhibitor.enable [
-          {
-            matcher = "";
-            hooks = [
-              {
-                type = "command";
-                command = "claude-sleep-inhibit start";
-              }
-            ];
-          }
-        ]
-        ++ [
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
-                command = "dcg";
-              }
-            ];
-          }
-        ];
-      Notification = [
+      PreToolUse = [
         {
-          matcher = "permission_prompt";
+          matcher = "Bash";
           hooks = [
             {
               type = "command";
-              command = "claude-alert";
+              command = "dcg";
             }
           ];
         }
-      ];
-      PostToolUse = [
         {
           matcher = "AskUserQuestion";
           hooks = [
@@ -343,13 +227,13 @@
           ];
         }
       ];
-      Stop = lib.optionals cfg.sleepInhibitor.enable [
+      Notification = [
         {
-          matcher = "";
+          matcher = "permission_prompt";
           hooks = [
             {
               type = "command";
-              command = "claude-sleep-inhibit stop";
+              command = "claude-alert";
             }
           ];
         }
@@ -500,14 +384,6 @@
 
   claudeSettingsFile = pkgs.writeText "claude-settings.json" (builtins.toJSON settings);
 in {
-  options.programs.claude-code = {
-    sleepInhibitor.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to enable the sleep inhibitor hook for Claude Code";
-    };
-  };
-
   config = {
     home.file = {
       ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
@@ -531,7 +407,6 @@ in {
     home.packages = [
       claude-statusline
       claude-alert
-      claude-sleep-inhibit
       dcg
     ];
 
