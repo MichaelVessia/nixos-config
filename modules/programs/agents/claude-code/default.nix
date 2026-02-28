@@ -199,6 +199,7 @@
       commit = "";
       pr = "";
     };
+    skipDangerousModePermissionPrompt = true;
     enabledPlugins = {
       "pr-review-toolkit@claude-plugins-official" = true;
     };
