@@ -206,3 +206,8 @@ Detailed infrastructure docs (IPs, service configs, setup history) are in:
 `~/obsidian/Notes/PROXMOX_SETUP.md`
 
 Read this file if you need static reference info not discoverable via commands.
+
+**Important**: After making significant changes to the Proxmox setup (adding/removing
+containers or VMs, resizing disks, changing IPs, modifying mounts, updating
+services), read and update `~/obsidian/Notes/PROXMOX_SETUP.md` to reflect the
+new state. Keep the note in sync with reality.
