@@ -21,45 +21,53 @@ Execute this flow fully, stop only if blocked.
    gh pr view --json number,url --jq '.number, .url'
    ```
 
-## 2) Wait for CI checks
+## 2) Monitor checks and bot comments (fail-fast loop)
 
-1. Wait for all checks to complete:
+Poll checks and bot comments together. Max 40 iterations, 30s apart (~20 min).
+On each iteration:
+
+1. Query check status:
    ```
-   gh pr checks <PR> --watch --interval 30
+   gh pr view <PR> --json statusCheckRollup --jq '
+     .statusCheckRollup[] | [.name, .status, .conclusion] | @tsv
+   '
    ```
-2. Record whether checks passed or failed.
+2. Query bot comments:
+   ```
+   gh pr view <PR> --json comments,reviews --jq '
+     [.comments[], .reviews[]]
+     | map(select(
+         .author.is_bot == true
+         or (.author.login | test("bot|copilot|dependabot|renovate|coderabbit"; "i"))
+       ))
+     | length
+   '
+   ```
+3. Evaluate:
+   - **Any check FAILED?** Get the changed files list (`gh pr diff --name-only`)
+     and determine if the failure is relevant to PR changes (touched files,
+     tests, lint, typecheck, build, or logic connected to changed code). If
+     relevant, break out of the loop immediately and go to step 3.
+   - **Bot comments appeared?** Break out immediately and go to step 3.
+   - **All checks PASSED and no bot comments?** Skip to step 5.
+   - **Checks still PENDING, nothing failed yet?** `sleep 30` and continue
+     polling.
+4. If 40 iterations pass with checks still pending, proceed to step 3 with
+   whatever state exists.
 
-## 3) Wait for bot comments
+## 3) Fix
 
-Poll for bot-authored comments/reviews (max 10 iterations, 30s apart).
+Invoke `fix-pr`. It handles failing checks, bot/reviewer comments, commits,
+pushes, and replies.
 
-```
-gh pr view <PR> --json comments,reviews --jq '
-  [.comments[], .reviews[]]
-  | map(select(
-      .author.is_bot == true
-      or (.author.login | test("bot|copilot|dependabot|renovate|coderabbit"; "i"))
-    ))
-  | length
-'
-```
+## 4) Verify fixes
 
-- If count > 0, stop polling early.
-- If count is still 0 after 10 iterations, proceed anyway.
+After `fix-pr` completes, re-enter the monitoring loop from step 2 (same
+fail-fast logic). If a relevant failure or new bot comment appears again,
+invoke `fix-pr` one more time (max 2 total invocations). After the second
+attempt, proceed to step 5 regardless of outcome.
 
-## 4) Decide next action
-
-- If CI failed OR bot comments exist: invoke `fix-pr`.
-- If CI passed AND no bot comments: skip to step 6.
-
-## 5) Verify fixes
-
-After `fix-pr` completes, re-run `gh pr checks <PR> --watch --interval 30`.
-
-- If checks still fail, invoke `fix-pr` one more time (max 2 total invocations).
-- After the second attempt, proceed to step 6 regardless of outcome.
-
-## 6) Final report
+## 5) Final report
 
 Output a summary:
 
