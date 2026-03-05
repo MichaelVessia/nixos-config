@@ -14,6 +14,12 @@
         {
           personal.path = ./shared/skills;
         }
+        // {
+          superpowers = {
+            path = inputs.superpowers;
+            subdir = "skills";
+          };
+        }
         // lib.optionalAttrs pkgs.stdenv.isDarwin {
           flocasts = {
             path = inputs.flocasts-skills;

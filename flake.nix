@@ -44,6 +44,10 @@
       url = "git+ssh://git@github.com/flocasts/agent-skills.git?ref=feat/datadog-pup-migration";
       flake = false;
     };
+    superpowers = {
+      url = "github:obra/superpowers";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {

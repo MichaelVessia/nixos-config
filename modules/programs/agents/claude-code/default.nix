@@ -187,9 +187,7 @@
     };
   };
 
-  # Agent instructions: shared base + Claude-specific overlay
   sharedInstructions = builtins.readFile ../shared/instructions.md;
-  claudeOverlay = builtins.readFile ./claude-overlay.md;
 
   # Settings as Nix attrset
   settings = {
@@ -387,11 +385,7 @@
 in {
   config = {
     home.file = {
-      ".claude/CLAUDE.md".text = claudeOverlay + "\n" + sharedInstructions;
-      ".claude/memory" = {
-        source = ../shared/memory;
-        recursive = true;
-      };
+      ".claude/CLAUDE.md".text = sharedInstructions;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;

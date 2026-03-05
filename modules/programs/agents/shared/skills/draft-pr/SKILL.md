@@ -16,5 +16,5 @@ model: claude-sonnet-4-6
 2. Invoke `commit-and-push` to stage, commit, and push all changes.
 3. Create a pull request using `gh pr create --draft`. Ensure the PR title
    adheres to conventional commits format.
-4. Invoke `update-pr-description` to update the PR description to match the
-   repo's PR template.
+4. Invoke `update-pr-description-and-title` to update the PR description to
+   match the repo's PR template and normalize the PR title.

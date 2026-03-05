@@ -1092,6 +1092,7 @@
         "paperless-cli": "paperless-cli",
         "sops-nix": "sops-nix",
         "subq": "subq",
+        "superpowers": "superpowers",
         "x-to-obsidian": "x-to-obsidian"
       }
     },
@@ -1132,6 +1133,22 @@
       "original": {
         "owner": "MichaelVessia",
         "repo": "subq",
+        "type": "github"
+      }
+    },
+    "superpowers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771702985,
+        "narHash": "sha256-AeICtdAfWRp0oCgQqd8LdrEWWtKNqUNWdvn0CGL18fA=",
+        "owner": "obra",
+        "repo": "superpowers",
+        "rev": "e4a2375cb705ca5800f0833528ce36a3faf9017a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "obra",
+        "repo": "superpowers",
         "type": "github"
       }
     },

@@ -1,3 +1,8 @@
+# Superpowers
+
+- Before starting multi-step work (features, debugging, refactors), check if a
+  superpowers skill applies (planning, TDD, systematic-debugging, etc.).
+
 # Communication
 
 - Be extremely concise. Sacrifice grammar for concision.
@@ -21,14 +26,6 @@
 - Clean up unused code ruthlessly. If a function no longer needs a parameter or
   a helper is dead, delete it and update the callers instead of letting the junk
   linger.
-
-# Code Review
-
-- When providing feedback or suggesting alternatives, include concrete code
-  examples from the actual codebase rather than abstract descriptions.
-- When reviewing PR feedback from GitHub Copilot or other reviewers, summarize
-  all comments first, then address them systematically one by one with explicit
-  file:line references.
 
 # Git
 
@@ -57,11 +54,8 @@
 - If you are ever curious how to run tests or what we test, read through
   .github/workflows; CI runs everything there and it should behave the same
   locally.
-
-# Debugging
-
-- For auth errors (401, 403), check environment variables and secrets early
-  (TOKEN_SECRET, API keys).
+- Every bug fix must come with a regression test.
+- Test behavior, not implementation details.
 
 # Tooling & workflow
 
