@@ -75,6 +75,15 @@
                 };
               };
             }
+            {
+              matches = [{"device.name" = "alsa_card.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00";}];
+              actions = {
+                update-props = {
+                  "api.acp.auto-profile" = false;
+                  "device.profile" = "input:analog-stereo-input";
+                };
+              };
+            }
           ];
         };
       };

@@ -18,7 +18,7 @@
       {
         name = "Brother_HL-L3270CDW";
         location = "Home";
-        deviceUri = "ipp://192.168.1.138/ipp";
+        deviceUri = "ipp://192.168.1.138/ipp/print";
         model = "everywhere";
         ppdOptions = {
           PageSize = "Letter";

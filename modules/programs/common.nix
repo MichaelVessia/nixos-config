@@ -75,7 +75,6 @@
         export PATH="${pkgs.bun}/bin:$PATH"
         exec bunx critique "$@"
       '') # git diff viewer
-      (pkgs.callPackage ./pup {}) # Datadog API CLI
       lazygit # terminal UI for git
       lazydocker # terminal UI for docker
       lsof # list open files
@@ -89,6 +88,7 @@
     ]
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
+      (pkgs.callPackage ./pup {}) # Datadog API CLI
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging

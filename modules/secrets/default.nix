@@ -18,6 +18,9 @@
     secrets.freshrss_api_user.owner = "michaelvessia";
     secrets.freshrss_api_password.owner = "michaelvessia";
     secrets.freshrss_url.owner = "michaelvessia";
+    secrets.kuma_url.owner = "michaelvessia";
+    secrets.kuma_username.owner = "michaelvessia";
+    secrets.kuma_password.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────

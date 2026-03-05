@@ -25,6 +25,7 @@
     ./fmcal.nix
     ./paperless-cli.nix
     ./hass-cli.nix
+    ./kuma-cli.nix
     ./subq.nix
     ./takopi
     ./qmd
