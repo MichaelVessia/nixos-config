@@ -1,15 +1,14 @@
 ---
-name: prfix
+name: fix-pr
 description: |
   Autonomously fix a pull request by resolving relevant failing PR checks, then
-  addressing PR comments one by one. Use when user says "prfix", "fix PR
-  checks", "address PR feedback", or asks to clean up a PR end to end. For
-  each accepted fix, commit and push. After comment fixes, invoke the
-  gh-comment skill to post what changed.
-allowed-tools: Bash(gh *), Bash(git *), Bash(npm test*), Bash(bun test*), Bash(pnpm test*), Bash(yarn test*), Read, Edit, Write, Glob, Grep, TodoWrite
+  addressing PR comments and posting replies. Use when user says "fix pr",
+  "prfix", "fix PR checks", "address PR feedback", or asks to clean up a PR
+  end to end.
+allowed-tools: Bash(gh *), Bash(git *), Bash(npm test*), Bash(bun test*), Bash(pnpm test*), Bash(yarn test*), Read, Edit, Write, Glob, Grep, TodoWrite, Skill
 ---
 
-# prfix
+# fix-pr
 
 Arguments: `$ARGUMENTS` (optional PR number or URL).
 
@@ -46,26 +45,14 @@ Execute this flow fully, stop only if blocked.
 
 ## 3) Address PR comments
 
-1. Gather comments:
-   - PR conversation comments (`gh pr view --json comments,reviews`).
-   - Inline review comments (`gh api repos/{owner}/{repo}/pulls/<PR>/comments --paginate`).
-2. Create todo list with one item per comment (include author, file:line, body).
-3. Process comments one by one. For each comment, evaluate:
-   - Is the feedback correct?
-   - Is it actionable and worth addressing now?
-   - What exact change should be made?
-4. If addressing:
-   - Implement fix.
-   - Run targeted tests/checks.
-   - Commit and push.
-   - Record short change summary for reply.
-5. If not addressing:
-   - Record concise rationale for reply.
+Invoke `address-pr-feedback` to review and address all open PR comments. The
+skill handles gathering comments, creating a todo list, implementing fixes,
+running tests, and committing changes.
 
-## 4) Reply on PR via gh-comment skill
+## 4) Reply on PR via gh-comment
 
-After each processed comment (or as a grouped batch), invoke `gh-comment` skill
-to post a reply that includes:
+After `address-pr-feedback` completes, invoke `gh-comment` to post replies for
+each processed comment. Include:
 
 - Comment reference (author + file:line when present)
 - Decision (`addressed` or `not addressed`)
