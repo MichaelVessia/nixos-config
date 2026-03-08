@@ -19,10 +19,16 @@ then set the PR title in conventional-commit format.
    using Glob.
 2. If a template exists, read it with the Read tool.
 3. Update the PR description using `gh pr edit` to follow the template
-   structure, filling in sections based on the PR's actual changes. If you don't
-   know how to fill out a section, leave it empty.
+   structure. Focus on the **overall intent and motivation** of the PR, not a
+   list of individual changes. Do NOT:
+   - Enumerate specific files changed
+   - List every commit or diff
+   - Describe mechanical edits (renames, imports, etc.)
+   Instead, explain **why** the change was made, what problem it solves, and any
+   important design decisions. Fill in template sections based on this intent. If
+   you don't know how to fill out a section, leave it empty.
 4. If no template exists, ensure the description includes at minimum:
-   - A summary of the changes
+   - A concise summary of the intent and motivation (not a changelog)
    - Steps to test the PR
 5. Generate a conventional-commit PR title from the actual PR changes:
    - Prefer the dominant type from commit prefixes when available (`feat`,
