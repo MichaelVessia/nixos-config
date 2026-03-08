@@ -197,6 +197,10 @@
       commit = "";
       pr = "";
     };
+    teammateMode = "in-process";
+    env = {
+      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    };
     skipDangerousModePermissionPrompt = true;
     enabledPlugins = {
       "pr-review-toolkit@claude-plugins-official" = true;
