@@ -23,7 +23,14 @@ Execute this flow fully, stop only if blocked.
    - Number, URL, title, body, head ref, head SHA.
    - Changed files list from `gh pr diff --name-only`.
 
-## 2) Fix relevant failing checks
+## 2) Resolve merge conflicts
+
+1. Check if the PR has merge conflicts:
+   - Use `gh pr view <PR> --json mergeable,mergeStateStatus`.
+2. If conflicts exist, invoke `resolve-merge-conflicts` with the PR number.
+3. After resolution, push and confirm the PR is conflict-free before proceeding.
+
+## 3) Fix relevant failing checks
 
 1. Inspect checks for this PR:
    - Use `gh pr view <PR> --json statusCheckRollup`.
@@ -43,13 +50,13 @@ Execute this flow fully, stop only if blocked.
    - Use clear commit message, no AI attribution text.
 5. Re-query PR checks. Continue until no relevant failures remain.
 
-## 3) Address PR comments
+## 4) Address PR comments
 
 Invoke `address-pr-feedback` to review and address all open PR comments. The
 skill handles gathering comments, creating a todo list, implementing fixes,
 running tests, and committing changes.
 
-## 4) Reply on PR via gh-comment
+## 5) Reply on PR via gh-comment
 
 After `address-pr-feedback` completes, invoke `gh-comment` to post replies for
 each processed comment. Include:
@@ -60,10 +67,11 @@ each processed comment. Include:
 
 Keep replies factual and brief.
 
-## 5) Done criteria
+## 6) Done criteria
 
 Complete only when all are true:
 
+- PR has no merge conflicts.
 - No relevant failing PR checks remain.
 - Every gathered PR comment has been evaluated.
 - Accepted comments have fixes committed and pushed.

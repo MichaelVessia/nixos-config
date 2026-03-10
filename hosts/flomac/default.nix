@@ -47,6 +47,7 @@
       "shottr"
       "superwhisper"
       "tailscale"
+      "libreoffice"
       "yaak"
       "zoom"
     ];
