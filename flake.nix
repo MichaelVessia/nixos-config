@@ -77,18 +77,21 @@
     forAllSystems = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-darwin"];
   in {
     devShells = forAllSystems (system: {
-      default = nixpkgs.legacyPackages.${system}.mkShell {
-        packages = with nixpkgs.legacyPackages.${system}; [
-          alejandra
-          lefthook
-          sops
-          age
-          ssh-to-age
-        ];
-        shellHook = ''
-          lefthook install
-        '';
-      };
+      default = let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+        pkgs.mkShell {
+          packages = with pkgs; [
+            alejandra
+            lefthook
+            sops
+            age
+            ssh-to-age
+          ];
+          shellHook = ''
+            lefthook install
+          '';
+        };
     });
 
     nixosConfigurations = {
