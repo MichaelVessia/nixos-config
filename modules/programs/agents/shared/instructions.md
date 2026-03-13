@@ -1,8 +1,3 @@
-# Superpowers
-
-- Before starting multi-step work (features, debugging, refactors), check if a
-  superpowers skill applies (planning, TDD, systematic-debugging, etc.).
-
 # Communication
 
 - Be extremely concise. Sacrifice grammar for concision.

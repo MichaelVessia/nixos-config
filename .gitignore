@@ -11,3 +11,5 @@ result-*
 *.plain.*
 *-plaintext.yaml
 *-plaintext.json
+
+docs/plans/

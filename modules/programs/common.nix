@@ -82,6 +82,7 @@
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
       inputs.llm-agents.packages.${pkgs.system}.opencode
+      inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
       (pkgs.callPackage ./sidecar {}) # TUI companion for CLI coding agents
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions (used by sidecar)
