@@ -1,0 +1,29 @@
+{
+  "project": "PROJECT_NAME",
+  "description": "Project description",
+  "updated_at": "2025-01-01",
+  "technology": {
+    "language": "TypeScript",
+    "framework": "Your framework",
+    "testing": "Your test framework"
+  },
+  "reference_repos": [],
+  "specs_dir": "specs/",
+  "available_specs": [],
+  "stories": [
+    {
+      "id": "1.1.0",
+      "phase": "Setup",
+      "epic": "Initial Setup",
+      "title": "Example story",
+      "description": "Description of what needs to be done",
+      "acceptance_criteria": [
+        "First criterion",
+        "Second criterion"
+      ],
+      "specs": [],
+      "status": "pending",
+      "estimated_complexity": "small"
+    }
+  ]
+}

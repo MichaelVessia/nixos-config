@@ -1,12 +1,12 @@
 ---
 name: ralph-prep
-description: Full Ralph preparation workflow - create spec skeleton, interview to flesh out, and generate docs PRD for Ralph auto-loop. Triggers on "ralph prep", "prep ralph", "prepare for ralph", "set up ralph for".
+description: Full Ralph preparation workflow - create spec skeleton, interview to flesh out, and generate docs PRD for Ralph story-loop execution. Triggers on "ralph prep", "prep ralph", "prepare for ralph", "set up ralph for".
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion, Skill
 ---
 
 # Ralph Prep - Full Preparation Workflow
 
-Orchestrate complete Ralph preparation: spec creation, interview, and docs PRD generation for auto-loop execution.
+Orchestrate complete Ralph preparation: spec creation, interview, and docs PRD generation for story-loop execution.
 
 ## Arguments
 
@@ -99,10 +99,10 @@ Wait for spec-interview to complete its interview process.
 ### 5. Verify Ralph Infrastructure
 
 Check ralph setup exists:
-- `ralph/ralph-auto-claude.sh` executable
-- `ralph/ralph-auto-codex.sh` executable
-- `ralph/ralph-auto-claude.jsonc` exists
-- `ralph/ralph-auto-codex.jsonc` exists
+- `ralph/ralph.sh` executable
+- `ralph/prd.json` exists
+- `ralph/RALPH_PROMPT.md` exists
+- `ralph/scripts/prd-status.sh` exists
 
 If missing, inform user:
 ```
@@ -127,9 +127,8 @@ Spec: specs/{FEATURE_NAME}.md
 PRD: docs/prds/{FEATURE_NAME}.md
 
 Commands:
-- ./ralph/ralph-auto-claude.sh "implement {FEATURE_NAME}"      # Start auto loop (Claude)
-- ./ralph/ralph-auto-codex.sh "implement {FEATURE_NAME}"       # Start auto loop (Codex)
-- ./ralph/ralph-auto-claude.sh "implement {FEATURE_NAME}" --judge
+- ./ralph/scripts/prd-status.sh                                # Check queue
+- ./ralph/ralph.sh                                             # Start Ralph loop
 ```
 
 ## Error Handling

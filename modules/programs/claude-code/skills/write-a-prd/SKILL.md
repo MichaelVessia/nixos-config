@@ -171,5 +171,5 @@ Report:
 - Remaining open questions/TODOs
 
 If issue output exists, include:
-- `./ralph/ralph-auto-claude.sh "implement <topic>"`
-- `./ralph/ralph-auto-codex.sh "implement <topic>"`
+- `./ralph/scripts/prd-status.sh`
+- `./ralph/ralph.sh`
