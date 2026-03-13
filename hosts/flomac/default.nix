@@ -39,6 +39,7 @@
       "ghostty"
       "hammerspoon"
       "google-drive"
+      "handy"
       "jordanbaird-ice"
       "karabiner-elements"
       "openlens"

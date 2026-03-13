@@ -4,7 +4,9 @@ set -e
 
 RALPH_DIR="ralph"
 
+RESCAFFOLD=false
 if [ -d "$RALPH_DIR" ]; then
+  RESCAFFOLD=true
   echo "ralph/ directory already exists, re-scaffolding..."
 fi
 
@@ -32,18 +34,30 @@ if ! grep -q "^\.ralph/$" "$EXCLUDE_FILE" 2>/dev/null; then
   echo ".ralph/" >> "$EXCLUDE_FILE"
 fi
 
-# Copy scripts from nix store (paths injected by Nix)
+# Helper: copy file only if it doesn't already exist (preserves user edits on re-scaffold)
+copy_if_new() {
+  local src="$1" dest="$2"
+  if [ "$RESCAFFOLD" = true ] && [ -f "$dest" ]; then
+    echo "  keeping $dest (user-customized)"
+    return
+  fi
+  cp "$src" "$dest"
+}
+
+# Infrastructure scripts (always overwritten, not user-edited)
 cp "@scriptsDir@/ralph.sh" "$RALPH_DIR/ralph.sh"
-cp "@scriptsDir@/ci-check.sh" "$RALPH_DIR/scripts/ci-check.sh"
 cp "@scriptsDir@/prd-status.sh" "$RALPH_DIR/scripts/prd-status.sh"
 cp "@scriptsDir@/prd-update.sh" "$RALPH_DIR/scripts/prd-update.sh"
 cp "@scriptsDir@/stream-filter.sh" "$RALPH_DIR/scripts/stream-filter.sh"
 
-# Copy templates from nix store
-cp "@templatesDir@/RALPH_PROMPT.md" "$RALPH_DIR/RALPH_PROMPT.md"
+# User-customizable files (preserved on re-scaffold)
+copy_if_new "@scriptsDir@/ci-check.sh" "$RALPH_DIR/scripts/ci-check.sh"
+copy_if_new "@templatesDir@/RALPH_PROMPT.md" "$RALPH_DIR/RALPH_PROMPT.md"
+copy_if_new "@templatesDir@/prd.json" "$RALPH_DIR/prd.json"
+copy_if_new "@templatesDir@/progress.txt" "$RALPH_DIR/progress.txt"
+
+# HOW_TO_RALPH.md is reference docs, always update it
 cp "@templatesDir@/HOW_TO_RALPH.md" "$RALPH_DIR/HOW_TO_RALPH.md"
-cp "@templatesDir@/prd.json" "$RALPH_DIR/prd.json"
-cp "@templatesDir@/progress.txt" "$RALPH_DIR/progress.txt"
 
 # Make files writable (nix store files are read-only)
 chmod u+w "$RALPH_DIR/RALPH_PROMPT.md"
