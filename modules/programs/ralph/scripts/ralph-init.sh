@@ -5,8 +5,7 @@ set -e
 RALPH_DIR="ralph"
 
 if [ -d "$RALPH_DIR" ]; then
-  echo "Error: ralph/ directory already exists"
-  exit 1
+  echo "ralph/ directory already exists, re-scaffolding..."
 fi
 
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
@@ -20,9 +19,17 @@ mkdir -p "$RALPH_DIR/scripts"
 mkdir -p ".ralph"
 
 # Add .ralph/ to git excludes (local, doesn't modify .gitignore)
+# In worktrees, git-dir points to .git/worktrees/<name> which may lack info/exclude.
+# Fall back to the main repo's info/exclude.
 GIT_DIR=$(git rev-parse --git-dir)
-if ! grep -q "^\.ralph/$" "$GIT_DIR/info/exclude" 2>/dev/null; then
-  echo ".ralph/" >> "$GIT_DIR/info/exclude"
+EXCLUDE_FILE="$GIT_DIR/info/exclude"
+if [ ! -d "$GIT_DIR/info" ]; then
+  COMMON_DIR=$(git rev-parse --git-common-dir)
+  EXCLUDE_FILE="$COMMON_DIR/info/exclude"
+fi
+mkdir -p "$(dirname "$EXCLUDE_FILE")"
+if ! grep -q "^\.ralph/$" "$EXCLUDE_FILE" 2>/dev/null; then
+  echo ".ralph/" >> "$EXCLUDE_FILE"
 fi
 
 # Copy scripts from nix store (paths injected by Nix)
