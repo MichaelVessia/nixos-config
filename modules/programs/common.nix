@@ -59,6 +59,7 @@
       nix-output-monitor
       nh # nix helper - better CLI for nixos-rebuild/darwin-rebuild
       devbox # portable development environments
+      devenv # developer environments with nix
 
       # productivity
       glow # markdown previewer in terminal
