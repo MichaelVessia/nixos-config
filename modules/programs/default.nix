@@ -23,6 +23,7 @@
     ./basalt.nix
     ./beads-viewer.nix
     ./fmcal.nix
+    ./floai.nix
     ./paperless-cli.nix
     ./hass-cli.nix
     ./kuma-cli.nix
