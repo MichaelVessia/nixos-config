@@ -73,10 +73,7 @@
       tmux
 
       btop # replacement of htop/nmon
-      (pkgs.writeShellScriptBin "critique" ''
-        export PATH="${pkgs.bun}/bin:$PATH"
-        exec bunx critique "$@"
-      '') # git diff viewer
+      difftastic # structural git diff viewer
       lazygit # terminal UI for git
       lazydocker # terminal UI for docker
       lsof # list open files

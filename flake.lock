@@ -545,11 +545,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1774216236,
-        "narHash": "sha256-sI26gUA+v2QAj80GeAPw4gOrYLqRZTaxA06EbB12Ugw=",
+        "lastModified": 1774659272,
+        "narHash": "sha256-C1RHYkHEqZLoKSdzwBK69d/GJtW8yANSSQkb3nrZ8mA=",
         "ref": "master",
-        "rev": "7d7db12803a1c56d281759b10d9989deb2b5b382",
-        "revCount": 33,
+        "rev": "9364ff9a49b67448b87d5f4955ecd8df01930580",
+        "revCount": 39,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
@@ -562,11 +562,11 @@
     "flocasts-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1774204077,
-        "narHash": "sha256-kHprqFD5yEgvXtJN3IAEyF69HdV60Q3oA8vmgYBgx9k=",
+        "lastModified": 1774662733,
+        "narHash": "sha256-FdmJ1mtwXGWNS/C3ZMbcfRniF/o1RRVua0j6IQeyoZw=",
         "ref": "master",
-        "rev": "347d4236228a58d612aa8d134c104764c9d3f114",
-        "revCount": 45,
+        "rev": "d517edc1655cb01d3ff5c17f70a69597de5a3c06",
+        "revCount": 53,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/agent-skills.git"
       },

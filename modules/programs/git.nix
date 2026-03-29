@@ -7,7 +7,9 @@
     enable = true;
     settings = {
       alias = {
-        d = "difftool";
+        d = "diff";
+        dl = "log -p --ext-diff";
+        ds = "show --ext-diff";
       };
       user.name = "Michael Vessia";
       user.email = "michael@vessia.net";
@@ -15,9 +17,11 @@
       color.ui = true;
       push.default = "current";
       pull.rebase = false;
-      diff.tool = "critique";
+      diff.external = "difft";
+      diff.tool = "difftastic";
       difftool.prompt = false;
-      difftool.critique.cmd = ''critique difftool "$LOCAL" "$REMOTE"'';
+      pager.difftool = true;
+      difftool.difftastic.cmd = ''difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
     };
   };
 
