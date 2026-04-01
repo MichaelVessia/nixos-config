@@ -1,5 +1,5 @@
 ---
-name: todo
+name: obsidian-todo
 description: Manage topic-based todo lists in Obsidian vault
 allowed-tools: Bash, Read, Edit
 ---
