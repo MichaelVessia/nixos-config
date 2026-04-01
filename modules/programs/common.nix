@@ -89,6 +89,7 @@
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
       (pkgs.callPackage ./pup {}) # Datadog API CLI
+      (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
