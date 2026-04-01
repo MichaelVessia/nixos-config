@@ -1,201 +1,359 @@
 ---
 name: cli-design
-description: Design and build agent-first CLIs with JSON envelopes, contextual next_actions, context-safe output, and optional NDJSON streaming. Use when creating CLI tools, adding commands, or reviewing command interfaces for agent consumption.
+displayName: CLI Design
+description: Design and build agent-first CLIs with HATEOAS JSON responses, context-protecting output, and self-documenting command trees. Use when creating new CLI tools, adding commands to existing CLIs, or reviewing CLI design for agent-friendliness. Triggers on 'build a CLI', 'add a command', 'CLI design', 'agent-friendly output', or any task involving command-line tool creation.
+version: 1.1.0
+tags: [cli, agentic, ux, json]
 ---
 
-# Agent-First CLI Design
+## Agent-First CLI Design
 
-Design CLIs for machine consumption first. Humans can always pipe into `jq`.
+CLIs in this system are **agent-first, human-distant-second**. Every command returns structured JSON that an agent can parse, act on, and follow. Humans are welcome to pipe through `jq`.
 
-## Defaults For This Setup
+## Core Principles
 
-- Prefer TypeScript + Bun + `@effect/cli` + Effect runtime.
-- Keep strict types, no `any`, no non-null assertions, no type assertions.
-- If a one-off tool is missing, use `nix run nixpkgs#<pkg>`.
-- If tooling should persist, update `flake.nix` (`devShells.default`).
+### 1. JSON always
 
-## Core Rules
+Every command returns JSON. No plain text. No tables. No color codes. Agents parse JSON; they don't parse prose.
 
-1. JSON only.
-No plain text mode, no table mode, no ANSI formatting.
-
-2. Every response includes next steps.
-Include `next_actions` with runnable commands or templates.
-
-3. Root command is self-documenting.
-Running the root command with no args returns command tree + usage.
-
-4. Protect context.
-Default output is terse, large data is truncated, include pointer to full output.
-
-5. Errors must be actionable.
-Return machine error code and a human-readable `fix`.
-
-## Response Contract
-
-Use one envelope for all commands.
-
-```ts
-type NextAction = {
-  command: string
-  description: string
-  params?: Record<
-    string,
-    {
-      description?: string
-      value?: string | number | boolean
-      default?: string | number | boolean
-      enum?: ReadonlyArray<string>
-      required?: boolean
-    }
-  >
-}
-
-type CliSuccess = {
-  ok: true
-  command: string
-  result: Record<string, unknown>
-  next_actions: ReadonlyArray<NextAction>
-}
-
-type CliError = {
-  ok: false
-  command: string
-  error: {
-    message: string
-    code: string
-  }
-  fix: string
-  next_actions: ReadonlyArray<NextAction>
-}
+```bash
+# This is the ONLY output format
+mycli status
+# → { "ok": true, "command": "mycli status", "result": {...}, "next_actions": [...] }
 ```
 
-Template syntax in `next_actions.command`:
-- `<arg>` required positional
-- `[--flag <value>]` optional flag with value
-- `[--flag]` optional boolean flag
+No `--json` flag. No `--human` flag. JSON is the default and only format.
 
-## Minimal Examples
+### 2. HATEOAS — every response tells you what to do next
 
-Success envelope:
+Every response includes `next_actions` — an array of command **templates** the agent can run next. Templates use standard POSIX/docopt placeholder syntax:
+
+- `<placeholder>` — required argument
+- `[--flag <value>]` — optional flag with value
+- `[--flag]` — optional boolean flag
+- No `params` field — literal command (run as-is)
+- `params` present — template (agent fills placeholders)
+- `params.*.value` — pre-filled from context (agent can override)
+- `params.*.default` — value if omitted
+- `params.*.enum` — valid choices
 
 ```json
 {
   "ok": true,
-  "command": "mycli runs get abc123",
+  "command": "mycli send pipeline/video.download",
   "result": {
-    "run_id": "abc123",
-    "status": "completed"
+    "event_id": "01KHF98SKZ7RE6HC2BH8PW2HB2",
+    "status": "accepted"
   },
   "next_actions": [
     {
-      "command": "mycli runs logs <run-id> [--tail <lines>]",
-      "description": "View run logs",
+      "command": "mycli run <run-id>",
+      "description": "Check run status for this event",
       "params": {
-        "run-id": { "value": "abc123", "required": true },
-        "lines": { "default": 50 }
+        "run-id": { "value": "01KHF98SKZ7RE6HC2BH8PW2HB2", "description": "Run ID (ULID)" }
       }
+    },
+    {
+      "command": "mycli logs <source> [--lines <lines>] [--grep <text>] [--follow]",
+      "description": "View worker logs",
+      "params": {
+        "source": { "enum": ["worker", "errors", "server"], "default": "worker" }
+      }
+    },
+    {
+      "command": "mycli status",
+      "description": "Check system health"
     }
   ]
 }
 ```
 
-Error envelope:
+`next_actions` are **contextual** — they change based on what just happened. A failed command suggests different next steps than a successful one. Templates are the agent's **affordances** — they show what's parameterizable, what values are valid, and what the current context pre-fills.
 
-```json
-{
-  "ok": false,
-  "command": "mycli runs get abc123",
-  "error": {
-    "message": "Run not found",
-    "code": "RUN_NOT_FOUND"
-  },
-  "fix": "Verify the run id, then list recent runs with mycli runs list",
-  "next_actions": [
-    {
-      "command": "mycli runs list [--limit <n>]",
-      "description": "List recent runs",
-      "params": {
-        "n": { "default": 20 }
-      }
-    }
-  ]
-}
-```
+### 3. Self-documenting command tree
 
-Root command output:
+Agents discover commands via **two paths**: the root command (JSON tree) and `--help` (Effect CLI auto-generated). Both must be useful.
+
+**Root command (no args)** returns the full command tree as JSON:
 
 ```json
 {
   "ok": true,
   "command": "mycli",
   "result": {
-    "description": "Example agent-first CLI",
+    "description": "MyCLI — description of this tool",
+    "health": { "server": {...}, "worker": {...} },
     "commands": [
-      { "name": "runs list", "usage": "mycli runs list [--limit <n>]", "description": "List runs" },
-      { "name": "runs get", "usage": "mycli runs get <run-id>", "description": "Get one run" }
+      { "name": "send", "description": "Send event to backend", "usage": "mycli send <event> -d '<json>'" },
+      { "name": "status", "description": "System status", "usage": "mycli status" },
+      { "name": "gateway", "description": "Gateway operations", "usage": "mycli gateway status" }
     ]
+  },
+  "next_actions": [...]
+}
+```
+
+**`--help` output** is auto-generated by Effect CLI from `Command.withDescription()`. Every subcommand **must** have a description — agents always call `--help` and a bare command list with no descriptions is useless.
+
+```typescript
+// Bad: agents see a blank command list
+const status = Command.make("status", {}, () => ...)
+
+// Good: agents see what each command does
+const status = Command.make("status", {}, () => ...).pipe(
+  Command.withDescription("Active sessions, queue depths, health")
+)
+```
+
+### 4. Context-protecting output
+
+Agents have finite context windows. CLI output must not blow them up.
+
+**Rules:**
+- Terse by default — minimum viable output
+- Auto-truncate large outputs (logs, lists) at a reasonable limit
+- When truncated, include a file path to the full output
+- Never dump raw logs, full transcripts, or unbounded lists
+
+```json
+{
+  "ok": true,
+  "command": "mycli logs",
+  "result": {
+    "lines": 20,
+    "total": 4582,
+    "truncated": true,
+    "full_output": "/var/folders/.../mycli-logs-abc123.log",
+    "entries": ["...last 20 lines..."]
   },
   "next_actions": [
     {
-      "command": "mycli runs list [--limit <n>]",
-      "description": "Start with recent runs",
-      "params": { "n": { "default": 20 } }
+      "command": "mycli logs <source> [--lines <lines>]",
+      "description": "Show more log lines",
+      "params": {
+        "source": { "enum": ["worker", "errors", "server"], "default": "worker" },
+        "lines": { "default": 20, "description": "Number of lines" }
+      }
     }
   ]
 }
 ```
 
-## Streaming (When Needed)
+### 5. Errors suggest fixes
 
-Use NDJSON only for temporal commands (`watch`, `follow`, `stream`).
-Last event must be terminal `result` or `error` envelope.
+When something fails, the response includes a `fix` field — plain language telling the agent what to do about it.
 
 ```json
-{"type":"start","command":"mycli runs watch abc123","ts":"2026-02-22T14:00:00Z"}
-{"type":"step","name":"build","status":"started","ts":"2026-02-22T14:00:03Z"}
-{"type":"step","name":"build","status":"completed","duration_ms":2050,"ts":"2026-02-22T14:00:05Z"}
-{"type":"result","ok":true,"command":"mycli runs watch abc123","result":{"run_id":"abc123","status":"completed"},"next_actions":[]}
+{
+  "ok": false,
+  "command": "mycli send pipeline/video.download",
+  "error": {
+    "message": "Server not responding",
+    "code": "SERVER_UNREACHABLE"
+  },
+  "fix": "Start the server: docker compose up -d",
+  "next_actions": [
+    { "command": "mycli status", "description": "Re-check system health after fix" }
+  ]
+}
 ```
 
-## Command Implementation Pattern
+## Response Envelope
 
-1. Define command with `Command.make`.
-2. Execute domain logic.
-3. Map output to success envelope.
-4. Map failures to error envelope with `fix`.
-5. Add contextual `next_actions`.
-6. Register command under root.
-7. Update root command tree output.
-8. Add/adjust tests.
+Every command uses this exact shape:
 
-## Test Requirements
+### Success
 
-For every new or changed command, add tests for:
-- success envelope shape
-- error envelope shape (`error.code`, `fix`, `next_actions`)
-- `next_actions` correctness and prefilled values
-- truncation behavior for large outputs
-- root command discoverability
-- streaming terminal event correctness (if streaming command)
+```typescript
+{
+  ok: true,
+  command: string,          // the command that was run
+  result: object,           // command-specific payload
+  next_actions: Array<{
+    command: string,        // command template (POSIX syntax) or literal
+    description: string,    // what it does
+    params?: Record<string, {   // presence = command is a template
+      description?: string,     // what this param means
+      value?: string | number,  // pre-filled from current context
+      default?: string | number,// value if omitted
+      enum?: string[],          // valid choices
+      required?: boolean        // true for <positional> args
+    }>
+  }>
+}
+```
 
-Run only changed tests unless user asks full suite.
+### Error
+
+```typescript
+{
+  ok: false,
+  command: string,
+  error: {
+    message: string,        // what went wrong
+    code: string            // machine-readable error code
+  },
+  fix: string,              // plain-language suggested fix
+  next_actions: Array<{
+    command: string,        // command template or literal
+    description: string,
+    params?: Record<string, { ... }>  // same schema as success
+  }>
+}
+```
+
+## Implementation
+
+### Framework: Effect CLI (@effect/cli)
+
+All CLIs use `@effect/cli` with Bun. This is non-negotiable — consistency across the system matters more than framework preference.
+
+```typescript
+import { Command, Options } from "@effect/cli"
+import { BunContext, BunRuntime } from "@effect/platform-bun"
+
+const send = Command.make("send", {
+  event: Options.text("event"),
+  data: Options.optional(Options.text("data").pipe(Options.withAlias("d"))),
+}, ({ event, data }) => {
+  // ... execute, return JSON envelope
+})
+
+const root = Command.make("mycli", {}, () => {
+  // Root: return health + command tree
+}).pipe(Command.withSubcommands([send, status, logs]))
+```
+
+### Binary distribution
+
+Build with Bun, install to `~/.bun/bin/`:
+
+```bash
+bun build src/cli.ts --compile --outfile mycli
+cp mycli ~/.bun/bin/
+```
+
+### Adding a new command
+
+1. Define the command with `Command.make`
+2. Return the standard JSON envelope (ok, command, result, next_actions)
+3. Include contextual `next_actions` — what makes sense AFTER this specific command
+4. Handle errors with the error envelope (ok: false, error, fix, next_actions)
+5. Add to the root command's subcommands
+6. Add to the root command's `commands` array in the self-documenting output
+7. Rebuild and install
+
+## Streaming Protocol (NDJSON)
+
+Request-response covers the **spatial** dimension (what's the state now?). Streamed NDJSON covers the **temporal** dimension (what's happening over time?). Together they make the full system observable through one protocol.
+
+### When to stream
+
+Stream when the command involves **temporal operations** — watching, following, tailing. Not every command needs streaming. Point-in-time queries (`status`, `list`) stay as single envelopes.
+
+Streaming is activated by command semantics (`--follow`, `watch`), never by a global `--stream` flag.
+
+### Protocol: typed NDJSON with HATEOAS terminal
+
+Each line is a self-contained JSON object with a `type` discriminator. The **last line is always the standard HATEOAS envelope** (`result` or `error`). Tools that don't understand streaming read the last line and get exactly what they expect.
+
+```
+{"type":"start","command":"mycli run --follow","ts":"2026-02-19T08:25:00Z"}
+{"type":"step","name":"download","status":"started","ts":"..."}
+{"type":"progress","name":"download","percent":45,"ts":"..."}
+{"type":"step","name":"download","status":"completed","duration_ms":3200,"ts":"..."}
+{"type":"step","name":"transcribe","status":"started","ts":"..."}
+{"type":"log","level":"warn","message":"Large file, chunked processing","ts":"..."}
+{"type":"step","name":"transcribe","status":"completed","duration_ms":45000,"ts":"..."}
+{"type":"result","ok":true,"command":"...","result":{...},"next_actions":[...]}
+```
+
+### Stream event types
+
+| Type | Meaning | Terminal? |
+|------|---------|-----------|
+| `start` | Stream begun, echoes command | No |
+| `step` | Step lifecycle (started/completed/failed) | No |
+| `progress` | Progress update (percent, bytes, message) | No |
+| `log` | Diagnostic message (info/warn/error level) | No |
+| `event` | An event was emitted (fan-out visibility) | No |
+| `result` | HATEOAS success envelope — always last | **Yes** |
+| `error` | HATEOAS error envelope — always last | **Yes** |
+
+### TypeScript types
+
+```typescript
+import type { NextAction } from "./response"
+
+type StreamEvent =
+  | { type: "start"; command: string; ts: string }
+  | { type: "step"; name: string; status: "started" | "completed" | "failed"; duration_ms?: number; error?: string; ts: string }
+  | { type: "progress"; name: string; percent?: number; message?: string; ts: string }
+  | { type: "log"; level: "info" | "warn" | "error"; message: string; ts: string }
+  | { type: "event"; name: string; data: unknown; ts: string }
+  | { type: "result"; ok: true; command: string; result: unknown; next_actions: NextAction[] }
+  | { type: "error"; ok: false; command: string; error: { message: string; code: string }; fix: string; next_actions: NextAction[] }
+```
+
+### Composable with Unix tools
+
+NDJSON is pipe-native. Agents and humans can filter streams:
+
+```bash
+# Only step events
+mycli watch | jq --unbuffered 'select(.type == "step")'
+
+# Only failures
+mycli run --follow | jq --unbuffered 'select(.type == "error" or (.type == "step" and .status == "failed"))'
+```
+
+### Agent consumption pattern
+
+Agents consuming streams read lines as they arrive and can make decisions mid-execution:
+
+1. Start the stream
+2. Read lines incrementally
+3. React to early signals (cancel if error, escalate if slow, log progress)
+4. The terminal `result`/`error` line contains `next_actions` for what to do after
+
+This eliminates the **polling tax** — no wasted tool calls checking "is it done yet?"
 
 ## Anti-Patterns
 
-- Plain text output
-- Hidden commands requiring `--help` parsing
-- Unbounded log/list dumps
-- Error messages without machine codes
-- Static next steps unrelated to command outcome
-- Streaming without terminal `result` or `error`
+| Don't | Do |
+|-------|-----|
+| Plain text output | JSON envelope |
+| Tables with ANSI colors | JSON arrays |
+| `--json` flag to opt into JSON | JSON is the only format |
+| Dump 10,000 lines | Truncate + file pointer |
+| `Error: something went wrong` | `{ ok: false, error: {...}, fix: "..." }` |
+| Undiscoverable commands | Root returns full command tree |
+| Static help text | HATEOAS next_actions |
+| `console.log("Success!")` | `{ ok: true, result: {...} }` |
+| Exit code as the only error signal | Error in JSON + exit code |
+| Require the agent to read --help | Root command self-documents |
+| Subcommand with no `withDescription` | Every command gets a description for `--help` |
+| Poll in a loop for temporal data | Stream NDJSON |
+| Plain text in streaming commands | Every line is a typed JSON object |
 
-## Quick Checklist
+## Naming Conventions
 
-- [ ] JSON envelope only
-- [ ] Root command returns command tree
-- [ ] Context-safe truncation with full output pointer
-- [ ] Actionable errors with `fix`
-- [ ] Contextual `next_actions` templates + params
-- [ ] Strict typing, no unsafe TypeScript shortcuts
-- [ ] Tests added and passing
+- Commands are **nouns or verbs**, lowercase, no hyphens: `send`, `status`, `logs`
+- Subcommands follow naturally: `mycli search "query"`, `mycli run start`
+- Flags use `--kebab-case`: `--max-quality`, `--follow`
+- Short flags for common options: `-d` for `--data`, `-f` for `--follow`
+
+## Checklist for New Commands
+
+- [ ] Returns JSON envelope (ok, command, result, next_actions)
+- [ ] `Command.withDescription()` set (shows in `--help`)
+- [ ] Error responses include fix field
+- [ ] Root command lists this command in its tree
+- [ ] Output is context-safe (truncated if potentially large)
+- [ ] next_actions are contextual to what just happened
+- [ ] next_actions with variable parts use template syntax (`<required>`, `[--flag <value>]`) + `params`
+- [ ] Context-specific values pre-filled via `params.*.value`
+- [ ] No plain text output anywhere
+- [ ] No ANSI colors or formatting
+- [ ] Works when piped (no TTY detection)
+- [ ] Builds and installs
