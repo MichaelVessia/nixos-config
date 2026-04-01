@@ -73,6 +73,8 @@
         export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="https://otlp.datadoghq.com/v1/metrics"
       fi
 
+      [ -f "$SECRETS_DIR/rootly_api_key" ] && export ROOTLY_API_KEY="$(cat "$SECRETS_DIR/rootly_api_key")"
+
     '';
 
     shellAliases = {

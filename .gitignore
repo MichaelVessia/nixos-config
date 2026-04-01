@@ -3,6 +3,7 @@
 result
 result-*
 *.img
+.grove/*
 
 # sops-nix safety (prevent accidental plaintext commits)
 *.decrypted

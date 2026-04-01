@@ -18,5 +18,6 @@
     secrets.dd_app_key = {};
     secrets.dd_api_key = {};
     secrets.dd_telemetry_api_key = {};
+    secrets.rootly_api_key = {};
   };
 }
