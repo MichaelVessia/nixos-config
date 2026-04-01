@@ -110,6 +110,7 @@ When reviewing existing docs:
 - Each document should primarily serve one user need
 - Split and link when one page tries to do multiple jobs
 - Use British English spelling when applying this skill
+- Never label a document with its Diataxis type in the title, subtitle, or opening line (no "This page is a reference", "Explanation: ...", etc.). The type should shape the writing style, not appear as a visible tag.
 
 ## Detailed Guidance
 
