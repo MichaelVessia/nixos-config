@@ -193,6 +193,7 @@
   settings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     model = "opus";
+    effortLevel = "high";
     attribution = {
       commit = "";
       pr = "";
