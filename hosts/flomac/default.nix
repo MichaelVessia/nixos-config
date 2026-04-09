@@ -88,6 +88,7 @@
       NSGlobalDomain = {
         AppleInterfaceStyle = "Dark";
         AppleShowAllExtensions = true;
+        ApplePressAndHoldEnabled = false; # Disable accent popup on key hold
         InitialKeyRepeat = 15;
         KeyRepeat = 2;
         NSAutomaticCapitalizationEnabled = false;

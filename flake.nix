@@ -37,6 +37,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     bun2nix.url = "github:nix-community/bun2nix";
+    worktrunk = {
+      url = "github:max-sixty/worktrunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -125,6 +129,7 @@
               home-manager.sharedModules = [
                 niri.homeModules.niri
                 noctalia.homeModules.default
+                inputs.worktrunk.homeModules.default
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;
@@ -204,6 +209,7 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 sops-nix.homeManagerModules.sops
+                inputs.worktrunk.homeModules.default
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;

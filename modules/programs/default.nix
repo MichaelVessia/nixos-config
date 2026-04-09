@@ -10,6 +10,7 @@
     ./agents
     ./nvf
     ./common.nix
+    ./cmux.nix
     ./ghostty.nix
     ./git.nix
     ./handy.nix
@@ -19,6 +20,7 @@
     ./ssh.nix
     ./syncthing.nix
     ./transcribe.nix
+    ./worktrunk.nix
     ./x-to-obsidian.nix
     ./basalt.nix
     ./beads-viewer.nix

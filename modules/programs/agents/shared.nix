@@ -4,7 +4,17 @@
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  superpowersFiltered = lib.cleanSourceWith {
+    src = inputs.superpowers;
+    filter = path: type: let
+      root = toString inputs.superpowers;
+      fullPath = toString path;
+      relPath = lib.removePrefix "${root}/" fullPath;
+    in
+      !(lib.hasPrefix "skills/using-superpowers" relPath);
+  };
+in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
   config = {
@@ -16,7 +26,7 @@
         }
         // {
           superpowers = {
-            path = inputs.superpowers;
+            path = superpowersFiltered;
             subdir = "skills";
           };
         }
