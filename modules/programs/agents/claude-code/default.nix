@@ -204,7 +204,15 @@
     };
     skipDangerousModePermissionPrompt = true;
     enabledPlugins = {
-      "pr-review-toolkit@claude-plugins-official" = true;
+      "codex@openai-codex" = true;
+    };
+    extraKnownMarketplaces = {
+      openai-codex = {
+        source = {
+          source = "github";
+          repo = "openai/codex-plugin-cc";
+        };
+      };
     };
     statusLine = {
       type = "command";
@@ -408,6 +416,7 @@ in {
       claude-statusline
       claude-alert
       dcg
+      pkgs.nodejs
     ];
 
     # dcg config
