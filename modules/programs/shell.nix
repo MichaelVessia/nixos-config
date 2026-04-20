@@ -1,8 +1,17 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
+{pkgs, ...}: let
+  direnvPackage =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then
+      pkgs.direnv.overrideAttrs (_: {
+        # nixpkgs' Fish check is currently killed on Darwin for direnv 2.37.1.
+        checkPhase = ''
+          runHook preCheck
+          make test-go test-bash test-zsh
+          runHook postCheck
+        '';
+      })
+    else pkgs.direnv;
+in {
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
@@ -198,6 +207,7 @@
   programs.direnv = {
     enable = true;
     enableZshIntegration = true;
+    package = direnvPackage;
     nix-direnv.enable = true;
   };
 }
