@@ -198,6 +198,7 @@
 
   # Environment variables
   environment.systemPackages = with pkgs; [
+    _1password-cli
     coreutils # provides gtimeout, gdate, etc.
     vim
   ];
