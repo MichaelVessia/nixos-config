@@ -13,7 +13,6 @@
     ./cmux.nix
     ./ghostty.nix
     ./git.nix
-    ./handy.nix
     ./media.nix
     ./shell.nix
     ./zellij.nix
@@ -23,7 +22,6 @@
     ./worktrunk.nix
     ./x-to-obsidian.nix
     ./basalt.nix
-    ./beads-viewer.nix
     ./fmcal.nix
     ./floai.nix
     ./paperless-cli.nix
@@ -31,7 +29,6 @@
     ./kuma-cli.nix
     ./subq.nix
     ./takopi
-    ./qmd
     ./karabiner.nix
     ./hammerspoon.nix
     ./raycast.nix

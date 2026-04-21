@@ -192,6 +192,7 @@
   # Settings as Nix attrset
   settings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+    theme = "auto";
     model = "opus";
     effortLevel = "high";
     attribution = {

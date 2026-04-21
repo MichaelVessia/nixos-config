@@ -78,14 +78,17 @@
       lazydocker # terminal UI for docker
       lsof # list open files
 
+      inputs.llm-agents.packages.${pkgs.system}.beads-viewer
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
+      inputs.llm-agents.packages.${pkgs.system}.handy
       inputs.llm-agents.packages.${pkgs.system}.opencode
       inputs.llm-agents.packages.${pkgs.system}.pi
+      inputs.llm-agents.packages.${pkgs.system}.qmd
+      inputs.llm-agents.packages.${pkgs.system}.rtk
       inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
-      (pkgs.callPackage ./sidecar {}) # TUI companion for CLI coding agents
-      (pkgs.callPackage ./td {}) # task tracking for AI coding sessions (used by sidecar)
+      (pkgs.callPackage ./td {}) # task tracking for AI coding sessions
     ]
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
@@ -95,7 +98,7 @@
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
-      xclip # X11 clipboard provider (required by sidecar)
+      xclip # X11 clipboard provider
       # Note: ydotool is enabled via programs.ydotool and used by Handy for text input
       iotop # io monitoring
       iftop # network monitoring

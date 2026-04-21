@@ -14,7 +14,6 @@
     ../../modules/programs/shell.nix
     ../../modules/programs/zellij.nix
     ../../modules/programs/ssh.nix
-    ../../modules/programs/qmd
     ../../modules/programs/takopi
     ../../modules/programs/basalt.nix
   ];
