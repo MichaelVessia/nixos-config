@@ -7,8 +7,8 @@
 
   codexConfig = {
     personality = "pragmatic";
-    model = "gpt-5.4";
-    model_reasoning_effort = "high";
+    model = "gpt-5.5";
+    model_reasoning_effort = "xhigh";
     tui = {
       status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
     };
