@@ -1356,6 +1356,7 @@
         "sops-nix": "sops-nix",
         "subq": "subq",
         "superpowers": "superpowers",
+        "warp-preview": "warp-preview",
         "wiggle-puppy": "wiggle-puppy",
         "worktrunk": "worktrunk",
         "x-to-obsidian": "x-to-obsidian"
@@ -1886,6 +1887,26 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "warp-preview": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1777401902,
+        "narHash": "sha256-7sa5tL1UEZo9tZu0b/gWLBJ/mFENXJIo+RtwLgWzylo=",
+        "owner": "jordangarrison",
+        "repo": "warp-preview-flake",
+        "rev": "c6600d6cf8a1b52a1fc9bc082431d70a30b6019c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jordangarrison",
+        "repo": "warp-preview-flake",
         "type": "github"
       }
     },

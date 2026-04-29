@@ -36,6 +36,10 @@
       url = "github:jordangarrison/wiggle-puppy";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    warp-preview = {
+      url = "github:jordangarrison/warp-preview-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     bun2nix.url = "github:nix-community/bun2nix";
     worktrunk = {
       url = "github:max-sixty/worktrunk";
