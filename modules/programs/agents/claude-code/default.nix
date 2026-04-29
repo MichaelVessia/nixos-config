@@ -425,6 +425,19 @@ in {
       install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
     '';
 
+    # Pre-cache the floai plugin marketplace on first activation so the
+    # plugin is ready to use without a manual /plugin install. Mirrors the
+    # codex marketplace activation in agents/codex.nix. HTTPS clone uses
+    # the gh credential helper configured in programs/git.nix.
+    home.activation.claudeMarketplaceFloai = lib.mkIf pkgs.stdenv.isDarwin (
+      lib.hm.dag.entryAfter ["claudeConfig"] ''
+        if [ ! -d "$HOME/.claude/plugins/marketplaces/flocasts" ]; then
+          PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.gh}/bin:$PATH" \
+            $DRY_RUN_CMD claude plugin marketplace add flocasts/floai || true
+        fi
+      ''
+    );
+
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
       claude-statusline
