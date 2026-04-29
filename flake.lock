@@ -139,16 +139,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1776182890,
-        "narHash": "sha256-+/VOe8XGq5klpU+I19D+3TcaR7o+Cwbq67KNF7mcFak=",
-        "owner": "Mic92",
+        "lastModified": 1777322186,
+        "narHash": "sha256-CFlRnym0RphrTymMUg7PfQgfdYdMd6BnMZQJhlwv0fI=",
+        "owner": "nix-community",
         "repo": "bun2nix",
-        "rev": "648d293c51e981aec9cb07ba4268bc19e7a8c575",
+        "rev": "8985e47786dd0bfa95b7c795f12aeafadd328eb8",
         "type": "github"
       },
       "original": {
-        "owner": "Mic92",
-        "ref": "catalog-support",
+        "owner": "nix-community",
+        "ref": "staging-2.1.0",
         "repo": "bun2nix",
         "type": "github"
       }
@@ -579,11 +579,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1776716985,
-        "narHash": "sha256-G2Bo28T/n3HH7nuoUZHO5serJ7zZL+aG86MY3WyImro=",
+        "lastModified": 1776874171,
+        "narHash": "sha256-L9++rIExoFekB/Up0NDH5jwcSKnxQvvRvOYXz8AvSLY=",
         "ref": "master",
-        "rev": "c6ff28fd89bb4b09229d008cc5ca539ed78e22fe",
-        "revCount": 65,
+        "rev": "89ec7c9beef521fa512057c33a1acbf390d0bf86",
+        "revCount": 90,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
@@ -591,23 +591,6 @@
         "ref": "master",
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
-      }
-    },
-    "flocasts-skills": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1775609035,
-        "narHash": "sha256-g8jEXcASkUku0l/iUVh9ctxlJq/dpaYmptIHJ+SXuDo=",
-        "ref": "master",
-        "rev": "5c245ab8181fd23c9bae8dc06de0e08ee154fcae",
-        "revCount": 68,
-        "type": "git",
-        "url": "ssh://git@github.com/flocasts/agent-skills.git"
-      },
-      "original": {
-        "ref": "master",
-        "type": "git",
-        "url": "ssh://git@github.com/flocasts/agent-skills.git"
       }
     },
     "fmcal": {
@@ -763,11 +746,11 @@
     },
     "import-tree_4": {
       "locked": {
-        "lastModified": 1763762820,
-        "narHash": "sha256-ZvYKbFib3AEwiNMLsejb/CWs/OL/srFQ8AogkebEPF0=",
+        "lastModified": 1773693634,
+        "narHash": "sha256-BtZ2dtkBdSUnFPPFc+n0kcMbgaTxzFNPv2iaO326Ffg=",
         "owner": "vic",
         "repo": "import-tree",
-        "rev": "3c23749d8013ec6daa1d7255057590e9ca726646",
+        "rev": "c41e7d58045f9057880b0d85e1152d6a4430dbf1",
         "type": "github"
       },
       "original": {
@@ -831,11 +814,11 @@
         "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
-        "lastModified": 1776384037,
-        "narHash": "sha256-Q38I4yAYAkq2xRrMb479WRE0dELZXVegWpCiEhcxGoU=",
+        "lastModified": 1777354680,
+        "narHash": "sha256-jtMZ7U79JYGoE8NYIu8Y4bNr+EoQW5i6zMP6Mig7tCU=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "4dd328159ccd0c359e2bdf3b535cc130e486c9ab",
+        "rev": "efa749415e2ee5015db3fda1d3d6d7484d8aa64c",
         "type": "github"
       },
       "original": {
@@ -1125,11 +1108,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1773840656,
-        "narHash": "sha256-9tpvMGFteZnd3gRQZFlRCohVpqooygFuy9yjuyRL2C0=",
+        "lastModified": 1776329215,
+        "narHash": "sha256-a8BYi3mzoJ/AcJP8UldOx8emoPRLeWqALZWu4ZvjPXw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9cf7092bdd603554bd8b63c216e8943cf9b12512",
+        "rev": "b86751bc4085f48661017fa226dee99fab6c651b",
         "type": "github"
       },
       "original": {
@@ -1170,11 +1153,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1776255774,
-        "narHash": "sha256-psVTpH6PK3q1htMJpmdz1hLF5pQgEshu7gQWgKO6t6Y=",
+        "lastModified": 1776949667,
+        "narHash": "sha256-GMSVw35Q+294GlrTUKlx087E31z7KurReQ1YHSKp5iw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "566acc07c54dc807f91625bb286cb9b321b5f42a",
+        "rev": "01fbdeef22b76df85ea168fbfe1bfd9e63681b30",
         "type": "github"
       },
       "original": {
@@ -1341,7 +1324,6 @@
         "bun2nix": "bun2nix",
         "darwin": "darwin",
         "floai": "floai",
-        "flocasts-skills": "flocasts-skills",
         "fmcal": "fmcal",
         "ghostty": "ghostty",
         "home-manager": "home-manager_3",

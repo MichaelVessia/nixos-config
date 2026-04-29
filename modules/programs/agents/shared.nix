@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   inputs,
   ...
 }: let
@@ -20,22 +19,13 @@ in {
   config = {
     programs.agent-skills = {
       enable = true;
-      sources =
-        {
-          personal.path = ./shared/skills;
-        }
-        // {
-          superpowers = {
-            path = superpowersFiltered;
-            subdir = "skills";
-          };
-        }
-        // lib.optionalAttrs pkgs.stdenv.isDarwin {
-          flocasts = {
-            path = inputs.flocasts-skills;
-            subdir = "skills";
-          };
+      sources = {
+        personal.path = ./shared/skills;
+        superpowers = {
+          path = superpowersFiltered;
+          subdir = "skills";
         };
+      };
       skills.enableAll = true;
       targets = {
         claude = {

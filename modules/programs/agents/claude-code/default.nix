@@ -204,17 +204,30 @@
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
     };
     skipDangerousModePermissionPrompt = true;
-    enabledPlugins = {
-      "codex@openai-codex" = true;
-    };
-    extraKnownMarketplaces = {
-      openai-codex = {
-        source = {
-          source = "github";
-          repo = "openai/codex-plugin-cc";
+    enabledPlugins =
+      {
+        "codex@openai-codex" = true;
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        "floai@flocasts" = true;
+      };
+    extraKnownMarketplaces =
+      {
+        openai-codex = {
+          source = {
+            source = "github";
+            repo = "openai/codex-plugin-cc";
+          };
+        };
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        flocasts = {
+          source = {
+            source = "github";
+            repo = "flocasts/floai";
+          };
         };
       };
-    };
     statusLine = {
       type = "command";
       command = "claude-statusline";
