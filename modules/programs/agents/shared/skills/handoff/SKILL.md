@@ -13,11 +13,27 @@ Produce a self-contained briefing so the next agent can pick up where this
 session left off with zero ramp-up. Output it directly as text (do not write a
 file).
 
+## Scope
+
+Arguments: $ARGUMENTS
+
+- **No arguments** → handoff covers the whole session.
+- **Arguments present** → treat them as the scope. Hand off only the work,
+  decisions, and remaining steps relevant to what the user described. Ignore
+  unrelated session history. If the scope is ambiguous (e.g. matches multiple
+  threads in the conversation), ask one clarifying question before producing
+  the handoff.
+
+Examples:
+- `/handoff` → full session
+- `/handoff the auth refactor` → just the auth refactor thread
+- `/handoff last message` → just what the user asked about most recently
+
 ## Process
 
 ### 1. Gather Context
 
-Review the full conversation and extract:
+Review the conversation (filtered to the scope above) and extract:
 
 - **Goal**: what the user is trying to accomplish (the "why")
 - **Completed**: what was already done this session (commits with SHAs, files
