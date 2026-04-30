@@ -3,7 +3,7 @@ name: open-and-monitor
 description: |
   Open a draft PR, then watch CI and bot reviewers and autofix until clean.
   Use when user says "open and monitor", "ship it", "open PR and fix", or
-  wants a hands-off PR workflow. Does NOT merge — use `babysit-pr` for an
+  wants a hands-off PR workflow. Does NOT merge — use `shepherd-pr` for an
   existing PR with auto-merge, or follow this with `merge-pr` once clean.
 allowed-tools: Bash(gh *), Skill
 ---
@@ -31,4 +31,4 @@ and exits either **clean** or **blocked**. Print its report verbatim as the
 final output.
 
 This skill does NOT merge. If you want auto-merge on an existing PR, use
-`babysit-pr` instead.
+`shepherd-pr` instead.

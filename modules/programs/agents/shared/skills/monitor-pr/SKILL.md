@@ -3,7 +3,7 @@ name: monitor-pr
 description: |
   Watch an open PR's CI and bot comments; on relevant failure or new bot
   feedback, invoke `fix-pr`. Exit when the PR is clean or stuck. Use when user
-  says "monitor PR", "watch CI", or wants hands-off CI babysitting without a
+  says "monitor PR", "watch CI", or wants hands-off CI shepherding without a
   merge step.
 allowed-tools: Bash(gh *), Bash(git *), Bash(sleep *), Skill
 ---

@@ -1,15 +1,15 @@
 ---
-name: babysit-pr
+name: shepherd-pr
 description: |
-  Babysit an already-open PR end to end: monitor CI + bot comments, invoke
-  `fix-pr` on issues, then merge when clean (respecting repo branch
+  Shepherd an already-open PR across the line: monitor CI + bot comments,
+  invoke `fix-pr` on issues, then merge when clean (respecting repo branch
   protection). Composes `monitor-pr` + `merge-pr`. Use when user says
-  "babysit", "babysit PR", "watch and merge", or wants hands-off ship-it
+  "shepherd", "shepherd PR", "watch and merge", or wants hands-off ship-it
   behavior on an existing PR.
 allowed-tools: Bash(gh *), Skill
 ---
 
-# babysit-pr
+# shepherd-pr
 
 Arguments: `$ARGUMENTS` (optional PR number or URL; else current branch PR).
 
@@ -36,7 +36,7 @@ protection).
 Combine the two sub-reports into a single final summary:
 
 ```
-## Babysit-PR
+## Shepherd-PR
 
 - **PR**: <URL>
 - **Monitor outcome**: clean | blocked (<reason>)
