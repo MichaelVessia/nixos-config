@@ -2,7 +2,7 @@
 name: wt-start
 description: Create a new branch in a fresh worktree and move into it
 allowed-tools: Bash(wt switch:*), Bash(wt list:*), Bash(jq:*), Bash(cd:*)
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 ## Your task

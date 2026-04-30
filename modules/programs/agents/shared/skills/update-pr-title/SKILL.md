@@ -2,7 +2,7 @@
 name: update-pr-title
 description: Set the current PR's title to the best-fitting conventional-commit title based on the actual changes. Flags when the choice was hard, since that often means the PR is doing too much.
 allowed-tools: Bash(gh pr edit:*), Bash(gh pr view:*), Bash(gh pr diff:*)
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 ## Context

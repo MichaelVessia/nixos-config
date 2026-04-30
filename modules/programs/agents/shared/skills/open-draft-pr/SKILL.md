@@ -5,7 +5,7 @@ description: |
   needs to run before review, or when the user says "draft PR", "open as
   draft", "WIP PR". For a ready-for-review PR, use `open-pr` instead.
 allowed-tools: Bash(git checkout --branch:*), Bash(git branch:*), Bash(gh pr create:*), Skill
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 ## Context

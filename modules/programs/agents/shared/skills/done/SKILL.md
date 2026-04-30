@@ -4,7 +4,7 @@ description: |
   End-of-session summary saved to Obsidian with bidirectional daily note linking.
   Trigger phrases: "done", "wrap up", "session done", "end session"
 allowed-tools: Bash, Write, Read, Edit
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 # done - End-of-Session Summary

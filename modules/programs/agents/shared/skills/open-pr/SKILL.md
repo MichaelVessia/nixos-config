@@ -5,7 +5,7 @@ description: |
   is complete and reviewable, or when the user says "open PR", "open a PR",
   "ship it for review". For an in-progress PR, use `open-draft-pr` instead.
 allowed-tools: Bash(git checkout --branch:*), Bash(git branch:*), Bash(gh pr create:*), Skill
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 ## Context

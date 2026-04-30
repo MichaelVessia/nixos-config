@@ -4,7 +4,7 @@ description: |
   Summarize remaining work and context for the next agent session.
   Trigger phrases: "handoff", "hand off", "pass it off", "next agent"
 allowed-tools: Bash, Read, Glob, Grep
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 # handoff - Context Handoff for Next Agent

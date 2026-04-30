@@ -2,7 +2,7 @@
 name: jira-comment
 description: Comment on a Jira ticket on Michael's behalf, clearly attributed as AI-generated. Use when asked to leave a comment or reply on Jira.
 allowed-tools: Bash(jira issue comment add:*), Bash(jira issue view:*)
-model: claude-haiku-4-5
+model: haiku
 ---
 
 ## Your task

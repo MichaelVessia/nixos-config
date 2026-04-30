@@ -2,7 +2,7 @@
 name: surge-deploy
 description: Deploy a directory to surge.sh and return the URL
 allowed-tools: Bash(bunx surge *), Bash(uuidgen *)
-model: claude-haiku-4-5
+model: haiku
 ---
 
 # surge-deploy
