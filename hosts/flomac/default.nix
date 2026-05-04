@@ -51,7 +51,6 @@
       "superwhisper"
       "tailscale"
       "libreoffice"
-      "warp"
       "yaak"
       "zoom"
     ];
