@@ -2,7 +2,6 @@
 name: commit-and-push
 description: Commit changes and push to remote
 allowed-tools: Bash(git push:*), Bash(git branch:*), Skill
-model: haiku
 ---
 
 ## Context

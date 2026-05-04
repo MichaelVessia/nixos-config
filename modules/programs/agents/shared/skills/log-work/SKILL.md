@@ -2,7 +2,6 @@
 name: log-work
 description: Log work activity to today's journal
 allowed-tools: Bash
-model: sonnet
 ---
 
 Create or append to today's journal file in your Obsidian vault. Intended for daily logging of activities, summaries, or notes.

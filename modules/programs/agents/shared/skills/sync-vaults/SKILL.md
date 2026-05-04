@@ -2,7 +2,6 @@
 name: sync-vaults
 description: Sync work notes from flo-notes into main Obsidian vault
 allowed-tools: Bash(git pull:*), Bash(git -C:*), Bash(ls:*), Bash(ln:*)
-model: haiku
 ---
 
 ## Context

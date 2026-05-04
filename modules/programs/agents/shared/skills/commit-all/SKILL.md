@@ -2,7 +2,6 @@
 name: commit-all
 description: Stage all changed files and create a commit
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
-model: sonnet
 ---
 
 ## Context

@@ -2,7 +2,6 @@
 name: journal
 description: End-of-day 5-minute checkin (Physical, Mind, Craft, Presence)
 allowed-tools: AskUserQuestion, Bash
-model: sonnet
 ---
 
 Run a quick end-of-day checkin using the AskUserQuestion tool, then log to Obsidian.

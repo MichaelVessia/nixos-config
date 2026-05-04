@@ -2,7 +2,6 @@
 name: wt-pr
 description: Check out a GitHub PR in its own worktree for review
 allowed-tools: Bash(wt switch:*), Bash(wt list:*), Bash(jq:*), Bash(cd:*)
-model: sonnet
 ---
 
 ## Your task

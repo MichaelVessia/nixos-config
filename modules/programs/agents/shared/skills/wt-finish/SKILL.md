@@ -2,7 +2,6 @@
 name: wt-finish
 description: Squash, rebase, fast-forward into the default branch, then remove the worktree
 allowed-tools: Bash(wt merge:*), Bash(wt list:*), Bash(git status:*), Bash(git branch:*)
-model: sonnet
 ---
 
 ## Context

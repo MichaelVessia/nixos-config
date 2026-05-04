@@ -2,7 +2,6 @@
 name: wt-prune
 description: Remove worktrees whose branches have merged into the default branch
 allowed-tools: Bash(wt list:*), Bash(wt step prune:*)
-model: sonnet
 ---
 
 ## Context

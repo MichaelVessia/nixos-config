@@ -2,7 +2,6 @@
 name: update-pr-description
 description: Fill the current PR's description from the repo's PR template (or a sane default), focused on intent and motivation rather than a changelog.
 allowed-tools: Bash(gh pr edit:*), Bash(gh pr view:*), Read, Glob
-model: sonnet
 ---
 
 ## Context

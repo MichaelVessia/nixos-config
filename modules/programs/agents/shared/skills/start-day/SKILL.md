@@ -2,7 +2,6 @@
 name: start-day
 description: Generate a daily kickoff note with GitHub context and recent vault activity
 allowed-tools: Bash, Read, mcp__atlassian__atlassianUserInfo, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getAccessibleAtlassianResources, mcp__google-calendar__gcal_list_events
-model: sonnet
 ---
 
 Create today's daily note with GitHub work items and recent vault context.

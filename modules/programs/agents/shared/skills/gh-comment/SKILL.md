@@ -2,7 +2,6 @@
 name: gh-comment
 description: Comment on a GitHub PR or issue on Michael's behalf, clearly attributed as AI-generated. Use when asked to leave a comment, reply, or respond on GitHub.
 allowed-tools: Bash(gh pr comment:*), Bash(gh issue comment:*), Bash(gh pr view:*), Bash(gh issue view:*), Bash(gh api:*)
-model: haiku
 ---
 
 ## Your task
