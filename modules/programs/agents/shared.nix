@@ -13,6 +13,23 @@
     in
       !(lib.hasPrefix "skills/using-superpowers" relPath);
   };
+
+  # Skill names enumerated from the same sources agent-skills-nix consumes,
+  # so we can declare one home.file entry per skill instead of owning the
+  # whole skills directory. That leaves siblings written by `flo skills add`
+  # (and similar tools) untouched on home-manager activation.
+  dirNames = path:
+    lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir path));
+  personalNames = dirNames ./shared/skills;
+  superpowersNames = lib.remove "using-superpowers" (dirNames "${inputs.superpowers}/skills");
+  skillNames = lib.unique (personalNames ++ superpowersNames);
+
+  perSkillSymlinks = prefix:
+    lib.listToAttrs (map (name: {
+        name = "${prefix}/${name}";
+        value.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills/${name}";
+      })
+      skillNames);
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
 
@@ -45,10 +62,9 @@ in {
       };
     };
 
-    home.file = {
-      ".claude/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-      ".codex/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-      ".config/opencode/skills".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-    };
+    home.file =
+      perSkillSymlinks ".claude/skills"
+      // perSkillSymlinks ".codex/skills"
+      // perSkillSymlinks ".config/opencode/skills";
   };
 }
