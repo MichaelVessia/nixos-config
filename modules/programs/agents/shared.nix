@@ -45,12 +45,16 @@ in {
       };
       skills.enableAll = true;
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
-      # top via perSkillSymlinks below.
+      # top via perSkillSymlinks below. `structure = "link"` declares one
+      # home.file entry per skill (recursive symlinks) so siblings written by
+      # `flo skills add` (and similar tools) survive home-manager activation.
+      # `symlink-tree` would run an activation sync script that owns the whole
+      # directory and deletes anything it didn't put there.
       targets = {
         agents = {
           enable = true;
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
+          dest = ".agents/skills";
+          structure = "link";
         };
       };
     };
