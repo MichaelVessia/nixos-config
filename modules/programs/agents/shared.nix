@@ -44,17 +44,10 @@ in {
         };
       };
       skills.enableAll = true;
+      # Single bundle dest under ~/.agents/skills; per-tool paths layered on
+      # top via perSkillSymlinks below.
       targets = {
-        claude = {
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
-        };
-        codex = {
-          enable = true;
-          dest = "$HOME/.agents/skills";
-          structure = "symlink-tree";
-        };
-        opencode = {
+        agents = {
           enable = true;
           dest = "$HOME/.agents/skills";
           structure = "symlink-tree";
