@@ -25,6 +25,7 @@
     brews = [
       "mas" # Mac App Store CLI
       "bd" # Beads - AI coding assistant
+      "agent-browser" # Browser automation CLI for AI agents; run `agent-browser install` once post-install to fetch Chrome
     ];
 
     # GUI Applications (casks)
