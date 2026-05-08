@@ -5,16 +5,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "pup";
-  version = "0.22.4";
+  version = "0.58.4";
 
   src = fetchFromGitHub {
     owner = "datadog-labs";
     repo = "pup";
     rev = "v${version}";
-    hash = "sha256-nDjfwM8+REyaStrjvxz1pW/8wMW/eW5e7UJKW4mBvCc=";
+    hash = "sha256-nWfFLoyLVUuFvsm5IZVCoIzk+PJIgwfUnZyE5KnzcPA=";
   };
 
-  cargoHash = "sha256-cmiJL98ygIZXgvCr5derxg7fy+NXTiKKsmerXM1mJQ0=";
+  cargoHash = "sha256-xwayUDimovu/nEDenD18nYoHxWCr5unCM3AMoqfUVNQ=";
 
   # Tests rely on runtime environment and network-adjacent behavior
   doCheck = false;
