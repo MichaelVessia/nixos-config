@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   inputs,
@@ -6,12 +7,15 @@
 }: let
   codexPkg = inputs.llm-agents.packages.${pkgs.system}.codex;
   sharedInstructions = builtins.readFile ./shared/instructions.md;
+  rtkAgentsRef = "@${config.home.homeDirectory}/.codex/RTK.md";
+  codexAgents = "${sharedInstructions}\n${rtkAgentsRef}\n";
 
   codexConfig =
     {
       personality = "pragmatic";
       model = "gpt-5.5";
       model_reasoning_effort = "xhigh";
+      features.goals = true;
       tui = {
         status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
       };
@@ -54,7 +58,8 @@
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
   config = {
-    home.file.".codex/AGENTS.md".text = sharedInstructions;
+    home.file.".codex/AGENTS.md".text = codexAgents;
+    home.file.".codex/RTK.md".source = ./shared/rtk/codex.md;
 
     home.activation =
       {

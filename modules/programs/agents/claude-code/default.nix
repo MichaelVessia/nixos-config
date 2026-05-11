@@ -241,6 +241,10 @@
               type = "command";
               command = "dcg";
             }
+            {
+              type = "command";
+              command = "rtk hook claude";
+            }
           ];
         }
         {
@@ -413,6 +417,7 @@ in {
   config = {
     home.file = {
       ".claude/CLAUDE.md".text = sharedInstructions;
+      ".claude/RTK.md".source = ../shared/rtk/claude.md;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;
