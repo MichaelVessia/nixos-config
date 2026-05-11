@@ -53,6 +53,7 @@
       "tailscale"
       "libreoffice"
       "yaak"
+      "zed"
       "zoom"
     ];
 

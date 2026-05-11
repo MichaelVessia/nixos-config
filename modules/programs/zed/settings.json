@@ -1,0 +1,39 @@
+{
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "never",
+    "toggle_relative_line_numbers": true
+  },
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Latte",
+    "dark": "Catppuccin Mocha"
+  },
+  "ui_font_size": 12,
+  "buffer_font_size": 14,
+  "auto_update": false,
+  "hour_format": "hour12",
+  "auto_install_extensions": {
+    "nix": true,
+    "typescript": true,
+    "catppuccin": true,
+    "biome": true
+  }
+}
