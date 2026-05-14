@@ -51,7 +51,10 @@
 
   piSettings = {
     inherit packages;
+    defaultProvider = "openai-codex";
+    defaultModel = "gpt-5.5";
     defaultThinkingLevel = "xhigh";
+    enabledModels = ["openai-codex/gpt-5.5"];
     theme = "catppuccin-mocha";
     subagents = {
       agentOverrides = lib.genAttrs subagentBuiltins (_: {model = "";});
