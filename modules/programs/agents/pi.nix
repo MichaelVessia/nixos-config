@@ -7,7 +7,6 @@
     source = "npm:pi-themes";
     themes = [
       "themes/*.json"
-      "!themes/catppuccin-mocha.json"
       "!themes/gruvbox-dark.json"
     ];
   };
@@ -23,8 +22,8 @@
     {source = "npm:pi-add-dir";}
     {source = "npm:pi-prompt-template-model";}
     {source = "npm:@plannotator/pi-extension";}
-    {source = "npm:@juanibiapina/pi-powerbar";}
     {source = "npm:@juanibiapina/pi-extension-settings";}
+    {source = "npm:@juanibiapina/pi-powerbar";}
     {source = "npm:@tmustier/pi-usage-extension";}
     {source = "npm:@tmustier/pi-raw-paste";}
     {source = "git:github.com/tintinweb/pi-manage-todo-list@b75c449aa85ce328e9a8b632f62bf642aed40359";}
@@ -52,17 +51,33 @@
 
   piSettings = {
     inherit packages;
-    defaultThinkingLevel = "high";
+    defaultThinkingLevel = "xhigh";
+    theme = "catppuccin-mocha";
     subagents = {
       agentOverrides = lib.genAttrs subagentBuiltins (_: {model = "";});
     };
   };
 
+  piExtensionSettings = {
+    powerbar = {
+      # Keep Cyber UI's detailed model/context footer; use powerbar for git,
+      # cumulative session tokens/cost, and the provider only.
+      left = "git-branch,tokens";
+      right = "provider";
+      separator = " │ ";
+      placement = "belowEditor";
+      "bar-style" = "blocks";
+      "bar-width" = "10";
+    };
+  };
+
   piSettingsFile = pkgs.writeText "pi-settings.json" (builtins.toJSON piSettings);
+  piExtensionSettingsFile = pkgs.writeText "pi-settings-extensions.json" (builtins.toJSON piExtensionSettings);
 in {
   config = {
     home.activation.piConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       install -Dm644 ${piSettingsFile} "$HOME/.pi/agent/settings.json"
+      install -Dm644 ${piExtensionSettingsFile} "$HOME/.pi/agent/settings-extensions.json"
     '';
   };
 }
