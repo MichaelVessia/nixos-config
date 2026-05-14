@@ -30,7 +30,8 @@
     {source = "git:github.com/tintinweb/pi-manage-todo-list@b75c449aa85ce328e9a8b632f62bf642aed40359";}
     {source = "npm:pi-btw";}
     {source = "npm:pi-interactive-shell";}
-    {source = "git:github.com/davebcn87/pi-autoresearch@5a29db080131449edc6d25a6b351b12879063366";}
+    # Fork pins Ctrl+Alt+X for the dashboard toggle to avoid pi's built-in Ctrl+X shortcut.
+    {source = "git:github.com/MichaelVessia/pi-autoresearch@76aa69464cd8d8028538ec8102ae91ea75df5736";}
     {source = "npm:@tmustier/pi-ralph-wiggum";}
     {source = "npm:@every-env/compound-plugin";}
     piThemesFiltered
