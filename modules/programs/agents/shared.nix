@@ -4,25 +4,13 @@
   inputs,
   ...
 }: let
-  superpowersFiltered = lib.cleanSourceWith {
-    src = inputs.superpowers;
-    filter = path: type: let
-      root = toString inputs.superpowers;
-      fullPath = toString path;
-      relPath = lib.removePrefix "${root}/" fullPath;
-    in
-      !(lib.hasPrefix "skills/using-superpowers" relPath);
-  };
-
-  # Skill names enumerated from the same sources agent-skills-nix consumes,
-  # so we can declare one home.file entry per skill instead of owning the
-  # whole skills directory. That leaves siblings written by `flo skills add`
-  # (and similar tools) untouched on home-manager activation.
+  # Enumerate personal skills from the source dir so we can declare one
+  # home.file entry per skill instead of owning the whole skills directory.
+  # That leaves siblings written by `flo skills add` (and similar tools)
+  # untouched on home-manager activation.
   dirNames = path:
     lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir path));
-  personalNames = dirNames ./shared/skills;
-  superpowersNames = lib.remove "using-superpowers" (dirNames "${inputs.superpowers}/skills");
-  skillNames = lib.unique (personalNames ++ superpowersNames);
+  skillNames = dirNames ./shared/skills;
 
   perSkillSymlinks = prefix:
     lib.listToAttrs (map (name: {
@@ -38,10 +26,6 @@ in {
       enable = true;
       sources = {
         personal.path = ./shared/skills;
-        superpowers = {
-          path = superpowersFiltered;
-          subdir = "skills";
-        };
       };
       skills.enableAll = true;
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on

@@ -68,9 +68,12 @@ in {
       [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
       [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
-      # AI agent telemetry -> Datadog (shared key for Claude Code + Codex)
+      # AI agent telemetry -> Datadog (shared key for Claude Code + Codex + opencode)
       if [ -f "$SECRETS_DIR/dd_telemetry_api_key" ]; then
         export DD_TELEMETRY_API_KEY="$(cat "$SECRETS_DIR/dd_telemetry_api_key")"
+        # opencode only enables OTEL when the generic base endpoint is set.
+        export OTEL_EXPORTER_OTLP_ENDPOINT="https://otlp.datadoghq.com"
+        export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
         # Claude Code OTEL
         export CLAUDE_CODE_ENABLE_TELEMETRY=1
         export OTEL_LOGS_EXPORTER=otlp
@@ -80,6 +83,10 @@ in {
         export OTEL_METRICS_EXPORTER=otlp
         export OTEL_EXPORTER_OTLP_METRICS_PROTOCOL="http/protobuf"
         export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="https://otlp.datadoghq.com/v1/metrics"
+        # Trace-specific OTLP vars for tools that honor per-signal endpoints
+        export OTEL_TRACES_EXPORTER=otlp
+        export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf"
+        export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="https://otlp.datadoghq.com/v1/traces"
       fi
 
       [ -f "$SECRETS_DIR/rootly_api_key" ] && export ROOTLY_API_KEY="$(cat "$SECRETS_DIR/rootly_api_key")"

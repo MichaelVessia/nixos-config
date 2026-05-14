@@ -138,11 +138,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777369708,
-        "narHash": "sha256-1xW7cRZNsFNPQD+cE0fwnLVStnDth0HSoASEIFeT7uI=",
+        "lastModified": 1778445566,
+        "narHash": "sha256-oQvcadh2BCkrog+SGrG6YffKJrveYpjj3TdQJWaKhaM=",
         "owner": "nix-community",
         "repo": "bun2nix",
-        "rev": "e659e1cc4b8e1b21d0aa85f1c481f9db61ecfa98",
+        "rev": "2499dedd70744dba1815875b854818a3019e9e4c",
         "type": "github"
       },
       "original": {
@@ -578,11 +578,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1778594418,
-        "narHash": "sha256-ODK+RgqduRrR6YxqSjaqs2egkDIGZnKbetHEIqIMzgs=",
+        "lastModified": 1778690797,
+        "narHash": "sha256-5f8dL5sebHnzRzp3tWvU0x+TvOQMA/9Q2WTcG2ItROA=",
         "ref": "master",
-        "rev": "4f0d5d669138563a0d7cb1357118f00d9d551bb1",
-        "revCount": 285,
+        "rev": "155b2787c627ef02c5dc4db08cd738062129c7ab",
+        "revCount": 301,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
@@ -798,11 +798,11 @@
         "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
-        "lastModified": 1778290078,
-        "narHash": "sha256-xQ4Xwqyv22tEMpsS/+aczfv1ZqaKB4fO2faHTiS2zwk=",
+        "lastModified": 1778622304,
+        "narHash": "sha256-SgBDJfY+g2sp+gDKWYb3ixuORppljPye5ni3PatnQGk=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "ec7e9c2f435bcb86459365b0ba22ed1ddb4a5dad",
+        "rev": "5a20300e2a82ce37cceefa9af2e601f7bf62893d",
         "type": "github"
       },
       "original": {
@@ -1137,11 +1137,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1778124196,
-        "narHash": "sha256-pYEytCNic/czazbV9r3tbQ6BZzqRBg/41x2dIC5ymOo=",
+        "lastModified": 1778551015,
+        "narHash": "sha256-j299xXVjlKs5WtVkKSgEXZGvpTTw5X2iWwKs4KWv/Ag=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "68a8af93ff4297686cb68880845e61e5e2e41d92",
+        "rev": "0a0bf409f3593f415d0a554f33acc63dc7dccb43",
         "type": "github"
       },
       "original": {
@@ -1321,7 +1321,6 @@
         "paperless-cli": "paperless-cli",
         "sops-nix": "sops-nix",
         "subq": "subq",
-        "superpowers": "superpowers",
         "wiggle-puppy": "wiggle-puppy",
         "worktrunk": "worktrunk",
         "x-to-obsidian": "x-to-obsidian"
@@ -1406,22 +1405,6 @@
       "original": {
         "owner": "MichaelVessia",
         "repo": "subq",
-        "type": "github"
-      }
-    },
-    "superpowers": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1777583321,
-        "narHash": "sha256-8/M/S0BUYurZkFqe6LemVtBQnPSxBNfy1C7Q6f92hjE=",
-        "owner": "obra",
-        "repo": "superpowers",
-        "rev": "e7a2d16476bf042e9add4699c9d018a90f86e4a6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "obra",
-        "repo": "superpowers",
         "type": "github"
       }
     },

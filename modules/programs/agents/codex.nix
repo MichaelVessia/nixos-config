@@ -1,14 +1,11 @@
 {
-  config,
   lib,
   pkgs,
   inputs,
   ...
 }: let
   codexPkg = inputs.llm-agents.packages.${pkgs.system}.codex;
-  sharedInstructions = builtins.readFile ./shared/instructions.md;
-  rtkAgentsRef = "@${config.home.homeDirectory}/.codex/RTK.md";
-  codexAgents = "${sharedInstructions}\n${rtkAgentsRef}\n";
+  codexAgents = builtins.readFile ./shared/instructions.md;
 
   codexConfig =
     {
