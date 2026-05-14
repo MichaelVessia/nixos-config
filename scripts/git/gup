@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+remote="origin"
+stashed=false
+
+require_git_repo() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "gup: not inside a git repository" >&2
+        exit 1
+    fi
+}
+
+current_ref() {
+    local branch
+
+    branch=$(git branch --show-current 2>/dev/null || true)
+    if [ -n "$branch" ]; then
+        echo "$branch"
+        return 0
+    fi
+
+    git rev-parse --short HEAD
+}
+
+default_branch() {
+    local branch
+
+    branch=$(git symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null || true)
+    if [ -n "$branch" ]; then
+        echo "${branch#"$remote/"}"
+        return 0
+    fi
+
+    git remote set-head "$remote" --auto >/dev/null 2>&1 || true
+
+    branch=$(git symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null || true)
+    if [ -n "$branch" ]; then
+        echo "${branch#"$remote/"}"
+        return 0
+    fi
+
+    if git show-ref --verify --quiet "refs/remotes/$remote/main"; then
+        echo "main"
+        return 0
+    fi
+
+    if git show-ref --verify --quiet "refs/remotes/$remote/master"; then
+        echo "master"
+        return 0
+    fi
+
+    echo "gup: could not determine $remote's default branch" >&2
+    exit 1
+}
+
+stash_local_changes() {
+    local status
+    local ref
+    local stash_commit
+    local timestamp
+
+    status=$(git status --porcelain --untracked-files=normal)
+    if [ -z "$status" ]; then
+        return 0
+    fi
+
+    ref=$(current_ref)
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+
+    echo "Stashing local changes, including untracked files..."
+    git stash push --include-untracked --message "gup auto-stash from $ref at $timestamp"
+
+    stash_commit=$(git rev-parse --short refs/stash)
+    stashed=true
+    echo "Saved local changes to stash@{0} ($stash_commit)."
+}
+
+backup_local_default_commits() {
+    local branch="$1"
+    local ahead
+    local backup_branch
+
+    if ! git show-ref --verify --quiet "refs/heads/$branch"; then
+        return 0
+    fi
+
+    ahead=$(git rev-list --count "$remote/$branch..$branch")
+    if [ "$ahead" -eq 0 ]; then
+        return 0
+    fi
+
+    backup_branch="gup-backup/$branch-$(date '+%Y%m%d-%H%M%S')"
+    git branch "$backup_branch" "$branch"
+    echo "Saved $ahead local commit(s) from $branch to backup branch $backup_branch."
+}
+
+checkout_default_branch() {
+    local branch="$1"
+
+    if git show-ref --verify --quiet "refs/heads/$branch"; then
+        git checkout "$branch"
+    else
+        git checkout --track -b "$branch" "$remote/$branch"
+    fi
+}
+
+main() {
+    local branch
+
+    require_git_repo
+
+    if ! git remote get-url "$remote" >/dev/null 2>&1; then
+        echo "gup: git remote '$remote' does not exist" >&2
+        exit 1
+    fi
+
+    stash_local_changes
+
+    echo "Fetching $remote..."
+    git fetch --prune "$remote"
+
+    branch=$(default_branch)
+    backup_local_default_commits "$branch"
+
+    echo "Checking out $branch..."
+    checkout_default_branch "$branch"
+
+    echo "Resetting $branch to $remote/$branch..."
+    git reset --hard "$remote/$branch"
+
+    echo "Updated $branch to $remote/$branch."
+
+    if [ "$stashed" = true ]; then
+        echo ""
+        echo "Your pre-update local changes are preserved in stash@{0}."
+        echo "Review them with: git stash show -p stash@{0}"
+        echo "Reapply them with: git stash pop stash@{0}"
+    fi
+}
+
+main "$@"

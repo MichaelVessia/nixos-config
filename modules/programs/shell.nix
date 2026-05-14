@@ -143,7 +143,6 @@ in {
       gs = "git status";
       gst = "git stash";
       gstp = "git stash pop";
-      gup = "git checkout $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') && git fetch && git reset --hard origin/$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')";
 
       # NH (nix helper) aliases - platform-aware
       # NixOS
