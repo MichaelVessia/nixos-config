@@ -578,11 +578,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1778690797,
-        "narHash": "sha256-5f8dL5sebHnzRzp3tWvU0x+TvOQMA/9Q2WTcG2ItROA=",
+        "lastModified": 1778869877,
+        "narHash": "sha256-2dlmjpUP/W2+j3v5OYX4WtBwkURpaQAR7DkxKIMqLNI=",
         "ref": "master",
-        "rev": "155b2787c627ef02c5dc4db08cd738062129c7ab",
-        "revCount": 301,
+        "rev": "e3297f407de001c8ea8b2f0e85f002734413f98b",
+        "revCount": 364,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },

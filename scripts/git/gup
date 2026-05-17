@@ -107,8 +107,41 @@ checkout_default_branch() {
     fi
 }
 
+current_worktree() {
+    git rev-parse --show-toplevel
+}
+
+worktree_for_branch() {
+    local branch="$1"
+
+    git worktree list --porcelain | awk -v b="refs/heads/$branch" '
+        $1 == "worktree" { wt = $2 }
+        $1 == "branch" && $2 == b { print wt; exit }
+    '
+}
+
+update_branch_in_other_worktree() {
+    local branch="$1"
+    local worktree_path="$2"
+    local status
+
+    status=$(git -C "$worktree_path" status --porcelain --untracked-files=no)
+    if [ -n "$status" ]; then
+        echo "gup: $branch is checked out at $worktree_path with uncommitted changes." >&2
+        echo "Stash or commit them there, then re-run gup." >&2
+        exit 1
+    fi
+
+    echo "Default branch '$branch' is checked out in another worktree:"
+    echo "  $worktree_path"
+    echo "Resetting $branch to $remote/$branch there..."
+    git -C "$worktree_path" reset --hard "$remote/$branch"
+}
+
 main() {
     local branch
+    local this_worktree
+    local branch_worktree
 
     require_git_repo
 
@@ -117,12 +150,21 @@ main() {
         exit 1
     fi
 
-    stash_local_changes
-
     echo "Fetching $remote..."
     git fetch --prune "$remote"
 
     branch=$(default_branch)
+    this_worktree=$(current_worktree)
+    branch_worktree=$(worktree_for_branch "$branch")
+
+    if [ -n "$branch_worktree" ] && [ "$branch_worktree" != "$this_worktree" ]; then
+        backup_local_default_commits "$branch"
+        update_branch_in_other_worktree "$branch" "$branch_worktree"
+        echo "Updated $branch to $remote/$branch."
+        exit 0
+    fi
+
+    stash_local_changes
     backup_local_default_commits "$branch"
 
     echo "Checking out $branch..."
