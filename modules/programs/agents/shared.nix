@@ -10,7 +10,8 @@
   # untouched on home-manager activation.
   dirNames = path:
     lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir path));
-  skillNames = dirNames ./shared/skills;
+  gwsSkillsPath = inputs.googleworkspace-cli + "/skills";
+  skillNames = dirNames ./shared/skills ++ dirNames gwsSkillsPath;
 
   perSkillSymlinks = prefix:
     lib.listToAttrs (map (name: {
@@ -26,6 +27,7 @@ in {
       enable = true;
       sources = {
         personal.path = ./shared/skills;
+        googleworkspace.path = gwsSkillsPath;
       };
       skills.enableAll = true;
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on

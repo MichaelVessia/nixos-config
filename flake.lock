@@ -635,6 +635,22 @@
         "type": "github"
       }
     },
+    "googleworkspace-cli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774983075,
+        "narHash": "sha256-YyNIHbyZrLlXYtWxZY8Um19MsnLharmS+nWGWO89fsA=",
+        "owner": "googleworkspace",
+        "repo": "cli",
+        "rev": "a3768d0e82ad83cca2da97724e46bea4ff0e6dbd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "googleworkspace",
+        "repo": "cli",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1310,6 +1326,7 @@
         "floai": "floai",
         "fmcal": "fmcal",
         "ghostty": "ghostty",
+        "googleworkspace-cli": "googleworkspace-cli",
         "home-manager": "home-manager_3",
         "llm-agents": "llm-agents",
         "niri": "niri",

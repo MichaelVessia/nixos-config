@@ -49,6 +49,10 @@
       url = "github:Kyure-A/agent-skills-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    googleworkspace-cli = {
+      url = "github:googleworkspace/cli";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
