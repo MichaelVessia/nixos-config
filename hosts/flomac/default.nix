@@ -47,6 +47,7 @@
       "linear-linear"
       "openlens"
       "orbstack"
+      "protonvpn"
       "raycast"
       "shottr"
       "superwhisper"

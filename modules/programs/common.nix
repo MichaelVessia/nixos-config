@@ -82,7 +82,6 @@
       inputs.llm-agents.packages.${pkgs.system}.beads-viewer
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
-      inputs.llm-agents.packages.${pkgs.system}.handy
       inputs.llm-agents.packages.${pkgs.system}.opencode
       inputs.llm-agents.packages.${pkgs.system}.pi
       inputs.llm-agents.packages.${pkgs.system}.qmd
