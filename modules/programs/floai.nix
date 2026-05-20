@@ -17,5 +17,6 @@
       '';
   });
 in {
-  home.packages = [floCli];
+  # flo-cli is only intended for use on flomac (darwin).
+  home.packages = pkgs.lib.optionals pkgs.stdenv.isDarwin [floCli];
 }
