@@ -53,6 +53,8 @@
     # Accept unsigned paths for remote deploys
     trusted-users = ["root" "pi"];
     require-sigs = false;
+    extra-substituters = ["https://cache.numtide.com"];
+    extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
   };
 
   # Allow unfree packages (for firmware)

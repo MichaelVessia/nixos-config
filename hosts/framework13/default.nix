@@ -120,9 +120,14 @@
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
-    # Ghostty cachix cache for nightly builds
-    extra-substituters = ["https://ghostty.cachix.org"];
-    extra-trusted-public-keys = ["ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="];
+    extra-substituters = [
+      "https://ghostty.cachix.org"
+      "https://cache.numtide.com"
+    ];
+    extra-trusted-public-keys = [
+      "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    ];
   };
 
   # List packages installed in system profile. To search, run:
