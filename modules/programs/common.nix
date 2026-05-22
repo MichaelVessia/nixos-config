@@ -30,6 +30,7 @@
       curl
       wget
       git-town
+      pkgs-unstable.gws # Google Workspace CLI; only in unstable
       jira-cli-go # Jira CLI
       (pkgs.callPackage ./linear-cli {}) # Linear CLI
       lefthook
@@ -82,10 +83,12 @@
       inputs.llm-agents.packages.${pkgs.system}.beads-viewer
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
+      inputs.llm-agents.packages.${pkgs.system}.hunk
       inputs.llm-agents.packages.${pkgs.system}.opencode
       inputs.llm-agents.packages.${pkgs.system}.pi
       inputs.llm-agents.packages.${pkgs.system}.qmd
       inputs.llm-agents.packages.${pkgs.system}.rtk
+      inputs.llm-agents.packages.${pkgs.system}.tuicr
       inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions
