@@ -13,10 +13,14 @@
   gwsSkillsPath = inputs.googleworkspace-cli + "/skills";
   skillNames = dirNames ./shared/skills ++ dirNames gwsSkillsPath;
 
+  # Point each per-tool symlink at the agent-skills bundle directly.
+  # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
+  # home-manager's activation collapse the recursive `.agents/skills` target
+  # and the per-tool entries onto each other, producing a symlink loop.
   perSkillSymlinks = prefix:
     lib.listToAttrs (map (name: {
         name = "${prefix}/${name}";
-        value.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills/${name}";
+        value.source = "${config.programs.agent-skills.bundlePath}/${name}";
       })
       skillNames);
 in {
