@@ -1,5 +1,6 @@
 .direnv/
 .opencode/
+.claude/
 result
 result-*
 *.img
