@@ -40,6 +40,11 @@
     secrets.tubearchivist_url.owner = "michaelvessia";
     secrets.tubearchivist_username.owner = "michaelvessia";
     secrets.tubearchivist_password.owner = "michaelvessia";
+    secrets.adguard_url.owner = "michaelvessia";
+    secrets.adguard_username.owner = "michaelvessia";
+    secrets.adguard_password.owner = "michaelvessia";
+    secrets.immich_url.owner = "michaelvessia";
+    secrets.immich_api_key.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
