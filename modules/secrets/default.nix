@@ -21,6 +21,25 @@
     secrets.kuma_url.owner = "michaelvessia";
     secrets.kuma_username.owner = "michaelvessia";
     secrets.kuma_password.owner = "michaelvessia";
+    secrets.sonarr_url.owner = "michaelvessia";
+    secrets.sonarr_api_key.owner = "michaelvessia";
+    secrets.radarr_url.owner = "michaelvessia";
+    secrets.radarr_api_key.owner = "michaelvessia";
+    secrets.prowlarr_url.owner = "michaelvessia";
+    secrets.prowlarr_api_key.owner = "michaelvessia";
+    secrets.sabnzbd_url.owner = "michaelvessia";
+    secrets.sabnzbd_api_key.owner = "michaelvessia";
+    secrets.jellyseerr_url.owner = "michaelvessia";
+    secrets.jellyseerr_api_key.owner = "michaelvessia";
+    secrets.caddy_url.owner = "michaelvessia";
+    secrets.jellyfin_url.owner = "michaelvessia";
+    secrets.jellyfin_api_key.owner = "michaelvessia";
+    secrets.booklore_url.owner = "michaelvessia";
+    secrets.booklore_username.owner = "michaelvessia";
+    secrets.booklore_password.owner = "michaelvessia";
+    secrets.tubearchivist_url.owner = "michaelvessia";
+    secrets.tubearchivist_username.owner = "michaelvessia";
+    secrets.tubearchivist_password.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
