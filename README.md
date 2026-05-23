@@ -18,9 +18,13 @@ Or manually:
 # NixOS
 sudo nixos-rebuild switch --flake .#framework13
 
-# macOS (nix-darwin)
-sudo darwin-rebuild switch --flake .#flomac
+# macOS (nix-darwin; flomac has a host-local flake for private floai)
+sudo darwin-rebuild switch --flake ./hosts/flomac#flomac
 ```
+
+The root flake intentionally excludes the private `floai` input so Linux hosts can
+run `nix flake update` without flocasts SAML access. `flomac` keeps that input in
+`hosts/flomac/flake.nix` with its own `hosts/flomac/flake.lock`.
 
 ## Directory Structure
 
