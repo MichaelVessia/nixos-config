@@ -34,7 +34,7 @@
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
     garage = {
-      url = "github:MichaelVessia/garage";
+      url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     floai.url = "git+ssh://git@github.com/flocasts/floai.git?ref=master";
