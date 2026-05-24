@@ -19,28 +19,28 @@ Credentials are exported into the shell by sops-nix (see
 - `SONARR_API_KEY` — API key
 - `SONARR_DEFAULT_QUALITY_PROFILE` — optional, defaults to `1`
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `sonarr` CLI reports a JSON error envelope when they are missing.
 
-## Wrapper script
+## CLI
 
-`scripts/sonarr.sh` exposes simple sub-commands so the agent doesn't have to
-hand-roll curl invocations for common operations. All output is JSON or
-pre-formatted text.
+Use the installed `sonarr` CLI for common operations. It always emits a single
+JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
+`scripts/sonarr.sh` remains as a compatibility shim for older workflows.
 
 ```bash
-bash scripts/sonarr.sh search "Severance"          # TVDB lookup
-bash scripts/sonarr.sh search-json "Severance"     # raw JSON for chaining
-bash scripts/sonarr.sh exists 81189                # is it in the library?
-bash scripts/sonarr.sh add 81189                   # add + search for episodes
-bash scripts/sonarr.sh add 81189 --no-search       # add but don't search
-bash scripts/sonarr.sh remove 81189                # delete from library, keep files
-bash scripts/sonarr.sh remove 81189 --delete-files # delete files too (confirm first!)
-bash scripts/sonarr.sh config                      # root folders + quality profiles
-bash scripts/sonarr.sh queue                       # active downloads
-bash scripts/sonarr.sh calendar [days]             # upcoming releases (default 14d)
-bash scripts/sonarr.sh missing                     # monitored episodes with no file
-bash scripts/sonarr.sh history [n]                 # recent history (default 50)
-bash scripts/sonarr.sh status                      # system/status sanity check
+sonarr search "Severance"                              # TVDB lookup
+sonarr exists 81189                                    # is it in the library?
+sonarr add 81189                                       # add + search for episodes
+sonarr add 81189 --no-search                           # add but don't search
+sonarr remove 81189                                    # delete from library, keep files
+sonarr remove 81189 --delete-files                     # refuses without confirmation
+sonarr remove 81189 --delete-files --confirm-delete-files
+sonarr config                                          # root folders + quality profiles
+sonarr queue --limit 100                               # active downloads
+sonarr calendar --days 14                              # upcoming releases
+sonarr missing --limit 100                             # monitored episodes with no file
+sonarr history --limit 50                              # recent history
+sonarr status                                          # system/status sanity check
 ```
 
 For anything not covered, call the API directly with `$SONARR_URL` and
@@ -49,10 +49,10 @@ For anything not covered, call the API directly with `$SONARR_URL` and
 
 ## Workflow: adding a show
 
-1. `bash scripts/sonarr.sh search "<title>"` — present results to user with
+1. `sonarr search "<title>"` — present results to user with
    `[Title (Year)](https://thetvdb.com/dereferrer/series/<tvdbId>)` links.
-2. `bash scripts/sonarr.sh exists <tvdbId>` — confirm it's not already there.
-3. `bash scripts/sonarr.sh add <tvdbId>` — adds and starts a search.
+2. `sonarr exists <tvdbId>` — confirm it's not already there.
+3. `sonarr add <tvdbId>` — adds and starts a search.
 
 ## Workflow: routine status checks
 
@@ -63,7 +63,7 @@ Use the high-level subcommands first (`queue`, `calendar`, `missing`, `history`,
 
 Always confirm with the user before:
 
-- `remove <tvdbId> --delete-files` (irreversible — removes media files)
+- `remove <tvdbId> --delete-files --confirm-delete-files` (irreversible — removes media files)
 - Bulk monitor/unmonitor toggles
 - Removing queue items with blocklist=true
 - Any custom DELETE/PUT against `/api/v3`

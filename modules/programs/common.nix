@@ -84,10 +84,11 @@
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
       inputs.llm-agents.packages.${pkgs.system}.opencode
-      inputs.llm-agents.packages.${pkgs.system}.pi
+      # pi is installed (wrapped) from modules/programs/agents/pi.nix
       inputs.llm-agents.packages.${pkgs.system}.qmd
       inputs.llm-agents.packages.${pkgs.system}.rtk
       inputs.llm-agents.packages.${pkgs.system}.tuicr
+      inputs.garage.packages.${pkgs.system}.sonarr
       inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions

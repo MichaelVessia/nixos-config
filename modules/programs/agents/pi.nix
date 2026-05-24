@@ -1,8 +1,32 @@
 {
+  config,
   lib,
   pkgs,
+  inputs,
   ...
 }: let
+  piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
+
+  npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
+
+  # Wrap pi so that:
+  #   - `npm install -g` writes to a user-writable dir instead of the read-only Nix store
+  #   - pi skips its self-update check (broken under Nix anyway, see earendil-works/pi#3942)
+  #   - telemetry is off
+  #   - installed extension bins are on PATH
+  piWrapped = pkgs.symlinkJoin {
+    name = "pi-wrapped-${piPkg.version or "0"}";
+    paths = [piPkg];
+    nativeBuildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram $out/bin/pi \
+        --set NPM_CONFIG_PREFIX "${npmGlobalDir}" \
+        --set PI_SKIP_VERSION_CHECK 1 \
+        --set PI_TELEMETRY 0 \
+        --prefix PATH : "${npmGlobalDir}/bin"
+    '';
+  };
+
   piThemesFiltered = {
     source = "npm:pi-themes";
     themes = [
@@ -11,12 +35,19 @@
     ];
   };
 
+  curatedThemesFiltered = {
+    source = "npm:@victor-software-house/pi-curated-themes";
+    themes = [
+      "themes/*.json"
+      "!themes/catppuccin-mocha.json"
+    ];
+  };
+
   packages = [
     {source = "npm:pi-subagents";}
     {source = "npm:pi-mcp-adapter";}
     {source = "npm:pi-web-access";}
     {source = "npm:pi-memory-md";}
-    {source = "git:github.com/badlogic/pi-diff-review@1584211692c49780ecd0f490a82762b0823fd475";}
     {source = "npm:@devkade/pi-plan";}
     {source = "npm:pi-simplify";}
     {source = "npm:pi-add-dir";}
@@ -36,7 +67,7 @@
     piThemesFiltered
     {source = "git:github.com/javierportillo/pi-hackerman@63b0a3ef2c7b14985ffeb6cac44614ba59cd5693";}
     {source = "npm:pi-cyber-ui";}
-    {source = "npm:@victor-software-house/pi-curated-themes";}
+    curatedThemesFiltered
     {source = "npm:pi-terminal-theme";}
   ];
 
@@ -56,6 +87,10 @@
     defaultThinkingLevel = "xhigh";
     enabledModels = ["openai-codex/gpt-5.5"];
     theme = "catppuccin-mocha";
+    # Forces pi to use plain `npm install` (with devDeps) for git sources
+    # instead of `npm install --omit=dev`. Required for packages like
+    # pi-diff-review whose `prepare` script depends on devDeps (husky).
+    npmCommand = ["npm"];
     subagents = {
       agentOverrides = lib.genAttrs subagentBuiltins (_: {model = "";});
     };
@@ -78,6 +113,8 @@
   piExtensionSettingsFile = pkgs.writeText "pi-settings-extensions.json" (builtins.toJSON piExtensionSettings);
 in {
   config = {
+    home.packages = [piWrapped];
+
     home.activation.piConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       install -Dm644 ${piSettingsFile} "$HOME/.pi/agent/settings.json"
       install -Dm644 ${piExtensionSettingsFile} "$HOME/.pi/agent/settings-extensions.json"

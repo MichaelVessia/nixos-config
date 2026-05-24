@@ -1,7 +1,7 @@
 ---
 name: jellyfin
-description: Inspect my self-hosted Jellyfin media server: server status, users, libraries, sessions, now-playing, recently-added, item search, library counts, and scheduled tasks. Use when the user asks about Jellyfin, what's playing, who's watching, what was just added, library size, or asks to run a Jellyfin task.
-allowed-tools: Bash, WebFetch
+description: "Inspect my self-hosted Jellyfin media server: server status, users, libraries, sessions, now-playing, recently-added, item search, library counts, and scheduled tasks. Use when the user asks about Jellyfin, what's playing, who's watching, what was just added, library size, or asks to run a Jellyfin task."
+allowed-tools: Bash WebFetch
 ---
 
 # Jellyfin

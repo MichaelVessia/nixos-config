@@ -10,7 +10,7 @@ sonarr/
 ├── SKILL.md            # Skill manifest (frontmatter + workflow guidance)
 ├── README.md           # This file
 ├── scripts/
-│   └── sonarr.sh       # Wrapper exposing sub-commands (search, add, queue, …)
+│   └── sonarr.sh       # Compatibility shim around the installed sonarr CLI
 └── references/
     ├── api-endpoints.md      # v3 endpoint reference
     ├── quick-reference.md    # Copy-paste recipes
@@ -41,32 +41,34 @@ Optional override: set `SONARR_DEFAULT_QUALITY_PROFILE` in the shell or a
 matching sops secret if you want `add` to default to something other than
 profile id `1`.
 
-## Sub-commands
+## CLI
 
-All commands are run as `bash scripts/sonarr.sh <cmd> [args]`.
+Prefer the installed `sonarr` command. It returns JSON envelopes for every
+command. `bash scripts/sonarr.sh <cmd> [args]` still works as a compatibility
+shim for older workflows.
 
 | Command                              | What it does                                  |
 | ------------------------------------ | --------------------------------------------- |
 | `status`                             | `GET /system/status` — sanity check           |
 | `config`                             | Root folders + quality profiles               |
 | `search <query>`                     | TVDB lookup, top 10 results                   |
-| `search-json <query>`                | Same lookup, raw JSON for chaining            |
+| `search-json <query>`                | Legacy alias for `search`                     |
 | `exists <tvdbId>`                    | Is the show already in the library?           |
-| `add <tvdbId> [profileId] [--no-search]` | Add show; searches for episodes by default |
-| `remove <tvdbId> [--delete-files]`   | Delete from library (files optional)          |
-| `queue`                              | Active download queue                         |
-| `calendar [days]`                    | Upcoming episodes, default 14 days            |
-| `missing`                            | Monitored episodes with no file               |
-| `history [n]`                        | Recent history, default 50 items              |
+| `add <tvdbId> [--quality-profile <id>] [--no-search]` | Add show; searches for episodes by default |
+| `remove <tvdbId> [--delete-files --confirm-delete-files]` | Delete from library; file deletion needs confirmation |
+| `queue --limit <n>`                  | Active download queue                         |
+| `calendar --days <n>`                | Upcoming episodes, default 14 days            |
+| `missing --limit <n>`                | Monitored episodes with no file               |
+| `history --limit <n>`                | Recent history, default 10 items              |
 
 ## Workflows
 
 **Adding a show**
 
 ```bash
-bash scripts/sonarr.sh search "Severance"
-bash scripts/sonarr.sh exists 371980
-bash scripts/sonarr.sh add 371980
+sonarr search "Severance"
+sonarr exists 371980
+sonarr add 371980
 ```
 
 **Cleaning up failed downloads** — see
@@ -77,9 +79,7 @@ bash scripts/sonarr.sh add 371980
 
 ## Notes
 
-- Requires `curl` and `jq` (both already in your dev shell).
+- Requires the `sonarr` package from `inputs.garage.packages.<system>.sonarr`.
 - Sonarr lives on the LAN (`192.168.1.38:8989`). Off-network access requires
   tailscale or VPN.
-- The wrapper is intentionally thin: any operation not covered by a
-  sub-command can be done with raw curl against `$SONARR_URL` using the
-  examples in `references/`.
+- The compatibility wrapper delegates to the packaged CLI.
