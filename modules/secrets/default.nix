@@ -34,9 +34,6 @@
     secrets.caddy_url.owner = "michaelvessia";
     secrets.jellyfin_url.owner = "michaelvessia";
     secrets.jellyfin_api_key.owner = "michaelvessia";
-    secrets.booklore_url.owner = "michaelvessia";
-    secrets.booklore_username.owner = "michaelvessia";
-    secrets.booklore_password.owner = "michaelvessia";
     secrets.autocaliweb_url.owner = "michaelvessia";
     secrets.autocaliweb_username.owner = "michaelvessia";
     secrets.autocaliweb_password.owner = "michaelvessia";

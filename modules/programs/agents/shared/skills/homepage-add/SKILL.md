@@ -89,7 +89,7 @@ Homepage uses Dashboard Icons. Common patterns:
 
 From the current config (ordered by card height):
 - Infrastructure (Proxmox, Unifi, Synology)
-- Documents & Books (Paperless, Calibre-web | BookLore, Calibre, Brother) - 2 columns
+- Documents & Books (Paperless, Calibre-web | AutoCaliWeb, Calibre, Brother) - 2 columns
 - Utilities (Syncthing, AdGuard, Caddy, UptimeKuma, Home Assistant, FreshRSS | Tailscale, N8N)
 - Media (JellySeerr, Radarr, Sonarr, Prowlarr, SABnzbd, Jellyfin)
 
