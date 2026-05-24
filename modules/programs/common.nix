@@ -88,7 +88,19 @@
       inputs.llm-agents.packages.${pkgs.system}.qmd
       inputs.llm-agents.packages.${pkgs.system}.rtk
       inputs.llm-agents.packages.${pkgs.system}.tuicr
+      inputs.garage.packages.${pkgs.system}.adguard
+      inputs.garage.packages.${pkgs.system}.autocaliweb
+      inputs.garage.packages.${pkgs.system}.booklore
+      inputs.garage.packages.${pkgs.system}.caddy
+      inputs.garage.packages.${pkgs.system}.immich
+      inputs.garage.packages.${pkgs.system}.jellyfin
+      inputs.garage.packages.${pkgs.system}.jellyseerr
+      inputs.garage.packages.${pkgs.system}.prowlarr
+      inputs.garage.packages.${pkgs.system}.radarr
+      inputs.garage.packages.${pkgs.system}.sabnzbd
       inputs.garage.packages.${pkgs.system}.sonarr
+      inputs.garage.packages.${pkgs.system}.tailscale
+      inputs.garage.packages.${pkgs.system}.tubearchivist
       inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions

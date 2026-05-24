@@ -18,28 +18,28 @@ Credentials are exported into the shell by sops-nix (see
 - `JELLYSEERR_URL` — base URL (no trailing slash)
 - `JELLYSEERR_API_KEY` — API key from Jellyseerr Settings → General
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `jellyseerr` CLI reports a JSON error envelope when they are missing.
 
-## Wrapper script
+## CLI
 
-`scripts/jellyseerr.sh` exposes simple sub-commands so the agent doesn't have
-to hand-roll curl invocations for common operations. All output is JSON or
-pre-formatted text.
+Use the installed `jellyseerr` CLI for common operations. It always emits a
+single JSON envelope with `ok`, `command`, `result` or `error`, and
+`next_actions`. `scripts/jellyseerr.sh` remains as a compatibility shim for
+older workflows.
 
 ```bash
-bash scripts/jellyseerr.sh status                     # /status sanity check
-bash scripts/jellyseerr.sh requests                   # pending requests (default)
-bash scripts/jellyseerr.sh requests --all             # all requests
-bash scripts/jellyseerr.sh request-counts             # totals by state
-bash scripts/jellyseerr.sh search "Severance"         # TMDB multi-search
-bash scripts/jellyseerr.sh media-status 95396         # media row by mediaId
-bash scripts/jellyseerr.sh recently-added             # available media sorted by mediaAdded
-bash scripts/jellyseerr.sh approve 42                 # POST /request/42/approve
-bash scripts/jellyseerr.sh decline 42                 # POST /request/42/decline
-bash scripts/jellyseerr.sh delete-request 42          # DELETE /request/42
-bash scripts/jellyseerr.sh users                      # admin: list users
-bash scripts/jellyseerr.sh issues                     # open issues
-bash scripts/jellyseerr.sh help                       # usage
+jellyseerr status                                     # /status sanity check
+jellyseerr requests --limit 25                        # pending requests (default)
+jellyseerr requests --all --limit 50                  # all requests
+jellyseerr request-counts                             # totals by state
+jellyseerr search "Severance" --limit 10              # TMDB multi-search
+jellyseerr media-status 95396                         # media row by mediaId
+jellyseerr recently-added --limit 25                  # available media sorted by mediaAdded
+jellyseerr approve 42 --confirm-approve               # POST /request/42/approve
+jellyseerr decline 42 --confirm-decline               # POST /request/42/decline
+jellyseerr delete-request 42 --confirm-delete-request # DELETE /request/42
+jellyseerr users --limit 50                           # admin: list users
+jellyseerr issues --limit 50                          # open issues
 ```
 
 For anything not covered, call the API directly with `$JELLYSEERR_URL` and
@@ -48,14 +48,15 @@ For anything not covered, call the API directly with `$JELLYSEERR_URL` and
 
 ## Workflow: triaging pending requests
 
-1. `bash scripts/jellyseerr.sh requests` — list pending items.
+1. `jellyseerr requests` — list pending items.
 2. Present each to the user with title, year, type (movie/TV), and requester.
-3. On user instruction: `approve <id>` or `decline <id>` (confirm first).
+3. On user instruction: `approve <id> --confirm-approve` or
+   `decline <id> --confirm-decline` (confirm first).
 
 ## Workflow: searching before adding
 
-1. `bash scripts/jellyseerr.sh search "<title>"` — TMDB multi-search.
-2. `bash scripts/jellyseerr.sh media-status <mediaId>` — see if it's already
+1. `jellyseerr search "<title>"` — TMDB multi-search.
+2. `jellyseerr media-status <mediaId>` — see if it's already
    tracked / available.
 3. Direct the user to the web UI to file a new request (creating requests
    requires a user context beyond a service API key).
@@ -64,9 +65,9 @@ For anything not covered, call the API directly with `$JELLYSEERR_URL` and
 
 Always confirm with the user before:
 
-- `approve <id>` — triggers a download in Sonarr/Radarr.
-- `decline <id>` — visible to the requester.
-- `delete-request <id>` — irreversible.
+- `jellyseerr approve <id> --confirm-approve` — triggers a download in Sonarr/Radarr.
+- `jellyseerr decline <id> --confirm-decline` — visible to the requester.
+- `jellyseerr delete-request <id> --confirm-delete-request` — irreversible.
 - Any custom POST/PUT/DELETE against `/api/v1`.
 
 ## References

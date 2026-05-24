@@ -17,28 +17,29 @@ Credentials are exported into the shell by sops-nix (see
 - `SABNZBD_URL` — base URL (no trailing slash)
 - `SABNZBD_API_KEY` — API key from SABnzbd Config -> General -> Security
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `sabnzbd` CLI reports a JSON error envelope when they are missing.
 
 ## Auth model
 
 SABnzbd authenticates via query string, not header. Every request includes
-`?apikey=$SABNZBD_API_KEY&output=json&mode=<mode>`. The script handles this.
+`?apikey=$SABNZBD_API_KEY&output=json&mode=<mode>`. The CLI handles this.
 
-## Wrapper script
+## CLI
 
-`scripts/sabnzbd.sh` exposes simple sub-commands so the agent doesn't have to
-hand-roll curl invocations for common operations.
+Use the installed `sabnzbd` CLI for common operations. It always emits a single
+JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
+`scripts/sabnzbd.sh` remains as a compatibility shim for older workflows.
 
 ```bash
-bash scripts/sabnzbd.sh status                # version, uptime, paused, disk, warnings
-bash scripts/sabnzbd.sh version               # SABnzbd version
-bash scripts/sabnzbd.sh queue                 # active download queue
-bash scripts/sabnzbd.sh history [n]           # recent history (default 50)
-bash scripts/sabnzbd.sh pause                 # pause the queue
-bash scripts/sabnzbd.sh resume                # resume the queue
-bash scripts/sabnzbd.sh delete <nzo_id>       # remove from queue, keep files
-bash scripts/sabnzbd.sh delete <nzo_id> --files  # delete files too (confirm first!)
-bash scripts/sabnzbd.sh server-stats          # day/week/month/total bytes per server
+sabnzbd status                                # version, uptime, paused, disk, warnings
+sabnzbd version                               # SABnzbd version
+sabnzbd queue --limit 50                      # active download queue
+sabnzbd history --limit 50                    # recent history
+sabnzbd pause                                 # pause the queue
+sabnzbd resume                                # resume the queue
+sabnzbd delete <nzo_id>                       # remove from queue, keep files
+sabnzbd delete <nzo_id> --files --confirm-delete-files
+sabnzbd server-stats                          # day/week/month/total bytes per server
 ```
 
 For anything not covered (adding NZBs, speed limits, history retry, category
@@ -54,7 +55,7 @@ Use the high-level subcommands first (`status`, `queue`, `history`,
 
 Always confirm with the user before:
 
-- `delete <nzo_id> --files` (deletes downloaded files from disk)
+- `sabnzbd delete <nzo_id> --files --confirm-delete-files` (deletes downloaded files from disk)
 - `purge` style operations (`mode=queue&name=delete&value=all`)
 - Clearing history (`mode=history&name=delete&value=all`)
 - Speed-limit changes that affect ongoing downloads

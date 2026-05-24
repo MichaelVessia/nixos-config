@@ -37,6 +37,9 @@
     secrets.booklore_url.owner = "michaelvessia";
     secrets.booklore_username.owner = "michaelvessia";
     secrets.booklore_password.owner = "michaelvessia";
+    secrets.autocaliweb_url.owner = "michaelvessia";
+    secrets.autocaliweb_username.owner = "michaelvessia";
+    secrets.autocaliweb_password.owner = "michaelvessia";
     secrets.tubearchivist_url.owner = "michaelvessia";
     secrets.tubearchivist_username.owner = "michaelvessia";
     secrets.tubearchivist_password.owner = "michaelvessia";

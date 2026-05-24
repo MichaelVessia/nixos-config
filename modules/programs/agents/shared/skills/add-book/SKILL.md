@@ -15,11 +15,26 @@ fixing according to its configured automation.
 - `AUTOCALIWEB_INGEST_DIR` - ingest path inside the AutoCaliWeb LXC, currently `/opt/acw-book-ingest`
 - `AUTOCALIWEB_PROXMOX_HOST` - Proxmox SSH host, currently `proxmox`
 - `AUTOCALIWEB_CTID` - AutoCaliWeb LXC id, currently `101`
-- `AUTOCALIWEB_URL` - optional UI URL for manual verification/reporting
+- `AUTOCALIWEB_URL` - UI/OPDS URL for reporting and CLI verification
+- `AUTOCALIWEB_USERNAME` - optional, required for the `autocaliweb` CLI
+- `AUTOCALIWEB_PASSWORD` - optional, required for the `autocaliweb` CLI
 
 The wrapper uploads through `ssh proxmox` + `pct exec 101` when the Proxmox env
 vars are present. Without them, it treats `AUTOCALIWEB_INGEST_DIR` as a local
 path.
+
+The installed `autocaliweb` CLI is read-only. Use it for status/search/recent
+verification, not for ingesting files. It always emits a single JSON envelope
+with `ok`, `command`, `result` or `error`, and `next_actions`.
+
+```bash
+autocaliweb status                    # OPDS status + catalog stats
+autocaliweb stats                     # database counts
+autocaliweb recent --limit 25         # recently added books
+autocaliweb search "Book Title"       # search books through OPDS
+autocaliweb book-info <uuid>          # Calibre Companion metadata
+autocaliweb shelves                   # OPDS shelves
+```
 
 ## Required Input
 
@@ -56,7 +71,10 @@ bash scripts/add-book.sh ~/Downloads/example.pdf --dry-run
 2. Run `bash scripts/add-book.sh <source> --dry-run` to validate paths.
 3. Run without `--dry-run` to copy/download into `/opt/acw-book-ingest` in LXC 101.
 4. Report the destination path and remind the user AutoCaliWeb imports async.
-5. If `AUTOCALIWEB_URL` is set, include it for follow-up verification.
+5. If CLI credentials are present, use `autocaliweb recent --limit 10` or
+   `autocaliweb search "<title>"` to verify after AutoCaliWeb has had time to
+   import the file.
+6. If `AUTOCALIWEB_URL` is set, include it for follow-up verification.
 
 ## Notes
 
@@ -66,3 +84,5 @@ bash scripts/add-book.sh ~/Downloads/example.pdf --dry-run
   by AutoCaliWeb/Calibre, not a raw filesystem copy.
 - Do not claim the book is fully imported unless you verify it in AutoCaliWeb or
   its logs. Copying to ingest only means the import was queued.
+- If `autocaliweb` returns an env-missing envelope, fall back to reporting the UI
+  URL and queued ingest path instead of claiming verification succeeded.

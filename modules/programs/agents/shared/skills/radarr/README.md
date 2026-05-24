@@ -1,7 +1,7 @@
 # Radarr Skill
 
-Wrapper for the self-hosted Radarr (v3 API): search, add, inspect, and manage
-the movie library from any agent (Claude, Codex, opencode).
+CLI for the self-hosted Radarr (v3 API): search, add, inspect, and manage the
+movie library from any agent (Claude, Codex, opencode).
 
 ## What's here
 
@@ -10,7 +10,7 @@ radarr/
 ├── SKILL.md            # Skill manifest (frontmatter + workflow guidance)
 ├── README.md           # This file
 ├── scripts/
-│   └── radarr.sh       # Wrapper exposing sub-commands (search, add, queue, …)
+│   └── radarr.sh       # Compatibility shim for older workflows
 └── references/
     ├── api-endpoints.md      # v3 endpoint reference
     ├── quick-reference.md    # Copy-paste recipes
@@ -41,42 +41,42 @@ Optional override: set `RADARR_DEFAULT_QUALITY_PROFILE` in the shell or a
 matching sops secret if you want `add` to default to something other than
 profile id `1`.
 
-## Sub-commands
+## CLI Commands
 
-All commands are run as `bash scripts/radarr.sh <cmd> [args]`.
+All commands are run as `radarr <cmd> [args]`. The shim keeps older positional
+forms working where practical.
 
 | Command                                       | What it does                                    |
 | --------------------------------------------- | ----------------------------------------------- |
 | `status`                                      | `GET /system/status` — sanity check             |
 | `config`                                      | Root folders + quality profiles                 |
 | `search <query>`                              | TMDB lookup, top 10 results                     |
-| `search-json <query>`                         | Same lookup, raw JSON for chaining              |
 | `exists <tmdbId>`                             | Is the movie already in the library?            |
-| `add <tmdbId> [profileId] [--no-search]`      | Add movie; searches by default                  |
-| `add-collection <colTmdbId> [--no-search]`    | Add every movie in a TMDB collection            |
+| `add <tmdbId> [--quality-profile id] [--no-search]` | Add movie; searches by default            |
+| `add-collection <colTmdbId> --confirm-add-collection [--no-search]` | Add every movie in a TMDB collection |
 | `collection-info <colTmdbId>`                 | Show Radarr's record for a collection           |
-| `remove <tmdbId> [--delete-files]`            | Delete from library (files optional)            |
-| `queue`                                       | Active download queue                           |
-| `calendar [days]`                             | Upcoming releases, default 30 days              |
-| `missing [n]`                                 | Monitored movies with no file                   |
-| `history [n]`                                 | Recent history, default 50 items                |
+| `remove <tmdbId> [--delete-files --confirm-delete-files]` | Delete from library (files optional) |
+| `queue --limit <n>`                           | Active download queue                           |
+| `calendar --days <n>`                         | Upcoming releases                               |
+| `missing --limit <n>`                         | Monitored movies with no file                   |
+| `history --limit <n>`                         | Recent history                                  |
 
 ## Workflows
 
 **Adding a movie**
 
 ```bash
-bash scripts/radarr.sh search "Inception"
-bash scripts/radarr.sh exists 27205
-bash scripts/radarr.sh add 27205
+radarr search "Inception"
+radarr exists 27205
+radarr add 27205
 ```
 
 **Adding a collection** — Radarr only knows about a collection once one of its
 movies is already in the library. Add a single movie first, then:
 
 ```bash
-bash scripts/radarr.sh collection-info 10
-bash scripts/radarr.sh add-collection 10
+radarr collection-info 10
+radarr add-collection 10 --confirm-add-collection
 ```
 
 **Cleaning up failed downloads** — see
@@ -84,9 +84,7 @@ bash scripts/radarr.sh add-collection 10
 
 ## Notes
 
-- Requires `curl` and `jq` (both already in your dev shell).
+- The installed `radarr` CLI emits a single JSON envelope for every command.
 - Radarr lives on the LAN (`192.168.1.186:7878`). Off-network access requires
   tailscale or VPN.
-- The wrapper is intentionally thin: any operation not covered by a
-  sub-command can be done with raw curl against `$RADARR_URL` using the
-  examples in `references/`.
+- Raw API examples remain in `references/` for operations not covered by the CLI.

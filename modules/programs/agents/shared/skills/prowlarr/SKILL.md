@@ -18,30 +18,30 @@ Credentials are exported into the shell by sops-nix (see
 - `PROWLARR_URL` — base URL (no trailing slash)
 - `PROWLARR_API_KEY` — API key
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `prowlarr` CLI reports a JSON error envelope when they are missing.
 
-## Wrapper script
+## CLI
 
-`scripts/prowlarr.sh` exposes simple sub-commands so the agent doesn't have to
-hand-roll curl invocations for common operations. All output is JSON or
-pre-formatted text.
+Use the installed `prowlarr` CLI for common operations. It always emits a single
+JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
+`scripts/prowlarr.sh` remains as a compatibility shim for older workflows.
 
 ```bash
-bash scripts/prowlarr.sh status                       # system/status sanity check
-bash scripts/prowlarr.sh health                       # health warnings
-bash scripts/prowlarr.sh indexers                     # list indexers (summary)
-bash scripts/prowlarr.sh indexers --verbose           # full indexer JSON
-bash scripts/prowlarr.sh indexer-stats                # per-indexer usage + failures
-bash scripts/prowlarr.sh search "ubuntu 24.04"        # search all indexers
-bash scripts/prowlarr.sh search "inception" --torrents
-bash scripts/prowlarr.sh search "inception" --usenet
-bash scripts/prowlarr.sh search "inception" --category 2000
-bash scripts/prowlarr.sh tv-search --tvdb 81189 --season 1 --episode 1
-bash scripts/prowlarr.sh movie-search --imdb tt0111161
-bash scripts/prowlarr.sh test <indexerId>             # test one indexer
-bash scripts/prowlarr.sh apps                         # connected apps (Sonarr/Radarr/...)
-bash scripts/prowlarr.sh sync                         # push indexer config to apps
-bash scripts/prowlarr.sh history [n]                  # recent indexer history (default 50)
+prowlarr status                                       # system/status sanity check
+prowlarr health --limit 25                            # health warnings
+prowlarr indexers --limit 50                          # list indexers
+prowlarr indexer-stats --limit 50                     # per-indexer usage + failures
+prowlarr search "ubuntu 24.04" --limit 25             # search all indexers
+prowlarr search "inception" --torrents
+prowlarr search "inception" --usenet
+prowlarr search "inception" --category 2000
+prowlarr tv-search --tvdb 81189 --season 1 --episode 1
+prowlarr movie-search --imdb tt0111161
+prowlarr movie-search --tmdb 278
+prowlarr test <indexerId>                             # test one indexer
+prowlarr apps --limit 25                              # connected apps (Sonarr/Radarr/...)
+prowlarr sync --confirm-sync                          # push indexer config to apps
+prowlarr history --limit 50                           # recent indexer history
 ```
 
 For anything not covered, call the API directly with `$PROWLARR_URL` and
@@ -50,7 +50,7 @@ For anything not covered, call the API directly with `$PROWLARR_URL` and
 
 ## Workflow: finding a release
 
-1. `bash scripts/prowlarr.sh search "<query>"` — top results across all
+1. `prowlarr search "<query>"` — top results across all
    indexers, with seeders, size, indexer name, and download URL.
 2. Filter with `--torrents`, `--usenet`, or `--category <id>` if the user
    wants narrower results (2000=Movies, 5000=TV, 3000=Audio, 7000=Books).
@@ -59,10 +59,10 @@ For anything not covered, call the API directly with `$PROWLARR_URL` and
 
 ## Workflow: indexer health check
 
-1. `bash scripts/prowlarr.sh indexer-stats` — shows query counts and failures.
-2. `bash scripts/prowlarr.sh health` — surfaces Prowlarr's own warnings.
+1. `prowlarr indexer-stats` — shows query counts and failures.
+2. `prowlarr health` — surfaces Prowlarr's own warnings.
 3. For a specific indexer suspected to be broken, run
-   `bash scripts/prowlarr.sh test <indexerId>`.
+   `prowlarr test <indexerId>`.
 
 ## Mutations: confirm first
 
@@ -70,7 +70,7 @@ Always confirm with the user before:
 
 - Disabling or deleting an indexer (raw `PUT`/`DELETE` against
   `/api/v1/indexer/{id}`).
-- `sync` — this is generally safe (idempotent) but pushes config to every
+- `prowlarr sync --confirm-sync` — this is generally safe (idempotent) but pushes config to every
   connected app; mention that side effect.
 - Any custom DELETE/PUT against `/api/v1`.
 

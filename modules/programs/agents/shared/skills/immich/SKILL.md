@@ -18,32 +18,32 @@ Credentials are exported into the shell by sops-nix (see
 - `IMMICH_URL` — base URL, no trailing slash (e.g. `http://192.168.1.82:2283`)
 - `IMMICH_API_KEY` — Immich API key
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `immich` CLI reports a JSON error envelope when they are missing.
 
-Immich uses the lowercase header `x-api-key` and exposes the API under
-`/api/`. The wrapper composes these for you.
+Immich uses the lowercase header `x-api-key` and exposes the API under `/api/`.
+The CLI composes these for you.
 
-## Wrapper script
+## CLI
 
-`scripts/immich.sh` exposes simple sub-commands so the agent doesn't have to
-hand-roll curl invocations. All output is JSON.
+Use the installed `immich` CLI for common operations. It always emits a single
+JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
+`scripts/immich.sh` remains as a compatibility shim for older workflows.
 
 ```bash
-bash scripts/immich.sh status                # version + ping projected to one object
-bash scripts/immich.sh stats                 # photos, videos, usage, per-user
-bash scripts/immich.sh storage               # disk free space + library size
-bash scripts/immich.sh users                 # id, name, email, isAdmin, quotaSizeInBytes
-bash scripts/immich.sh me                    # current user (whoever the API key belongs to)
-bash scripts/immich.sh albums [n]            # first n albums (default 25)
-bash scripts/immich.sh album-info <id>       # full album detail
-bash scripts/immich.sh search <query>        # CLIP smart search, metadata fallback
-bash scripts/immich.sh recent [n]            # most recent assets (default 25)
-bash scripts/immich.sh people [n]            # named/unnamed people (default 25)
-bash scripts/immich.sh person-info <id>      # full person detail
-bash scripts/immich.sh jobs                  # background queues + counts
-bash scripts/immich.sh library-stats         # alias for stats
-bash scripts/immich.sh tags                  # all tags
-bash scripts/immich.sh help                  # usage
+immich status                                # version + ping projected to one object
+immich stats                                 # photos, videos, usage, per-user
+immich storage                               # disk free space + library size
+immich users                                 # users, preferring admin fields when available
+immich me                                    # current user attached to the API key
+immich albums --limit 25                     # visible albums
+immich album-info <id> --limit 25            # full album detail + bounded asset sample
+immich search "beach sunset" --limit 25      # smart search, metadata fallback
+immich recent --limit 25                     # most recent assets
+immich people --limit 25                     # named/unnamed people
+immich person-info <id>                      # full person detail
+immich jobs                                  # background queues + counts
+immich library-stats                         # alias for stats
+immich tags                                  # all tags
 ```
 
 For anything not covered, call the API directly with `$IMMICH_URL` and
@@ -52,10 +52,10 @@ For anything not covered, call the API directly with `$IMMICH_URL` and
 
 ## Workflow: find a photo
 
-1. `bash scripts/immich.sh search "<natural language query>"` — CLIP-based
+1. `immich search "<natural language query>"` — CLIP-based
    semantic search returns matching asset ids.
 2. If smart search isn't configured (machine-learning service down), the
-   wrapper falls back to filename metadata search.
+   CLI falls back to filename metadata search.
 3. Inspect a single asset with `curl -sS -H "x-api-key: $IMMICH_API_KEY" \
    "$IMMICH_URL/api/assets/<id>"` (see quick-reference).
 
@@ -79,7 +79,7 @@ For now, perform mutations from the Immich UI.
 
 ## References
 
-- `references/api-endpoints.md` — endpoints used by the wrapper, verified
+- `references/api-endpoints.md` — endpoints used by the CLI, verified
   against Immich v2.5.6
 - `references/quick-reference.md` — copy-paste curl recipes
 - `references/troubleshooting.md` — auth, permissions (v2 per-permission API

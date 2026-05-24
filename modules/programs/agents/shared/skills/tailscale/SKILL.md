@@ -6,36 +6,40 @@ allowed-tools: Bash
 
 # Tailscale
 
-Wraps the local `tailscale` CLI on framework13. All operations are read-only:
+Wraps the local Tailscale daemon on framework13. All operations are read-only:
 list peers, see which exit nodes are advertised, inspect MagicDNS, look up an
 IP, ping a host. No tailnet state changes.
 
 ## Environment
 
-No secrets, no env vars. The skill uses whatever `tailscale` is on `$PATH`
-(installed system-wide on framework13) and whichever tailnet the local daemon
-is logged in to. `tailscale status --json` returns the full peer list, so we
-do not need to call the remote Tailscale API for reads.
+No secrets, no env vars. The installed `tailscale` CLI is a garage wrapper that
+uses the system Tailscale binary (`/run/current-system/sw/bin/tailscale`) and
+whichever tailnet the local daemon is logged in to. `tailscale status --json`
+from the system binary returns the full peer list, so we do not need to call the
+remote Tailscale API for reads.
 
-## Wrapper script
+## CLI
 
-`scripts/tailscale.sh` exposes sub-commands. Output is JSON or formatted text.
+Use the installed `tailscale` CLI for common operations. It always emits a
+single JSON envelope with `ok`, `command`, `result` or `error`, and
+`next_actions`. `scripts/tailscale.sh` remains as a compatibility shim for
+older workflows.
 
 ```bash
-bash scripts/tailscale.sh status              # compact peer summary (hostname/ip/online/exit)
-bash scripts/tailscale.sh peers               # table: hostname, ip, OS, online
-bash scripts/tailscale.sh exit-nodes          # peers advertising as exit nodes
-bash scripts/tailscale.sh current-exit-node   # which exit node we're routing through
-bash scripts/tailscale.sh dns                 # MagicDNS + DNS config
-bash scripts/tailscale.sh ip                  # this machine's v4 and v6
-bash scripts/tailscale.sh whois 100.x.y.z     # identify a tailnet IP
-bash scripts/tailscale.sh ping host           # tailscale ping --c 3
-bash scripts/tailscale.sh help
+tailscale status --limit 25                   # compact peer summary (hostname/ip/online/exit)
+tailscale peers --limit 50                    # peers with hostname, IP, OS, online
+tailscale exit-nodes --limit 25               # peers advertising as exit nodes
+tailscale current-exit-node                   # which exit node we're routing through
+tailscale dns                                 # MagicDNS + DNS config
+tailscale ip                                  # this machine's v4 and v6
+tailscale whois 100.x.y.z                     # identify a tailnet IP
+tailscale ping host                           # system tailscale ping --c 3
 ```
 
-For anything not covered, fall back to `tailscale` directly. See
-`references/quick-reference.md` and `references/api-endpoints.md` for the
-status JSON shape.
+For raw Tailscale commands not covered by the garage wrapper, call
+`/run/current-system/sw/bin/tailscale` explicitly. See
+`references/quick-reference.md` and `references/api-endpoints.md` for the status
+JSON shape.
 
 ## Topology notes
 
@@ -49,8 +53,8 @@ status JSON shape.
 
 Out of scope. `up`, `down`, `logout`, `set --exit-node`, `funnel`, `serve`,
 `file cp` and similar are not exposed here because they either require
-interactive auth or change tailnet state. If the user wants one, surface the
-command and let them run it manually.
+interactive auth or change tailnet state. If the user wants one, surface the raw
+`/run/current-system/sw/bin/tailscale ...` command and let them run it manually.
 
 ## References
 

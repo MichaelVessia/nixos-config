@@ -6,7 +6,7 @@ allowed-tools: Bash, WebFetch
 
 # BookLore
 
-Read-only wrapper for my self-hosted BookLore instance: inspect version, user,
+Read-only CLI for my self-hosted BookLore instance: inspect version, user,
 libraries, shelves, and books.
 
 ## Environment
@@ -18,7 +18,7 @@ Credentials are exported into the shell by sops-nix (see
 - `BOOKLORE_USERNAME` — login user
 - `BOOKLORE_PASSWORD` — login password
 
-The wrapper script asserts all three are set and aborts cleanly otherwise.
+The `booklore` CLI reports a JSON error envelope when they are missing.
 
 ## Auth model: JWT, not API key
 
@@ -28,33 +28,25 @@ BookLore has no API-key auth. The flow is:
 2. Response: `{"accessToken": "...", "refreshToken": "...", "isDefaultPassword": false}`
 3. Subsequent calls use `Authorization: Bearer <accessToken>`
 
-`scripts/booklore.sh` caches the access token in a per-user/per-URL
-tempfile (`$TMPDIR/booklore-<uid>/<hash>.token`) and decodes the JWT's
-`exp` claim to decide whether to reuse or re-login. The `login` helper
-inside the script returns a valid token on stdout; every other
-sub-command calls it once at the top.
+The CLI logs in when needed, decodes the JWT `exp` claim, and reuses the token
+inside the command process.
 
-This is also a workaround for a server-side bug in the deployed
-`development` build: two logins in the same wall-clock second produce
-identical refresh tokens and trip a UNIQUE constraint on
-`refresh_token`, returning HTTP 400. The cache means we log in roughly
-once per JWT lifetime instead of once per call.
+## CLI
 
-## Wrapper script
-
-`scripts/booklore.sh` exposes simple sub-commands. All output is JSON or
-pre-formatted text.
+Use the installed `booklore` CLI for common operations. It always emits a
+single JSON envelope with `ok`, `command`, `result` or `error`, and
+`next_actions`. `scripts/booklore.sh` remains as a compatibility shim for older
+workflows.
 
 ```bash
-bash scripts/booklore.sh status              # /api/v1/version
-bash scripts/booklore.sh version             # alias for status
-bash scripts/booklore.sh me                  # /api/v1/users/me
-bash scripts/booklore.sh libraries           # /api/v1/libraries
-bash scripts/booklore.sh books [n]           # /api/v1/books (default 50)
-bash scripts/booklore.sh book-info <id>      # /api/v1/books/<id>
-bash scripts/booklore.sh search <query>      # client-side title filter on /api/v1/books
-bash scripts/booklore.sh shelves             # /api/v1/shelves
-bash scripts/booklore.sh help
+booklore status                              # /api/v1/version
+booklore version                             # alias for status
+booklore me                                  # /api/v1/users/me
+booklore libraries                           # /api/v1/libraries
+booklore books --limit 50                    # bounded /api/v1/books list
+booklore book-info <id>                      # /api/v1/books/<id>
+booklore search "Foundation" --limit 25      # client-side title search
+booklore shelves                             # /api/v1/shelves
 ```
 
 For anything not covered, call the API directly with `$BOOKLORE_URL` after
@@ -63,8 +55,8 @@ logging in — see `references/api-endpoints.md` and
 
 ## Workflow: looking up a book
 
-1. `bash scripts/booklore.sh search "<title>"` — client-side filter.
-2. `bash scripts/booklore.sh book-info <id>` — full record for the match.
+1. `booklore search "<title>"` — client-side filter.
+2. `booklore book-info <id>` — full record for the match.
 
 ## Workflow: routine status checks
 
@@ -73,7 +65,7 @@ curl (after login) for anything else.
 
 ## Mutations
 
-This wrapper is intentionally read-only. The deployed BookLore version is
+This CLI is intentionally read-only. The deployed BookLore version is
 `development` and its mutation surface (uploads, edits, deletes) has not
 been verified here. Before issuing any POST/PUT/DELETE, confirm with the
 user and verify the endpoint exists on the running instance (see the
@@ -96,9 +88,7 @@ controller-inspection recipe in `references/troubleshooting.md`).
 - Many endpoints in upstream main (e.g. `/api/v1/auth/refresh`,
   `/api/v1/books/{id}/cover`, downloads) may not exist on this deployed
   instance, which reports `version: "development"`. Verify before relying.
-- Access tokens are short-lived; the script caches them in a tempfile
-  with a 30s safety margin against `exp` and re-logins automatically.
-- Two logins in the same second hit a UNIQUE-constraint bug on this
-  build's `refresh_token` table; the token cache avoids it.
+- Access tokens are short-lived; if repeated CLI invocations hit auth errors,
+  retry after a second before assuming the credentials are wrong.
 - BookLore lives on the LAN (`192.168.1.7:8080`). If `BOOKLORE_URL` is
   unreachable, surface that rather than guessing.

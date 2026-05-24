@@ -21,7 +21,7 @@ Credentials are exported into the shell by sops-nix (see
 - `TUBEARCHIVIST_USERNAME` — admin username
 - `TUBEARCHIVIST_PASSWORD` — admin password
 
-The wrapper script asserts these are set and aborts cleanly otherwise.
+The `tubearchivist` CLI reports a JSON error envelope when they are missing.
 
 ## Auth model
 
@@ -34,38 +34,37 @@ TubeArchivist uses Django session auth, not JWT or API keys.
    - `X-CSRFToken: <csrftoken cookie value>`
    - `Referer: <TUBEARCHIVIST_URL>/`
 
-The wrapper caches the cookie jar in
-`$TMPDIR/tubearchivist-<uid>/<hash>.jar` and reuses it across invocations
-(TA's default session lifetime is 2 days). It re-logs in automatically if
-the jar is missing or stale.
+The CLI handles login, cookies, and CSRF headers for supported commands.
 
-## Wrapper script
+## CLI
 
-`scripts/tubearchivist.sh` exposes simple sub-commands so the agent doesn't
-have to hand-roll the login dance. All output is JSON.
+Use the installed `tubearchivist` CLI for common operations. It always emits a
+single JSON envelope with `ok`, `command`, `result` or `error`, and
+`next_actions`. `scripts/tubearchivist.sh` remains as a compatibility shim for
+older workflows.
 
 ```bash
-bash scripts/tubearchivist.sh status                       # health + config + stats
-bash scripts/tubearchivist.sh channels                     # subscribed channels
-bash scripts/tubearchivist.sh channel-info <channel_id>    # one channel detail
-bash scripts/tubearchivist.sh subscribe "<url-or-id>"      # queues Celery task
-bash scripts/tubearchivist.sh unsubscribe <channel_id>     # confirm with user first!
-bash scripts/tubearchivist.sh videos [n]                   # recent indexed videos
-bash scripts/tubearchivist.sh video-info <youtube_id>      # one video detail
-bash scripts/tubearchivist.sh downloads                    # pending queue
-bash scripts/tubearchivist.sh playlists                    # indexed playlists
-bash scripts/tubearchivist.sh tasks                        # Celery task history
-bash scripts/tubearchivist.sh search <query>               # cross-index search
+tubearchivist status                                       # health + config + stats
+tubearchivist channels --limit 50                          # subscribed channels
+tubearchivist channel-info <channel_id>                    # one channel detail
+tubearchivist subscribe "<url-or-id>"                      # queues Celery resolution
+tubearchivist unsubscribe <channel_id> --confirm-unsubscribe
+tubearchivist videos --limit 25                            # recent indexed videos
+tubearchivist video-info <youtube_id>                      # one video detail
+tubearchivist downloads --limit 25                         # pending queue
+tubearchivist playlists --limit 25                         # indexed playlists
+tubearchivist tasks --limit 25                             # Celery task history
+tubearchivist search <query> --limit 25                    # cross-index search
 ```
 
-For anything not covered, call the API directly with the cookie jar — see
+For anything not covered, call the API directly after logging in — see
 `references/api-endpoints.md` and `references/quick-reference.md`.
 
 ## Workflow: subscribing to a channel
 
 1. Ask the user for either the YouTube channel URL (e.g.
    `https://www.youtube.com/@ExampleChannel`) or the channel ID (`UC...`).
-2. `bash scripts/tubearchivist.sh subscribe "<arg>"` — this queues a Celery
+2. `tubearchivist subscribe "<arg>"` — this queues a Celery
    `subscribe_to` task. TA does the resolution.
 3. The channel will not appear in `channels` immediately. Celery typically
    takes 30-60 seconds. Poll `tasks` to confirm the `subscribe_to` task
@@ -94,7 +93,7 @@ that's `/mnt/synology-media/youtube`. One folder per channel:
 
 Always confirm with the user before:
 
-- `unsubscribe <channel_id>` — drops the channel and stops future syncs.
+- `tubearchivist unsubscribe <channel_id> --confirm-unsubscribe` — drops the channel and stops future syncs.
 - Any custom `DELETE` against `/api/video/`, `/api/channel/`, or
   `/api/playlist/` — these remove indexed data.
 - Bulk operations against `/api/appsettings/*` (snapshots, backups,

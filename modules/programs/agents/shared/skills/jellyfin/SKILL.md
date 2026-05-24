@@ -1,7 +1,7 @@
 ---
 name: jellyfin
 description: "Inspect my self-hosted Jellyfin media server: server status, users, libraries, sessions, now-playing, recently-added, item search, library counts, and scheduled tasks. Use when the user asks about Jellyfin, what's playing, who's watching, what was just added, library size, or asks to run a Jellyfin task."
-allowed-tools: Bash WebFetch
+allowed-tools: Bash, WebFetch
 ---
 
 # Jellyfin
@@ -18,26 +18,27 @@ Credentials are exported into the shell by sops-nix (see
 - `JELLYFIN_URL` — base URL (no trailing slash), e.g. `http://192.168.1.21:8096`
 - `JELLYFIN_API_KEY` — API key from Dashboard → API Keys
 
-The wrapper script asserts these are set and aborts cleanly otherwise. Jellyfin
-inherits auth headers from Emby, so the header name is `X-Emby-Token` (not
-`X-Api-Key`).
+The `jellyfin` CLI reports a JSON error envelope when they are missing.
+Jellyfin inherits auth headers from Emby, so the header name is `X-Emby-Token`
+(not `X-Api-Key`).
 
-## Wrapper script
+## CLI
 
-`scripts/jellyfin.sh` exposes simple sub-commands so the agent doesn't have to
-hand-roll curl invocations for common operations. All output is JSON.
+Use the installed `jellyfin` CLI for common operations. It always emits a single
+JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
+`scripts/jellyfin.sh` remains as a compatibility shim for older workflows.
 
 ```bash
-bash scripts/jellyfin.sh status                # /System/Info sanity check
-bash scripts/jellyfin.sh users                 # all users with last activity
-bash scripts/jellyfin.sh libraries             # virtual folders (libraries)
-bash scripts/jellyfin.sh sessions              # every active session
-bash scripts/jellyfin.sh now-playing           # sessions with NowPlayingItem
-bash scripts/jellyfin.sh recently-added [n]    # latest n items (default 20)
-bash scripts/jellyfin.sh item-search "<query>" # search Movies/Series/Episodes
-bash scripts/jellyfin.sh library-stats         # /Items/Counts
-bash scripts/jellyfin.sh scheduled-tasks       # task list with state
-bash scripts/jellyfin.sh run-task <taskId>     # POST /ScheduledTasks/Running/<id>
+jellyfin status                                # /System/Info sanity check
+jellyfin users                                 # all users with last activity
+jellyfin libraries                             # virtual folders (libraries)
+jellyfin sessions                              # every active session
+jellyfin now-playing                           # sessions with NowPlayingItem
+jellyfin recently-added --limit 20             # latest items
+jellyfin item-search "<query>" --limit 25      # search Movies/Series/Episodes
+jellyfin library-stats                         # /Items/Counts
+jellyfin scheduled-tasks                       # task list with state
+jellyfin run-task <taskId> --confirm-run-task  # POST /ScheduledTasks/Running/<id>
 ```
 
 For anything not covered, call the API directly with `$JELLYFIN_URL` and the
@@ -46,23 +47,23 @@ and `references/quick-reference.md`.
 
 ## Workflow: who's watching?
 
-1. `bash scripts/jellyfin.sh now-playing` — current streams with user, device,
+1. `jellyfin now-playing` — current streams with user, device,
    item, and play method.
-2. `bash scripts/jellyfin.sh sessions` — full session list if no one is
+2. `jellyfin sessions` — full session list if no one is
    actively playing (idle clients still show up).
 
 ## Workflow: what's new?
 
-1. `bash scripts/jellyfin.sh recently-added 10` — last 10 items added across
+1. `jellyfin recently-added --limit 10` — last 10 items added across
    the libraries the first user can see.
-2. `bash scripts/jellyfin.sh library-stats` — totals (Movies, Series,
+2. `jellyfin library-stats` — totals (Movies, Series,
    Episodes, etc.).
 
 ## Mutations: confirm first
 
 Always confirm with the user before:
 
-- `run-task <taskId>` (kicks off a server task; some are I/O heavy)
+- `jellyfin run-task <taskId> --confirm-run-task` (kicks off a server task; some are I/O heavy)
 - Any custom POST/PUT/DELETE against the Jellyfin API
 
 ## References
@@ -76,7 +77,7 @@ Always confirm with the user before:
 
 - Header is `X-Emby-Token` (Jellyfin forked Emby and kept the name).
 - Many `/Items` endpoints are user-scoped — they require a `userId` in the
-  path or query. The wrapper picks the first non-disabled user.
+  path or query. The CLI picks the first non-disabled user.
 - Recently-added is per-user; an admin sees everything, restricted users only
   see their own libraries.
 - Jellyfin lives on the LAN. If `JELLYFIN_URL` is unreachable, surface that to
