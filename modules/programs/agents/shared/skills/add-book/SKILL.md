@@ -12,7 +12,7 @@ fixing according to its configured automation.
 
 ## Environment
 
-- `AUTOCALIWEB_INGEST_DIR` - ingest path inside the AutoCaliWeb LXC, currently `/opt/acw-book-ingest`
+- `AUTOCALIWEB_INGEST_DIR` - ingest path inside the AutoCaliWeb LXC, currently `/book-ingest`
 - `AUTOCALIWEB_PROXMOX_HOST` - Proxmox SSH host, currently `proxmox`
 - `AUTOCALIWEB_CTID` - AutoCaliWeb LXC id, currently `101`
 - `AUTOCALIWEB_URL` - UI/OPDS URL for reporting and CLI verification
@@ -69,7 +69,7 @@ bash scripts/add-book.sh ~/Downloads/example.pdf --dry-run
 
 1. Confirm source path/URL and that the user wants it imported.
 2. Run `bash scripts/add-book.sh <source> --dry-run` to validate paths.
-3. Run without `--dry-run` to copy/download into `/opt/acw-book-ingest` in LXC 101.
+3. Run without `--dry-run` to copy/download into `/book-ingest` in LXC 101.
 4. Report the destination path and remind the user AutoCaliWeb imports async.
 5. If CLI credentials are present, use `autocaliweb recent --limit 10` or
    `autocaliweb search "<title>"` to verify after AutoCaliWeb has had time to

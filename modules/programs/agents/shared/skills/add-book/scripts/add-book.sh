@@ -9,7 +9,7 @@ usage:
   bash scripts/add-book.sh <file-or-url> [--name "Book.epub"] [--ingest-dir DIR] [--proxmox-host HOST] [--ctid ID] [--dry-run]
 
 env:
-  AUTOCALIWEB_INGEST_DIR  ingest path, usually /opt/acw-book-ingest in LXC 101
+  AUTOCALIWEB_INGEST_DIR  ingest path, usually /book-ingest in LXC 101
   AUTOCALIWEB_PROXMOX_HOST Proxmox SSH host, usually proxmox
   AUTOCALIWEB_CTID        AutoCaliWeb LXC id, usually 101
   AUTOCALIWEB_URL         optional UI URL, included in JSON output

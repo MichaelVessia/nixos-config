@@ -80,7 +80,7 @@ in {
       [ -f "$SECRETS_DIR/autocaliweb_password" ] && export AUTOCALIWEB_PASSWORD="$(cat "$SECRETS_DIR/autocaliweb_password")"
       export AUTOCALIWEB_PROXMOX_HOST="proxmox"
       export AUTOCALIWEB_CTID="101"
-      export AUTOCALIWEB_INGEST_DIR="/opt/acw-book-ingest"
+      export AUTOCALIWEB_INGEST_DIR="/book-ingest"
       [ -n "$AUTOCALIWEB_URL" ] || export AUTOCALIWEB_URL="http://192.168.1.145:8083"
       [ -f "$SECRETS_DIR/tubearchivist_url" ] && export TUBEARCHIVIST_URL="$(cat "$SECRETS_DIR/tubearchivist_url")"
       [ -f "$SECRETS_DIR/tubearchivist_username" ] && export TUBEARCHIVIST_USERNAME="$(cat "$SECRETS_DIR/tubearchivist_username")"
