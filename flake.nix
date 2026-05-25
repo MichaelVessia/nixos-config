@@ -30,6 +30,14 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     ghostty.url = "github:ghostty-org/ghostty";
     niri.url = "github:sodiboo/niri-flake";
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    dgop = {
+      url = "github:AvengeMedia/dgop";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     noctalia.url = "github:noctalia-dev/noctalia-shell";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
@@ -74,6 +82,7 @@
     nixos-hardware,
     ghostty,
     niri,
+    dms,
     noctalia,
     sops-nix,
     agent-skills-nix,
@@ -132,6 +141,8 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 niri.homeModules.niri
+                dms.homeModules.dank-material-shell
+                dms.homeModules.niri
                 noctalia.homeModules.default
                 inputs.worktrunk.homeModules.default
               ];

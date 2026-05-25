@@ -11,7 +11,7 @@
 
   # XWayland support for X11 apps, shell tools
   environment.systemPackages = with pkgs; [
-    niri-unstable
+    niri
     xwayland-satellite
     swaylock
     swayidle
