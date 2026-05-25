@@ -44,6 +44,6 @@
   # Polkit agent for authentication dialogs
   security.polkit.enable = true;
 
-  # UPower for battery monitoring (required for noctalia battery widget)
+  # UPower for battery monitoring.
   services.upower.enable = true;
 }

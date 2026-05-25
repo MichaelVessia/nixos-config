@@ -38,7 +38,6 @@
       url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia.url = "github:noctalia-dev/noctalia-shell";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
     garage = {
@@ -83,7 +82,6 @@
     ghostty,
     niri,
     dms,
-    noctalia,
     sops-nix,
     agent-skills-nix,
     ...
@@ -143,7 +141,6 @@
                 niri.homeModules.niri
                 dms.homeModules.dank-material-shell
                 dms.homeModules.niri
-                noctalia.homeModules.default
                 inputs.worktrunk.homeModules.default
               ];
 

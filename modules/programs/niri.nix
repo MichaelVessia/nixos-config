@@ -14,14 +14,8 @@
     then osConfig.networking.hostName
     else null;
 
-  wallpaper = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/po/wallhaven-polllj.jpg";
-    hash = "sha256-mijhZOGKGwFF2CjcOtol5kGwsYIdMOYQMf7Im02RqqE=";
-  };
-
   desktopShell = "dank";
   useDank = desktopShell == "dank";
-  useNoctalia = desktopShell == "noctalia";
 in
   lib.mkIf pkgs.stdenv.isLinux {
     # Clipboard services via Home Manager (systemd-managed)
@@ -38,71 +32,6 @@ in
     # Ensure screenshot/recording directories exist
     home.file."Pictures/Screenshots/.keep".text = "";
     home.file."Videos/.keep".text = "";
-
-    # Noctalia wallpaper config
-    home.file.".cache/noctalia/wallpapers.json" = lib.mkIf useNoctalia {
-      text = builtins.toJSON {
-        defaultWallpaper = "${wallpaper}";
-      };
-    };
-
-    # Noctalia shell configuration
-    programs.noctalia-shell = lib.mkIf useNoctalia {
-      enable = true;
-      package = null; # Use the package from home.packages to avoid IPC issues
-      settings = {
-        colorSchemes = {
-          predefinedScheme = "Catppuccin";
-          darkMode = true;
-        };
-        location = {
-          name = "New York";
-          useFahrenheit = true;
-        };
-        bar = {
-          position = "top";
-          widgets = {
-            left = [
-              {id = "Launcher";}
-              {id = "Workspace";}
-            ];
-            center = [
-              {id = "Clock";}
-            ];
-            right = [
-              {
-                id = "Tray";
-                pinned = ["*handy*" "tray-icon tray app"];
-              }
-              {id = "SystemMonitor";}
-              {id = "Volume";}
-              {id = "Brightness";}
-              {id = "Battery";}
-              {id = "ControlCenter";}
-            ];
-          };
-        };
-      };
-      plugins = {
-        sources = [
-          {
-            enabled = true;
-            name = "Official Noctalia Plugins";
-            url = "https://github.com/noctalia-dev/noctalia-plugins";
-          }
-        ];
-        states = {
-          screen-recorder = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
-          keybind-cheatsheet = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
-        };
-      };
-    };
 
     programs.dank-material-shell = lib.mkIf useDank {
       enable = true;
@@ -124,32 +53,25 @@ in
     };
 
     # Packages needed for niri desktop environment
-    home.packages = with pkgs;
-      [
-        # Clipboard
-        wl-clipboard
-        cliphist
-        wtype # for Handy paste on Wayland
+    home.packages = with pkgs; [
+      # Clipboard
+      wl-clipboard
+      cliphist
+      wtype # for Handy paste on Wayland
 
-        # Screenshot/recording tools
-        grim
-        slurp
-        gpu-screen-recorder # for noctalia screen recorder plugin
+      # Screenshot/recording tools
+      grim
+      slurp
+      # Notifications
+      libnotify
 
-        # Notifications
-        libnotify
+      # System tray applets
+      networkmanagerapplet
+      blueman
 
-        # System tray applets
-        networkmanagerapplet
-        blueman
-
-        # Authentication
-        polkit_gnome
-      ]
-      ++ lib.optionals useNoctalia [
-        # Noctalia shell (unified bar, notifications, launcher, lock screen, power menu)
-        inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-      ];
+      # Authentication
+      polkit_gnome
+    ];
 
     programs.niri = {
       enable = true;
@@ -256,19 +178,12 @@ in
         };
 
         # Spawn programs at startup
-        spawn-at-startup =
-          [
-            # Network manager applet
-            {command = ["nm-applet" "--indicator"];}
-            # Bluetooth applet
-            {command = ["blueman-applet"];}
-          ]
-          ++ lib.optionals useNoctalia [
-            # Noctalia shell (bar, notifications, launcher, lock screen, power menu, wallpaper)
-            {command = ["noctalia-shell"];}
-            # Authentication agent
-            {command = ["${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"];}
-          ];
+        spawn-at-startup = [
+          # Network manager applet
+          {command = ["nm-applet" "--indicator"];}
+          # Bluetooth applet
+          {command = ["blueman-applet"];}
+        ];
 
         # Environment variables
         environment = {
@@ -331,12 +246,6 @@ in
           "Mod+Return".action.spawn = "ghostty";
           "Mod+B".action.spawn = "brave";
           "Mod+E".action.spawn = "nautilus";
-          "Mod+Space" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
-          };
-          "Mod+Semicolon" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "emoji"];
-          };
           # Handy transcription toggle (Alt+` with swap)
           "Mod+Grave".action.spawn = ["pkill" "-USR2" "handy"];
 
@@ -344,12 +253,8 @@ in
           # WINDOW CONTROLS
           # ================
           "Mod+Q".action.close-window = [];
-          "Mod+V" = lib.mkIf useNoctalia {
-            action.toggle-window-floating = [];
-          };
-          "Mod+M" = lib.mkIf useNoctalia {
-            action.maximize-column = [];
-          };
+          "Mod+V".action.toggle-window-floating = [];
+          "Mod+M".action.maximize-column = [];
           "Mod+Shift+M".action.fullscreen-window = [];
 
           # ================
@@ -424,9 +329,7 @@ in
           # ================
           # MULTI-MONITOR
           # ================
-          "Mod+Comma" = lib.mkIf useNoctalia {
-            action.focus-monitor-left = [];
-          };
+          "Mod+Comma".action.focus-monitor-left = [];
           "Mod+Period".action.focus-monitor-right = [];
           "Mod+Shift+Comma".action.move-window-to-monitor-left = [];
           "Mod+Shift+Period".action.move-window-to-monitor-right = [];
@@ -446,34 +349,30 @@ in
           "Print".action.screenshot = [];
           "Shift+Print".action.screenshot-window = [];
           "Ctrl+Shift+4".action.spawn = ["sh" "-c" "grim -g \"$(slurp)\" - | wl-copy && notify-send 'Screenshot copied'"];
-          "Ctrl+Shift+5" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "plugin:screen-recorder" "toggle"];
-          };
-
           # ================
           # MEDIA KEYS
           # ================
-          "XF86AudioRaiseVolume" = lib.mkIf useNoctalia {
+          "XF86AudioRaiseVolume" = {
             allow-when-locked = true;
             action.spawn = ["wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "5%+"];
           };
-          "XF86AudioLowerVolume" = lib.mkIf useNoctalia {
+          "XF86AudioLowerVolume" = {
             allow-when-locked = true;
             action.spawn = ["wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"];
           };
-          "XF86AudioMute" = lib.mkIf useNoctalia {
+          "XF86AudioMute" = {
             allow-when-locked = true;
             action.spawn = ["wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"];
           };
-          "XF86AudioMicMute" = lib.mkIf useNoctalia {
+          "XF86AudioMicMute" = {
             allow-when-locked = true;
             action.spawn = ["wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"];
           };
-          "XF86MonBrightnessUp" = lib.mkIf useNoctalia {
+          "XF86MonBrightnessUp" = {
             allow-when-locked = true;
             action.spawn = ["brightnessctl" "-e4" "-n2" "set" "5%+"];
           };
-          "XF86MonBrightnessDown" = lib.mkIf useNoctalia {
+          "XF86MonBrightnessDown" = {
             allow-when-locked = true;
             action.spawn = ["brightnessctl" "-e4" "-n2" "set" "5%-"];
           };
@@ -493,23 +392,9 @@ in
           # ================
           # SYSTEM
           # ================
-          "Mod+Ctrl+Alt+L" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "lock" "lock"];
-          };
-          "Mod+C" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "clipboard"];
-          };
           "Mod+Shift+C".action.spawn = ["niri" "msg" "action" "reload-config"];
           "Mod+Shift+Q".action.quit = [];
-          "Mod+Slash" = lib.mkIf useNoctalia {
-            action.spawn = ["noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"];
-          };
           "Mod+Shift+Slash".action.show-hotkey-overlay = [];
-
-          # Restart noctalia-shell (for when bar disappears)
-          "Mod+Ctrl+Shift+N" = lib.mkIf useNoctalia {
-            action.spawn = ["sh" "-c" "pkill -9 quickshell; noctalia-shell"];
-          };
         };
 
         # Animations
