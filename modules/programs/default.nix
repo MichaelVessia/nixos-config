@@ -11,6 +11,7 @@
     ./nvf
     ./common.nix
     ./cmux.nix
+    ./dms
     ./ghostty.nix
     ./git.nix
     ./media.nix
