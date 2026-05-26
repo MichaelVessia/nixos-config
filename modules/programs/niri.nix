@@ -177,13 +177,8 @@ in
           center-focused-column = "on-overflow";
         };
 
-        # Spawn programs at startup
-        spawn-at-startup = [
-          # Network manager applet
-          {command = ["nm-applet" "--indicator"];}
-          # Bluetooth applet
-          {command = ["blueman-applet"];}
-        ];
+        # Dank Material Shell provides native network and Bluetooth widgets.
+        spawn-at-startup = [];
 
         # Environment variables
         environment = {
