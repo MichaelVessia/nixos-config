@@ -118,6 +118,9 @@ in {
     home.activation.piConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       install -Dm644 ${piSettingsFile} "$HOME/.pi/agent/settings.json"
       install -Dm644 ${piExtensionSettingsFile} "$HOME/.pi/agent/settings-extensions.json"
+      # herdr's `integration install pi` drops herdr-agent-state.ts here but
+      # refuses to create the dir itself; ensure it exists so the install works.
+      install -d "$HOME/.pi/agent/extensions"
     '';
   };
 }

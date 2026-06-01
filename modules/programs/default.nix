@@ -12,6 +12,7 @@
     ./common.nix
     ./cmux.nix
     ./ghostty.nix
+    ./herdr.nix
     ./git.nix
     ./media.nix
     ./shell.nix

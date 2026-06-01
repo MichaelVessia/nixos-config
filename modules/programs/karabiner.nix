@@ -61,7 +61,7 @@ lib.mkIf pkgs.stdenv.isDarwin {
                   from = {
                     pointing_button = "button5";
                     modifiers = {
-                      mandatory = ["left_command"];
+                      mandatory = ["command"];
                     };
                   };
                   to = [{key_code = "return_or_enter";}];
