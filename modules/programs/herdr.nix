@@ -46,14 +46,13 @@
       focus_pane_up = ["prefix+k" "ctrl+k"];
       focus_pane_right = ["prefix+l" "ctrl+l"];
 
-      # Navigate-mode movement is the only place herdr defaults to arrow keys
-      # (navigate_workspace_up/down = up/down). Make k/j primary, keep arrows as
-      # a fallback. Plain keys are safe here: these only win while navigate mode
-      # is open, so they do not intercept typing. Pane movement
-      # (navigate_pane_*) already defaults to h/j/k/l with arrows hardwired, so
-      # it needs no override.
-      navigate_workspace_up = ["k" "up"];
-      navigate_workspace_down = ["j" "down"];
+      # Navigate-mode movement. Panes keep herdr's vim default (h/j/k/l, no
+      # override needed). Workspace nav can't reuse j/k - that collides with
+      # pane up/down in navigate mode (herdr disables one) - and we want no
+      # arrow keys, so workspaces move on shift+J/shift+K: same vim feel,
+      # shifted for the higher-level nav.
+      navigate_workspace_up = "shift+k";
+      navigate_workspace_down = "shift+j";
 
       # Splits: prefix+\ vertical, prefix+- horizontal (usual muscle memory).
       # prefix+- is already herdr's default for split_horizontal, so only the
