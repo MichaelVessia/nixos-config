@@ -74,6 +74,10 @@
       # herdr rejects it.
       split_vertical = ["prefix+backslash" "prefix+v"];
     };
+
+    # Silence the beep when background agents change state (settings > sound >
+    # "sound alerts: off"). Set declaratively so a rebuild re-asserts it.
+    ui.sound.enabled = false;
   };
 in {
   home.activation.herdrConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
