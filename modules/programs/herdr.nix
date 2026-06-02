@@ -54,6 +54,18 @@
       navigate_workspace_up = "shift+k";
       navigate_workspace_down = "shift+j";
 
+      # Agent panel nav (prefix-mode actions, the vertical agent list in the
+      # sidebar). comma/period is the prev/next idiom, kept off the vim hjkl
+      # family so it never shadows pane focus (prefix+j/k) or workspace nav
+      # (bare shift+j/k in navigate mode - a different mode, no real collision,
+      # but we avoid the shared glyph). "comma" is in herdr's documented
+      # punctuation list; "period" is NOT, so next_agent keeps prefix+plus as a
+      # parseable fallback (same pattern as split_vertical's backslash->v). After
+      # a rebuild, `herdr server reload-config` then check herdr.log: if period
+      # is rejected the bind silently falls through to prefix+plus.
+      previous_agent = "prefix+comma";
+      next_agent = ["prefix+period" "prefix+plus"];
+
       # Splits: prefix+\ vertical, prefix+- horizontal (usual muscle memory).
       # prefix+- is already herdr's default for split_horizontal, so only the
       # vertical bind moves off the default prefix+v. "backslash" is not in
