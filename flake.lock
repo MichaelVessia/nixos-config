@@ -1299,6 +1299,26 @@
         "type": "github"
       }
     },
+    "openwhispr": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780532190,
+        "narHash": "sha256-V14w/qyjTu48Qji9w4APDFVb81ePmyl75Ct0Fe0IYek=",
+        "owner": "OpenWhispr",
+        "repo": "openwhispr",
+        "rev": "18063b34584a2584b8f442f30068af4847257a08",
+        "type": "github"
+      },
+      "original": {
+        "owner": "OpenWhispr",
+        "repo": "openwhispr",
+        "type": "github"
+      }
+    },
     "paperless-cli": {
       "inputs": {
         "bun2nix": "bun2nix_6",
@@ -1337,6 +1357,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "noctalia": "noctalia",
         "nvf": "nvf",
+        "openwhispr": "openwhispr",
         "paperless-cli": "paperless-cli",
         "sops-nix": "sops-nix",
         "subq": "subq",

@@ -14,6 +14,9 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      # Homebrew now refuses `brew bundle install --cleanup` without explicit
+      # confirmation; --force-cleanup skips the prompt for cleanup only.
+      extraFlags = ["--force-cleanup"];
     };
 
     # Third-party taps
