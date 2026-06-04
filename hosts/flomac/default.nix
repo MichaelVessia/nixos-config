@@ -21,6 +21,7 @@
 
     # Third-party taps
     taps = [
+      "nkzw-tech/tap" # codiff
       "steveyegge/beads"
     ];
 
@@ -39,6 +40,7 @@
       "chatgpt"
       "claude"
       "cmux"
+      "nkzw-tech/tap/codiff"
       "codex-app"
       "figma"
       "ghostty"
