@@ -85,7 +85,10 @@
     defaultProvider = "openai-codex";
     defaultModel = "gpt-5.5";
     defaultThinkingLevel = "xhigh";
-    enabledModels = ["openai-codex/gpt-5.5"];
+    enabledModels = [
+      "openai-codex/gpt-5.5"
+      "openai-codex/gpt-5.3-codex-spark"
+    ];
     theme = "catppuccin-mocha";
     # Forces pi to use plain `npm install` (with devDeps) for git sources
     # instead of `npm install --omit=dev`. Required for packages like
