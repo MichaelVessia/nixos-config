@@ -192,13 +192,22 @@ in {
       zk = "zellij kill-session"; # kill session
     };
 
-    sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-      NIXOS_CONFIG = "$HOME/nixos-config";
-      TMPDIR = "$HOME/.cache/tmp";
-      NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
-    };
+    sessionVariables =
+      {
+        EDITOR = "nvim";
+        VISUAL = "nvim";
+        NIXOS_CONFIG = "$HOME/nixos-config";
+        TMPDIR = "$HOME/.cache/tmp";
+        NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
+      }
+      // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+        # agent-browser launches Brave instead of its bundled Chromium, so
+        # AI-agent browser automation (Claude Code, Codex, ...) uses the same
+        # browser the human runs. Login state still needs either a one-time
+        # `agent-browser open <url> --headed` login (persisted state) or
+        # attaching to a running Brave via --cdp.
+        AGENT_BROWSER_EXECUTABLE_PATH = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser";
+      };
   };
 
   # atuin - magical shell history

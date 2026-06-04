@@ -26,10 +26,10 @@
   #     ctrl+a leader (modules/programs/ghostty.nix) and tmux's ctrl+b.
   #     If herdr rejects the ";" spelling, fall back to prefix = "ctrl+space".
   #   - Pane focus gets a direct ctrl+h/j/k/l duplicate alongside the default
-  #     prefix+h/j/k/l, matching zellij/zed/cmux muscle memory. ctrl+ is the
-  #     only modifier that reaches a TUI in ghostty unconfigured: opt+ is a
-  #     compose key (would need macos-option-as-alt) and cmd+ is swallowed by
-  #     macOS, so the Grove opt+ family is intentionally not mapped here.
+  #     prefix+h/j/k/l, matching zellij/zed/cmux muscle memory. cmd+ is
+  #     swallowed by macOS; ctrl+ and alt+ both reach the TUI - alt+ via
+  #     ghostty's macos-option-as-alt = left (modules/programs/ghostty.nix),
+  #     which frees the alt+ family for direct workspace/agent switching.
   tomlFormat = pkgs.formats.toml {};
 
   herdrConfig = tomlFormat.generate "herdr-config.toml" {
@@ -54,17 +54,22 @@
       navigate_workspace_up = "shift+k";
       navigate_workspace_down = "shift+j";
 
-      # Agent panel nav (prefix-mode actions, the vertical agent list in the
-      # sidebar). comma/period is the prev/next idiom, kept off the vim hjkl
-      # family so it never shadows pane focus (prefix+j/k) or workspace nav
-      # (bare shift+j/k in navigate mode - a different mode, no real collision,
-      # but we avoid the shared glyph). "comma" is in herdr's documented
-      # punctuation list; "period" is NOT, so next_agent keeps prefix+plus as a
-      # parseable fallback (same pattern as split_vertical's backslash->v). After
-      # a rebuild, `herdr server reload-config` then check herdr.log: if period
-      # is rejected the bind silently falls through to prefix+plus.
-      previous_agent = "prefix+comma";
-      next_agent = ["prefix+period" "prefix+plus"];
+      # Direct workspace switching: single-chord alt+j/k, no prefix and no
+      # navigate mode. Needs ghostty's macos-option-as-alt = left so opt
+      # arrives as alt on macOS. Navigate-mode shift+J/K above stays as the
+      # in-mode equivalent.
+      next_workspace = "alt+j";
+      previous_workspace = "alt+k";
+
+      # Agent panel nav (the vertical agent list in the sidebar). Direct
+      # alt+shift+j/k mirrors the workspace chords one shift "up"; the prefix
+      # comma/period binds stay for muscle memory. "comma" is in herdr's
+      # documented punctuation list; "period" is NOT, so next_agent keeps
+      # prefix+plus as a parseable fallback (same pattern as split_vertical's
+      # backslash->v). After a rebuild, `herdr server reload-config` then check
+      # herdr.log: if a chord is rejected the bind falls through to the next.
+      previous_agent = ["prefix+comma" "alt+shift+k"];
+      next_agent = ["prefix+period" "prefix+plus" "alt+shift+j"];
 
       # Splits: prefix+\ vertical, prefix+- horizontal (usual muscle memory).
       # prefix+- is already herdr's default for split_horizontal, so only the
