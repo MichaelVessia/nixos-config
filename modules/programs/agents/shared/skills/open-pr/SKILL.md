@@ -21,3 +21,13 @@ allowed-tools: Bash(git checkout --branch:*), Bash(git branch:*), Bash(gh pr cre
 4. Invoke `update-pr-title` to set the best-fitting conventional-commit title.
 5. Invoke `update-pr-description` to fill the body from the repo's PR
    template.
+
+## Sequencing
+
+Each numbered step runs in its own message. The `Skill` tool loads
+instructions for the *next* turn; it does not execute them on the current
+turn. Do **not** bundle a `Skill` invocation with later steps (e.g. running
+`gh pr create` in the same message that invokes `commit-and-push`) — the PR
+will be created against an empty branch because the commit-and-push
+instructions have not run yet. Wait for each invoked skill to complete before
+starting the next step.
