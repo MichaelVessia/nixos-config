@@ -47,11 +47,7 @@
     {source = "npm:pi-subagents";}
     {source = "npm:pi-mcp-adapter";}
     {source = "npm:pi-web-access";}
-    {source = "npm:pi-memory-md";}
-    {source = "npm:@devkade/pi-plan";}
-    {source = "npm:pi-simplify";}
     {source = "npm:pi-add-dir";}
-    {source = "npm:pi-prompt-template-model";}
     {source = "npm:@plannotator/pi-extension";}
     {source = "npm:@juanibiapina/pi-extension-settings";}
     {source = "npm:@juanibiapina/pi-powerbar";}
@@ -60,12 +56,12 @@
     {source = "git:github.com/tintinweb/pi-manage-todo-list@b75c449aa85ce328e9a8b632f62bf642aed40359";}
     {source = "npm:pi-btw";}
     {source = "npm:pi-interactive-shell";}
+    {source = "npm:pi-dynamic-workflows";}
     # Fork pins Ctrl+Alt+X for the dashboard toggle to avoid pi's built-in Ctrl+X shortcut.
     {source = "git:github.com/MichaelVessia/pi-autoresearch@76aa69464cd8d8028538ec8102ae91ea75df5736";}
     {source = "npm:@tmustier/pi-ralph-wiggum";}
     {source = "npm:@every-env/compound-plugin";}
     piThemesFiltered
-    {source = "git:github.com/javierportillo/pi-hackerman@63b0a3ef2c7b14985ffeb6cac44614ba59cd5693";}
     {source = "npm:pi-cyber-ui";}
     curatedThemesFiltered
     {source = "npm:pi-terminal-theme";}
