@@ -71,6 +71,14 @@
       previous_agent = ["prefix+comma" "alt+shift+k"];
       next_agent = ["prefix+period" "prefix+plus" "alt+shift+j"];
 
+      # Direct tab switching: alt+[/]. Brackets are NOT in herdr's documented
+      # punctuation list, and alt+[ is byte-identical to the CSI escape
+      # introducer, so this depends on herdr's parser disambiguating (kitty
+      # keyboard protocol). Default prefix+p/n stay as reliable fallbacks; if
+      # the brackets don't register, swap these for alt+h/l instead.
+      previous_tab = ["prefix+p" "alt+["];
+      next_tab = ["prefix+n" "alt+]"];
+
       # Splits: prefix+\ vertical, prefix+- horizontal (usual muscle memory).
       # prefix+- is already herdr's default for split_horizontal, so only the
       # vertical bind moves off the default prefix+v. "backslash" is not in
