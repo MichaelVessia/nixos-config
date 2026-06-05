@@ -600,11 +600,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1780669731,
-        "narHash": "sha256-IIVBY/Zh4NmXzBuRgWlaWxppWC4ZPmaTA6kZv/AAW9I=",
+        "lastModified": 1780685261,
+        "narHash": "sha256-lrkOAxgERtKaw2xhw3CnMYvDKJZpShmf3TZfO7lSIKs=",
         "ref": "master",
-        "rev": "a98f78c1199e8435ebc09e29b65aba0ed295eb78",
-        "revCount": 465,
+        "rev": "5115b1e592188d9cbaa868faad13965d402790e8",
+        "revCount": 468,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },

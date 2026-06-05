@@ -85,6 +85,8 @@
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
       inputs.llm-agents.packages.${pkgs.system}.herdr
+      inputs.llm-agents.packages.${pkgs.system}.hunk
+      inputs.llm-agents.packages.${pkgs.system}.omp
       inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi.nix
       inputs.llm-agents.packages.${pkgs.system}.qmd
