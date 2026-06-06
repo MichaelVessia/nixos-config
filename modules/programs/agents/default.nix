@@ -1,6 +1,7 @@
 {...}: {
   imports = [
     ./shared.nix
+    ./agentsview.nix
     ./codex.nix
     ./opencode.nix
     ./pi.nix
