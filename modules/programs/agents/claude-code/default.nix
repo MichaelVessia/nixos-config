@@ -369,7 +369,6 @@
         "Bash(comm:*)"
         "Bash(tee:*)"
         "Bash(xargs:*)"
-        "Bash(bd:*)"
         "Bash(npm:*)"
         "Bash(npx:*)"
         "Bash(pnpm:*)"

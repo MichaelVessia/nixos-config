@@ -81,7 +81,6 @@
       lsof # list open files
 
       inputs.llm-agents.packages.${pkgs.system}.agentsview
-      inputs.llm-agents.packages.${pkgs.system}.beads-viewer
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex
       inputs.llm-agents.packages.${pkgs.system}.herdr
