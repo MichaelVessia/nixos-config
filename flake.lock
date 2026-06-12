@@ -600,11 +600,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1780685261,
-        "narHash": "sha256-lrkOAxgERtKaw2xhw3CnMYvDKJZpShmf3TZfO7lSIKs=",
+        "lastModified": 1781202081,
+        "narHash": "sha256-iox0v/pk/DluP9MgWO5+nxP9hX0xxpdzwOQZt4e9zwI=",
         "ref": "master",
-        "rev": "5115b1e592188d9cbaa868faad13965d402790e8",
-        "revCount": 468,
+        "rev": "d26da62237bcc48aa3a0f06afa96d5d2fa7645fb",
+        "revCount": 507,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
@@ -829,11 +829,11 @@
         "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
-        "lastModified": 1780697194,
-        "narHash": "sha256-puccQgXtwSjcRVJTTwto+V0Fmylm0Bfn2evHZFgM6qw=",
+        "lastModified": 1781031510,
+        "narHash": "sha256-ShE1w8IzxlzkZq7tp9JzMQFZH5H3uGSmBfbvqV8x8bE=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "1401b0c31c8d0020ec3ade38e483870275b0a18a",
+        "rev": "afdd3b7a384553b66ea8db87eb87b8ffb4d54efc",
         "type": "github"
       },
       "original": {
@@ -1157,11 +1157,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1780365719,
-        "narHash": "sha256-QfWfccTN+70ZQ4m2qlU9PiKfz2Yppq94058iJyARNwc=",
+        "lastModified": 1780930886,
+        "narHash": "sha256-rppURzHviaQN131F+nLiLdGfcb0uCd9gGP0E5+iw9MI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ffa10e26ae11d676b2db836259889f1f571cb14f",
+        "rev": "8c3cede7ddc26bd659d2d383b5610efbd2c7a16e",
         "type": "github"
       },
       "original": {
