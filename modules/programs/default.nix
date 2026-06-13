@@ -13,23 +13,23 @@
     ./cmux.nix
     ./dms
     ./ghostty.nix
+    ./herdr.nix
     ./git.nix
     ./media.nix
+    ./openwhispr.nix
     ./shell.nix
     ./zellij.nix
     ./ssh.nix
+    ./stack.nix
     ./syncthing.nix
     ./transcribe.nix
     ./worktrunk.nix
     ./x-to-obsidian.nix
-    ./basalt.nix
     ./fmcal.nix
     ./floai.nix
     ./paperless-cli.nix
     ./hass-cli.nix
     ./kuma-cli.nix
-    ./subq.nix
-    ./takopi
     ./karabiner.nix
     ./hammerspoon.nix
     ./raycast.nix

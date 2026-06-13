@@ -43,6 +43,11 @@
     # Shell integration
     shell-integration = zsh
 
+    # Left option acts as alt so TUIs receive alt+ chords (herdr workspace and
+    # agent nav, modules/programs/herdr.nix); right option still composes
+    # special characters (macOS only, ignored on Linux).
+    macos-option-as-alt = left
+
     # Tab management keybindings with leader key (ctrl+a)
     keybind = ctrl+a>1=goto_tab:1
     keybind = ctrl+a>2=goto_tab:2

@@ -14,17 +14,19 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      # Homebrew now refuses `brew bundle install --cleanup` without explicit
+      # confirmation; --force-cleanup skips the prompt for cleanup only.
+      extraFlags = ["--force-cleanup"];
     };
 
     # Third-party taps
     taps = [
-      "steveyegge/beads"
+      "nkzw-tech/tap" # codiff
     ];
 
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
-      "bd" # Beads - AI coding assistant
       "agent-browser" # Browser automation CLI for AI agents; run `agent-browser install` once post-install to fetch Chrome
     ];
 
@@ -36,6 +38,7 @@
       "chatgpt"
       "claude"
       "cmux"
+      "nkzw-tech/tap/codiff"
       "codex-app"
       "figma"
       "ghostty"
