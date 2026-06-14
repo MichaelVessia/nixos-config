@@ -17,6 +17,12 @@
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
   # home-manager's activation collapse the recursive `.agents/skills` target
   # and the per-tool entries onto each other, producing a symlink loop.
+  perToolSkillDirs = [
+    ".claude/skills"
+    ".codex/skills"
+    ".config/opencode/skills"
+  ];
+
   perSkillSymlinks = prefix:
     lib.listToAttrs (map (name: {
         name = "${prefix}/${name}";
@@ -48,6 +54,15 @@ in {
         };
       };
     };
+
+    home.activation.removeLegacyPerToolSkillDirLinks = lib.hm.dag.entryBetween ["linkGeneration"] ["writeBoundary"] ''
+      for dir in ${lib.escapeShellArgs perToolSkillDirs}; do
+        path="$HOME/$dir"
+        if [ -L "$path" ]; then
+          $DRY_RUN_CMD rm "$path"
+        fi
+      done
+    '';
 
     home.file =
       perSkillSymlinks ".claude/skills"
