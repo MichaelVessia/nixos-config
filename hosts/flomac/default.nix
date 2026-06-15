@@ -35,6 +35,7 @@
     # GUI Applications (casks)
     casks = [
       "1password"
+      "bitwarden"
       "brave-browser"
       "bruno"
       "chatgpt"

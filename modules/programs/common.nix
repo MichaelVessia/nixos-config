@@ -5,7 +5,38 @@
   pkgs-unstable,
   inputs,
   ...
-}: {
+}: let
+  garageCliNames = [
+    "adguard"
+    "autocaliweb"
+    "caddy"
+    "immich"
+    "jellyfin"
+    "jellyseerr"
+    "prowlarr"
+    "radarr"
+    "sabnzbd"
+    "sonarr"
+    "tailscale"
+    "tubearchivist"
+  ];
+
+  garageCli = name: let
+    package = inputs.garage.packages.${pkgs.system}.${name};
+  in
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then
+      package.overrideAttrs (_old: {
+        bunInstallFlags = [
+          "--linker=hoisted"
+          "--backend=copyfile"
+        ];
+        postBunSetInstallCacheDirPhase = ''
+          chmod -R u+w "$BUN_INSTALL_CACHE_DIR"
+        '';
+      })
+    else package;
+in {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs;
     [
@@ -65,7 +96,6 @@
 
       # productivity
       glow # markdown previewer in terminal
-      bitwarden-desktop # password manager
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
       # Note: whisper-cpp is configured in transcribe.nix
@@ -91,28 +121,18 @@
       inputs.llm-agents.packages.${pkgs.system}.qmd
       inputs.llm-agents.packages.${pkgs.system}.rtk
       inputs.llm-agents.packages.${pkgs.system}.tuicr
-      inputs.garage.packages.${pkgs.system}.adguard
-      inputs.garage.packages.${pkgs.system}.autocaliweb
-      inputs.garage.packages.${pkgs.system}.caddy
-      inputs.garage.packages.${pkgs.system}.immich
-      inputs.garage.packages.${pkgs.system}.jellyfin
-      inputs.garage.packages.${pkgs.system}.jellyseerr
-      inputs.garage.packages.${pkgs.system}.prowlarr
-      inputs.garage.packages.${pkgs.system}.radarr
-      inputs.garage.packages.${pkgs.system}.sabnzbd
-      inputs.garage.packages.${pkgs.system}.sonarr
-      inputs.garage.packages.${pkgs.system}.tailscale
-      inputs.garage.packages.${pkgs.system}.tubearchivist
       inputs.wiggle-puppy.packages.${pkgs.system}.default
       (pkgs.callPackage ./ralph {})
       (pkgs.callPackage ./td {}) # task tracking for AI coding sessions
     ]
+    ++ builtins.map garageCli garageCliNames
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
       (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
+      bitwarden-desktop # password manager
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       xclip # X11 clipboard provider
