@@ -77,6 +77,12 @@
 
   # System configuration
   system = {
+    activationScripts.extraActivation.text = ''
+      if command -v brew >/dev/null 2>&1; then
+        brew trust --tap humanlayer/humanlayer >/dev/null
+      fi
+    '';
+
     stateVersion = 5;
     primaryUser = username;
     defaults = {
