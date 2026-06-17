@@ -21,6 +21,7 @@
 
     # Third-party taps
     taps = [
+      "humanlayer/humanlayer"
       "nkzw-tech/tap" # codiff
       "omnigent-ai/tap"
     ];
@@ -48,16 +49,17 @@
       "hammerspoon"
       "google-drive"
       "handy"
+      "humanlayer/humanlayer/humanlayer"
       "jordanbaird-ice"
       "karabiner-elements"
-      "linear-linear"
+      "linear"
       "openlens"
       "orbstack"
       "protonvpn"
       "raycast"
       "shottr"
       "superwhisper"
-      "tailscale"
+      "tailscale-app"
       "libreoffice"
       "yaak"
       "zed"
@@ -68,6 +70,8 @@
     masApps = {
       # "Xcode" = 497799835; # Too large, install manually if needed
       "Amphetamine" = 937984704;
+      "Okta Verify" = 490179405;
+      "Slack" = 803453959;
     };
   };
 

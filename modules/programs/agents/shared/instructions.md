@@ -59,6 +59,14 @@
 - AST-first where it helps. Prefer ast-grep for tree-safe edits when it is
   better than regex.
 
+# Obsidian Vault
+
+- Treat `/Users/michael.vessia/obsidian` as shared durable memory for agent
+  work, regardless of the repository or working directory.
+- Update the vault when work reveals durable project context, decisions, people
+  context, or reusable notes that future agents should inherit.
+- Before editing the vault, read `/Users/michael.vessia/obsidian/AGENTS.md`.
+
 # Final Handoff
 
 Before finishing a task:

@@ -20,4 +20,8 @@
     secrets.dd_telemetry_api_key = {};
     secrets.rootly_api_key = {};
   };
+
+  home.activation.sopsNixLogDirectory = lib.hm.dag.entryBefore ["sops-nix"] ''
+    mkdir -p "$HOME/Library/Logs/SopsNix"
+  '';
 }
