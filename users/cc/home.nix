@@ -15,7 +15,6 @@
     ../../modules/programs/zellij.nix
     ../../modules/programs/ssh.nix
     ../../modules/programs/takopi
-    ../../modules/programs/basalt.nix
   ];
 
   home.username = "cc";

@@ -29,7 +29,10 @@
 
   services.tailscale.enable = true;
 
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs.docker_29;
+  };
 
   users.users.cc = {
     isNormalUser = true;

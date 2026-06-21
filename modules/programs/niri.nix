@@ -16,6 +16,176 @@
 
   desktopShell = "dank";
   useDank = desktopShell == "dank";
+  pactlPath = "${pkgs.pulseaudio}/bin/pactl";
+  audioDefaultDevicePatch = pkgs.writeText "dms-audio-default-device-button.patch" ''
+    --- Services/AudioService.qml
+    +++ Services/AudioService.qml
+    @@ -73,6 +73,36 @@ Singleton {
+         // default sink. Going through Pipewire.nodes.values directly (no .filter
+         // / spread / .sort / property var) avoids QML type erasure to QObject*,
+         // which newer quickshell rejects when assigning to preferredDefaultAudioSink.
+    +    function shellSingleQuote(value) {
+    +        return "'" + String(value).replace(/'/g, "'\"'\"'") + "'";
+    +    }
+    +
+    +    function setPulseDefaultSinkByName(name) {
+    +        const quotedName = shellSingleQuote(name);
+    +        const command = "${pactlPath} set-default-sink " + quotedName + "\n" +
+    +            "${pactlPath} list short sink-inputs | while read -r input _; do " +
+    +            "[ -n \"$input\" ] && ${pactlPath} move-sink-input \"$input\" " + quotedName + " || true; " +
+    +            "done";
+    +        Proc.runCommand("setPulseDefaultSinkByName", ["sh", "-c", command], (output, exitCode) => {
+    +            if (exitCode !== 0) {
+    +                console.error("AudioService: Failed to set default Pulse sink:", output);
+    +            }
+    +        }, 0);
+    +    }
+    +
+    +    function setPulseDefaultSourceByName(name) {
+    +        const quotedName = shellSingleQuote(name);
+    +        const command = "${pactlPath} set-default-source " + quotedName + "\n" +
+    +            "${pactlPath} list short source-outputs | while read -r output _; do " +
+    +            "[ -n \"$output\" ] && ${pactlPath} move-source-output \"$output\" " + quotedName + " || true; " +
+    +            "done";
+    +        Proc.runCommand("setPulseDefaultSourceByName", ["sh", "-c", command], (output, exitCode) => {
+    +            if (exitCode !== 0) {
+    +                console.error("AudioService: Failed to set default Pulse source:", output);
+    +            }
+    +        }, 0);
+    +    }
+    +
+         function setDefaultSinkByName(name) {
+             if (!name)
+                 return false;
+    --- Modules/Settings/Widgets/DeviceAliasRow.qml
+    +++ Modules/Settings/Widgets/DeviceAliasRow.qml
+    @@ -15,10 +15,13 @@ Rectangle {
+
+         property bool showHideButton: false
+         property bool isHidden: false
+    +    property bool showDefaultButton: false
+    +    property bool isDefaultDevice: false
+
+         signal editRequested(var deviceNode)
+         signal resetRequested(var deviceNode)
+         signal hideRequested(var deviceNode)
+    +    signal defaultRequested(var deviceNode)
+
+         width: parent?.width ?? 0
+         height: deviceRowContent.height + Theme.spacingM * 2
+    @@ -119,6 +122,23 @@ Rectangle {
+                 anchors.verticalCenter: parent.verticalCenter
+                 spacing: Theme.spacingS
+
+    +            DankActionButton {
+    +                id: defaultButton
+    +                visible: root.showDefaultButton && !root.isHidden
+    +                buttonSize: 36
+    +                iconName: root.isDefaultDevice ? "radio_button_checked" : "radio_button_unchecked"
+    +                iconSize: 20
+    +                backgroundColor: root.isDefaultDevice ? Theme.withAlpha(Theme.primary, 0.15) : Theme.surfaceContainerHigh
+    +                iconColor: root.isDefaultDevice ? Theme.primary : Theme.surfaceVariantText
+    +                tooltipText: root.isDefaultDevice ? I18n.tr("Default device") : I18n.tr("Set default device")
+    +                anchors.verticalCenter: parent.verticalCenter
+    +                onClicked: {
+    +                    if (!root.isDefaultDevice) {
+    +                        root.defaultRequested(root.deviceNode);
+    +                    }
+    +                }
+    +            }
+    +
+                 DankActionButton {
+                     id: resetButton
+                     visible: root.hasCustomAlias
+    --- Modules/Settings/AudioTab.qml
+    +++ Modules/Settings/AudioTab.qml
+    @@ -136,7 +136,7 @@ Item {
+
+                         StyledText {
+                             width: parent.width
+    -                        text: I18n.tr("Set custom names for your audio output devices", "Audio settings description")
+    +                        text: I18n.tr("Choose the default output device, set custom names, and adjust limits", "Audio settings description")
+                             font.pixelSize: Theme.fontSizeSmall
+                             color: Theme.surfaceVariantText
+                             wrapMode: Text.WordWrap
+    @@ -164,6 +164,8 @@ Item {
+                                     deviceNode: modelData
+                                     deviceType: "output"
+                                     showHideButton: true
+    +                                showDefaultButton: true
+    +                                isDefaultDevice: modelData === AudioService.sink
+
+                                     onEditRequested: device => {
+                                         root.editingDevice = device;
+    @@ -180,6 +182,11 @@ Item {
+                                     onHideRequested: device => {
+                                         root.persistHiddenOutputDeviceNames([...root.hiddenOutputDeviceNames, device.name]);
+                                     }
+    +
+    +                                onDefaultRequested: device => {
+    +                                    AudioService.setDefaultSinkByName(device.name);
+    +                                    root.updateDeviceList();
+    +                                }
+                                 }
+
+                                 Item {
+    @@ -327,7 +334,7 @@ Item {
+
+                         StyledText {
+                             width: parent.width
+    -                        text: I18n.tr("Set custom names for your audio input devices", "Audio settings description")
+    +                        text: I18n.tr("Choose the default input device and set custom names", "Audio settings description")
+                             font.pixelSize: Theme.fontSizeSmall
+                             color: Theme.surfaceVariantText
+                             wrapMode: Text.WordWrap
+    @@ -350,6 +357,8 @@ Item {
+                                 deviceNode: modelData
+                                 deviceType: "input"
+                                 showHideButton: true
+    +                            showDefaultButton: true
+    +                            isDefaultDevice: modelData === AudioService.source
+
+                                 onEditRequested: device => {
+                                     root.editingDevice = device;
+    @@ -366,6 +375,11 @@ Item {
+                                 onHideRequested: device => {
+                                     root.persistHiddenInputDeviceNames([...root.hiddenInputDeviceNames, device.name]);
+                                 }
+    +
+    +                            onDefaultRequested: device => {
+    +                                AudioService.setDefaultSourceByName(device.name);
+    +                                root.updateDeviceList();
+    +                            }
+                             }
+                         }
+
+  '';
+  dmsPackage = let
+    unpatchedDmsPackage = inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  in
+    pkgs.runCommand "${unpatchedDmsPackage.name}-framework13" {
+      nativeBuildInputs = [pkgs.gnupatch];
+      meta = (unpatchedDmsPackage.meta or {}) // {mainProgram = "dms";};
+    } ''
+      cp -a ${unpatchedDmsPackage} $out
+      chmod -R u+w $out
+
+      patch -d $out/share/quickshell/dms -p0 < ${audioDefaultDevicePatch}
+
+      substituteInPlace $out/share/quickshell/dms/Services/AudioService.qml \
+        --replace-fail 'Pipewire.preferredDefaultAudioSink = node;' 'Pipewire.preferredDefaultAudioSink = node;
+                setPulseDefaultSinkByName(name);' \
+        --replace-fail 'Pipewire.preferredDefaultAudioSource = node;' 'Pipewire.preferredDefaultAudioSource = node;
+                setPulseDefaultSourceByName(name);'
+
+      substituteInPlace $out/bin/dms $out/share/systemd/user/dms.service \
+        --replace-fail ${unpatchedDmsPackage} $out
+
+      substituteInPlace $out/share/quickshell/dms/Services/AudioService.qml \
+        --replace-fail 'function detectSoundsAvailability() {' 'function detectSoundsAvailability() {
+            soundsAvailable = false;
+            return false;'
+    '';
 in
   lib.mkIf pkgs.stdenv.isLinux {
     # Clipboard services via Home Manager (systemd-managed)
@@ -35,8 +205,10 @@ in
 
     programs.dank-material-shell = lib.mkIf useDank {
       enable = true;
+      package = dmsPackage;
+      systemd.enable = true;
       niri = {
-        enableSpawn = true;
+        enableSpawn = false;
         enableKeybinds = false;
         includes = {
           enable = true;
@@ -107,41 +279,6 @@ in
             max-scroll-amount = "0%";
           };
         };
-
-        # Output (monitor) configuration - Framework 13
-        outputs = lib.mkMerge [
-          (lib.mkIf (hostname == "framework13") {
-            "DP-2" = {
-              position = {
-                x = 0;
-                y = 0;
-              };
-            };
-            "DP-1" = {
-              position = {
-                x = 2560;
-                y = 0;
-              };
-            };
-            "eDP-1" = {
-              scale = 1.5;
-              position = {
-                x = 5120;
-                y = 0;
-              };
-            };
-          })
-          # Fallback for unknown hostname
-          (lib.mkIf (hostname == null) {
-            "eDP-1" = {
-              scale = 1.5;
-              position = {
-                x = 0;
-                y = 0;
-              };
-            };
-          })
-        ];
 
         # Layout configuration
         layout = {

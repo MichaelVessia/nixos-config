@@ -84,6 +84,18 @@
                 };
               };
             }
+            {
+              matches = [
+                {
+                  "node.name" = "alsa_output.usb-Focusrite_Scarlett_Solo_4th_Gen_S190NM15BB541C-00.HiFi__Line1__sink";
+                }
+              ];
+              actions = {
+                update-props = {
+                  "node.disabled" = true;
+                };
+              };
+            }
           ];
         };
       };
@@ -152,7 +164,10 @@
   services.fwupd.enable = true;
 
   # Enable Docker
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs.docker_29;
+  };
 
   # Tailscale VPN
   services.tailscale.enable = true;

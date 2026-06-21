@@ -21,12 +21,51 @@
     "tubearchivist"
   ];
 
+  garageBun2nix = inputs.garage.inputs.bun2nix.packages.${pkgs.system}.default;
+  garageMissingBunNix = builtins.toFile "garage-bun-missing.nix" ''
+    {fetchurl, ...}: {
+      "@mpsuesser/oxlint-plugin-effect@0.3.0" = fetchurl {
+        url = "https://registry.npmjs.org/@mpsuesser/oxlint-plugin-effect/-/oxlint-plugin-effect-0.3.0.tgz";
+        hash = "sha512-2n09UMHywAo+oifH1Tp7o9+uvC9WBc78smQTRlWCusfQw86ECK+7H4ExJGU9WjvMiJzuIw+0Gw2FNUq9vUuqoA==";
+      };
+
+      "@oxlint/plugins@1.69.0" = fetchurl {
+        url = "https://registry.npmjs.org/@oxlint/plugins/-/plugins-1.69.0.tgz";
+        hash = "sha512-4MLUf2a9ai9EymFvcIBvaCkHJkvOA/WHmPhzrTu0cRBYpaaMBxmwwjGTOYdBC149XAwtaL7eaCnojkqxdMvuKg==";
+      };
+
+      "effect-oxlint@0.3.2" = fetchurl {
+        url = "https://registry.npmjs.org/effect-oxlint/-/effect-oxlint-0.3.2.tgz";
+        hash = "sha512-IBCRRtcwP9LQVxHNnA6n7LBcrIFnBcCsUyUWo1fHBJqBUQ/Tj2DcDgiPhf0DnE5ClhJYtXMAKh6Fc/EuaG49hQ==";
+      };
+
+      "effect@4.0.0-beta.78" = fetchurl {
+        url = "https://registry.npmjs.org/effect/-/effect-4.0.0-beta.78.tgz";
+        hash = "sha512-j79Rl9QpHwMz/ZJWLNpZoiVj9N7zHqiLKN5EcYd/A8J1oqejILWQLfc4HPlvqHqKC8SK55LJ+X4gy4ONJ+JpfQ==";
+      };
+    }
+  '';
+  garageBunDeps = pkgs.symlinkJoin {
+    name = "garage-bun-cache";
+    paths = [
+      (garageBun2nix.fetchBunDeps {
+        bunNix = "${inputs.garage}/bun.nix";
+      })
+      (garageBun2nix.fetchBunDeps {
+        bunNix = garageMissingBunNix;
+      })
+    ];
+  };
+
   garageCli = name: let
     package = inputs.garage.packages.${pkgs.system}.${name};
+    packageWithFixedBunDeps = package.overrideAttrs (_old: {
+      bunDeps = garageBunDeps;
+    });
   in
     if pkgs.stdenv.hostPlatform.isDarwin
     then
-      package.overrideAttrs (_old: {
+      packageWithFixedBunDeps.overrideAttrs (_old: {
         bunInstallFlags = [
           "--linker=hoisted"
           "--backend=copyfile"
@@ -35,7 +74,7 @@
           chmod -R u+w "$BUN_INSTALL_CACHE_DIR"
         '';
       })
-    else package;
+    else packageWithFixedBunDeps;
 in {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs;
@@ -132,7 +171,6 @@ in {
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
-      bitwarden-desktop # password manager
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       xclip # X11 clipboard provider
