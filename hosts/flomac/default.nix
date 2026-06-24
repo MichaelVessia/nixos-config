@@ -67,11 +67,10 @@
     ];
 
     # Mac App Store apps (requires mas)
+    # Note: Slack and Okta Verify are MDM-managed, not installed via mas.
     masApps = {
       # "Xcode" = 497799835; # Too large, install manually if needed
       "Amphetamine" = 937984704;
-      "Okta Verify" = 490179405;
-      "Slack" = 803453959;
     };
   };
 
