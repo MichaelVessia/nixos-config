@@ -5,12 +5,8 @@
   ...
 }: let
   codexPkg = inputs.llm-agents.packages.${pkgs.system}.codex;
-  sharedInstructions = builtins.replaceStrings ["@RTK.md\n\n"] [""] (builtins.readFile ./shared/instructions.md);
-  codexAgents = ''
-    ${builtins.readFile ./shared/rtk/codex.md}
-
-    ${sharedInstructions}
-  '';
+  sharedInstructions = builtins.readFile ./shared/instructions.md;
+  codexAgents = sharedInstructions;
 
   codexConfig =
     {
@@ -61,7 +57,6 @@
 in {
   config = {
     home.file.".codex/AGENTS.md".text = codexAgents;
-    home.file.".codex/RTK.md".source = ./shared/rtk/codex.md;
 
     home.activation =
       {

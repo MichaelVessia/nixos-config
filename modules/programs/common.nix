@@ -57,24 +57,12 @@
     ];
   };
 
-  garageCli = name: let
-    package = inputs.garage.packages.${pkgs.system}.${name};
-    packageWithFixedBunDeps = package.overrideAttrs (_old: {
+  # garage CLIs only install on Linux (see home.packages), so the Darwin bun
+  # build workaround is no longer needed; the bunDeps fix still applies.
+  garageCli = name:
+    (inputs.garage.packages.${pkgs.system}.${name}).overrideAttrs (_old: {
       bunDeps = garageBunDeps;
     });
-  in
-    if pkgs.stdenv.hostPlatform.isDarwin
-    then
-      packageWithFixedBunDeps.overrideAttrs (_old: {
-        bunInstallFlags = [
-          "--linker=hoisted"
-          "--backend=copyfile"
-        ];
-        postBunSetInstallCacheDirPhase = ''
-          chmod -R u+w "$BUN_INSTALL_CACHE_DIR"
-        '';
-      })
-    else packageWithFixedBunDeps;
 in {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs;
@@ -157,14 +145,8 @@ in {
       inputs.llm-agents.packages.${pkgs.system}.omp
       inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi.nix
-      inputs.llm-agents.packages.${pkgs.system}.qmd
-      inputs.llm-agents.packages.${pkgs.system}.rtk
-      inputs.llm-agents.packages.${pkgs.system}.tuicr
-      inputs.wiggle-puppy.packages.${pkgs.system}.default
-      (pkgs.callPackage ./ralph {})
-      (pkgs.callPackage ./td {}) # task tracking for AI coding sessions
     ]
-    ++ builtins.map garageCli garageCliNames
+    ++ lib.optionals stdenv.isLinux (builtins.map garageCli garageCliNames)
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
       (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships

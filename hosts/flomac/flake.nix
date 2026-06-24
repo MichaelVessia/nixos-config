@@ -35,11 +35,6 @@
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
 
-    wiggle-puppy = {
-      url = "github:jordangarrison/wiggle-puppy";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     bun2nix.url = "github:nix-community/bun2nix";
 
     worktrunk = {

@@ -1,6 +1,6 @@
 ---
 name: write-a-prd
-description: Create thorough PRDs through repo analysis and deep user interviews. Use for "create a PRD", "write requirements", "product spec", or "implementation plan". Writes PRDs to docs/prds and can optionally decompose them into local issue markdown files for Ralph.
+description: Create thorough PRDs through repo analysis and deep user interviews. Use for "create a PRD", "write requirements", "product spec", or "implementation plan". Writes PRDs to docs/prds and can optionally decompose them into local issue markdown files.
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion, Skill
 ---
 
@@ -17,7 +17,7 @@ Produce high-quality PRDs with explicit decisions, test strategy, and clear scop
 
 If mode is not explicit:
 - Default to `docs`
-- Use `issues` when user asks for issue decomposition, tracer bullets, or Ralph-ready backlog generation
+- Use `issues` when user asks for issue decomposition, tracer bullets, or backlog generation
 
 ## Output Convention
 
@@ -169,7 +169,3 @@ Report:
 - Output file paths
 - Key decisions made
 - Remaining open questions/TODOs
-
-If issue output exists, include:
-- `./ralph/scripts/prd-status.sh`
-- `./ralph/ralph.sh`

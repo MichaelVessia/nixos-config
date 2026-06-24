@@ -59,7 +59,6 @@
     {source = "npm:pi-dynamic-workflows";}
     # Fork pins Ctrl+Alt+X for the dashboard toggle to avoid pi's built-in Ctrl+X shortcut.
     {source = "git:github.com/MichaelVessia/pi-autoresearch@76aa69464cd8d8028538ec8102ae91ea75df5736";}
-    {source = "npm:@tmustier/pi-ralph-wiggum";}
     {source = "npm:@every-env/compound-plugin";}
     piThemesFiltered
     {source = "npm:pi-cyber-ui";}
