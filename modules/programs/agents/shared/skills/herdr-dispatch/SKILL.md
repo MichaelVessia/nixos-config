@@ -10,8 +10,8 @@ Use Herdr as the dispatch layer for visible agent work. This skill is for launch
 ## Defaults
 
 - Agent harness: Claude.
-- Claude launch: `claude --dangerously-skip-permissions --dangerously-bypass-hook-trust`.
-- If the installed Claude build rejects `--dangerously-bypass-hook-trust`, retry once without that flag and mention the fallback in the dispatch report.
+- Claude launch: `claude --dangerously-skip-permissions`.
+- Do NOT add `--dangerously-bypass-hook-trust` by default: current Claude builds (>= v2.1.x) reject it, the launched pane exits instantly, and you waste a spawn discovering this. Only add it if the user explicitly asks, and if the pane dies, retry once without it and note the fallback.
 - Codex launch, when explicitly requested: `codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access`.
 - Ignore requested effort levels for now. Use harness defaults.
 - Visibility: always user-visible in Herdr.
@@ -61,10 +61,11 @@ herdr worktree create --cwd /path/to/repo --branch codex/herdr-<slug> --label <a
 ```
 
 4. Parse the returned JSON for the worktree path and workspace id when available.
-5. Start the named agent in that worktree:
+5. Prime the new worktree's environment BEFORE starting the agent (see "Worktree environment" below). Skipping this leaves the agent in a degraded shell with the wrong toolchain.
+6. Start the named agent in that worktree:
 
 ```bash
-herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- claude --dangerously-skip-permissions --dangerously-bypass-hook-trust "<prompt>"
+herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- claude --dangerously-skip-permissions "<prompt>"
 ```
 
 For Codex:
@@ -73,12 +74,39 @@ For Codex:
 herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access "<prompt>"
 ```
 
-If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`.
+If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
+
+## Worktree environment
+
+Repos like `web-monorepo` use direnv (`.envrc` → devbox/nix) to put the correct toolchain (node, pnpm, env vars) on PATH. A freshly created worktree is broken in **two** ways, and both must be fixed or the agent runs with the wrong, unpinned global tools and any repo build/test/lint misbehaves:
+
+1. **direnv is blocked.** Approval is keyed by **path + content hash**, so every new worktree path starts blocked: `direnv: error .../.envrc is blocked. Run 'direnv allow'`.
+2. **Gitignored local env files are missing.** A git worktree only carries *tracked* files. Local files like `.env` are gitignored, so they exist in the main checkout but not the worktree. devbox parses `.env` on activation and aborts if it is absent (`Error: failed parsing .env file`), which silently drops you back to system node/pnpm.
+
+After `herdr worktree create`, before `herdr agent start`, prime the worktree. Only do this when the source repo's `.envrc` is already trusted (never blindly trust an unvetted `.envrc`):
+
+```bash
+REPO=/path/to/repo
+WT=/path/to/worktree
+
+if [ -f "$REPO/.envrc" ] && (cd "$REPO" && direnv status | grep -q "Found RC allowed"); then
+  # 1. seed gitignored local env files that devbox/direnv needs
+  for f in .env .env.local; do
+    [ -f "$REPO/$f" ] && [ ! -e "$WT/$f" ] && cp "$REPO/$f" "$WT/$f"
+  done
+  # 2. approve direnv for the new worktree path
+  direnv allow "$WT"
+  # 3. (optional) pre-warm so the agent's first shell doesn't sit through the devbox build
+  direnv exec "$WT" true
+fi
+```
+
+If the repo has no `.envrc`, or direnv is unavailable, skip this silently. For Obsidian/research contexts, skip entirely. Verify success by checking the toolchain resolves into the worktree, not system paths: `direnv exec "$WT" bash -c 'command -v node'` should point at `$WT/.devbox/...`, not `/opt/homebrew/...`.
 
 For Obsidian or research-only work:
 
 ```bash
-herdr agent start <agent-name> --cwd /Users/michael.vessia/obsidian --no-focus -- claude --dangerously-skip-permissions --dangerously-bypass-hook-trust "<prompt>"
+herdr agent start <agent-name> --cwd /Users/michael.vessia/obsidian --no-focus -- claude --dangerously-skip-permissions "<prompt>"
 ```
 
 Do not create a worktree for vault work.
@@ -96,6 +124,16 @@ If it is already idle or status detection is stale, read recent output instead:
 ```bash
 herdr agent read <agent-name> --source recent-unwrapped --lines 80
 ```
+
+If `agent wait`/`agent read` by name returns `agent_not_found`, the harness's herdr state hook is outdated (`herdr integration status` shows it as `outdated`) and the name never registered. Fall back to the `pane_id` captured from `agent start` and read the pane directly:
+
+```bash
+herdr pane read <pane-id> --source recent-unwrapped --lines 80
+# verify the pane is still alive (a pane that vanished means the harness exited at launch):
+herdr pane list --workspace <workspace-id>
+```
+
+A pane that disappears seconds after `agent start` means the launched CLI exited immediately. The usual cause is an unsupported flag (e.g. `--dangerously-bypass-hook-trust`); relaunch without it.
 
 Return after spawn confirmation. Do not wait for task completion unless the user asks.
 
@@ -141,7 +179,7 @@ After dispatch, tell the user:
 - Harness used.
 - Repo/context.
 - Worktree path for code work, or `no worktree` for Obsidian/research.
-- How to inspect or follow up, usually `herdr agent read <name>`.
+- How to inspect or follow up: `herdr agent read <name>`, or `herdr pane read <pane-id>` if the state hook is outdated and the name does not resolve.
 
 Keep the report short.
 
