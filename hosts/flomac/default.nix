@@ -23,14 +23,12 @@
     taps = [
       "humanlayer/humanlayer"
       "nkzw-tech/tap" # codiff
-      "omnigent-ai/tap"
     ];
 
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
       "agent-browser" # Browser automation CLI for AI agents; run `agent-browser install` once post-install to fetch Chrome
-      "omnigent"
     ];
 
     # GUI Applications (casks)
