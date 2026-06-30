@@ -15,6 +15,7 @@ Use Herdr as the dispatch layer for visible agent work. This skill is for launch
 - Codex launch, when explicitly requested: `codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access`.
 - Ignore requested effort levels for now. Use harness defaults.
 - Visibility: always user-visible in Herdr.
+- Layout: one new **tab** per agent. Never split into panes unless the user explicitly asks for a split/side-by-side view. See `Tabs vs Panes`.
 - Focus: use `--no-focus` unless the user explicitly asks to focus the spawned work.
 - Names: short, useful, role-oriented names, such as `review-pr-4370`, `impl-auth`, or `research-herdr`.
 - Cleanup: never close, archive, or remove Herdr workspaces/worktrees unless explicitly asked.
@@ -27,6 +28,25 @@ Use Herdr as the dispatch layer for visible agent work. This skill is for launch
 - Fanout is allowed. For code fanout, create one worktree/thread per independent task by default.
 
 For code repositories, default to a Herdr worktree. For Obsidian vault or research-only work, do not create a git worktree; start the agent directly in the vault or resolved context.
+
+## Tabs vs Panes
+
+A **tab** is a full-width thread, like a Codex Desktop thread. A **pane** is a split inside a single tab, so multiple agents share one screen side by side.
+
+- Default to one **tab** per agent. Each dispatched agent gets its own tab.
+- A pane is created **only** by passing `--split right|down` to `herdr agent start`. Without `--split`, an agent lands in its own tab.
+- Use panes only when the user explicitly asks to split, compare side by side, or watch agents in one view (`split`, `side by side`, `same screen`, `as a pane`). Otherwise never split.
+- Fanout follows the same rule: N independent tasks means N tabs, not N panes in one tab.
+
+To guarantee a fresh tab deterministically, create it first and target it by id:
+
+```bash
+herdr tab create --workspace <workspace-id> --label <agent-name> --no-focus
+# parse result.tab.tab_id from the JSON, then:
+herdr agent start <agent-name> --tab <tab-id> --no-focus -- claude ...
+```
+
+If you do not pre-create a tab, omit `--split` and `agent start` opens a new tab on its own. Reach for `--split` only on explicit request.
 
 ## Repo Resolution
 
@@ -75,6 +95,8 @@ herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id
 ```
 
 If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
+
+Do not pass `--split` here: each agent gets its own tab. When fanning out several agents into the **same** workspace (no separate worktree per task), create a tab per agent first (`herdr tab create --workspace <id> --label <agent-name> --no-focus`, parse `result.tab.tab_id`) and pass `--tab <tab-id>` to `agent start`, so they land as separate tabs rather than splitting one. See `Tabs vs Panes`.
 
 ## Worktree environment
 
@@ -155,7 +177,7 @@ If `agent send` does not submit the prompt in the current harness, read the agen
 
 For a request like `use herdr to review PRs 1, 2, 3`:
 
-- Create one worktree/thread per PR.
+- Create one worktree/thread per PR, each in its own **tab** (never panes).
 - Name agents `review-pr-1`, `review-pr-2`, `review-pr-3`.
 - In each prompt, tell the worker to inspect the PR, review only, and report findings. If the user asked for fixes too, allow fixes, commits, pushes, and PR updates.
 - Prefer checking out the PR branch in that worktree. If checkout fails, have the worker fetch and inspect the PR via GitHub CLI.
