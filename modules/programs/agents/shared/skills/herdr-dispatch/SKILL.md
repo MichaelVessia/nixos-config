@@ -15,7 +15,7 @@ Use Herdr as the dispatch layer for visible agent work. This skill is for launch
 - Codex launch, when explicitly requested: `codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access`.
 - Ignore requested effort levels for now. Use harness defaults.
 - Visibility: always user-visible in Herdr.
-- Layout: one new **tab** per agent. Never split into panes unless the user explicitly asks for a split/side-by-side view. See `Tabs vs Panes`.
+- Layout: one new **tab** per agent by default. Panes are a deliberate choice; only split when the user asks, and tile them into a grid. See `Tabs vs Panes`.
 - Focus: use `--no-focus` unless the user explicitly asks to focus the spawned work.
 - Names: short, useful, role-oriented names, such as `review-pr-4370`, `impl-auth`, or `research-herdr`.
 - Cleanup: never close, archive, or remove Herdr workspaces/worktrees unless explicitly asked.
@@ -34,9 +34,9 @@ For code repositories, default to a Herdr worktree. For Obsidian vault or resear
 A **tab** is a full-width thread, like a Codex Desktop thread. A **pane** is a split inside a single tab, so multiple agents share one screen side by side.
 
 - Default to one **tab** per agent. Each dispatched agent gets its own tab.
-- A pane is created **only** by passing `--split right|down` to `herdr agent start`. Without `--split`, an agent lands in its own tab.
-- Use panes only when the user explicitly asks to split, compare side by side, or watch agents in one view (`split`, `side by side`, `same screen`, `as a pane`). Otherwise never split.
-- Fanout follows the same rule: N independent tasks means N tabs, not N panes in one tab.
+- A pane is created by passing `--split right|down` to `herdr agent start` (or `herdr pane split`). Without `--split`, an agent lands in its own tab.
+- Panes are a deliberate choice, not the default. Use them when the user asks to split, compare side by side, watch agents in one view, or tile them (`split`, `side by side`, `same screen`, `as a pane`, `grid`, `tile them`). When unsure, default to tabs.
+- Fanout defaults the same way: N independent tasks means N tabs. Only collapse them into panes when the user asks, and then tile them as a **grid** (see `Pane grids`).
 
 To guarantee a fresh tab deterministically, create it first and target it by id:
 
@@ -46,7 +46,27 @@ herdr tab create --workspace <workspace-id> --label <agent-name> --no-focus
 herdr agent start <agent-name> --tab <tab-id> --no-focus -- claude ...
 ```
 
-If you do not pre-create a tab, omit `--split` and `agent start` opens a new tab on its own. Reach for `--split` only on explicit request.
+If you do not pre-create a tab, omit `--split` and `agent start` opens a new tab on its own.
+
+### Pane grids
+
+When the user wants panes, tile them into a near-square **grid** so every agent stays readable. Do not chain `--split down` (or `--split right`) off the same growing pane; that produces one column (or row) of ever-thinner, eventually-unreadable splits.
+
+For N agents, fill row-major into a grid sized `cols = ceil(sqrt(N))`, `rows = ceil(N / cols)`:
+
+1. Start every agent normally with `agent start` (own tab, capture each `pane_id` from the JSON). The first agent's tab becomes the grid tab.
+2. Move the rest into the grid tab beside a specific neighbor, choosing direction by grid position. Track the `pane_id` parked at each cell so later moves target the right neighbor:
+
+```bash
+# first pane of a new column: place to the right of the previous column's top pane
+herdr pane move <pane-id> --tab <grid-tab-id> --split right --target-pane <top-pane-of-prev-column> --no-focus
+# next row within a column: place below the pane directly above it
+herdr pane move <pane-id> --tab <grid-tab-id> --split down --target-pane <pane-above> --no-focus
+```
+
+3. If cells come out uneven, balance with `herdr pane resize --direction <left|right|up|down> --amount <float> --pane <id>`.
+
+Reporting should say `grid in tab <label> (<cols>x<rows>)` so the user knows the layout.
 
 ## Repo Resolution
 
@@ -96,7 +116,7 @@ herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id
 
 If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
 
-Do not pass `--split` here: each agent gets its own tab. When fanning out several agents into the **same** workspace (no separate worktree per task), create a tab per agent first (`herdr tab create --workspace <id> --label <agent-name> --no-focus`, parse `result.tab.tab_id`) and pass `--tab <tab-id>` to `agent start`, so they land as separate tabs rather than splitting one. See `Tabs vs Panes`.
+By default, do not pass `--split` here: each agent gets its own tab. When fanning out several agents into the **same** workspace (no separate worktree per task), create a tab per agent first (`herdr tab create --workspace <id> --label <agent-name> --no-focus`, parse `result.tab.tab_id`) and pass `--tab <tab-id>` to `agent start`, so they land as separate tabs rather than accidentally splitting one. If the user deliberately wants them in panes, tile them into a grid instead (see `Pane grids`).
 
 ## Worktree environment
 
@@ -177,7 +197,7 @@ If `agent send` does not submit the prompt in the current harness, read the agen
 
 For a request like `use herdr to review PRs 1, 2, 3`:
 
-- Create one worktree/thread per PR, each in its own **tab** (never panes).
+- Create one worktree/thread per PR, each in its own **tab** by default. If the user asks to see them together, tile the PR panes into a grid (see `Pane grids`).
 - Name agents `review-pr-1`, `review-pr-2`, `review-pr-3`.
 - In each prompt, tell the worker to inspect the PR, review only, and report findings. If the user asked for fixes too, allow fixes, commits, pushes, and PR updates.
 - Prefer checking out the PR branch in that worktree. If checkout fails, have the worker fetch and inspect the PR via GitHub CLI.
