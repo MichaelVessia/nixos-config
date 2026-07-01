@@ -100,7 +100,7 @@ For code work:
 herdr worktree create --cwd /path/to/repo --branch codex/herdr-<slug> --label <agent-name> --no-focus --json
 ```
 
-4. Parse the returned JSON for the worktree path and workspace id when available.
+4. Parse the returned JSON for the worktree path and workspace id. Also capture `result.root_pane.pane_id` — see "The orphan root pane" below; you close this at the end.
 5. Prime the new worktree's environment BEFORE starting the agent (see "Worktree environment" below). Skipping this leaves the agent in a degraded shell with the wrong toolchain.
 6. Start the named agent in that worktree:
 
@@ -115,6 +115,18 @@ herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id
 ```
 
 If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
+
+7. Close the worktree's orphan root pane so the agent is alone and full-width:
+
+```bash
+herdr pane close <root-pane-id>   # the root_pane.pane_id captured in step 4
+```
+
+## The orphan root pane
+
+`herdr worktree create` (and `workspace open`) always spawns a default shell pane in the new worktree (returned as `result.root_pane`). `herdr agent start` does **not** reuse it — it opens a *second* pane beside it. Left alone, every dispatch ends up with two panes: the running agent, plus a dead shell that never had a command run in it. In a fresh worktree that dead pane also shows `direnv: error .../.envrc is blocked`, which is why the failure looks direnv-caused. It is not: the two panes appear regardless, and priming direnv (below) does not remove the orphan.
+
+Fix: after `agent start`, close the root pane by the `root_pane.pane_id` captured at creation. The agent pane is a separate pane in the same tab, so closing the root leaves the agent full-width. Only close the root pane, never the agent pane, and never close the last pane in a workspace (that removes the workspace). For Obsidian/research dispatch there is no worktree and no root pane, so skip this.
 
 By default, do not pass `--split` here: each agent gets its own tab. When fanning out several agents into the **same** workspace (no separate worktree per task), create a tab per agent first (`herdr tab create --workspace <id> --label <agent-name> --no-focus`, parse `result.tab.tab_id`) and pass `--tab <tab-id>` to `agent start`, so they land as separate tabs rather than accidentally splitting one. If the user deliberately wants them in panes, tile them into a grid instead (see `Pane grids`).
 
