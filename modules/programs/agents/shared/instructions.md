@@ -65,6 +65,48 @@
   context, or reusable notes that future agents should inherit.
 - Before editing the vault, read `/Users/michael.vessia/obsidian/AGENTS.md`.
 
+# Picking models for subagents and delegated work
+
+Rankings (higher = better; cost = what I actually pay, not list price;
+intelligence = how hard a problem it handles unsupervised; taste = UI/UX, code
+quality, API design, copy):
+
+| model      | reach via            | cost | intelligence | taste |
+|------------|----------------------|------|--------------|-------|
+| gpt-5.5    | Codex plugin         | 9    | 8            | 5     |
+| sonnet-4.6 | Agent/Workflow model | 5    | 5            | 7     |
+| opus-4.8   | Agent/Workflow model | 4    | 7            | 8     |
+| fable-5    | Agent/Workflow model | 2    | 9            | 9     |
+
+How to apply:
+
+- Bulk/mechanical (clear-spec impl, data analysis, migrations, investigation):
+  gpt-5.5.
+- User-facing (UI, copy, API design) needs taste >= 7: fable-5 or opus-4.8.
+- No strong signal: opus-4.8 for coding, gpt-5.5 for bulk, fable-5 for
+  taste-critical.
+- Cost is a tie-breaker only. When axes conflict for anything that ships:
+  intelligence > taste > cost.
+- Reviews: fable-5 or opus-4.8; a Codex review is a strong independent second
+  lens. Review with a different model than wrote the code. Never use Haiku.
+- Defaults, not limits. If a cheaper model's output misses the bar, redo on a
+  smarter one without asking.
+
+Reaching gpt-5.5 goes through the Codex plugin, not raw `codex exec` or the
+internal `codex-*` skills (those are `user-invocable: false` helpers of the
+rescue agent):
+
+- Delegate a task (impl, fix, diagnosis, research): spawn the
+  `codex:codex-rescue` agent via the Agent tool
+  (`subagent_type: "codex:codex-rescue"`), passing `--model` / `--effort
+  <none|minimal|low|medium|high|xhigh>` in the request. This is the maintained
+  codex wrapper; do not hand-roll `codex exec`.
+- Code review: `/codex:review`, or `/codex:adversarial-review` to challenge the
+  approach. These are user-run slash commands (the agent cannot self-invoke
+  them), so ask me to run one when a Codex review would help.
+- Claude models (sonnet-4.6, opus-4.8, fable-5) run via the Agent/Workflow
+  `model` parameter.
+
 # Final Handoff
 
 Before finishing a task:
