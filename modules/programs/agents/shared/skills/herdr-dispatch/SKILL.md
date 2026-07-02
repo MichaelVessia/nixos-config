@@ -9,41 +9,16 @@ Use Herdr as the dispatch layer for visible agent work. This skill is for launch
 
 ## Defaults
 
-- Agent harness + model: pick per task, do not hard-default to Claude. See `Model & Harness Selection`. When there is no signal, use Claude `--model opus`.
-- Claude launch: `claude --dangerously-skip-permissions --model <id>`.
+- Agent harness: Claude.
+- Claude launch: `claude --dangerously-skip-permissions`.
 - Do NOT add `--dangerously-bypass-hook-trust` by default: current Claude builds (>= v2.1.x) reject it, the launched pane exits instantly, and you waste a spawn discovering this. Only add it if the user explicitly asks, and if the pane dies, retry once without it and note the fallback.
-- Codex launch (bulk/mechanical work, or when requested): `codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access -c model_reasoning_effort=<level>`.
-- Set effort by task type (see `Model & Harness Selection`). For codex, via `-c model_reasoning_effort=`; Claude has no launch-time effort flag, so its model tier is the lever. If the user explicitly requests an effort level, honor it.
+- Codex launch, when explicitly requested: `codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access`.
+- Ignore requested effort levels for now. Use harness defaults.
 - Visibility: always user-visible in Herdr.
 - Layout: one new **tab** per agent by default. Panes are a deliberate choice; only split when the user asks, and tile them into a grid. See `Tabs vs Panes`.
 - Focus: use `--no-focus` unless the user explicitly asks to focus the spawned work.
 - Names: short, useful, role-oriented names, such as `review-pr-4370`, `impl-auth`, or `research-herdr`.
 - Cleanup: never close, archive, or remove Herdr workspaces/worktrees unless explicitly asked.
-
-## Model & Harness Selection
-
-Pick harness and model by task type, not a fixed default. Rankings (higher = better; cost = what I actually pay, not list price; intelligence = how hard a problem it handles unsupervised; taste = UI/UX, code quality, API design, copy):
-
-| model      | harness | cost | intelligence | taste |
-|------------|---------|------|--------------|-------|
-| gpt-5.5    | codex   | 9    | 8            | 5     |
-| sonnet-5   | claude  | 5    | 5            | 7     |
-| opus-4.8   | claude  | 4    | 7            | 8     |
-| fable-5    | claude  | 2    | 9            | 9     |
-
-Apply:
-
-- No strong signal: Claude `--model opus` for coding, codex/gpt-5.5 for bulk, Claude `--model claude-fable-5` for taste-critical work.
-- Bulk/mechanical (clear-spec implementation, data analysis, migrations): codex/gpt-5.5.
-- User-facing (UI, copy, API design) needs taste >= 7: fable-5 or opus-4.8.
-- Reviews of plans/implementations: fable-5 or opus-4.8; add a codex/gpt-5.5 agent as an independent second lens for high-stakes work. Always review with a different harness/model than wrote the code.
-- Cost is a tie-breaker only. When axes conflict for anything that ships: intelligence > taste > cost.
-- Defaults, not limits. If a cheaper model's output misses the bar, redispatch on a smarter one without asking. Judge the output, not the price tag. Never use Haiku.
-
-Model flags:
-
-- Claude: append `--model <id>` to the launch. Short aliases `opus`, `sonnet`, `haiku`; use the full id `claude-fable-5` for Fable. Omit `--model` to use the account default.
-- Codex: always gpt-5.5 (per `~/.codex/config.toml`). Set reasoning effort with `-c model_reasoning_effort=low|medium|high|xhigh`. My config default is xhigh (slow); drop to `low` for mechanical/grep-and-summarize work, raise to `high` for the hardest tasks.
 
 ## Mental Model
 
@@ -130,15 +105,13 @@ herdr worktree create --cwd /path/to/repo --branch codex/herdr-<slug> --label <a
 6. Start the named agent in that worktree:
 
 ```bash
-# pick <model-id> per Model & Harness Selection (e.g. opus, claude-fable-5)
-herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- claude --dangerously-skip-permissions --model <model-id> "<prompt>"
+herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- claude --dangerously-skip-permissions "<prompt>"
 ```
 
-For Codex (bulk/mechanical work, or when requested):
+For Codex:
 
 ```bash
-# set <effort> per Model & Harness Selection (low for mechanical, high for hardest)
-herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access -c model_reasoning_effort=<effort> "<prompt>"
+herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access "<prompt>"
 ```
 
 If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
@@ -187,7 +160,7 @@ If the repo has no `.envrc`, or direnv is unavailable, skip this silently. For O
 For Obsidian or research-only work:
 
 ```bash
-herdr agent start <agent-name> --cwd /Users/michael.vessia/obsidian --no-focus -- claude --dangerously-skip-permissions --model <model-id> "<prompt>"
+herdr agent start <agent-name> --cwd /Users/michael.vessia/obsidian --no-focus -- claude --dangerously-skip-permissions "<prompt>"
 ```
 
 Do not create a worktree for vault work.
