@@ -57,34 +57,6 @@
     '';
   };
 
-  alertSound = ./sounds/teleport.ogg;
-
-  claude-alert = pkgs.writeShellApplication {
-    name = "claude-alert";
-    runtimeInputs =
-      lib.optionals pkgs.stdenv.isLinux [pkgs.pipewire]
-      ++ lib.optionals pkgs.stdenv.isDarwin [pkgs.ffmpeg];
-    text = ''
-      if [[ "$(uname -s)" == "Darwin" ]]; then
-        ffplay -nodisp -autoexit -loglevel quiet ${alertSound} 2>/dev/null &
-      else
-        pw-play ${alertSound} 2>/dev/null &
-      fi
-    '';
-  };
-
-  claude-notify = pkgs.writeShellApplication {
-    name = "claude-notify";
-    runtimeInputs = lib.optionals pkgs.stdenv.isLinux [pkgs.pipewire];
-    text = ''
-      if [[ "$(uname -s)" == "Darwin" ]]; then
-        afplay /System/Library/Sounds/Glass.aiff 2>/dev/null &
-      else
-        pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
-      fi
-    '';
-  };
-
   # Destructive Command Guard - blocks dangerous commands for AI agents
   # https://github.com/Dicklesworthstone/destructive_command_guard
   dcg = let
@@ -240,26 +212,6 @@
             {
               type = "command";
               command = "dcg";
-            }
-          ];
-        }
-        {
-          matcher = "AskUserQuestion";
-          hooks = [
-            {
-              type = "command";
-              command = "claude-alert";
-            }
-          ];
-        }
-      ];
-      Notification = [
-        {
-          matcher = "permission_prompt";
-          hooks = [
-            {
-              type = "command";
-              command = "claude-alert";
             }
           ];
         }
@@ -440,7 +392,6 @@ in {
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
       claude-statusline
-      claude-alert
       dcg
       pkgs.nodejs
     ];
