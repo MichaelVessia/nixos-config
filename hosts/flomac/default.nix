@@ -77,6 +77,7 @@
     activationScripts.extraActivation.text = ''
       if command -v brew >/dev/null 2>&1; then
         brew trust --tap humanlayer/humanlayer >/dev/null
+        brew trust --tap nkzw-tech/tap >/dev/null
       fi
     '';
 
