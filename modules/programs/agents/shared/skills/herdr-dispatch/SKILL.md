@@ -27,7 +27,7 @@ Pick harness and model by task type, not a fixed default. Rankings (higher = bet
 | model      | harness | cost | intelligence | taste |
 |------------|---------|------|--------------|-------|
 | gpt-5.5    | codex   | 9    | 8            | 5     |
-| sonnet-4.6 | claude  | 5    | 5            | 7     |
+| sonnet-5   | claude  | 5    | 5            | 7     |
 | opus-4.8   | claude  | 4    | 7            | 8     |
 | fable-5    | claude  | 2    | 9            | 9     |
 

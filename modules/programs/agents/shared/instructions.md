@@ -65,47 +65,69 @@
   context, or reusable notes that future agents should inherit.
 - Before editing the vault, read `/Users/michael.vessia/obsidian/AGENTS.md`.
 
-# Picking models for subagents and delegated work
+# Picking the right models for workflows and subagents
 
-Rankings (higher = better; cost = what I actually pay, not list price;
-intelligence = how hard a problem it handles unsupervised; taste = UI/UX, code
-quality, API design, copy):
+Rankings, higher = better. Cost reflects what I actually pay (OpenAI has really
+generous limits), not list price. Intelligence is how hard a problem you can
+hand the model unsupervised. Taste covers UI/UX, code quality, API design, and
+copy.
 
-| model      | reach via            | cost | intelligence | taste |
-|------------|----------------------|------|--------------|-------|
-| gpt-5.5    | Codex plugin         | 9    | 8            | 5     |
-| sonnet-4.6 | Agent/Workflow model | 5    | 5            | 7     |
-| opus-4.8   | Agent/Workflow model | 4    | 7            | 8     |
-| fable-5    | Agent/Workflow model | 2    | 9            | 9     |
+| model      | cost | intelligence | taste |
+|------------|------|--------------|-------|
+| gpt-5.5    | 9    | 8            | 5     |
+| sonnet-5   | 5    | 5            | 7     |
+| opus-4.8   | 4    | 7            | 8     |
+| fable-5    | 2    | 9            | 9     |
 
 How to apply:
 
-- Bulk/mechanical (clear-spec impl, data analysis, migrations, investigation):
-  gpt-5.5.
-- User-facing (UI, copy, API design) needs taste >= 7: fable-5 or opus-4.8.
-- No strong signal: opus-4.8 for coding, gpt-5.5 for bulk, fable-5 for
-  taste-critical.
-- Cost is a tie-breaker only. When axes conflict for anything that ships:
+- These are defaults, not limits. Standing permission to override: if a cheaper
+  model's output doesn't meet the bar, rerun or redo the work with a smarter
+  model without asking. Judge the output, not the price tag. Escalating costs
+  less than shipping mediocre work.
+- Cost is a tie-breaker only; when axes conflict for anything that ships,
   intelligence > taste > cost.
-- Reviews: fable-5 or opus-4.8; a Codex review is a strong independent second
-  lens. Review with a different model than wrote the code. Never use Haiku.
-- Defaults, not limits. If a cheaper model's output misses the bar, redo on a
-  smarter one without asking.
+- Bulk/mechanical work (clear-spec implementation, data analysis, migrations):
+  gpt-5.5, it's effectively free.
+- Anything user-facing (UI, copy, API design) needs taste >= 7.
+- Reviews of plans/implementations: fable-5 or opus-4.8, optionally gpt-5.5 as
+  an extra independent perspective.
+- Never use Haiku.
+- Mechanics: gpt-5.5 is only reachable through the `codex:codex-rescue`
+  subagent (Codex plugin for Claude Code); my `~/.codex/config.toml` defaults
+  to gpt-5.5.
+- Use gpt-5.5 via `/codex:rescue` when you want Codex to:
+    - investigate a bug
+    - try a fix
+    - continue a previous Codex task
+    - take a faster or cheaper pass with a smaller model.
+    - It supports `--background`, `--wait`, `--resume`, and `--fresh`. If you
+      omit `--resume` and `--fresh`, the plugin can offer to continue the
+      latest rescue thread for this repo.
+- Use gpt-5.5 via `/codex:transfer` to create a persistent Codex thread from
+  the current Claude Code session and print a `codex resume <session-id>`
+  command. Use it when you started a debugging or implementation conversation
+  in Claude Code and want to continue that same context directly in Codex.
+- Use gpt-5.5 via `/codex:status` to see running and recent Codex jobs for the
+  current repository. Use it to:
+    - check progress on background work
+    - see the latest completed job
+    - confirm whether a task is still running.
+- Use gpt-5.5 via `/codex:result` to show the final stored Codex output for a
+  finished job. When available, it also includes the Codex session ID so you
+  can reopen that run directly in Codex with `codex resume <session-id>`.
+- Use gpt-5.5 via `/codex:cancel` to cancel an active background Codex job.
+- For code review, `/codex:review` (or `/codex:adversarial-review` to challenge
+  the approach) runs a Codex review of local git state.
+- Claude models (sonnet-5, opus-4.8, fable-5) run via the Agent/Workflow
+  model parameter.
 
-Reaching gpt-5.5 goes through the Codex plugin, not raw `codex exec` or the
-internal `codex-*` skills (those are `user-invocable: false` helpers of the
-rescue agent):
+Using gpt-5.5 inside workflows and subagents via the Codex plugin (the model
+parameter only takes Claude models, so use a wrapper):
 
-- Delegate a task (impl, fix, diagnosis, research): spawn the
-  `codex:codex-rescue` agent via the Agent tool
-  (`subagent_type: "codex:codex-rescue"`), passing `--model` / `--effort
-  <none|minimal|low|medium|high|xhigh>` in the request. This is the maintained
-  codex wrapper; do not hand-roll `codex exec`.
-- Code review: `/codex:review`, or `/codex:adversarial-review` to challenge the
-  approach. These are user-run slash commands (the agent cannot self-invoke
-  them), so ask me to run one when a Codex review would help.
-- Claude models (sonnet-4.6, opus-4.8, fable-5) run via the Agent/Workflow
-  `model` parameter.
+- Spawn a thin Claude wrapper agent with `model: 'sonnet', effort: 'low'` whose
+  prompt instructs it to write a self-contained codex prompt, run `codex exec`
+  via Bash, and return the result verbatim.
 
 # Final Handoff
 
