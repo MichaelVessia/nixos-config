@@ -102,6 +102,42 @@
     };
   };
 
+  # WirePlumber silently drops the built-in analog output profile when
+  # /dev/snd/pcmC0D0p is busy during its card probe (happens at boot and
+  # after suspend/resume), leaving only HDMI sinks and no speaker audio.
+  # Until the boot-time holder is identified, log it and heal by forcing
+  # a re-probe.
+  #
+  # If speakers ever go silent again:
+  #   - Watchdog log (shows the healing + the culprit process name):
+  #       journalctl --user -u analog-sink-watchdog
+  #   - Manual heal (same thing the watchdog does):
+  #       systemctl --user restart wireplumber
+  #   - Check sinks (should list "Built-in Audio Analog Stereo"):
+  #       wpctl status
+  #   - If sink exists but still silent, check ALSA Master isn't muted:
+  #       amixer -c 0 sset Master 100% unmute
+  # Once the journal names the process holding pcmC0D0p, fix that at the
+  # source and delete this watchdog.
+  systemd.user.services.analog-sink-watchdog = {
+    description = "Re-probe audio card when built-in analog sink is missing";
+    after = ["wireplumber.service"];
+    wantedBy = ["default.target"];
+    path = [pkgs.pipewire pkgs.psmisc];
+    script = ''
+      sink=alsa_output.pci-0000_00_1f.3.analog-stereo
+      while true; do
+        sleep 15
+        systemctl --user --quiet is-active wireplumber.service || continue
+        pw-cli ls Node 2>/dev/null | grep -q "$sink" && continue
+        echo "analog sink missing; holders of pcmC0D0p:"
+        fuser -v /dev/snd/pcmC0D0p || true
+        systemctl --user restart wireplumber.service
+        sleep 30
+      done
+    '';
+  };
+
   # Audio tools for debugging
   environment.systemPackages = with pkgs; [
     pavucontrol
