@@ -119,6 +119,21 @@ in {
 
       [ -f "$SECRETS_DIR/rootly_api_key" ] && export ROOTLY_API_KEY="$(cat "$SECRETS_DIR/rootly_api_key")"
 
+      # share [PORT] [DIR] — serve a directory over HTTP and expose it via a
+      # Cloudflare quick tunnel. Defaults: port 8000, current directory.
+      # Ctrl-C tears down both the tunnel and the local server.
+      share() {
+        local port="''${1:-8000}"
+        local dir="''${2:-.}"
+        python3 -m http.server "$port" --directory "$dir" >/dev/null 2>&1 &
+        local server_pid=$!
+        trap "kill $server_pid 2>/dev/null" INT TERM
+        echo "Serving $dir on http://localhost:$port (pid $server_pid) — waiting for tunnel URL..."
+        cloudflared tunnel --url "http://localhost:$port"
+        kill "$server_pid" 2>/dev/null
+        trap - INT TERM
+      }
+
     '';
 
     shellAliases = {

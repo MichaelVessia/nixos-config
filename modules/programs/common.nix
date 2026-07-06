@@ -101,6 +101,7 @@ in {
       ldns # replacement of `dig`, it provide the command `drill`
       nmap # A utility for network discovery and security auditing
       ipcalc # it is a calculator for the IPv4/v6 addresses
+      cloudflared # Cloudflare tunnels; `cloudflared tunnel --url http://localhost:PORT` for a quick public URL
 
       # misc
       file
