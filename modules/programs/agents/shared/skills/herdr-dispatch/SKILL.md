@@ -114,13 +114,24 @@ For Codex:
 herdr agent start <agent-name> --cwd /path/to/worktree --workspace <workspace-id> --no-focus -- codex --dangerously-bypass-approvals-and-sandbox --ask-for-approval never --sandbox danger-full-access "<prompt>"
 ```
 
-If the worktree command does not return a usable workspace id, omit `--workspace` and rely on `--cwd`. Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
+`--workspace` is required, not optional. The workspace that `worktree create` returns carries the repo/worktree metadata that nests the thread under its repo in the sidebar. Starting an agent with only `--cwd` makes Herdr create a plain workspace with no repo association: it renders top-level instead of under the repo, and there is no command to re-associate it afterwards. If `worktree create`'s JSON lacks a usable workspace id, recover one instead of omitting the flag:
+
+```bash
+# find the worktree's open workspace (open_workspace_id on the matching path)
+herdr worktree list --cwd /path/to/repo --json
+# or, if no workspace is open for it, open one with metadata attached
+herdr worktree open --cwd /path/to/repo --path /path/to/worktree --no-focus --json
+```
+
+Always capture the `pane_id` from the `agent start` JSON result (e.g. `w4:p3`) and keep it as the durable handle for monitoring (see "Follow-Up and Monitoring").
 
 7. Close the worktree's orphan root pane so the agent is alone and full-width:
 
 ```bash
 herdr pane close <root-pane-id>   # the root_pane.pane_id captured in step 4
 ```
+
+8. Verify grouping: the `workspace_id` in the `agent start` pane id must match the worktree's workspace id. A different id means the agent spawned a plain ungrouped workspace; close that stray workspace and relaunch with the correct `--workspace`.
 
 ## The orphan root pane
 
