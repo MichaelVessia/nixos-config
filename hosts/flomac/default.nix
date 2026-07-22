@@ -75,6 +75,15 @@
       "Okta Verify" = 490179405;
       "Slack" = 803453959;
     };
+
+    # MDM handles Slack/Okta Verify updates and mas can't (VPP apps aren't in
+    # the user's purchase history, so `mas upgrade` fails with "No downloads
+    # initiated"). Skip their install/upgrade; cleanup still sees the masApps
+    # entries above and keeps them. The Brewfile is evaluated as Ruby, so this
+    # sets the skip list for the same `brew bundle` run.
+    extraConfig = ''
+      ENV["HOMEBREW_BUNDLE_MAS_SKIP"] = "490179405 803453959"
+    '';
   };
 
   # System configuration
