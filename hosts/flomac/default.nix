@@ -66,19 +66,25 @@
     ];
 
     # Mac App Store apps (requires mas)
-    # Note: Slack and Okta Verify are MDM-managed, not installed via mas.
+    # Slack and Okta Verify are MDM-managed but registered with the App Store,
+    # so they must be listed here or `--cleanup` tries (and fails) to
+    # uninstall the root-owned app bundles.
     masApps = {
       # "Xcode" = 497799835; # Too large, install manually if needed
       "Amphetamine" = 937984704;
+      "Okta Verify" = 490179405;
+      "Slack" = 803453959;
     };
   };
 
   # System configuration
   system = {
+    # Activation runs as root, where brew is neither on PATH nor willing to
+    # run; invoke it the same way the homebrew module does.
     activationScripts.extraActivation.text = ''
-      if command -v brew >/dev/null 2>&1; then
-        brew trust --tap humanlayer/humanlayer >/dev/null
-        brew trust --tap nkzw-tech/tap >/dev/null
+      if [ -x /opt/homebrew/bin/brew ]; then
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap humanlayer/humanlayer >/dev/null
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
       fi
     '';
 
