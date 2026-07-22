@@ -57,6 +57,7 @@
       "raycast"
       "shottr"
       "superwhisper"
+      "t3-code" # Minimal GUI for orchestrating AI coding agents (t3.codes)
       "tailscale-app"
       "libreoffice"
       "yaak"
