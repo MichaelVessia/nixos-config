@@ -15,7 +15,7 @@
   # stamps `onboarding = false` into it on first run - so a read-only symlink
   # into the nix store gets clobbered: herdr replaces the symlink with its own
   # plain file and our keybindings vanish. Writing a real, writable file (the
-  # same pattern as modules/programs/agents/pi.nix) lets herdr coexist, and the
+  # same pattern as modules/programs/agents/pi) lets herdr coexist, and the
   # `onboarding = false` below means herdr has nothing it needs to rewrite. Each
   # rebuild re-asserts our config; herdr's own runtime tweaks live in
   # session.json, not here.

@@ -4,7 +4,7 @@
     ./agentsview.nix
     ./codex.nix
     ./opencode.nix
-    ./pi.nix
+    ./pi
     ./plannotator.nix
     ./skill-cleanup.nix
     ./claude-code

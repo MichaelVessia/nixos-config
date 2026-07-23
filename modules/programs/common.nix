@@ -145,7 +145,7 @@ in {
       inputs.llm-agents.packages.${pkgs.system}.hunk
       inputs.llm-agents.packages.${pkgs.system}.omp
       inputs.llm-agents.packages.${pkgs.system}.opencode
-      # pi is installed (wrapped) from modules/programs/agents/pi.nix
+      # pi is installed (wrapped) from modules/programs/agents/pi
     ]
     ++ lib.optionals stdenv.isLinux (builtins.map garageCli garageCliNames)
     ++ lib.optionals stdenv.isDarwin [
