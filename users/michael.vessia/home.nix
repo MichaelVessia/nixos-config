@@ -13,6 +13,16 @@
   home.username = "michael.vessia";
   home.homeDirectory = "/Users/michael.vessia";
 
+  # Homebrew's tap-trust checks break `brew bundle --cleanup` during darwin
+  # activation for third-party taps (humanlayer, nkzw-tech): `brew trust` state
+  # does not survive brew bundle runs, so activation dies before home-manager
+  # ever runs. Opt out of trust checks; our taps are declared in hosts/flomac.
+  # brew's launcher sources this file itself, so it applies even under the
+  # activation script's stripped environment.
+  home.file.".homebrew/brew.env".text = ''
+    HOMEBREW_NO_REQUIRE_TAP_TRUST=1
+  '';
+
   # Export sops-nix secrets to launchd environment (available to all GUI apps and shells)
   launchd.agents.sops-nix-env = {
     enable = true;
