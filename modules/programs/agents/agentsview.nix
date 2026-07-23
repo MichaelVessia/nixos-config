@@ -25,9 +25,12 @@
             # drop the lines/sections we manage, preserving everything else
             ${pkgs.gnused}/bin/sed -i '/^pi_dirs/d' "$conf"
             tmp="$(mktemp)"
+            # agentsview re-serializes the file when it saves cursor_secret,
+            # indenting sections and unquoting keys, so match any spelling of
+            # the custom_model_pricing tables, not just the form we append
             ${pkgs.gawk}/bin/awk '
-              /^\[custom_model_pricing\."claude-fable-5"\]/ { skip=1; next }
-              skip==1 && /^\[/ { skip=0 }
+              /^[[:space:]]*\[custom_model_pricing[].]/ { skip=1; next }
+              skip==1 && /^[[:space:]]*\[/ { skip=0 }
               skip==1 { next }
               { print }
             ' "$conf" > "$tmp" && mv "$tmp" "$conf"
