@@ -5,6 +5,7 @@
   config,
   lib,
   pkgs,
+  pkgs-unstable,
   inputs,
   osConfig ? null,
   ...
@@ -16,14 +17,26 @@
 
   desktopShell = "dank";
   useDank = desktopShell == "dank";
+  dmsNiriIncludeFiles = ["alttab" "binds" "colors" "layout" "outputs" "wpblur"];
+  dmsNiriConfigText = borderEnabled:
+    builtins.concatStringsSep "\n" (
+      ["include \"hm.kdl\""]
+      ++ map (filename: "include \"dms/${filename}.kdl\"") dmsNiriIncludeFiles
+      ++ lib.optional borderEnabled ''
+        // Border fix
+        // See https://yalter.github.io/niri/Configuration%3A-Include.html#border-special-case for details
+        layout { border { on; }; }
+      ''
+    )
+    + "\n";
   pactlPath = "${pkgs.pulseaudio}/bin/pactl";
   audioDefaultDevicePatch = pkgs.writeText "dms-audio-default-device-button.patch" ''
     --- Services/AudioService.qml
     +++ Services/AudioService.qml
-    @@ -73,6 +73,36 @@ Singleton {
-         // default sink. Going through Pipewire.nodes.values directly (no .filter
-         // / spread / .sort / property var) avoids QML type erasure to QObject*,
-         // which newer quickshell rejects when assigning to preferredDefaultAudioSink.
+    @@ -67,6 +67,36 @@
+         signal wireplumberReloadStarted
+         signal wireplumberReloadCompleted(bool success)
+
     +    function shellSingleQuote(value) {
     +        return "'" + String(value).replace(/'/g, "'\"'\"'") + "'";
     +    }
@@ -54,9 +67,9 @@
     +        }, 0);
     +    }
     +
-         function setDefaultSinkByName(name) {
-             if (!name)
-                 return false;
+         function getMaxVolumePercent(node) {
+             if (!node?.name)
+                 return 100;
     --- Modules/Settings/Widgets/DeviceAliasRow.qml
     +++ Modules/Settings/Widgets/DeviceAliasRow.qml
     @@ -15,10 +15,13 @@ Rectangle {
@@ -182,9 +195,8 @@
         --replace-fail ${unpatchedDmsPackage} $out
 
       substituteInPlace $out/share/quickshell/dms/Services/AudioService.qml \
-        --replace-fail 'function detectSoundsAvailability() {' 'function detectSoundsAvailability() {
-            soundsAvailable = false;
-            return false;'
+        --replace-fail 'readonly property bool soundsAvailable: MultimediaService.available' \
+          'readonly property bool soundsAvailable: false'
     '';
 in
   lib.mkIf pkgs.stdenv.isLinux {
@@ -206,13 +218,14 @@ in
     programs.dank-material-shell = lib.mkIf useDank {
       enable = true;
       package = dmsPackage;
+      quickshell.package = pkgs-unstable.quickshell;
       systemd.enable = true;
       niri = {
         enableSpawn = false;
         enableKeybinds = false;
         includes = {
           enable = true;
-          filesToInclude = ["alttab" "binds" "colors" "layout" "outputs" "wpblur"];
+          filesToInclude = dmsNiriIncludeFiles;
         };
       };
       enableSystemMonitoring = true;
@@ -222,6 +235,14 @@ in
       enableAudioWavelength = true;
       enableCalendarEvents = false;
       dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    };
+
+    # DMS emits obsolete `include optional=true` syntax that niri 25.11 rejects.
+    # Keep the same include order, but override the generated wrapper with
+    # current niri include syntax until upstream updates its Home Manager module.
+    xdg.configFile."niri-config-dms" = lib.mkIf useDank {
+      target = "niri/config.kdl";
+      text = lib.mkForce (dmsNiriConfigText config.programs.niri.settings.layout.border.enable);
     };
 
     # Packages needed for niri desktop environment
