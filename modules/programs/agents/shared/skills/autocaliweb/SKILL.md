@@ -1,7 +1,7 @@
 ---
 name: autocaliweb
-description: Inspect my self-hosted AutoCaliWeb library. Use when the user asks about AutoCaliWeb, books in Calibre, OPDS status, recent imports, shelves, catalog stats, or wants to search the ebook library.
-allowed-tools: Bash, WebFetch
+description: Inspect and import content into my self-hosted AutoCaliWeb library. Use for catalog status, search, recent imports, shelves, metadata, or importing an ebook, comic, PDF, or audiobook.
+allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 
 # AutoCaliWeb
@@ -52,10 +52,36 @@ For import verification:
 2. If the title is absent, run `autocaliweb search "<title>" --limit 25`.
 3. Do not claim an import completed unless it appears in AutoCaliWeb results.
 
-## Mutations
+## Workflow: import a book
 
-This skill is read-only. For importing ebook, comic, PDF, or audiobook files,
-use the `add-book` skill, which queues files into AutoCaliWeb's ingest folder.
+The user must provide a readable local file or a direct HTTP(S) URL they are
+allowed to download. Do not search for pirated copies. Confirm before copying
+because AutoCaliWeb may import, convert, modify metadata, and move the queued
+file into the Calibre library.
+
+Environment:
+
+- `AUTOCALIWEB_INGEST_DIR` defaults to `/book-ingest`.
+- `AUTOCALIWEB_PROXMOX_HOST` defaults to `proxmox`.
+- `AUTOCALIWEB_CTID` defaults to `101`.
+
+Run:
+
+```bash
+bash scripts/add-book.sh <file-or-url> --dry-run
+bash scripts/add-book.sh <file-or-url>
+```
+
+The script copies local files without deleting the original and refuses to
+overwrite an existing destination. Never copy directly into
+`/calibre-library`; AutoCaliWeb and Calibre must update the metadata.
+
+After queuing:
+
+1. Report the ingest destination and that import is asynchronous.
+2. After AutoCaliWeb has had time to process it, use
+   `autocaliweb recent --limit 10` or `autocaliweb search "<title>"`.
+3. Do not claim the import completed until it appears in AutoCaliWeb.
 
 ## Notes
 

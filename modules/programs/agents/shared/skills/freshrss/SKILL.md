@@ -1,6 +1,6 @@
 ---
 name: freshrss
-description: Access and interact with my FreshRSS instance. Use for any RSS-related question, including reading articles, searching past content, finding feeds, getting recommendations, managing subscriptions, checking unread counts, or exploring what I follow.
+description: Access and manage my FreshRSS instance. Use for RSS reading, search, recommendations, subscriptions, auto-categorization, uncategorized-feed cleanup, or subscribing to an email newsletter through Kill the Newsletter.
 allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 
@@ -173,6 +173,49 @@ When asked for feed recommendations:
    already subscribe to
 4. Present recommendations grouped by interest area, with feed URL and a brief
    description of what the feed covers
+
+## Workflow: add and categorize a feed
+
+1. Authenticate and fetch the existing categories.
+2. Fetch the feed URL and sample its title, description, and recent posts.
+3. Prefer the best-fitting existing category. Propose a short category matching
+   the current naming style only when none fits.
+4. Confirm the category unless the match is obvious.
+5. Add the feed using `subscription/quickadd`, then assign the category using
+   `subscription/edit`.
+6. Verify the resulting subscription and report its title, URL, and category.
+
+## Workflow: subscribe to an email newsletter
+
+1. Fetch the newsletter's site to understand its subject and choose a title.
+2. Create a Kill the Newsletter inbox:
+
+   ```bash
+   FEED_SLUG=$(curl -s -X POST https://kill-the-newsletter.com/feeds \
+     -H "CSRF-Protection: true" \
+     -d "title=NEWSLETTER_TITLE" \
+     -D - -o /dev/null | grep -oP 'location:.*feeds/\K[^\s]+')
+   ```
+
+3. Add `https://kill-the-newsletter.com/feeds/${FEED_SLUG}.xml` using the feed
+   workflow above.
+4. Report `${FEED_SLUG}@kill-the-newsletter.com`, the private Atom feed URL,
+   its FreshRSS category, and that the email address must be entered on the
+   newsletter signup page. Confirmation messages will appear in FreshRSS.
+5. Never share the Kill the Newsletter feed URL publicly.
+
+## Workflow: organize uncategorized feeds
+
+1. Fetch existing categories and subscriptions with no category or only the
+   `Uncategorized` category.
+2. Sample each feed's site or RSS URL. Infer an existing category where
+   possible; skip feeds with insufficient evidence rather than guessing.
+3. Present one batch table containing each feed, proposed category, and brief
+   rationale. Let the user approve, reject, or override the proposals.
+4. For approved feeds, add the selected category with `subscription/edit` and
+   remove `user/-/label/Uncategorized`.
+5. Report categorized, skipped, and still-uncategorized feeds, including any
+   newly created categories.
 
 ## Notes
 

@@ -113,6 +113,7 @@
           inherit username;
           inherit inputs;
           inherit pkgs-unstable;
+          enableHomelabSkills = true;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -165,6 +166,7 @@
           inherit username;
           inherit inputs;
           inherit pkgs-unstable;
+          enableHomelabSkills = false;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -199,6 +201,7 @@
           inherit username;
           inherit inputs;
           pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+          enableHomelabSkills = false;
         };
       in
         darwin.lib.darwinSystem {

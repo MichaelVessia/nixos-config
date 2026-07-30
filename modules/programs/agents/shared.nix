@@ -2,6 +2,7 @@
   config,
   lib,
   inputs,
+  enableHomelabSkills,
   ...
 }: let
   # Enumerate personal skills from the source dir so we can declare one
@@ -11,7 +12,33 @@
   dirNames = path:
     lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir path));
   gwsSkillsPath = inputs.googleworkspace-cli + "/skills";
-  skillNames = dirNames ./shared/skills ++ dirNames gwsSkillsPath;
+  personalSkillNames = dirNames ./shared/skills;
+  googleWorkspaceSkillNames = dirNames gwsSkillsPath;
+  homelabSkillNames = [
+    "adguard"
+    "autocaliweb"
+    "caddy"
+    "freshrss"
+    "home-assistant-manager"
+    "homepage-add"
+    "immich"
+    "jellyfin"
+    "jellyseerr"
+    "paperless"
+    "prowlarr"
+    "proxmox"
+    "radarr"
+    "sabnzbd"
+    "sonarr"
+    "tailscale"
+    "tubearchivist"
+    "uptime-kuma"
+  ];
+  enabledPersonalSkillNames =
+    if enableHomelabSkills
+    then personalSkillNames
+    else lib.subtractLists homelabSkillNames personalSkillNames;
+  skillNames = enabledPersonalSkillNames ++ googleWorkspaceSkillNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -39,7 +66,10 @@ in {
         personal.path = ./shared/skills;
         googleworkspace.path = gwsSkillsPath;
       };
-      skills.enableAll = true;
+      skills = {
+        enable = enabledPersonalSkillNames;
+        enableAll = ["googleworkspace"];
+      };
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
       # top via perSkillSymlinks below. `structure = "link"` declares one
       # home.file entry per skill (recursive symlinks) so siblings written by

@@ -1,6 +1,6 @@
 ---
 name: tubearchivist
-description: Browse, search, and manage channels and downloads in my self-hosted TubeArchivist YouTube archive. Use when the user asks about TubeArchivist, mentions YouTube archiving, asks to subscribe/unsubscribe to a channel, check what's downloading, list indexed videos or channels, inspect Celery task status, or trigger a search.
+description: Browse and manage my TubeArchivist archive. Use for channels, videos, downloads, tasks, search, ordinary subscriptions, or a curated creator import that queues popular videos and exposes the channel in Jellyfin.
 allowed-tools: Bash, WebFetch
 ---
 
@@ -77,6 +77,36 @@ For anything not covered, call the API directly after logging in — see
 Use `status` for a one-shot overview (health, version, totals). Drop to
 `tasks` to see what Celery is up to. `downloads` lists items the worker has
 queued for yt-dlp.
+
+## Workflow: curated channel import
+
+Use this when the user wants a creator subscribed in TubeArchivist and surfaced
+under a friendly name in Jellyfin. Confirm first because it subscribes to a
+channel, downloads videos, and changes locked Jellyfin metadata.
+
+Required environment:
+
+- `TUBEARCHIVIST_URL`, `TUBEARCHIVIST_USERNAME`, `TUBEARCHIVIST_PASSWORD`
+- `JELLYFIN_URL`, `JELLYFIN_API_KEY`
+
+Resolve the channel before committing:
+
+```bash
+bash scripts/add-youtube-channel.sh <handle-or-url> <friendly-name> --resolve-only
+```
+
+Then run:
+
+```bash
+bash scripts/add-youtube-channel.sh <handle-or-url> <friendly-name> [--top N] [--recent K]
+```
+
+Defaults are `--top 20 --recent 30`. The script resolves the handle, subscribes
+through TubeArchivist, queues the most-viewed videos among the recent sample,
+waits for the first file, scans Jellyfin, renames the channel folder, and locks
+its `Name` field. It returns a JSON summary. Surface authentication failures,
+bad handles, download timeouts, or a missing Jellyfin YouTube library rather
+than claiming partial success.
 
 ## Storage layout
 
