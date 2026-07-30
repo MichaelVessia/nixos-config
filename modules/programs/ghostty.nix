@@ -21,7 +21,7 @@
   # Shared config file for both platforms
   xdg.configFile."ghostty/config".text = ''
     # Font configuration
-    font-family = JetBrains Mono
+    font-family = JetBrainsMono Nerd Font
     font-size = 12
 
     # Theme (dark or light)

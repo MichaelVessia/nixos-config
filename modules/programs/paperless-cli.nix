@@ -8,11 +8,12 @@
 #   paperless-cli search "query"  # search documents
 #   paperless-cli --help          # help
 {
+  inputs,
+  lib,
   pkgs,
-  paperless-cli,
   ...
 }: let
-  paperless-cli-pkg = paperless-cli.packages.${pkgs.system}.default;
+  paperless-cli-pkg = inputs.paperless-cli.packages.${pkgs.system}.default;
   wrapper = pkgs.writeShellScriptBin "paperless-cli" ''
     set -a
     source "$HOME/.secrets.env"
@@ -20,5 +21,5 @@
     exec ${paperless-cli-pkg}/bin/paperless-cli "$@"
   '';
 in {
-  home.packages = [wrapper];
+  home.packages = lib.optionals pkgs.stdenv.isLinux [wrapper];
 }

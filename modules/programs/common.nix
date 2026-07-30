@@ -57,7 +57,6 @@ in {
       ncdu # disk usage
       curl
       wget
-      git-town
       pkgs-unstable.gws # Google Workspace CLI; only in unstable
       jira-cli-go # Jira CLI
       (pkgs.callPackage ./linear-cli {}) # Linear CLI

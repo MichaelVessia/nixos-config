@@ -16,7 +16,6 @@
     ./herdr.nix
     ./git.nix
     ./media.nix
-    ./openwhispr.nix
     ./shell.nix
     ./zellij.nix
     ./ssh.nix

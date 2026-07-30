@@ -7,6 +7,10 @@
   # System-level nix-darwin configuration
   # Manages Homebrew and macOS system settings
 
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
+
   # Enable Homebrew management through nix-darwin
   homebrew = {
     enable = true;
@@ -34,9 +38,8 @@
     # GUI Applications (casks)
     casks = [
       "1password"
-      "bitwarden"
+      "aws-vpn-client"
       "brave-browser"
-      "bruno"
       "chatgpt"
       "claude"
       "cmux"
@@ -56,11 +59,9 @@
       "protonvpn"
       "raycast"
       "shottr"
-      "superwhisper"
       "t3-code" # Minimal GUI for orchestrating AI coding agents (t3.codes)
       "tailscale-app"
       "libreoffice"
-      "yaak"
       "zed"
       "zoom"
     ];

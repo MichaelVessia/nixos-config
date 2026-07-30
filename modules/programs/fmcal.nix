@@ -8,11 +8,12 @@
 #   fmcal          # show today's events
 #   fmcal -h       # help
 {
+  inputs,
+  lib,
   pkgs,
-  fmcal,
   ...
 }: let
-  fmcal-pkg = fmcal.packages.${pkgs.system}.default;
+  fmcal-pkg = inputs.fmcal.packages.${pkgs.system}.default;
   wrapper = pkgs.writeShellScriptBin "fmcal" ''
     set -a
     source "$HOME/.secrets.env"
@@ -20,5 +21,5 @@
     exec ${fmcal-pkg}/bin/fmcal "$@"
   '';
 in {
-  home.packages = [wrapper];
+  home.packages = lib.optionals pkgs.stdenv.isLinux [wrapper];
 }

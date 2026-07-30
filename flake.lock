@@ -136,11 +136,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782772816,
-        "narHash": "sha256-s9BuFv0mRuZx9C1MF8qPHRdcAK14ONi0A5m6E2wqOoM=",
+        "lastModified": 1784665499,
+        "narHash": "sha256-9BMxlTxCCDAeoNLtb1a/st7udtTIJep+wpUzquA29VU=",
         "owner": "nix-community",
         "repo": "bun2nix",
-        "rev": "5a39d717029e94163ac223aee8d5c9946cafed1c",
+        "rev": "0f2a1f0b6f42cebe3b149bf62d38754c5e0e9729",
         "type": "github"
       },
       "original": {
@@ -822,11 +822,11 @@
         "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
-        "lastModified": 1784615936,
-        "narHash": "sha256-DzPXJmiePXn0+G6t5/H8nqTNX/AT7KlzVrpL5LZe8OE=",
+        "lastModified": 1785145739,
+        "narHash": "sha256-qX/t+D9uVsMw32Za6oXcgXWn6d2HGZqEzMlZWnVQ4GM=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "ba8c89d5b4836d46f7bdbffd2df34c66dadef725",
+        "rev": "259abb89d0a0d3ba685987053ad344534a5d6600",
         "type": "github"
       },
       "original": {
@@ -1112,11 +1112,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1784555310,
-        "narHash": "sha256-/FCliTPgiuV1owejZFNx3Ch9irdvkOfOFl+HHZ+DrtM=",
+        "lastModified": 1785110946,
+        "narHash": "sha256-WWuWxmXKzGZWryswWlijP3Mjp6aGy4Ngmeil5nGMMjk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "421eebfd0ec7bccd4abe826ce62d7e6e83129493",
+        "rev": "d3498f786f97ac0bded21b34bae0bf3809b45aa3",
         "type": "github"
       },
       "original": {
@@ -1209,26 +1209,6 @@
         "type": "github"
       }
     },
-    "openwhispr": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-unstable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784604693,
-        "narHash": "sha256-J2LLgYaPRP3bcWxUhuVqUKppsdfw6TQVbJVV2t/Ug4U=",
-        "owner": "OpenWhispr",
-        "repo": "openwhispr",
-        "rev": "7c06935ac05f07a45ad8e771227a68a8d499a8e4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "OpenWhispr",
-        "repo": "openwhispr",
-        "type": "github"
-      }
-    },
     "paperless-cli": {
       "inputs": {
         "bun2nix": "bun2nix_6",
@@ -1268,7 +1248,6 @@
         "nixpkgs": "nixpkgs_8",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nvf": "nvf",
-        "openwhispr": "openwhispr",
         "paperless-cli": "paperless-cli",
         "sops-nix": "sops-nix",
         "subq": "subq",

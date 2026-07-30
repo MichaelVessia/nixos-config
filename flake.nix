@@ -64,12 +64,6 @@
       url = "github:googleworkspace/cli";
       flake = false;
     };
-    # Flake lives on main only (release tags predate it); it still packages
-    # the latest tagged release. x86_64-linux only, darwin uses the dmg.
-    openwhispr = {
-      url = "github:OpenWhispr/openwhispr";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
   };
 
   outputs = inputs @ {
