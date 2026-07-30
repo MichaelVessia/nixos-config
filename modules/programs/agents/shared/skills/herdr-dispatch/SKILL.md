@@ -1,6 +1,6 @@
 ---
 name: herdr-dispatch
-description: Use when the user explicitly asks Codex Desktop or another shell outside Herdr to create, inspect, prompt, follow up with, or monitor Herdr agent tabs.
+description: Use when the user explicitly asks Codex Desktop or another shell outside Herdr to create, inspect, prompt, follow up with, or monitor Herdr agent tabs, or when the `codex-herdr` router skill hands off external control.
 ---
 
 # Herdr Dispatch
@@ -9,7 +9,7 @@ This local adapter permits explicit user-requested Herdr control from outside `H
 
 ## Safety and defaults
 
-- Act only on an explicit request to control Herdr.
+- Act only on an explicit request to control Herdr. A user request routed through the `codex-herdr` skill counts as explicit.
 - Verify connectivity with `herdr workspace list`.
 - Never assume the focused pane belongs to the external controller.
 - Create one tab per agent with `--no-focus`. Split panes only when requested.
