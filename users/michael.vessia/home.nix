@@ -23,6 +23,15 @@
     HOMEBREW_NO_REQUIRE_TAP_TRUST=1
   '';
 
+  # Moshi's phone-generated SSH public key. The bootstrap pairing command
+  # creates a regular authorized_keys file, so replace it on first activation.
+  home.file.".ssh/authorized_keys" = {
+    force = true;
+    text = ''
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHN3Hc3Ls44cFgAZE6f5By/ER+wkPpNMnCowP+CPMneS moshi-pair:host_3e50c88ec5f3440f8bf588b7d70dd74c:EfXCl1Mb:2026-07-31T19:55:55Z
+    '';
+  };
+
   # Export sops-nix secrets to launchd environment (available to all GUI apps and shells)
   launchd.agents.sops-nix-env = {
     enable = true;

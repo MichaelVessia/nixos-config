@@ -50,6 +50,9 @@ in {
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
 
+  home.file.".pi/agent/extensions/gpt-fast-mode.ts".source =
+    config.lib.file.mkOutOfStoreSymlink "${piDir}/extensions/gpt-fast-mode.ts";
+
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
   home.activation.piExtensionsDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
