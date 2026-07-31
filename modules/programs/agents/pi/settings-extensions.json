@@ -1,1 +1,1 @@
-{"powerbar":{"bar-style":"blocks","bar-width":"10","left":"git-branch,tokens","placement":"belowEditor","right":"provider","separator":" │ "}}
+{"powerbar":{"bar-style":"continuous","bar-width":"6","left":"git-branch,model,context-detail,limit-short,limit-week","placement":"belowEditor","right":"","separator":"  "}}

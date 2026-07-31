@@ -66,7 +66,8 @@
       ]
     },
     {
-      "source": "npm:pi-cyber-ui"
+      "source": "npm:pi-cyber-ui",
+      "extensions": []
     },
     {
       "source": "npm:@victor-software-house/pi-curated-themes",
