@@ -27,12 +27,15 @@
     taps = [
       "humanlayer/humanlayer"
       "nkzw-tech/tap" # codiff
+      "rjyo/moshi"
     ];
 
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
       "agent-browser" # Browser automation CLI for AI agents; run `agent-browser install` once post-install to fetch Chrome
+      "moshi-hook"
+      "mosh"
     ];
 
     # GUI Applications (casks)
@@ -95,6 +98,7 @@
       if [ -x /opt/homebrew/bin/brew ]; then
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap humanlayer/humanlayer >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap rjyo/moshi >/dev/null
       fi
     '';
 
