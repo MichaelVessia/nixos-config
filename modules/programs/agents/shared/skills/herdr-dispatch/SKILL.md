@@ -15,7 +15,8 @@ This local adapter permits explicit user-requested Herdr control from outside `H
 - Create one tab per agent with `--no-focus`. Split panes only when requested.
 - Honor explicit harness, model, and thinking level. Ask if the harness conflicts with the model family, or if neither model nor harness is specified.
 - Never close or remove panes, tabs, workspaces, agents, or worktrees unless requested.
-- Do not create a worktree unless the user requests isolation.
+- Nontrivial work is non-blocking by default: submit prompts without `--wait` and return control to the user (see Prompting and waiting).
+- Do not create a worktree unless the user requests isolation. When they do request one, use Herdr's built-in `herdr worktree` flow (see Worktrees), never manual git plumbing.
 
 ## Harness and model routing
 
@@ -56,10 +57,10 @@ herdr agent start luna-medium \
 ## Dispatch
 
 1. List workspaces and identify the requested workspace from current JSON output. Never guess an ID.
-2. Create a tab in that workspace. Capture `result.root_pane.pane_id`; IDs are session-local.
+2. Create a tab in that workspace. Capture `result.root_pane.pane_id`; IDs are session-local. If the user asked for a worktree, replace this step with the Worktrees flow below.
 3. Start the agent in that existing shell pane with `herdr agent start`.
-4. Submit the task with `herdr agent prompt`.
-5. Read the result and report the agent name plus its inspection command.
+4. Submit the task with `herdr agent prompt <agent> "<task>"`, no `--wait`.
+5. Immediately report that the agent is running: agent name, workspace (and worktree if any), and its inspection/focus command. Do not poll; Herdr's UI already shows state.
 
 Example, matching “create a tab in the Obsidian workspace and send `Hello` to Claude”:
 
@@ -73,25 +74,109 @@ herdr agent start hello-claude \
   --kind claude \
   --pane <result.root_pane.pane_id> \
   -- --dangerously-skip-permissions
-herdr agent prompt hello-claude "Hello" \
-  --wait \
-  --until idle \
-  --until done \
-  --timeout 60000
-herdr agent read hello-claude --source recent-unwrapped --lines 80
+herdr agent prompt hello-claude "Hello"
+# report now: hello-claude is running in obsidian; inspect with
+#   herdr agent read hello-claude --source recent-unwrapped --lines 80
 ```
 
 Names must be short and unique. Use the pane ID returned during creation as the fallback handle if agent-name detection is unavailable.
+
+## Prompting and waiting
+
+For nontrivial work (investigation, implementation, review, tests, PR work), submit without `--wait`, tell the user it is running, and return control. Reserve `--wait` for short, explicitly synchronous interactions or when the user asks to wait for completion in the current turn.
+
+For completion follow-up, use a watcher. It must first wait for `working` so it cannot match the agent's initial idle state and falsely announce completion:
+
+```bash
+herdr agent wait <agent> --until working --timeout 60000 && \
+  herdr agent wait <agent> --until idle --until done --until blocked
+```
+
+Herdr cannot wake the controlling chat itself; run the watcher through the controlling harness's wake mechanism so completion re-enters the conversation:
+
+- Claude Code: run the watcher as a background Bash task (`run_in_background`); the session is re-invoked when it exits. Then `herdr agent read` and report.
+- Pi: run it via `pi-interactive-shell` in dispatch mode with `background: true` and `handsFree: { autoExitOnQuiet: false }` — the watcher is silent while waiting and quiet-detection would kill it early. Completion wakes the turn via `triggerTurn`.
+- Harness without a wake mechanism: detach the watcher with `( ... && herdr notification show "<agent> finished" --body "herdr agent read <agent>" --sound done ) &` for a desktop alert, then read and report on the next controlling turn. Do not promise a chat wake-up the harness cannot deliver.
 
 ## Follow-up
 
 ```bash
 herdr agent list
 herdr agent read <name-or-pane-id> --source recent-unwrapped --lines 120
-herdr agent prompt <name-or-pane-id> "<follow-up>" --wait --timeout 600000
-herdr agent wait <name-or-pane-id> --until idle --until done --timeout 600000
+herdr agent prompt <name-or-pane-id> "<follow-up>"
+herdr agent wait <name-or-pane-id> --timeout 600000   # only when the user asked to wait; matches idle|done|blocked
 herdr agent focus <name-or-pane-id>
 ```
+
+## Worktrees
+
+Applies only when the user asks for a Herdr worktree, worktree isolation, or a trackable worktree. Herdr has a first-class worktree flow (`herdr worktree create|open|list|remove`, plus the workspace menu's `New worktree` / `Open worktree...`); use it, never assemble the pieces by hand.
+
+A worktree-backed child workspace is not a tab. `worktree create` makes a new workspace linked to the parent repo workspace; Herdr nests it under the parent and tracks branch, path, and removal. A tab whose cwd happens to be a worktree has none of that.
+
+### Anti-patterns
+
+Never approximate the flow with:
+
+- manual `git worktree add`
+- standalone `herdr workspace create` pointed at a worktree path
+- `herdr tab create --cwd <worktree-path>` in the parent
+
+All three lose the parent-workspace association Herdr's UI and worktree tracking depend on.
+
+### Create
+
+```bash
+herdr workspace list   # find the parent repo workspace_id
+herdr worktree create \
+  --workspace <parent-workspace-id> \
+  --branch <branch> \
+  --base <base-ref> \
+  --path <worktree-path> \
+  --label <label> \
+  --no-focus \
+  --json
+```
+
+- Always pass `--workspace` with the parent's ID so the worktree lands under that workspace.
+- Pass branch, base, path, and label explicitly. `--focus` only if the user wants to switch to it.
+- Respect the repo's worktree path policy. Example: flo360 requires worktrees under `<repo-root>/.worktrees/`.
+- Result type is `worktree_created`: `workspace` (the new child workspace), `tab`, `root_pane`, `worktree`. Capture `result.workspace.workspace_id` and `result.root_pane.pane_id`, then start the agent in that pane with `herdr agent start` as usual.
+
+### Open an existing worktree
+
+If the git worktree already exists on disk:
+
+```bash
+herdr worktree open \
+  --workspace <parent-workspace-id> \
+  --path <existing-worktree-path> \
+  --no-focus \
+  --json
+```
+
+Result type is `worktree_opened` with the same fields plus `already_open`. If `already_open` is true, check `herdr agent list` before starting anything in the returned pane.
+
+### Verify and report
+
+```bash
+herdr worktree list --workspace <parent-workspace-id> --json
+```
+
+Entries with `open_workspace_id` are open in Herdr. Confirm the new worktree is listed under the parent's repo, then report the child `workspace_id`, the agent name, and its inspection command.
+
+### Migrating a wrong setup
+
+If an agent was already started outside this flow (manual worktree tab, standalone workspace):
+
+1. Stop it safely first (`herdr agent wait ... --until idle`, then interrupt if needed). Never leave two agents writing to the same checkout.
+2. Inspect the checkout and preserve uncommitted changes.
+3. Attach the existing worktree properly with `worktree open --workspace <parent> --path <path>`.
+4. Resume with a single agent in the new pane. Close the orphaned tab or workspace only with user permission.
+
+### Removal
+
+Never remove an active worktree manually (`git worktree remove`, `rm -rf`). Use `herdr worktree remove --workspace <worktree-workspace-id>` only after explicit user permission and after verifying no needed changes remain (`git -C <path> status`). Remove targets the worktree-backed child workspace's own ID, not the parent's. `--force` only if the user confirms discarding.
 
 ## Failures
 
