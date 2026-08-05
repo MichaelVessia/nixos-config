@@ -1,8 +1,23 @@
-import type {
-  ExtensionAPI,
-  ExtensionContext,
+import {
+  CustomEditor,
+  type ExtensionAPI,
+  type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
+import { matchesKey } from "@earendil-works/pi-tui";
 import { Effect, Option, Ref } from "effect";
+
+class PromptStashEditor extends CustomEditor {
+  onPromptStash: (() => void) | undefined;
+
+  override handleInput(data: string): void {
+    if (matchesKey(data, "ctrl+s")) {
+      this.onPromptStash?.();
+      return;
+    }
+
+    super.handleInput(data);
+  }
+}
 
 /** Register Claude Code-style prompt stashing for Pi. */
 export default function promptStash(pi: ExtensionAPI): void {
@@ -45,9 +60,14 @@ export default function promptStash(pi: ExtensionAPI): void {
       }
     });
 
-  pi.registerShortcut("ctrl+s", {
-    description: "Stash or restore the current prompt",
-    handler: (ctx) => Effect.runPromise(toggleStash(ctx)),
+  pi.on("session_start", (_event, ctx) => {
+    if (ctx.mode !== "tui") return;
+
+    ctx.ui.setEditorComponent((tui, theme, keybindings) => {
+      const editor = new PromptStashEditor(tui, theme, keybindings);
+      editor.onPromptStash = () => Effect.runSync(toggleStash(ctx));
+      return editor;
+    });
   });
 
   pi.on("input", (event, ctx) => {

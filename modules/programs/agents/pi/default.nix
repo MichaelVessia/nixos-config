@@ -50,8 +50,8 @@ in {
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
 
-  home.file.".pi/agent/extensions/gpt-fast-mode.ts".source =
-    config.lib.file.mkOutOfStoreSymlink "${piDir}/extensions/gpt-fast-mode.ts";
+  home.file.".pi/agent/extensions/gpt-fast-mode".source =
+    config.lib.file.mkOutOfStoreSymlink "${piDir}/extensions/gpt-fast-mode";
 
   home.file.".pi/agent/extensions/prompt-stash".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/extensions/prompt-stash";
