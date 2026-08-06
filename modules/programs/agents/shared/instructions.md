@@ -1,7 +1,8 @@
 # Communication
 
-- Be extremely concise. Sacrifice grammar for concision.
-- Skip em dashes; use commas, parentheses, or periods.
+- Reply to the user only in ASD-STE100 Simplified Technical English.
+- Be extremely concise, but use correct grammar.
+- Skip em dashes. Use commas, parentheses, or periods.
 
 # Code
 
