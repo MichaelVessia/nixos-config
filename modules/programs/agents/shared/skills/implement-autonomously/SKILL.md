@@ -1,0 +1,148 @@
+---
+name: implement-autonomously
+description: Implement one task autonomously through a Herdr worktree, draft PR, green CI, opposite-family review, and final human handoff.
+compatibility: Requires Herdr, git, GitHub CLI, Claude Code with Fable and auto-review, and Pi with GPT-5.6 Sol, GPT fast mode, and pi-subagents.
+disable-model-invocation: true
+---
+
+# Implement autonomously
+
+Implement one task until its draft PR is safe for the user to inspect. The controller owns the state machine. The implementation agent owns the branch. The opposite model family reviews after the first green CI result.
+
+## Guardrails
+
+- Keep the PR draft. A human-ready result is not GitHub's Ready for review state.
+- Never merge the PR.
+- Use one Herdr-managed worktree for the full run.
+- Give the implementer and reviewer separate tabs in that worktree workspace.
+- Keep only one agent writing at a time.
+- Let the reviewer edit, but not commit, push, or update the PR. Return branch ownership to the implementer after review.
+- Continue through waits and repair cycles. Stop only for a user decision, missing credentials, unavailable required agent, persistent external failure, or the final handoff.
+- Verify state from Herdr, git, and GitHub. An agent's report is not evidence by itself.
+
+## 1. Select the crew
+
+Use the implementation choice in the invocation when it is explicit. Otherwise ask the user to select one crew before creating anything:
+
+1. Claude Code with Fable implements. Pi with `openai-codex/gpt-5.6-sol` reviews.
+2. Pi with `openai-codex/gpt-5.6-sol` implements. Claude Code with Fable reviews.
+
+Ask: `Who should implement: (1) Claude Code with Fable, or (2) Pi with GPT-5.6 Sol? The other family will review.`
+
+There is no default crew. Use GPT fast mode whenever Pi participates unless the user opts out. Preserve any explicit effort or thinking level. Do not substitute another harness or model when a required profile is unavailable.
+
+**Complete when:** the implementer and opposite-family reviewer profiles are explicit.
+
+## 2. Establish control and evidence
+
+If `HERDR_ENV=1`, read and follow `../herdr/SKILL.md`. Otherwise read and follow `../herdr-dispatch/SKILL.md`; this explicit skill invocation authorizes external Herdr control.
+
+Verify:
+
+- Herdr connectivity and the current repository workspace;
+- repository root, default or requested base branch, and worktree path policy;
+- `git`, `gh`, and GitHub authentication;
+- both required agent profiles;
+- Claude Code `auto-review` when Claude reviews;
+- Pi fast mode and `pi-subagents` when Pi participates;
+- the repository instructions, task source, acceptance criteria, PR template, and validation commands.
+
+Maintain this run record in the controller context:
+
+| Worktree workspace | Path | Branch | Implementer | Reviewer | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+**Complete when:** every field needed for dispatch is known, and no prerequisite is assumed.
+
+## 3. Create the worktree and implementation owner
+
+Use `herdr worktree create` under the current repository workspace. Pass the base, branch, path, label, and `--no-focus` explicitly. Never replace this with manual `git worktree` commands or a normal Herdr tab.
+
+Start the selected implementer in the worktree's root pane. If Pi implements, ensure fast mode is enabled before dispatch unless the user opted out. Prepare a source-grounded prompt from [the owner brief](references/owner-brief.md). Include the task, acceptance criteria, governing plans or issues, repository rules, validation commands, non-goals, branch details, and autonomy boundary.
+
+Submit without a synchronous wait. Use the active Herdr adapter's wake mechanism to resume when the owner becomes idle, done, or blocked. Read the full handoff after each wake. Give routine implementation and CI repairs back to the same owner.
+
+**Complete when:** one implementation owner is working in the tracked worktree with a complete brief.
+
+## 4. Reach the first green draft
+
+The implementer must:
+
+1. implement the approved scope;
+2. run focused local validation;
+3. commit and push the branch;
+4. open a draft PR from the repository template;
+5. repair relevant CI failures until the current head is green;
+6. report the PR, head SHA, checks, tests, and any residual risk;
+7. become idle before review starts.
+
+The controller must independently verify the PR URL, draft state, current head SHA, and check rollup. Green means every required or relevant check for that exact head completed successfully. Retry a clearly transient external failure once. Route code, test, lint, type, build, or migration failures to the implementer.
+
+**Complete when:** the PR is draft, the implementer is idle, and CI is green for the verified current head SHA.
+
+## 5. Run opposite-family auto-review
+
+Create a new non-focused tab inside the existing worktree workspace, rooted at the same worktree path. This is a tab, not another worktree. Start the selected opposite-family reviewer there.
+
+Prepare its task from [the reviewer brief](references/reviewer-brief.md). Give it the same task, plan, acceptance criteria, base, PR, repository rules, and validation contract as the implementer.
+
+Use the reviewer's native mechanism:
+
+- Pi: enable fast mode unless opted out, then use `/review-loop` with implementation authorized.
+- Claude Code: use `auto-review`.
+
+Both paths use the same contract: fresh review context, evidence-backed triage, accepted edits, and re-review until clean or capped at three rounds. The reviewer may edit the worktree only while the implementer is idle. It leaves all changes uncommitted and unpushed.
+
+Read the complete review report and inspect the worktree after the reviewer becomes idle. Record accepted fixes, rejected findings, validation, remaining findings, and the stop reason.
+
+**Complete when:** the reviewer is idle, its loop is clean or capped, and all edits and remaining findings are accounted for.
+
+## 6. Return ownership to the implementer
+
+Send the existing implementer the review report and current worktree state using the handback section of [the owner brief](references/owner-brief.md). The implementer must:
+
+1. inspect every reviewer edit;
+2. retain, correct, or revert it with an evidence-based reason;
+3. resolve remaining actionable defects within scope;
+4. run focused and repository-required validation;
+5. commit and push accepted changes;
+6. update the draft PR body when evidence or behavior changed;
+7. repair CI until the new current head is green.
+
+If the implementer materially changes reviewed behavior while correcting reviewer work, return the stable diff to the same reviewer tab for a focused final pass before the last push and CI gate. Keep the implementer idle during that pass.
+
+**Complete when:** the worktree is clean, accepted changes are pushed, review findings are resolved or explicitly rejected, and CI is green for the final head SHA.
+
+## 7. Hand off to the user
+
+Verify directly:
+
+- PR URL and number;
+- final head SHA;
+- PR remains draft;
+- mergeability reports no conflict;
+- every required or relevant check for the final head is successful;
+- worktree is clean;
+- both Herdr agents are idle;
+- no unresolved actionable review finding remains.
+
+Report:
+
+```markdown
+## Draft PR ready for your review
+
+- PR: <URL> (#<number>)
+- Final head: <SHA>
+- Implementer: <harness, model, mode>
+- Reviewer: <harness, model, mode>
+- CI: <checks and conclusions>
+- Local validation: <commands and results>
+- Review: <rounds, findings, fixes, rejected findings>
+- Residual risks: <items or none>
+- Herdr: <worktree workspace and agent handles>
+- State: Draft, not merged, ready for your inspection
+```
+
+Leave the worktree, tabs, branch, and draft PR in place.
+
+**Complete when:** the user has a tool-verified final report and no human action occurred before it was needed.
