@@ -19,6 +19,10 @@ Implement one task until its draft PR is safe for the user to inspect. The contr
 - Let the reviewer edit, but not commit, push, or update the PR. Return branch ownership to the implementer after review.
 - Continue through waits and repair cycles. Stop only for a user decision, missing credentials, unavailable required agent, persistent external failure, or the final handoff.
 - Verify state from Herdr, git, and GitHub. An agent's report is not evidence by itself.
+- Always attempt task-level end-to-end verification. Unit tests, lint, type checks, and CI support this verification, but they do not replace it.
+- Put human-reviewable proof in the PR description. Do not leave proof only in an agent report, a local file, or a CI log.
+- Write the PR description with ASD-STE100 Simplified Technical English principles. Use short, direct sentences, active voice, common words, and one instruction or claim per sentence. Define necessary acronyms and avoid vague claims.
+- Never expose secrets, personal data, access tokens, or unsafe production data in proof artifacts.
 
 ## 1. Select the crew
 
@@ -47,6 +51,16 @@ Verify:
 - Pi fast mode and `pi-subagents` when Pi participates;
 - the repository instructions, task source, acceptance criteria, PR template, and validation commands.
 
+Define an end-to-end verification plan before dispatch. Choose proof that matches the user-visible or system-visible behavior. Examples include:
+
+- browser screenshots or a short recording for a user interface flow;
+- request and response evidence for an API flow;
+- terminal output for a command-line flow;
+- deployment, service, log, or metric evidence for an infrastructure change;
+- before-and-after output for a bug fix or behavior change.
+
+Prefer a real workflow over an isolated function call. Use the safest representative environment and data. Record the expected artifact, where it will be stored, and how it will appear in the PR description. If true end-to-end verification is not possible, require the strongest available substitute and a specific explanation of the missing verification, its cause, and the manual steps a human can run.
+
 Maintain this run record in the controller context:
 
 | Worktree workspace | Path | Branch | Implementer | Reviewer | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
@@ -70,15 +84,20 @@ The implementer must:
 
 1. implement the approved scope;
 2. run focused local validation;
-3. commit and push the branch;
-4. open a draft PR from the repository template;
-5. repair relevant CI failures until the current head is green;
-6. report the PR, head SHA, checks, tests, and any residual risk;
-7. become idle before review starts.
+3. run the planned end-to-end verification and capture task-appropriate proof;
+4. commit and push the branch;
+5. open a draft PR from the repository template;
+6. add a clear `End-to-end verification` section to the PR description, without removing required template sections;
+7. embed or link durable proof that a reviewer can open from GitHub, and state the tested environment, steps, and result;
+8. repair relevant CI failures until the current head is green;
+9. report the PR, head SHA, checks, tests, proof, and any residual risk;
+10. become idle before review starts.
+
+Screenshots must show the relevant final state and enough context to identify the tested flow. Text proof must include the command or action and the important result. A local path is not proof for a PR reviewer. Do not add generated proof files to the repository only to make them durable unless repository policy permits it. If no safe durable upload method is available, state that blocker and give exact reproduction steps in the PR description.
 
 The controller must independently verify the PR URL, draft state, current head SHA, and check rollup. Green means every required or relevant check for that exact head completed successfully. Retry a clearly transient external failure once. Route code, test, lint, type, build, or migration failures to the implementer.
 
-**Complete when:** the PR is draft, the implementer is idle, and CI is green for the verified current head SHA.
+**Complete when:** the PR is draft, the implementer is idle, CI is green for the verified current head SHA, and the PR description contains task-appropriate end-to-end proof or a documented verification gap.
 
 ## 5. Run opposite-family auto-review
 
@@ -93,7 +112,7 @@ Use the reviewer's native mechanism:
 
 Both paths use the same contract: fresh review context, evidence-backed triage, accepted edits, and re-review until clean or capped at three rounds. The reviewer may edit the worktree only while the implementer is idle. It leaves all changes uncommitted and unpushed.
 
-Read the complete review report and inspect the worktree after the reviewer becomes idle. Record accepted fixes, rejected findings, validation, remaining findings, and the stop reason.
+Read the complete review report and inspect the worktree after the reviewer becomes idle. Record accepted fixes, rejected findings, validation, remaining findings, and the stop reason. Also record whether the reviewer found the end-to-end proof relevant, readable, and consistent with the implementation. The reviewer does not update the PR.
 
 **Complete when:** the reviewer is idle, its loop is clean or capped, and all edits and remaining findings are accounted for.
 
@@ -106,12 +125,14 @@ Send the existing implementer the review report and current worktree state using
 3. resolve remaining actionable defects within scope;
 4. run focused and repository-required validation;
 5. commit and push accepted changes;
-6. update the draft PR body when evidence or behavior changed;
-7. repair CI until the new current head is green.
+6. repeat end-to-end verification when a change can affect the proved behavior;
+7. update the draft PR description when behavior, evidence, verification limits, or residual risk changed;
+8. keep the PR description human-readable and consistent with ASD-STE100 principles;
+9. repair CI until the new current head is green.
 
 If the implementer materially changes reviewed behavior while correcting reviewer work, return the stable diff to the same reviewer tab for a focused final pass before the last push and CI gate. Keep the implementer idle during that pass.
 
-**Complete when:** the worktree is clean, accepted changes are pushed, review findings are resolved or explicitly rejected, and CI is green for the final head SHA.
+**Complete when:** the worktree is clean, accepted changes are pushed, review findings are resolved or explicitly rejected, end-to-end proof matches the final behavior, and CI is green for the final head SHA.
 
 ## 7. Hand off to the user
 
@@ -124,7 +145,12 @@ Verify directly:
 - every required or relevant check for the final head is successful;
 - worktree is clean;
 - both Herdr agents are idle;
-- no unresolved actionable review finding remains.
+- no unresolved actionable review finding remains;
+- the PR description has an `End-to-end verification` section;
+- its proof is safe, durable, viewable from GitHub, and matches the final head;
+- any verification gap has a specific reason, the strongest substitute evidence, and exact manual steps.
+
+Read the final PR description directly. Do not accept the implementer's summary as proof that it is clear or complete.
 
 Report:
 
@@ -137,6 +163,8 @@ Report:
 - Reviewer: <harness, model, mode>
 - CI: <checks and conclusions>
 - Local validation: <commands and results>
+- End-to-end proof: <PR description section and linked or embedded artifacts>
+- Verification gaps: <reason and manual steps, or none>
 - Review: <rounds, findings, fixes, rejected findings>
 - Residual risks: <items or none>
 - Herdr: <worktree workspace and agent handles>
