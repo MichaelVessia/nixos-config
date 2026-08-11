@@ -23,6 +23,9 @@ Implement one task until its draft PR is safe for the user to inspect. The contr
 - Put human-reviewable proof in the PR description. Do not leave proof only in an agent report, a local file, or a CI log.
 - Write the PR description with ASD-STE100 Simplified Technical English principles. Use short, direct sentences, active voice, common words, and one instruction or claim per sentence. Define necessary acronyms and avoid vague claims.
 - Never expose secrets, personal data, access tokens, or unsafe production data in proof artifacts.
+- Start every Claude Code session, including every Fable implementer or reviewer, with the exact `--dangerously-skip-permissions` flag. This requirement has no opt-out in this skill.
+- Pass `--dangerously-skip-permissions` to Claude Code after the `herdr agent start` `--` separator. Never rely on an alias, saved setting, inherited session, or default permission mode.
+- Never send a task prompt to a Claude Code session until the controller verifies that the launch arguments contain `--dangerously-skip-permissions`.
 
 ## 1. Select the crew
 
@@ -47,6 +50,7 @@ Verify:
 - repository root, default or requested base branch, and worktree path policy;
 - `git`, `gh`, and GitHub authentication;
 - both required agent profiles;
+- the exact Claude Code launch form `herdr agent start <name> --kind claude --pane <pane-id> -- --model fable --dangerously-skip-permissions` for every Fable role, with `--effort <level>` added before the permission flag when needed;
 - Claude Code `auto-review` when Claude reviews;
 - Pi fast mode and `pi-subagents` when Pi participates;
 - the repository instructions, task source, acceptance criteria, PR template, and validation commands.
@@ -63,8 +67,10 @@ Prefer a real workflow over an isolated function call. Use the safest representa
 
 Maintain this run record in the controller context:
 
-| Worktree workspace | Path | Branch | Implementer | Reviewer | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Worktree workspace | Path | Branch | Implementer | Implementer launch | Reviewer | Reviewer launch | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+For each Claude Code role, record controller-visible evidence that its launch arguments included `--dangerously-skip-permissions`. Record `not applicable` for Pi roles.
 
 **Complete when:** every field needed for dispatch is known, and no prerequisite is assumed.
 
@@ -72,11 +78,22 @@ Maintain this run record in the controller context:
 
 Use `herdr worktree create` under the current repository workspace. Pass the base, branch, path, label, and `--no-focus` explicitly. Never replace this with manual `git worktree` commands or a normal Herdr tab.
 
-Start the selected implementer in the worktree's root pane. If Pi implements, ensure fast mode is enabled before dispatch unless the user opted out. Prepare a source-grounded prompt from [the owner brief](references/owner-brief.md). Include the task, acceptance criteria, governing plans or issues, repository rules, validation commands, non-goals, branch details, and autonomy boundary.
+Start the selected implementer in the worktree's root pane. If Claude Code with Fable implements, use this launch shape and include the flag literally:
+
+```bash
+herdr agent start <implementer-name> \
+  --kind claude \
+  --pane <worktree-root-pane-id> \
+  -- --model fable --dangerously-skip-permissions
+```
+
+When an effort level is explicit, add `--effort <level>` after `--model fable` and before the permission flag. Do not put the permission flag before the `--` separator. Before dispatch, verify the actual launch arguments from controller-visible command or process evidence. A Claude agent's statement about its permission mode is not evidence. If the flag is missing, do not send the task. Terminate that session with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement. Do not continue by answering permission prompts.
+
+If Pi implements, ensure fast mode is enabled before dispatch unless the user opted out. Prepare a source-grounded prompt from [the owner brief](references/owner-brief.md). Include the task, acceptance criteria, governing plans or issues, repository rules, validation commands, non-goals, branch details, and autonomy boundary.
 
 Submit without a synchronous wait. Use the active Herdr adapter's wake mechanism to resume when the owner becomes idle, done, or blocked. Read the full handoff after each wake. Give routine implementation and CI repairs back to the same owner.
 
-**Complete when:** one implementation owner is working in the tracked worktree with a complete brief.
+**Complete when:** one implementation owner is working in the tracked worktree with a complete brief, and any Claude Code owner has verified `--dangerously-skip-permissions` launch evidence.
 
 ## 4. Reach the first green draft
 
@@ -103,6 +120,17 @@ The controller must independently verify the PR URL, draft state, current head S
 
 Create a new non-focused tab inside the existing worktree workspace, rooted at the same worktree path. This is a tab, not another worktree. Start the selected opposite-family reviewer there.
 
+If Claude Code with Fable reviews, use this launch shape and include the flag literally:
+
+```bash
+herdr agent start <reviewer-name> \
+  --kind claude \
+  --pane <reviewer-tab-root-pane-id> \
+  -- --model fable --dangerously-skip-permissions
+```
+
+When an effort level is explicit, add `--effort <level>` after `--model fable` and before the permission flag. Verify the launch arguments before sending the review task. If the flag is missing, do not prompt or use that reviewer session. Terminate it with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement.
+
 Prepare its task from [the reviewer brief](references/reviewer-brief.md). Give it the same task, plan, acceptance criteria, base, PR, repository rules, and validation contract as the implementer.
 
 Use the reviewer's native mechanism:
@@ -114,7 +142,7 @@ Both paths use the same contract: fresh review context, evidence-backed triage, 
 
 Read the complete review report and inspect the worktree after the reviewer becomes idle. Record accepted fixes, rejected findings, validation, remaining findings, and the stop reason. Also record whether the reviewer found the end-to-end proof relevant, readable, and consistent with the implementation. The reviewer does not update the PR.
 
-**Complete when:** the reviewer is idle, its loop is clean or capped, and all edits and remaining findings are accounted for.
+**Complete when:** the reviewer is idle, its loop is clean or capped, all edits and remaining findings are accounted for, and any Claude Code reviewer has verified `--dangerously-skip-permissions` launch evidence.
 
 ## 6. Return ownership to the implementer
 
@@ -145,6 +173,7 @@ Verify directly:
 - every required or relevant check for the final head is successful;
 - worktree is clean;
 - both Herdr agents are idle;
+- every Claude Code agent used in the run has controller-visible launch evidence for `--dangerously-skip-permissions`;
 - no unresolved actionable review finding remains;
 - the PR description has an `End-to-end verification` section;
 - its proof is safe, durable, viewable from GitHub, and matches the final head;

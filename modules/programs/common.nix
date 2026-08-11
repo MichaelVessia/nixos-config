@@ -107,6 +107,7 @@ in {
       lazydocker # terminal UI for docker
       lsof # list open files
 
+      inputs.llm-agents.packages.${pkgs.system}.agent-browser
       inputs.llm-agents.packages.${pkgs.system}.agentsview
       inputs.llm-agents.packages.${pkgs.system}.claude-code
       inputs.llm-agents.packages.${pkgs.system}.codex

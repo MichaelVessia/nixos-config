@@ -33,7 +33,6 @@
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
-      "agent-browser" # Browser automation CLI for AI agents; run `agent-browser install` once post-install to fetch Chrome
       "moshi-hook"
       "mosh"
     ];
@@ -44,7 +43,7 @@
       "aws-vpn-client"
       "brave-browser"
       "chatgpt"
-      "claude"
+      "claude" # Desktop app; llm-agents claude-desktop is currently Linux-only
       "cmux"
       "nkzw-tech/tap/codiff"
       "codex-app"
