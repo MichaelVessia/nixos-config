@@ -5,7 +5,11 @@
   "enabledModels": [
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-terra"
+    "openai-codex/gpt-5.6-terra",
+    "claude-bridge/claude-fable-5",
+    "claude-bridge/claude-sonnet-5",
+    "claude-bridge/claude-haiku-4-5",
+    "claude-bridge/claude-opus-5"
   ],
   "npmCommand": [
     "npm"
