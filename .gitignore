@@ -1,8 +1,10 @@
 .direnv/
 .opencode/
+.claude/
 result
 result-*
 *.img
+.grove/*
 
 # sops-nix safety (prevent accidental plaintext commits)
 *.decrypted
@@ -11,3 +13,7 @@ result-*
 *.plain.*
 *-plaintext.yaml
 *-plaintext.json
+
+docs/plans/
+docs/superpowers/plans/
+docs/superpowers/specs/

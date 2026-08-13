@@ -7,6 +7,10 @@
   # System-level nix-darwin configuration
   # Manages Homebrew and macOS system settings
 
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
+
   # Enable Homebrew management through nix-darwin
   homebrew = {
     enable = true;
@@ -14,50 +18,89 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      # Homebrew now refuses `brew bundle install --cleanup` without explicit
+      # confirmation; --force-cleanup skips the prompt for cleanup only.
+      extraFlags = ["--force-cleanup"];
     };
 
     # Third-party taps
     taps = [
-      "steveyegge/beads"
+      "humanlayer/humanlayer"
+      "nkzw-tech/tap" # codiff
+      "rjyo/moshi"
     ];
 
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
-      "bd" # Beads - AI coding assistant
+      "moshi-hook"
+      "mosh"
     ];
 
     # GUI Applications (casks)
     casks = [
       "1password"
+      "aws-vpn-client"
       "brave-browser"
-      "bruno"
       "chatgpt"
-      "claude"
+      "claude" # Desktop app; llm-agents claude-desktop is currently Linux-only
+      "cmux"
+      "nkzw-tech/tap/codiff"
+      "codex-app"
       "figma"
       "ghostty"
       "hammerspoon"
       "google-drive"
+      "handy"
+      "humanlayer/humanlayer/humanlayer"
       "jordanbaird-ice"
       "karabiner-elements"
+      "linear"
       "openlens"
       "orbstack"
+      "protonvpn"
       "raycast"
       "shottr"
-      "superwhisper"
-      "yaak"
+      "t3-code" # Minimal GUI for orchestrating AI coding agents (t3.codes)
+      "tailscale-app"
+      "libreoffice"
+      "zed"
       "zoom"
     ];
 
     # Mac App Store apps (requires mas)
+    # Slack and Okta Verify are MDM-managed but registered with the App Store,
+    # so they must be listed here or `--cleanup` tries (and fails) to
+    # uninstall the root-owned app bundles.
     masApps = {
       # "Xcode" = 497799835; # Too large, install manually if needed
       "Amphetamine" = 937984704;
+      "Okta Verify" = 490179405;
+      "Slack" = 803453959;
     };
+
+    # MDM handles Slack/Okta Verify updates and mas can't (VPP apps aren't in
+    # the user's purchase history, so `mas upgrade` fails with "No downloads
+    # initiated"). Skip their install/upgrade; cleanup still sees the masApps
+    # entries above and keeps them. The Brewfile is evaluated as Ruby, so this
+    # sets the skip list for the same `brew bundle` run.
+    extraConfig = ''
+      ENV["HOMEBREW_BUNDLE_MAS_SKIP"] = "490179405 803453959"
+    '';
   };
 
   # System configuration
   system = {
+    # Activation runs as root, where brew is neither on PATH nor willing to
+    # run; invoke it the same way the homebrew module does.
+    activationScripts.extraActivation.text = ''
+      if [ -x /opt/homebrew/bin/brew ]; then
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap humanlayer/humanlayer >/dev/null
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap rjyo/moshi >/dev/null
+      fi
+    '';
+
     stateVersion = 5;
     primaryUser = username;
     defaults = {
@@ -82,6 +125,7 @@
       NSGlobalDomain = {
         AppleInterfaceStyle = "Dark";
         AppleShowAllExtensions = true;
+        ApplePressAndHoldEnabled = false; # Disable accent popup on key hold
         InitialKeyRepeat = 15;
         KeyRepeat = 2;
         NSAutomaticCapitalizationEnabled = false;
@@ -191,6 +235,7 @@
 
   # Environment variables
   environment.systemPackages = with pkgs; [
+    _1password-cli
     coreutils # provides gtimeout, gdate, etc.
     vim
   ];

@@ -75,10 +75,67 @@
                 };
               };
             }
+            {
+              matches = [{"device.name" = "alsa_card.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00";}];
+              actions = {
+                update-props = {
+                  "api.acp.auto-profile" = false;
+                  "device.profile" = "input:analog-stereo-input";
+                };
+              };
+            }
+            {
+              matches = [
+                {
+                  "node.name" = "alsa_output.usb-Focusrite_Scarlett_Solo_4th_Gen_S190NM15BB541C-00.HiFi__Line1__sink";
+                }
+              ];
+              actions = {
+                update-props = {
+                  "node.disabled" = true;
+                };
+              };
+            }
           ];
         };
       };
     };
+  };
+
+  # WirePlumber silently drops the built-in analog output profile when
+  # /dev/snd/pcmC0D0p is busy during its card probe (happens at boot and
+  # after suspend/resume), leaving only HDMI sinks and no speaker audio.
+  # Until the boot-time holder is identified, log it and heal by forcing
+  # a re-probe.
+  #
+  # If speakers ever go silent again:
+  #   - Watchdog log (shows the healing + the culprit process name):
+  #       journalctl --user -u analog-sink-watchdog
+  #   - Manual heal (same thing the watchdog does):
+  #       systemctl --user restart wireplumber
+  #   - Check sinks (should list "Built-in Audio Analog Stereo"):
+  #       wpctl status
+  #   - If sink exists but still silent, check ALSA Master isn't muted:
+  #       amixer -c 0 sset Master 100% unmute
+  # Once the journal names the process holding pcmC0D0p, fix that at the
+  # source and delete this watchdog.
+  systemd.user.services.analog-sink-watchdog = {
+    description = "Re-probe audio card when built-in analog sink is missing";
+    after = ["wireplumber.service"];
+    wantedBy = ["default.target"];
+    path = [pkgs.pipewire pkgs.psmisc];
+    script = ''
+      sink=alsa_output.pci-0000_00_1f.3.analog-stereo
+      while true; do
+        sleep 15
+        systemctl --user --quiet is-active wireplumber.service || continue
+        pw-cli ls Node 2>/dev/null | grep -q "$sink" && continue
+        echo "analog sink missing; holders of pcmC0D0p:"
+        fuser -v /dev/snd/pcmC0D0p || true
+        systemctl --user restart wireplumber.service
+        sleep 30
+      done
+    '';
   };
 
   # Audio tools for debugging
@@ -94,12 +151,16 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.michaelvessia = {
     isNormalUser = true;
     description = "Michael Vessia";
     extraGroups = ["networkmanager" "wheel" "docker" "ydotool" "input"];
+    shell = pkgs.zsh;
   };
+
+  # Enable zsh system-wide (required for login shell)
+  programs.zsh.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -107,9 +168,14 @@
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
-    # Ghostty cachix cache for nightly builds
-    extra-substituters = ["https://ghostty.cachix.org"];
-    extra-trusted-public-keys = ["ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="];
+    extra-substituters = [
+      "https://ghostty.cachix.org"
+      "https://cache.numtide.com"
+    ];
+    extra-trusted-public-keys = [
+      "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    ];
   };
 
   # List packages installed in system profile. To search, run:
@@ -134,7 +200,10 @@
   services.fwupd.enable = true;
 
   # Enable Docker
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs.docker_29;
+  };
 
   # Tailscale VPN
   services.tailscale.enable = true;

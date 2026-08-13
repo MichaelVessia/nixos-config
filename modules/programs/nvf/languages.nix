@@ -43,7 +43,7 @@
       };
       html.enable = true;
       sql.enable = true;
-      ts = {
+      typescript = {
         enable = true;
         treesitter.enable = true;
         format = {
@@ -51,7 +51,7 @@
         };
         lsp = {
           enable = true;
-          servers = ["ts_ls"];
+          servers = ["typescript-language-server"];
         };
         extraDiagnostics.enable = true;
       };

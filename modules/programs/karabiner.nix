@@ -39,10 +39,36 @@ lib.mkIf pkgs.stdenv.isDarwin {
               }
             ];
           }
+          {
+            # BenQ ZOWIE Gaming Mouse: opt-in to event modification
+            # (Karabiner ignores pointing devices by default)
+            identifiers = {
+              is_pointing_device = true;
+              product_id = 32770;
+              vendor_id = 1189;
+            };
+            ignore = false;
+          }
         ];
 
         complex_modifications = {
-          rules = [];
+          rules = [
+            {
+              description = "Cmd + Mouse Forward (button5) → Enter";
+              manipulators = [
+                {
+                  type = "basic";
+                  from = {
+                    pointing_button = "button5";
+                    modifiers = {
+                      mandatory = ["command"];
+                    };
+                  };
+                  to = [{key_code = "return_or_enter";}];
+                }
+              ];
+            }
+          ];
         };
       }
     ];

@@ -5,7 +5,35 @@
   pkgs-unstable,
   inputs,
   ...
-}: {
+}: let
+  garageCliNames = [
+    "adguard"
+    "autocaliweb"
+    "caddy"
+    "immich"
+    "jellyfin"
+    "jellyseerr"
+    "prowlarr"
+    "radarr"
+    "sabnzbd"
+    "sonarr"
+    "tailscale"
+    "tubearchivist"
+  ];
+
+  garageBun2nix = inputs.garage.inputs.bun2nix.packages.${pkgs.system}.default;
+  garageBunNix = import ./garage-bun.nix {garageSource = inputs.garage;};
+  garageBunDeps = garageBun2nix.fetchBunDeps {
+    bunNix = garageBunNix;
+  };
+
+  # garage CLIs only install on Linux (see home.packages), so the Darwin bun
+  # build workaround is no longer needed; the bunDeps fix still applies.
+  garageCli = name:
+    (inputs.garage.packages.${pkgs.system}.${name}).overrideAttrs (_old: {
+      bunDeps = garageBunDeps;
+    });
+in {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs;
     [
@@ -29,8 +57,10 @@
       ncdu # disk usage
       curl
       wget
-      git-town
+      pkgs-unstable.gws # Google Workspace CLI; only in unstable
       jira-cli-go # Jira CLI
+      (pkgs.callPackage ./linear-cli {}) # Linear CLI
+      lefthook
       # Note: atuin, zoxide, fzf, eza, and bat are configured as programs in shell.nix for shell integration
 
       # networking tools
@@ -40,6 +70,7 @@
       ldns # replacement of `dig`, it provide the command `drill`
       nmap # A utility for network discovery and security auditing
       ipcalc # it is a calculator for the IPv4/v6 addresses
+      cloudflared # Cloudflare tunnels; `cloudflared tunnel --url http://localhost:PORT` for a quick public URL
 
       # misc
       file
@@ -58,10 +89,10 @@
       nix-output-monitor
       nh # nix helper - better CLI for nixos-rebuild/darwin-rebuild
       devbox # portable development environments
+      devenv # developer environments with nix
 
       # productivity
       glow # markdown previewer in terminal
-      bitwarden-desktop # password manager
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
       # Note: whisper-cpp is configured in transcribe.nix
@@ -71,24 +102,31 @@
       tmux
 
       btop # replacement of htop/nmon
-      (pkgs.writeShellScriptBin "critique" ''
-        export PATH="${pkgs.bun}/bin:$PATH"
-        exec bunx critique "$@"
-      '') # git diff viewer
-      (pkgs.writeShellScriptBin "datadog" ''
-        export PATH="${pkgs.bun}/bin:$PATH"
-        exec bunx @ctdio/datadog-cli "$@"
-      '') # datadog CLI
+      difftastic # structural git diff viewer
+      lazygit # terminal UI for git
       lazydocker # terminal UI for docker
       lsof # list open files
 
-      inputs.claude-code.packages.${pkgs.system}.default
-      opencode # AI coding agent (from nixpkgs)
-      (pkgs.callPackage ./ralph {})
+      inputs.llm-agents.packages.${pkgs.system}.agent-browser
+      inputs.llm-agents.packages.${pkgs.system}.agentsview
+      inputs.llm-agents.packages.${pkgs.system}.claude-code
+      inputs.llm-agents.packages.${pkgs.system}.codex
+      inputs.llm-agents.packages.${pkgs.system}.herdr
+      inputs.llm-agents.packages.${pkgs.system}.hunk
+      inputs.llm-agents.packages.${pkgs.system}.omp
+      inputs.llm-agents.packages.${pkgs.system}.opencode
+      # pi is installed (wrapped) from modules/programs/agents/pi
+    ]
+    ++ lib.optionals stdenv.isLinux (builtins.map garageCli garageCliNames)
+    ++ lib.optionals stdenv.isDarwin [
+      pngpaste # grab images from clipboard
+      (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
+      (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
+      xclip # X11 clipboard provider
       # Note: ydotool is enabled via programs.ydotool and used by Handy for text input
       iotop # io monitoring
       iftop # network monitoring

@@ -1,5 +1,9 @@
 {
   description = "NixOS configuration";
+  nixConfig = {
+    extra-substituters = ["https://cache.numtide.com"];
+    extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
+  };
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
@@ -18,7 +22,7 @@
       url = "github:lnl7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    claude-code.url = "github:sadjow/claude-code-nix";
+    llm-agents.url = "github:numtide/llm-agents.nix";
     nvf = {
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -26,18 +30,39 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     ghostty.url = "github:ghostty-org/ghostty";
     niri.url = "github:sodiboo/niri-flake";
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    dgop = {
+      url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
+    garage = {
+      url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    floai.url = "git+ssh://git@github.com/flocasts/floai.git?ref=master";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
     bun2nix.url = "github:nix-community/bun2nix";
+    worktrunk = {
+      url = "github:max-sixty/worktrunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    agent-skills-nix = {
+      url = "github:Kyure-A/agent-skills-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    googleworkspace-cli = {
+      url = "github:googleworkspace/cli";
+      flake = false;
     };
   };
 
@@ -47,13 +72,14 @@
     nixpkgs-unstable,
     home-manager,
     darwin,
-    claude-code,
+    llm-agents,
     nvf,
     nixos-hardware,
     ghostty,
     niri,
-    noctalia,
+    dms,
     sops-nix,
+    agent-skills-nix,
     ...
   }: let
     system = "x86_64-linux";
@@ -63,18 +89,21 @@
     forAllSystems = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-darwin"];
   in {
     devShells = forAllSystems (system: {
-      default = nixpkgs.legacyPackages.${system}.mkShell {
-        packages = with nixpkgs.legacyPackages.${system}; [
-          alejandra
-          lefthook
-          sops
-          age
-          ssh-to-age
-        ];
-        shellHook = ''
-          lefthook install
-        '';
-      };
+      default = let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+        pkgs.mkShell {
+          packages = with pkgs; [
+            alejandra
+            lefthook
+            sops
+            age
+            ssh-to-age
+          ];
+          shellHook = ''
+            lefthook install
+          '';
+        };
     });
 
     nixosConfigurations = {
@@ -84,6 +113,7 @@
           inherit username;
           inherit inputs;
           inherit pkgs-unstable;
+          enableHomelabSkills = true;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -106,7 +136,9 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 niri.homeModules.niri
-                noctalia.homeModules.default
+                dms.homeModules.dank-material-shell
+                dms.homeModules.niri
+                inputs.worktrunk.homeModules.default
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;
@@ -127,6 +159,35 @@
           "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
         ];
       };
+
+      claude-casino = let
+        username = "cc";
+        specialArgs = {
+          inherit username;
+          inherit inputs;
+          inherit pkgs-unstable;
+          enableHomelabSkills = false;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+
+          modules = [
+            ./hosts/claude-casino
+            sops-nix.nixosModules.sops
+
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username}/home.nix;
+            }
+          ];
+        };
     };
 
     # SD card image for tts-pi
@@ -140,6 +201,7 @@
           inherit username;
           inherit inputs;
           pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+          enableHomelabSkills = false;
         };
       in
         darwin.lib.darwinSystem {
@@ -158,6 +220,7 @@
               home-manager.backupFileExtension = "backup";
               home-manager.sharedModules = [
                 sops-nix.homeManagerModules.sops
+                inputs.worktrunk.homeModules.default
               ];
 
               home-manager.extraSpecialArgs = inputs // specialArgs;

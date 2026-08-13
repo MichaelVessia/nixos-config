@@ -21,7 +21,7 @@
   # Shared config file for both platforms
   xdg.configFile."ghostty/config".text = ''
     # Font configuration
-    font-family = JetBrains Mono
+    font-family = JetBrainsMono Nerd Font
     font-size = 12
 
     # Theme (dark or light)
@@ -42,6 +42,11 @@
 
     # Shell integration
     shell-integration = zsh
+
+    # Left option acts as alt so TUIs receive alt+ chords (herdr workspace and
+    # agent nav, modules/programs/herdr.nix); right option still composes
+    # special characters (macOS only, ignored on Linux).
+    macos-option-as-alt = left
 
     # Tab management keybindings with leader key (ctrl+a)
     keybind = ctrl+a>1=goto_tab:1
@@ -64,17 +69,15 @@
     keybind = ctrl+a>n=next_tab
     keybind = ctrl+a>t=toggle_tab_overview
 
-    # Split creation (vim-style)
-    keybind = ctrl+a>h=new_split:left
-    keybind = ctrl+a>j=new_split:down
-    keybind = ctrl+a>k=new_split:up
-    keybind = ctrl+a>l=new_split:right
+    # Split creation (matches tmux)
+    keybind = ctrl+a>backslash=new_split:right
+    keybind = ctrl+a>minus=new_split:down
 
-    # Split navigation
-    keybind = ctrl+h=goto_split:left
-    keybind = ctrl+j=goto_split:down
-    keybind = ctrl+k=goto_split:up
-    keybind = ctrl+l=goto_split:right
+    # Split navigation (with leader to not conflict with nvim/tmux)
+    keybind = ctrl+a>shift+h=goto_split:left
+    keybind = ctrl+a>shift+j=goto_split:down
+    keybind = ctrl+a>shift+k=goto_split:up
+    keybind = ctrl+a>shift+l=goto_split:right
     keybind = ctrl+a>q=close_surface
 
     # Window management

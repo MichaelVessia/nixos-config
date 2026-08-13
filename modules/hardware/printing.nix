@@ -1,8 +1,16 @@
 # Printing Configuration
-{pkgs, ...}: {
-  services.printing = {
-    enable = true;
-    drivers = [pkgs.brlaser];
+{...}: {
+  services.printing.enable = true;
+
+  # ensure-printers runs at boot before network/printer is ready
+  # Add network dependency and retry logic
+  systemd.services.ensure-printers = {
+    after = ["network-online.target"];
+    wants = ["network-online.target"];
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
   };
 
   hardware.printers = {
@@ -10,7 +18,7 @@
       {
         name = "Brother_HL-L3270CDW";
         location = "Home";
-        deviceUri = "ipp://192.168.1.138/ipp";
+        deviceUri = "ipp://192.168.1.138/ipp/print";
         model = "everywhere";
         ppdOptions = {
           PageSize = "Letter";

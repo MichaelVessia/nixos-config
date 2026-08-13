@@ -1,0 +1,94 @@
+{
+  "defaultModel": "gpt-5.6-sol",
+  "defaultProvider": "openai-codex",
+  "defaultThinkingLevel": "medium",
+  "enabledModels": [
+    "openai-codex/gpt-5.6-luna",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-terra",
+    "claude-bridge/claude-fable-5",
+    "claude-bridge/claude-sonnet-5",
+    "claude-bridge/claude-haiku-4-5",
+    "claude-bridge/claude-opus-5"
+  ],
+  "npmCommand": [
+    "npm"
+  ],
+  "packages": [
+    {
+      "source": "npm:pi-subagents"
+    },
+    {
+      "source": "npm:pi-mcp-adapter"
+    },
+    {
+      "source": "npm:pi-web-access"
+    },
+    {
+      "source": "npm:pi-add-dir"
+    },
+    {
+      "source": "npm:@plannotator/pi-extension"
+    },
+    {
+      "source": "npm:@juanibiapina/pi-extension-settings"
+    },
+    {
+      "source": "npm:@juanibiapina/pi-powerbar"
+    },
+    {
+      "source": "npm:@tmustier/pi-usage-extension"
+    },
+    {
+      "source": "npm:@tmustier/pi-raw-paste"
+    },
+    {
+      "source": "git:github.com/tintinweb/pi-manage-todo-list@b75c449aa85ce328e9a8b632f62bf642aed40359"
+    },
+    {
+      "source": "npm:pi-btw"
+    },
+    {
+      "source": "npm:pi-interactive-shell"
+    },
+    {
+      "source": "npm:pi-dynamic-workflows"
+    },
+    {
+      "source": "git:github.com/MichaelVessia/pi-autoresearch@76aa69464cd8d8028538ec8102ae91ea75df5736"
+    },
+    {
+      "source": "npm:pi-themes",
+      "themes": [
+        "themes/*.json",
+        "!themes/gruvbox-dark.json"
+      ]
+    },
+    "npm:pi-claude-bridge"
+  ],
+  "subagents": {
+    "agentOverrides": {
+      "context-builder": {
+        "model": ""
+      },
+      "planner": {
+        "model": ""
+      },
+      "researcher": {
+        "model": ""
+      },
+      "reviewer": {
+        "model": ""
+      },
+      "scout": {
+        "model": ""
+      },
+      "worker": {
+        "model": ""
+      }
+    }
+  },
+  "theme": "catppuccin-latte/catppuccin-mocha",
+  "lastChangelogVersion": "0.84.1",
+  "hideThinkingBlock": false
+}

@@ -9,7 +9,11 @@
 #   hass-cli state get <entity>  # get entity state
 #   hass-cli service call <svc>  # call a service
 #   hass-cli --help              # help
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   wrapper = pkgs.writeShellScriptBin "hass-cli" ''
     set -a
     source "$HOME/.secrets.env"
@@ -17,5 +21,5 @@
     exec ${pkgs.home-assistant-cli}/bin/hass-cli "$@"
   '';
 in {
-  home.packages = [wrapper];
+  home.packages = lib.optionals pkgs.stdenv.isLinux [wrapper];
 }

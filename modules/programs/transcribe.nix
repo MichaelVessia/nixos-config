@@ -89,5 +89,5 @@
         echo "Done!"
   '';
 in {
-  home.packages = [transcribe];
+  home.packages = lib.optionals pkgs.stdenv.isLinux [transcribe];
 }

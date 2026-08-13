@@ -1,9 +1,6 @@
 # X to Obsidian - background server for Chrome extension
 #
-# Requires ~/.secrets.env with:
-#   X_TO_OBSIDIAN_VAULT_PATH=/path/to/your/obsidian/vault
-#   X_TO_OBSIDIAN_LLM_PROVIDER=google  # or "anthropic"
-#   X_TO_OBSIDIAN_GOOGLE_API_KEY=xxx   # or X_TO_OBSIDIAN_ANTHROPIC_API_KEY
+# Secrets come from sops-nix (/run/secrets/ or ~/.config/sops-nix/secrets/).
 #
 # Commands:
 #   systemctl --user status x-to-obsidian   # check status
@@ -17,12 +14,15 @@
   ...
 }: let
   x-to-obsidian-pkg = x-to-obsidian.packages.${pkgs.system}.default;
-  # Wrapper script that maps prefixed env vars to what the app expects
   wrapper = pkgs.writeShellScript "x-to-obsidian-wrapper" ''
-    export VAULT_PATH="''${X_TO_OBSIDIAN_VAULT_PATH}"
-    export LLM_PROVIDER="''${X_TO_OBSIDIAN_LLM_PROVIDER}"
-    export GOOGLE_API_KEY="''${X_TO_OBSIDIAN_GOOGLE_API_KEY:-}"
-    export ANTHROPIC_API_KEY="''${X_TO_OBSIDIAN_ANTHROPIC_API_KEY:-}"
+    SECRETS_DIR="/run/secrets"
+    [ -d "$HOME/.config/sops-nix/secrets" ] && SECRETS_DIR="$HOME/.config/sops-nix/secrets"
+
+    [ -f "$SECRETS_DIR/x_to_obsidian_vault_path" ] && export VAULT_PATH="$(cat "$SECRETS_DIR/x_to_obsidian_vault_path")"
+    [ -f "$SECRETS_DIR/x_to_obsidian_llm_provider" ] && export LLM_PROVIDER="$(cat "$SECRETS_DIR/x_to_obsidian_llm_provider")"
+    [ -f "$SECRETS_DIR/x_to_obsidian_google_api_key" ] && export GOOGLE_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_google_api_key")"
+    [ -f "$SECRETS_DIR/x_to_obsidian_anthropic_api_key" ] && export ANTHROPIC_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_anthropic_api_key")"
+
     exec ${x-to-obsidian-pkg}/bin/x-to-obsidian
   '';
 in
@@ -36,7 +36,6 @@ in
         Type = "simple";
         ExecStart = "${wrapper}";
         Restart = "on-failure";
-        EnvironmentFile = "%h/.secrets.env";
       };
       Install = {
         WantedBy = ["default.target"];

@@ -1,8 +1,18 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  neotestWithCleanSubprocessExit = pkgs.vimPlugins.neotest.overrideAttrs (old: {
+    postPatch =
+      (old.postPatch or "")
+      + ''
+        substituteInPlace lua/neotest/lib/subprocess.lua \
+          --replace-fail 'nio.fn.chanclose(child_chan, "rpc")' \
+          'nio.fn.rpcrequest(child_chan, "nvim_command", "qa!")'
+      '';
+  });
+in {
   programs.nvf.settings.vim = {
     extraPlugins = with pkgs.vimPlugins; {
       neotest = {
-        package = neotest;
+        package = neotestWithCleanSubprocessExit;
         setup = ''
           require("neotest").setup({})
         '';

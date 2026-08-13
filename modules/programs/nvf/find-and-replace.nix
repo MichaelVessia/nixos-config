@@ -1,8 +1,8 @@
-{pkgs-unstable, ...}: {
+{pkgs, ...}: {
   programs.nvf.settings = {
     vim = {
       lazy.plugins."grug-far.nvim" = {
-        package = pkgs-unstable.vimPlugins.grug-far-nvim;
+        package = pkgs.vimPlugins.grug-far-nvim;
         setupModule = "grug-far";
         cmd = ["GrugFar"];
       };
