@@ -27,13 +27,13 @@ Use an explicit user choice. Otherwise use:
 
 | Role | Model | Thinking | Extra mode |
 | --- | --- | --- | --- |
-| Owner | `openai-codex/gpt-5.6-sol` | `medium` | GPT fast mode |
+| Owner | `openai-codex/gpt-5.6-sol` | `medium` | none |
 | Reviewer | `claude-bridge/claude-fable-5` | `high` | none |
 
 Default to cross-family review. The user may select `no cross-family review` for
 a token-constrained run; then no reviewer session is created. They may also swap
-models or override thinking. Every selected model runs through Pi with
-`--kind pi`.
+models or override thinking. GPT fast mode is opt-in only when the user requests
+it. Every selected model runs through Pi with `--kind pi`.
 
 **Complete when:** the owner profile and review policy are explicit, and the
 reviewer profile is explicit when review is enabled.
