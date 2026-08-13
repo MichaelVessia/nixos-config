@@ -6,6 +6,7 @@
   ...
 }: let
   piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
+  garagePiExtensions = inputs.garage.packages.${pkgs.system}.pi-extensions;
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
 
@@ -44,14 +45,15 @@ in {
   #     pi-diff-review whose `prepare` script depends on devDeps (husky).
   #   - pi-autoresearch fork pin: pins Ctrl+Alt+X for the dashboard toggle to
   #     avoid pi's built-in Ctrl+X shortcut.
-  #   - ../../projects/garage/packages/pi-extensions: resolved by pi relative
-  #     to ~/.pi/agent/settings.json, keeping the local Garage package portable
-  #     across home directories.
   home.file.".pi/agent/settings.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings.json";
 
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
+
+  home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
+
+  home.file.".pi/agent/extensions/prompt-stash.js".source = "${garagePiExtensions}/extensions/prompt-stash.js";
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.

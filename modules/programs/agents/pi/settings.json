@@ -12,9 +12,6 @@
   ],
   "packages": [
     {
-      "source": "../../projects/garage/packages/pi-extensions"
-    },
-    {
       "source": "npm:pi-subagents"
     },
     {
