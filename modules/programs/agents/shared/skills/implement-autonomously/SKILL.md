@@ -1,13 +1,13 @@
 ---
 name: implement-autonomously
 description: Implement one task autonomously through a Herdr worktree, draft PR, green CI, opposite-family review, and final human handoff.
-compatibility: Requires Herdr, git, GitHub CLI, Claude Code with Fable and auto-review, and Pi with GPT-5.6 Sol, GPT fast mode, and pi-subagents.
+compatibility: Requires Herdr, git, GitHub CLI, and Pi with claude-bridge models, GPT-5.6 Sol, GPT fast mode, and pi-subagents.
 disable-model-invocation: true
 ---
 
 # Implement autonomously
 
-Implement one task until its draft PR is safe for the user to inspect. The controller owns the state machine. The implementation agent owns the branch. The opposite model family reviews after the first green CI result.
+Implement one task until its draft PR is safe for the user to inspect. The controller owns the state machine. The implementation agent owns the branch. Pi runs every agent session. The opposite model family reviews after the first green CI result.
 
 ## Guardrails
 
@@ -23,36 +23,32 @@ Implement one task until its draft PR is safe for the user to inspect. The contr
 - Put human-reviewable proof in the PR description. Do not leave proof only in an agent report, a local file, or a CI log.
 - Write the PR description with ASD-STE100 Simplified Technical English principles. Use short, direct sentences, active voice, common words, and one instruction or claim per sentence. Define necessary acronyms and avoid vague claims.
 - Never expose secrets, personal data, access tokens, or unsafe production data in proof artifacts.
-- Start every Claude Code session, including every Fable implementer or reviewer, with the exact `--dangerously-skip-permissions` flag. This requirement has no opt-out in this skill.
-- Pass `--dangerously-skip-permissions` to Claude Code after the `herdr agent start` `--` separator. Never rely on an alias, saved setting, inherited session, or default permission mode.
-- Never send a task prompt to a Claude Code session until the controller verifies that the launch arguments contain `--dangerously-skip-permissions`.
+## 1. Select the models
 
-## 1. Select the crew
+Use the implementation model in the invocation when it is explicit. Otherwise ask the user to select one pairing before creating anything:
 
-Use the implementation choice in the invocation when it is explicit. Otherwise ask the user to select one crew before creating anything:
+1. Pi with `claude-bridge/claude-fable-5` implements. Pi with `openai-codex/gpt-5.6-sol` reviews.
+2. Pi with `openai-codex/gpt-5.6-sol` implements. Pi with `claude-bridge/claude-fable-5` reviews.
 
-1. Claude Code with Fable implements. Pi with `openai-codex/gpt-5.6-sol` reviews.
-2. Pi with `openai-codex/gpt-5.6-sol` implements. Claude Code with Fable reviews.
+Ask: `Which model should implement: (1) Claude Fable 5, or (2) GPT-5.6 Sol? Pi runs both roles, and the other model family will review.`
 
-Ask: `Who should implement: (1) Claude Code with Fable, or (2) Pi with GPT-5.6 Sol? The other family will review.`
+There is no default pairing. Use GPT fast mode for GPT-5.6 Sol unless the user opts out. Preserve any explicit thinking level. Always launch Pi, including for `claude-bridge/*` models. Do not launch Claude Code or substitute another model when a required model is unavailable.
 
-There is no default crew. Use GPT fast mode whenever Pi participates unless the user opts out. Preserve any explicit effort or thinking level. Do not substitute another harness or model when a required profile is unavailable.
-
-**Complete when:** the implementer and opposite-family reviewer profiles are explicit.
+**Complete when:** the Pi implementer and opposite-family Pi reviewer models are explicit.
 
 ## 2. Establish control and evidence
 
-If `HERDR_ENV=1`, read and follow `../herdr/SKILL.md`. Otherwise read and follow `../herdr-dispatch/SKILL.md`; this explicit skill invocation authorizes external Herdr control.
+If `HERDR_ENV=1`, read and follow `../herdr/SKILL.md`. Otherwise read and follow `../herdr-dispatch/SKILL.md`; this explicit skill invocation authorizes external Herdr control. For this workflow, the Pi-only routing in this skill overrides the dispatch adapter's generic routing for unqualified Claude model names. A full `claude-bridge/*` identifier always runs through `--kind pi`.
 
 Verify:
 
 - Herdr connectivity and the current repository workspace;
 - repository root, default or requested base branch, and worktree path policy;
 - `git`, `gh`, and GitHub authentication;
-- both required agent profiles;
-- the exact Claude Code launch form `herdr agent start <name> --kind claude --pane <pane-id> -- --model fable --dangerously-skip-permissions` for every Fable role, with `--effort <level>` added before the permission flag when needed;
-- Claude Code `auto-review` when Claude reviews;
-- Pi fast mode and `pi-subagents` when Pi participates;
+- both required models in Pi;
+- the exact Pi launch form `herdr agent start <name> --kind pi --pane <pane-id> -- --model <provider/model>` for every role;
+- Pi's review loop for both model families;
+- GPT fast mode for GPT-5.6 Sol and `pi-subagents` for every role;
 - the repository instructions, task source, acceptance criteria, PR template, and validation commands.
 
 Define an end-to-end verification plan before dispatch. Choose proof that matches the user-visible or system-visible behavior. Examples include:
@@ -67,10 +63,10 @@ Prefer a real workflow over an isolated function call. Use the safest representa
 
 Maintain this run record in the controller context:
 
-| Worktree workspace | Path | Branch | Implementer | Implementer launch | Reviewer | Reviewer launch | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
+| Worktree workspace | Path | Branch | Implementer model | Implementer launch | Reviewer model | Reviewer launch | Draft PR | Head SHA | CI 1 | Review | CI 2 | Blocker |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
-For each Claude Code role, record controller-visible evidence that its launch arguments included `--dangerously-skip-permissions`. Record `not applicable` for Pi roles.
+For each role, record controller-visible evidence that Herdr launched Pi with the selected full provider/model identifier.
 
 **Complete when:** every field needed for dispatch is known, and no prerequisite is assumed.
 
@@ -78,22 +74,22 @@ For each Claude Code role, record controller-visible evidence that its launch ar
 
 Use `herdr worktree create` under the current repository workspace. Pass the base, branch, path, label, and `--no-focus` explicitly. Never replace this with manual `git worktree` commands or a normal Herdr tab.
 
-Start the selected implementer in the worktree's root pane. If Claude Code with Fable implements, use this launch shape and include the flag literally:
+Start the selected implementer in the worktree's root pane with Pi and the full provider/model identifier:
 
 ```bash
 herdr agent start <implementer-name> \
-  --kind claude \
+  --kind pi \
   --pane <worktree-root-pane-id> \
-  -- --model fable --dangerously-skip-permissions
+  -- --model <provider/model>
 ```
 
-When an effort level is explicit, add `--effort <level>` after `--model fable` and before the permission flag. Do not put the permission flag before the `--` separator. Before dispatch, verify the actual launch arguments from controller-visible command or process evidence. A Claude agent's statement about its permission mode is not evidence. If the flag is missing, do not send the task. Terminate that session with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement. Do not continue by answering permission prompts.
+Use `claude-bridge/claude-fable-5` or `openai-codex/gpt-5.6-sol` according to the selected pairing. Preserve an explicit Pi thinking level in the launch arguments. Before dispatch, verify the actual launch arguments from controller-visible command or process evidence. If Pi or the model is wrong, do not send the task. Terminate that session with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement.
 
-If Pi implements, ensure fast mode is enabled before dispatch unless the user opted out. Prepare a source-grounded prompt from [the owner brief](references/owner-brief.md). Include the task, acceptance criteria, governing plans or issues, repository rules, validation commands, non-goals, branch details, and autonomy boundary.
+When GPT-5.6 Sol implements, ensure fast mode is enabled before dispatch unless the user opted out. Prepare a source-grounded prompt from [the owner brief](references/owner-brief.md). Include the task, acceptance criteria, governing plans or issues, repository rules, validation commands, non-goals, branch details, and autonomy boundary.
 
 Submit without a synchronous wait. Use the active Herdr adapter's wake mechanism to resume when the owner becomes idle, done, or blocked. Read the full handoff after each wake. Give routine implementation and CI repairs back to the same owner.
 
-**Complete when:** one implementation owner is working in the tracked worktree with a complete brief, and any Claude Code owner has verified `--dangerously-skip-permissions` launch evidence.
+**Complete when:** one Pi implementation owner is working in the tracked worktree with a complete brief and verified model launch evidence.
 
 ## 4. Reach the first green draft
 
@@ -120,29 +116,26 @@ The controller must independently verify the PR URL, draft state, current head S
 
 Create a new non-focused tab inside the existing worktree workspace, rooted at the same worktree path. This is a tab, not another worktree. Start the selected opposite-family reviewer there.
 
-If Claude Code with Fable reviews, use this launch shape and include the flag literally:
+Start the reviewer with Pi and the selected opposite-family model:
 
 ```bash
 herdr agent start <reviewer-name> \
-  --kind claude \
+  --kind pi \
   --pane <reviewer-tab-root-pane-id> \
-  -- --model fable --dangerously-skip-permissions
+  -- --model <provider/model>
 ```
 
-When an effort level is explicit, add `--effort <level>` after `--model fable` and before the permission flag. Verify the launch arguments before sending the review task. If the flag is missing, do not prompt or use that reviewer session. Terminate it with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement.
+Verify Pi and the full provider/model launch arguments before sending the review task. If either is wrong, do not prompt or use that reviewer session. Terminate it with Herdr key controls, verify that its pane returned to a shell, then start and verify a correctly configured replacement.
 
 Prepare its task from [the reviewer brief](references/reviewer-brief.md). Give it the same task, plan, acceptance criteria, base, PR, repository rules, and validation contract as the implementer.
 
-Use the reviewer's native mechanism:
+Use Pi's `/review-loop` with implementation authorized. Enable GPT fast mode when the reviewer is GPT-5.6 Sol unless the user opted out.
 
-- Pi: enable fast mode unless opted out, then use `/review-loop` with implementation authorized.
-- Claude Code: use `auto-review`.
-
-Both paths use the same contract: fresh review context, evidence-backed triage, accepted edits, and re-review until clean or capped at three rounds. The reviewer may edit the worktree only while the implementer is idle. It leaves all changes uncommitted and unpushed.
+The review uses fresh context, evidence-backed triage, accepted edits, and re-review until clean or capped at three rounds. The reviewer may edit the worktree only while the implementer is idle. It leaves all changes uncommitted and unpushed.
 
 Read the complete review report and inspect the worktree after the reviewer becomes idle. Record accepted fixes, rejected findings, validation, remaining findings, and the stop reason. Also record whether the reviewer found the end-to-end proof relevant, readable, and consistent with the implementation. The reviewer does not update the PR.
 
-**Complete when:** the reviewer is idle, its loop is clean or capped, all edits and remaining findings are accounted for, and any Claude Code reviewer has verified `--dangerously-skip-permissions` launch evidence.
+**Complete when:** the Pi reviewer is idle, its loop is clean or capped, all edits and remaining findings are accounted for, and its model launch evidence is verified.
 
 ## 6. Return ownership to the implementer
 
@@ -173,7 +166,7 @@ Verify directly:
 - every required or relevant check for the final head is successful;
 - worktree is clean;
 - both Herdr agents are idle;
-- every Claude Code agent used in the run has controller-visible launch evidence for `--dangerously-skip-permissions`;
+- every agent used in the run has controller-visible evidence for Pi and the selected model;
 - no unresolved actionable review finding remains;
 - the PR description has an `End-to-end verification` section;
 - its proof is safe, durable, viewable from GitHub, and matches the final head;
@@ -188,8 +181,8 @@ Report:
 
 - PR: <URL> (#<number>)
 - Final head: <SHA>
-- Implementer: <harness, model, mode>
-- Reviewer: <harness, model, mode>
+- Implementer: <Pi model and mode>
+- Reviewer: <Pi model and mode>
 - CI: <checks and conclusions>
 - Local validation: <commands and results>
 - End-to-end proof: <PR description section and linked or embedded artifacts>

@@ -21,8 +21,7 @@ AUTHORITATIVE INPUTS
 - End-to-end flow and proof contract: <flow, environment, expected evidence, and allowed fallback>
 
 MECHANISM
-<For Pi: Ensure GPT fast mode is enabled unless the user opted out. Invoke /review-loop with implementation authorized.>
-<For Claude Code: Invoke auto-review.>
+Run this review in Pi. Invoke `/review-loop` with implementation authorized. If the selected reviewer is GPT-5.6 Sol, enable GPT fast mode unless the user opted out.
 
 Use at most three review rounds. Each round must inspect the current repository and diff with fresh review context. Review implementation quality and fidelity to every acceptance criterion.
 
