@@ -1,7 +1,7 @@
 {
   "defaultModel": "gpt-5.6-sol",
   "defaultProvider": "openai-codex",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "enabledModels": [
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-sol",
@@ -60,7 +60,8 @@
         "!themes/gruvbox-dark.json"
       ]
     },
-    "https://github.com/vvv850/pi-pretty-codeblocks"
+    "https://github.com/vvv850/pi-pretty-codeblocks",
+    "npm:pi-claude-bridge"
   ],
   "subagents": {
     "agentOverrides": {

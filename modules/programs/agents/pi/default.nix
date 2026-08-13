@@ -29,6 +29,23 @@
   };
 
   piDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/pi";
+
+  claudeBridgeConfig = (pkgs.formats.json {}).generate "claude-bridge.json" {
+    askClaude = {
+      enabled = true;
+      defaultMode = "read";
+      defaultIsolated = false;
+      allowFullMode = true;
+      appendSkills = true;
+    };
+    provider = {
+      plan = "max";
+      longContextExtraUsage = false;
+      strictMcpConfig = true;
+      autoMemoryEnabled = false;
+      pathToClaudeCodeExecutable = "${config.home.profileDirectory}/bin/claude";
+    };
+  };
 in {
   home.packages = [piWrapped];
 
@@ -50,6 +67,8 @@ in {
 
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
+
+  home.file.".pi/agent/claude-bridge.json".source = claudeBridgeConfig;
 
   home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
 
