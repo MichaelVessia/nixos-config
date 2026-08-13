@@ -1,6 +1,6 @@
 {
-  "defaultModel": "claude-fable-5",
-  "defaultProvider": "claude-bridge",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultProvider": "openai-codex",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "openai-codex/gpt-5.6-luna",
