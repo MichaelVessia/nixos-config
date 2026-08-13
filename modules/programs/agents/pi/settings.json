@@ -60,7 +60,6 @@
         "!themes/gruvbox-dark.json"
       ]
     },
-    "https://github.com/vvv850/pi-pretty-codeblocks",
     "npm:pi-claude-bridge"
   ],
   "subagents": {
@@ -85,7 +84,7 @@
       }
     }
   },
-  "theme": "catppuccin-mocha",
+  "theme": "catppuccin-latte/catppuccin-mocha",
   "lastChangelogVersion": "0.84.1",
   "hideThinkingBlock": false
 }

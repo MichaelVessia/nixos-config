@@ -37,6 +37,14 @@
     # rewrite config.toml (which would otherwise drop our keybindings).
     onboarding = false;
 
+    # Follow Ghostty/macOS appearance changes. Herdr forwards the same semantic
+    # light/dark state to pane applications, allowing Pi to switch in sync.
+    theme = {
+      auto_switch = true;
+      dark_name = "catppuccin";
+      light_name = "catppuccin-latte";
+    };
+
     keys = {
       prefix = "ctrl+;";
 
