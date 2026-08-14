@@ -68,7 +68,12 @@ in {
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
 
-  home.file.".pi/agent/claude-bridge.json".source = claudeBridgeConfig;
+  # Claude Bridge writes runtime state (for example startupNoticeShown) into
+  # this file, so it cannot remain a Home Manager symlink into the Nix store.
+  # Re-assert the declarative config as a writable file on each activation.
+  home.activation.claudeBridgeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    install -Dm644 ${claudeBridgeConfig} "$HOME/.pi/agent/claude-bridge.json"
+  '';
 
   home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
 
