@@ -77,7 +77,8 @@ in {
 
   home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
 
-  home.file.".pi/agent/extensions/prompt-stash.js".source = "${garagePiExtensions}/extensions/prompt-stash.js";
+  home.file.".pi/agent/extensions/prompt-stash.ts".source =
+    config.lib.file.mkOutOfStoreSymlink "${piDir}/prompt-stash.ts";
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
