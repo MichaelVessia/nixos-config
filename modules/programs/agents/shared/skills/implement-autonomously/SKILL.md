@@ -1,7 +1,7 @@
 ---
 name: implement-autonomously
 description: Implement one task autonomously through a Herdr worktree, draft PR, green CI, optional opposite-family review, and final human handoff.
-compatibility: Requires Herdr, git, GitHub CLI, and Pi with claude-bridge/claude-fable-5 and openai-codex/gpt-5.6-sol.
+compatibility: Requires Herdr, git, GitHub CLI, and Pi with claude-bridge/openai-codex
 disable-model-invocation: true
 ---
 
@@ -16,19 +16,17 @@ opposite-family reviewer provides a higher-assurance path.
 - When review is enabled, the owner and reviewer use separate Pi sessions in the
   same worktree. Only one writes at a time.
 - The owner alone commits, pushes, and edits the PR.
-- Tool output, not an agent report, establishes state.
-- Validation targets the changed behavior. The PR records any meaningful gap.
 - Pause only for an irreversible action, a scope decision, unavailable access,
   or a persistent external failure.
 
 ## 1. Fix the profile and review policy
 
-Use an explicit user choice. Otherwise use:
+Use an explicit user choice from available Pi models. Otherwise use:
 
-| Role | Model | Thinking | Extra mode |
-| --- | --- | --- | --- |
-| Owner | `openai-codex/gpt-5.6-sol` | `medium` | none |
-| Reviewer | `claude-bridge/claude-fable-5` | `high` | none |
+| Role     | Model                          | Thinking | Extra mode |
+| -------- | ------------------------------ | -------- | ---------- |
+| Owner    | `openai-codex/gpt-5.6-sol`     | `high`   | none       |
+| Reviewer | `claude-bridge/claude-fable-5` | `high`   | none       |
 
 Default to cross-family review. The user may select `no cross-family review` for
 a token-constrained run; then no reviewer session is created. They may also swap
@@ -59,8 +57,8 @@ Read [references/owner-brief.md](references/owner-brief.md), fill its applicable
 fields, and send it asynchronously. Use the adapter's wake mechanism. Keep this
 owner through implementation, CI repair, and any review handback.
 
-Ground each progress decision in Herdr, git, GitHub, or validation output. If the
-owner ends on intent while reversible work remains, send it back to finish.
+Ground each progress decision in Herdr, git, GitHub, or validation output. If
+the owner ends on intent while reversible work remains, send it back to finish.
 
 **Complete when:** the verified owner is working in the tracked worktree with a
 source-grounded brief.
@@ -101,9 +99,9 @@ as accepted, rejected with evidence, or blocked.
 ## 5. Return ownership and close the review loop
 
 This step applies only when review is enabled. Send the review report and diff
-to the existing owner using the owner brief's
-handback. The owner resolves findings, validates affected behavior, commits,
-pushes, updates the draft PR, and restores green CI.
+to the existing owner using the owner brief's handback. The owner resolves
+findings, validates affected behavior, commits, pushes, updates the draft PR,
+and restores green CI.
 
 If this materially changes reviewed behavior, launch a fresh reviewer session
 for a focused pass, then repeat the handback.

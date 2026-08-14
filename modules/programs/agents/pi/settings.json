@@ -12,7 +12,7 @@
     "claude-bridge/claude-opus-5"
   ],
   "npmCommand": [
-    "npm"
+    "pi-package-manager"
   ],
   "packages": [
     {
@@ -64,7 +64,9 @@
         "!themes/gruvbox-dark.json"
       ]
     },
-    "npm:pi-claude-bridge"
+    "npm:pi-claude-bridge",
+    "npm:@zhcsyncer/pi-recap",
+    "git:github.com/MichaelVessia/garage"
   ],
   "subagents": {
     "agentOverrides": {

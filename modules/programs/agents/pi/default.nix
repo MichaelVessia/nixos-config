@@ -6,9 +6,23 @@
   ...
 }: let
   piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
-  garagePiExtensions = inputs.garage.packages.${pkgs.system}.pi-extensions;
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
+
+  # Pi normally manages packages with npm. Garage is a Bun workspace and uses
+  # workspace: dependency specifiers that npm cannot install, so dispatch only
+  # that Git package to Bun while preserving npm for every other Pi package.
+  piPackageManager = pkgs.writeShellApplication {
+    name = "pi-package-manager";
+    runtimeInputs = [pkgs.bun pkgs.jq pkgs.nodejs];
+    text = ''
+      if [ -f package.json ] && jq -e '.name == "garage-monorepo"' package.json >/dev/null; then
+        exec bun "$@"
+      fi
+
+      exec npm "$@"
+    '';
+  };
 
   # Wrap pi so that:
   #   - `npm install -g` writes to a user-writable dir instead of the read-only Nix store
@@ -47,7 +61,7 @@
     };
   };
 in {
-  home.packages = [piWrapped];
+  home.packages = [piWrapped piPackageManager];
 
   # Out-of-store symlinks so pi can edit its own settings (install packages,
   # switch models/themes) with the drift landing in the git working tree for
@@ -57,9 +71,11 @@ in {
   # reaching the repo.
   #
   # Notes on non-obvious values in settings.json (JSON can't hold comments):
-  #   - npmCommand ["npm"]: forces plain `npm install` (with devDeps) for git
-  #     sources instead of `npm install --omit=dev`. Required for packages like
-  #     pi-diff-review whose `prepare` script depends on devDeps (husky).
+  #   - npmCommand ["pi-package-manager"]: uses plain npm installs (with
+  #     devDeps) for normal packages, but dispatches Garage to Bun because its
+  #     workspace: dependency specifiers are not supported by npm. Plain npm is
+  #     required for packages like pi-diff-review whose `prepare` script
+  #     depends on devDeps (husky).
   #   - pi-autoresearch fork pin: pins Ctrl+Alt+X for the dashboard toggle to
   #     avoid pi's built-in Ctrl+X shortcut.
   home.file.".pi/agent/settings.json".source =
@@ -74,12 +90,6 @@ in {
   home.activation.claudeBridgeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     install -Dm644 ${claudeBridgeConfig} "$HOME/.pi/agent/claude-bridge.json"
   '';
-
-  home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
-
-  home.file.".pi/agent/extensions/prompt-stash.js".source = "${garagePiExtensions}/extensions/prompt-stash.js";
-
-  home.file.".pi/agent/extensions/session-model-default.js".source = "${garagePiExtensions}/extensions/session-model-default.js";
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
