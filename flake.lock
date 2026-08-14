@@ -667,11 +667,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786573074,
-        "narHash": "sha256-UcQMFC77tkOJMBL2o85iz4NKB7smjA+nXVcbNR6Ca6U=",
-        "ref": "refs/heads/master",
-        "rev": "744202f0d66cf4eace1aad5e675e07b36043247b",
-        "revCount": 151,
+        "lastModified": 1786678208,
+        "narHash": "sha256-7UTvfYFnIIXnPDzIKXqAAl/mBVcyblT8bcWFCuYgy3s=",
+        "ref": "master",
+        "rev": "abe020c75ba071fb2f9a5c7f5d7322f38651a66e",
+        "revCount": 155,
         "type": "git",
         "url": "ssh://git@github.com/MichaelVessia/garage.git"
       },
