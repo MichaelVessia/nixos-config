@@ -66,7 +66,8 @@
     },
     "npm:pi-claude-bridge",
     "npm:@zhcsyncer/pi-recap",
-    "git:github.com/MichaelVessia/garage"
+    "git:github.com/MichaelVessia/garage",
+    "https://github.com/fitchmultz/pi-stash"
   ],
   "subagents": {
     "agentOverrides": {
