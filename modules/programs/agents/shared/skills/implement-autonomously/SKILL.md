@@ -25,8 +25,12 @@ Use an explicit user choice from available Pi models. Otherwise use:
 
 | Role     | Model                          | Thinking | Extra mode |
 | -------- | ------------------------------ | -------- | ---------- |
-| Owner    | `openai-codex/gpt-5.6-sol`     | `high`   | none       |
-| Reviewer | `claude-bridge/claude-fable-5` | `high`   | none       |
+| Owner    | `openai-codex/gpt-5.6-sol`    | `high`   | none       |
+| Reviewer | `claude-bridge/claude-opus-5` | `high`   | none       |
+
+When cross-family review selects a Claude-family reviewer, default to
+`claude-bridge/claude-opus-5`. Use Fable only when the user explicitly requests
+it. Preserve an explicit user model choice.
 
 Default to cross-family review. The user may select `no cross-family review` for
 a token-constrained run; then no reviewer session is created. They may also swap
