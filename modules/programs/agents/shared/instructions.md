@@ -16,6 +16,11 @@
 
 - Never use `--no-verify` to bypass commit hooks unless explicitly instructed.
 
+# Issue Tracking
+
+- When you start work on an issue, update its status to `In Progress`, or the
+  equivalent status, in the appropriate issue tracker.
+
 # Environment
 
 - Prefer the repository's existing Nix environment. Do not mutate it without

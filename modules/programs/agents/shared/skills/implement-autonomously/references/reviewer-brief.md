@@ -19,6 +19,13 @@ SOURCES
 - Non-goals: <items>
 - Required validation: <commands>
 
+REVIEW METHOD
+- Review skill: <repository-specific skill, generic skill, or none>
+
+Use the selected review skill as the primary review process. Prefer a
+repository-specific or task-specific review skill over a generic review skill.
+If no review skill is available, follow this brief directly.
+
 Inspect the implementation and relevant tests directly. Verify each finding
 against the real code path before editing. Fix concrete defects in correctness,
 security, data integrity, concurrency, type safety, boundary handling, or tests

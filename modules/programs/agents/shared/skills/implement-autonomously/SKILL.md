@@ -87,12 +87,16 @@ idle.
 
 With `no cross-family review`, skip to Step 6 after confirming the Step 3 gate.
 Otherwise create a new Pi session in a separate tab at the same worktree. Launch
-and verify the reviewer profile. Read
+and verify the reviewer profile. Inspect the review skills available to that
+session. Prefer a repository-specific or task-specific review skill when one is
+present. Otherwise use the best matching generic review skill. If no review
+skill is available, follow the reviewer brief directly. Read
 [references/reviewer-brief.md](references/reviewer-brief.md), fill its fields,
-and send it asynchronously.
+including the selected review skill, and send it asynchronously.
 
-The reviewer inspects and tests the change directly. It may leave fixes in the
-working tree while the owner is idle. It does not commit or change GitHub.
+The reviewer uses the selected skill to inspect and test the change directly.
+It may leave fixes in the working tree while the owner is idle. It does not
+commit or change GitHub.
 
 When review finishes, inspect the report and diff. Give every finding and edit
 an explicit disposition before returning ownership.
