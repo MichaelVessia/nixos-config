@@ -68,8 +68,6 @@ in {
       [ -f "$SECRETS_DIR/radarr_api_key" ] && export RADARR_API_KEY="$(cat "$SECRETS_DIR/radarr_api_key")"
       [ -f "$SECRETS_DIR/prowlarr_url" ] && export PROWLARR_URL="$(cat "$SECRETS_DIR/prowlarr_url")"
       [ -f "$SECRETS_DIR/prowlarr_api_key" ] && export PROWLARR_API_KEY="$(cat "$SECRETS_DIR/prowlarr_api_key")"
-      [ -f "$SECRETS_DIR/sabnzbd_url" ] && export SABNZBD_URL="$(cat "$SECRETS_DIR/sabnzbd_url")"
-      [ -f "$SECRETS_DIR/sabnzbd_api_key" ] && export SABNZBD_API_KEY="$(cat "$SECRETS_DIR/sabnzbd_api_key")"
       [ -f "$SECRETS_DIR/jellyseerr_url" ] && export JELLYSEERR_URL="$(cat "$SECRETS_DIR/jellyseerr_url")"
       [ -f "$SECRETS_DIR/jellyseerr_api_key" ] && export JELLYSEERR_API_KEY="$(cat "$SECRETS_DIR/jellyseerr_api_key")"
       [ -f "$SECRETS_DIR/caddy_url" ] && export CADDY_URL="$(cat "$SECRETS_DIR/caddy_url")"

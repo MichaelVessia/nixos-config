@@ -15,7 +15,6 @@
     "jellyseerr"
     "prowlarr"
     "radarr"
-    "sabnzbd"
     "sonarr"
     "tailscale"
     "tubearchivist"

@@ -1,78 +1,76 @@
 ---
 name: sabnzbd
-description: Inspect and control my self-hosted SABnzbd Usenet downloader. Use when the user asks about SABnzbd, NZB downloads, the Usenet queue, download history, server stats, or asks to pause/resume/delete a download.
-allowed-tools: Bash, WebFetch
+description: Inspect and control my self-hosted SABnzbd Usenet downloader through Executor and Garage MCP. Use when the user asks about SABnzbd, NZB downloads, the Usenet queue, download history, server stats, or asks to pause, resume, or delete a queued download.
 ---
 
 # SABnzbd
 
-Manage my self-hosted SABnzbd (HTTP API, v4.5+): check the download queue and
-history, pause/resume the queue, delete queue items, and view server stats.
+Use the `garage-mcp` integration through the Executor MCP server. Do not call a
+local `sabnzbd` binary, use raw curl, request an API key, or expose service
+credentials. Executor owns the connection and approval policy; Garage MCP owns
+the domain-shaped SABnzbd tools.
 
-## Environment
+## Executor workflow
 
-Credentials are exported into the shell by sops-nix (see
-`modules/programs/shell.nix`):
+1. Load Executor's execution guidance with `executor_skills({ name: "execute" })`
+   when it is not already available.
+2. Use `executor_execute` to call tools under this connection:
+   `garage-mcp.user.garageMcpHomelab`.
+3. Treat an operation as successful only when Executor returns `ok: true` and
+   the MCP tool result has `isError: false`. Read the domain value from
+   `structuredContent`.
+4. If Executor pauses a mutation for approval, surface the approval request and
+   resume through `executor_resume`. Never bypass or replace the policy.
 
-- `SABNZBD_URL` — base URL (no trailing slash)
-- `SABNZBD_API_KEY` — API key from SABnzbd Config -> General -> Security
+Example Executor sandbox call:
 
-The `sabnzbd` CLI reports a JSON error envelope when they are missing.
-
-## Auth model
-
-SABnzbd authenticates via query string, not header. Every request includes
-`?apikey=$SABNZBD_API_KEY&output=json&mode=<mode>`. The CLI handles this.
-
-## CLI
-
-Use the installed `sabnzbd` CLI for common operations. It always emits a single
-JSON envelope with `ok`, `command`, `result` or `error`, and `next_actions`.
-`scripts/sabnzbd.sh` remains as a compatibility shim for older workflows.
-
-```bash
-sabnzbd status                                # version, uptime, paused, disk, warnings
-sabnzbd version                               # SABnzbd version
-sabnzbd queue --limit 50                      # active download queue
-sabnzbd history --limit 50                    # recent history
-sabnzbd pause                                 # pause the queue
-sabnzbd resume                                # resume the queue
-sabnzbd delete <nzo_id>                       # remove from queue, keep files
-sabnzbd delete <nzo_id> --files --confirm-delete-files
-sabnzbd server-stats                          # day/week/month/total bytes per server
+```ts
+const result = await tools[
+  "garage-mcp.user.garageMcpHomelab.sabnzbd_queue"
+]({ limit: 50 })
+return result
 ```
 
-For anything not covered (adding NZBs, speed limits, history retry, category
-changes), call the API directly with `$SABNZBD_URL` and `$SABNZBD_API_KEY` —
-see `references/api-endpoints.md` and `references/quick-reference.md`.
+## Available tools
 
-## Workflow: routine status checks
+| Tool | Input | Purpose |
+| --- | --- | --- |
+| `sabnzbd_status` | `{}` | Version, uptime, pause state, storage, speed limits, and warnings |
+| `sabnzbd_version` | `{}` | Running SABnzbd version |
+| `sabnzbd_queue` | `{ limit: 1..100 }` | Bounded active queue and totals |
+| `sabnzbd_history` | `{ limit: 1..100 }` | Bounded recent history and totals |
+| `sabnzbd_server_stats` | `{}` | Day/week/month/total usage by news server |
+| `sabnzbd_pause` | `{}` | Pause the global queue; Executor approval required |
+| `sabnzbd_resume` | `{}` | Resume the global queue; Executor approval required |
+| `sabnzbd_delete` | `{ nzoId, deleteFiles, confirmDeleteFiles }` | Delete one queue item; Executor approval required |
 
-Use the high-level subcommands first (`status`, `queue`, `history`,
-`server-stats`). Drop to raw curl for niche operations.
+NZO IDs look like `SABnzbd_nzo_xxxxxxxx`. Obtain the exact ID from
+`sabnzbd_queue`; never infer one from a display name.
 
-## Mutations: confirm first
+Executor policies must match these exact saved-connection addresses:
 
-Always confirm with the user before:
+- `garage-mcp.user.garageMcpHomelab.sabnzbd_pause`
+- `garage-mcp.user.garageMcpHomelab.sabnzbd_resume`
+- `garage-mcp.user.garageMcpHomelab.sabnzbd_delete`
 
-- `sabnzbd delete <nzo_id> --files --confirm-delete-files` (deletes downloaded files from disk)
-- `purge` style operations (`mode=queue&name=delete&value=all`)
-- Clearing history (`mode=history&name=delete&value=all`)
-- Speed-limit changes that affect ongoing downloads
-- Any custom POST against `/api` that mutates state
+All three policies were exercised through Executor and cancelled before tool
+invocation during migration verification.
 
-## References
+## Safety
 
-- `references/api-endpoints.md` — full API mode reference with
-  request/response shapes
-- `references/quick-reference.md` — copy-paste curl recipes for common ops
-- `references/troubleshooting.md` — auth, connection, and common error fixes
+- Read tools may run directly.
+- Pause and resume must pass Executor's approval policy.
+- Every delete must pass Executor's destructive-operation approval policy.
+- Before setting `deleteFiles: true`, explicitly confirm with the user that the
+  downloaded data should be removed from disk. Then set both `deleteFiles: true`
+  and `confirmDeleteFiles: true`; Garage MCP rejects the operation otherwise.
+- Do not execute a fake or real destructive operation merely to test policy.
+- Do not fall back to raw SABnzbd API calls for unsupported operations. Explain
+  that the operation is not exposed and propose adding a reviewed Garage MCP
+  tool.
 
-## Notes
+## Failure handling
 
-- API style is `?mode=<mode>` against a single `/api` endpoint, not REST.
-- `output=json` is required for JSON responses; default is XML.
-- SABnzbd lives on the LAN. If `$SABNZBD_URL` is unreachable, surface that to
-  the user rather than guessing.
-- NZO IDs look like `SABnzbd_nzo_xxxxxxxx` and identify both queue and history
-  items.
+Report Garage MCP's safe error code, message, and remediation. For connection or
+configuration failures, identify the failing Executor/Garage MCP integration;
+do not ask the user to export `SABNZBD_URL` or `SABNZBD_API_KEY` locally.

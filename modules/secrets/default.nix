@@ -27,8 +27,6 @@
     secrets.radarr_api_key.owner = "michaelvessia";
     secrets.prowlarr_url.owner = "michaelvessia";
     secrets.prowlarr_api_key.owner = "michaelvessia";
-    secrets.sabnzbd_url.owner = "michaelvessia";
-    secrets.sabnzbd_api_key.owner = "michaelvessia";
     secrets.jellyseerr_url.owner = "michaelvessia";
     secrets.jellyseerr_api_key.owner = "michaelvessia";
     secrets.caddy_url.owner = "michaelvessia";
