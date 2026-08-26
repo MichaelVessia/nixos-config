@@ -27,8 +27,7 @@ sops-nix. The flake configures `framework13`, `tts-pi`, `claude-casino`, and
   migration requires changing them.
 - Add new flake-referenced files to Git before evaluating; Git flakes ignore
   untracked files.
-- Do not hand-edit generated hardware configuration or
-  `modules/programs/garage-bun.nix`; follow each file's regeneration notes.
+- Do not hand-edit generated hardware configuration; follow each file's regeneration notes.
 - Never activate a configuration (`reload`, `nh ... switch`, or
   `*-rebuild switch`) unless the user explicitly asks. Validate by formatting,
   checking, evaluating, or building first.

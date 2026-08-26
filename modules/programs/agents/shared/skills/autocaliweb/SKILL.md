@@ -1,92 +1,28 @@
 ---
 name: autocaliweb
-description: Inspect and import content into my self-hosted AutoCaliWeb library. Use for catalog status, search, recent imports, shelves, metadata, or importing an ebook, comic, PDF, or audiobook.
-allowed-tools: Bash, WebFetch, AskUserQuestion
+description: Browse my self-hosted AutoCaliWeb ebook catalog through Executor and Garage MCP. Use for catalog status, statistics, books, recent additions, search, book metadata, or shelves.
 ---
 
 # AutoCaliWeb
 
-Read-only CLI for my self-hosted AutoCaliWeb instance: inspect OPDS status,
-catalog stats, books, recent imports, shelves, and individual book metadata.
+Use the `garage-mcp` integration through Executor. Do not call a local Garage CLI, use raw curl, request credentials, read local secret files, or attempt the retired Proxmox/file-ingestion workflow.
 
-## Environment
+## Workflow
 
-Credentials are exported into the shell by sops-nix and shell defaults:
+1. Load `executor_skills({ name: "execute" })` when needed.
+2. Call tools under `garage-mcp.user.garageMcpHomelab` with `executor_execute`.
+3. Treat a call as successful only when Executor returns `ok: true` and the MCP result has `isError: false`; read the domain value from `structuredContent`.
 
-- `AUTOCALIWEB_URL` - base UI/OPDS URL, defaults to `http://192.168.1.145:8083`
-- `AUTOCALIWEB_USERNAME` - login user
-- `AUTOCALIWEB_PASSWORD` - login password
+## Tools
 
-The `autocaliweb` CLI reports a JSON error envelope when required env vars are
-missing.
+- `autocaliweb_status`
+- `autocaliweb_version`
+- `autocaliweb_stats`
+- `autocaliweb_catalog`
+- `autocaliweb_books` with `{ limit: 1..100 }`
+- `autocaliweb_recent` with `{ limit: 1..100 }`
+- `autocaliweb_search` with `{ query, limit: 1..100 }`
+- `autocaliweb_book_info` with `{ uuid }`
+- `autocaliweb_shelves`
 
-## CLI
-
-Use the installed `autocaliweb` CLI for common operations. It always emits a
-single JSON envelope with `ok`, `command`, `result` or `error`, and
-`next_actions`.
-
-```bash
-autocaliweb                         # command tree and configuration health
-autocaliweb status                  # OPDS status and catalog stats
-autocaliweb version                 # alias for status
-autocaliweb stats                   # database counts
-autocaliweb catalog                 # top-level OPDS catalog entries
-autocaliweb books --limit 50        # bounded alphabetical book list
-autocaliweb recent --limit 25       # recently added books
-autocaliweb search "Foundation"     # search books through OPDS
-autocaliweb book-info <uuid>        # Calibre Companion metadata
-autocaliweb shelves                 # OPDS shelves visible to the user
-```
-
-## Workflows
-
-For a book lookup:
-
-1. Run `autocaliweb search "<title>" --limit 25`.
-2. Run `autocaliweb book-info <uuid>` for the best match.
-
-For import verification:
-
-1. Run `autocaliweb recent --limit 10` after AutoCaliWeb has had time to import.
-2. If the title is absent, run `autocaliweb search "<title>" --limit 25`.
-3. Do not claim an import completed unless it appears in AutoCaliWeb results.
-
-## Workflow: import a book
-
-The user must provide a readable local file or a direct HTTP(S) URL they are
-allowed to download. Do not search for pirated copies. Confirm before copying
-because AutoCaliWeb may import, convert, modify metadata, and move the queued
-file into the Calibre library.
-
-Environment:
-
-- `AUTOCALIWEB_INGEST_DIR` defaults to `/book-ingest`.
-- `AUTOCALIWEB_PROXMOX_HOST` defaults to `proxmox`.
-- `AUTOCALIWEB_CTID` defaults to `101`.
-
-Run:
-
-```bash
-bash scripts/add-book.sh <file-or-url> --dry-run
-bash scripts/add-book.sh <file-or-url>
-```
-
-The script copies local files without deleting the original and refuses to
-overwrite an existing destination. Never copy directly into
-`/calibre-library`; AutoCaliWeb and Calibre must update the metadata.
-
-After queuing:
-
-1. Report the ingest destination and that import is asynchronous.
-2. After AutoCaliWeb has had time to process it, use
-   `autocaliweb recent --limit 10` or `autocaliweb search "<title>"`.
-3. Do not claim the import completed until it appears in AutoCaliWeb.
-
-## Notes
-
-- Prefer bounded commands with `--limit` to keep context small.
-- If `reachable` is false in the command tree, surface the CLI error instead of
-  guessing at server state.
-- AutoCaliWeb imports asynchronously; an ingest copy means queued, not fully
-  imported.
+All tools are read-only. File upload, URL ingestion, and Proxmox operations are intentionally unsupported. Report Garage MCP's safe structured failure without asking for `AUTOCALIWEB_*` environment variables.

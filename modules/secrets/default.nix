@@ -21,28 +21,6 @@
     secrets.kuma_url.owner = "michaelvessia";
     secrets.kuma_username.owner = "michaelvessia";
     secrets.kuma_password.owner = "michaelvessia";
-    secrets.sonarr_url.owner = "michaelvessia";
-    secrets.sonarr_api_key.owner = "michaelvessia";
-    secrets.radarr_url.owner = "michaelvessia";
-    secrets.radarr_api_key.owner = "michaelvessia";
-    secrets.prowlarr_url.owner = "michaelvessia";
-    secrets.prowlarr_api_key.owner = "michaelvessia";
-    secrets.jellyseerr_url.owner = "michaelvessia";
-    secrets.jellyseerr_api_key.owner = "michaelvessia";
-    secrets.caddy_url.owner = "michaelvessia";
-    secrets.jellyfin_url.owner = "michaelvessia";
-    secrets.jellyfin_api_key.owner = "michaelvessia";
-    secrets.autocaliweb_url.owner = "michaelvessia";
-    secrets.autocaliweb_username.owner = "michaelvessia";
-    secrets.autocaliweb_password.owner = "michaelvessia";
-    secrets.tubearchivist_url.owner = "michaelvessia";
-    secrets.tubearchivist_username.owner = "michaelvessia";
-    secrets.tubearchivist_password.owner = "michaelvessia";
-    secrets.adguard_url.owner = "michaelvessia";
-    secrets.adguard_username.owner = "michaelvessia";
-    secrets.adguard_password.owner = "michaelvessia";
-    secrets.immich_url.owner = "michaelvessia";
-    secrets.immich_api_key.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────

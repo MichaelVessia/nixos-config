@@ -30,7 +30,6 @@
     "radarr"
     "sabnzbd"
     "sonarr"
-    "tailscale"
     "tubearchivist"
     "uptime-kuma"
   ];

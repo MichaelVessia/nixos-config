@@ -5,34 +5,7 @@
   pkgs-unstable,
   inputs,
   ...
-}: let
-  garageCliNames = [
-    "adguard"
-    "autocaliweb"
-    "caddy"
-    "immich"
-    "jellyfin"
-    "jellyseerr"
-    "prowlarr"
-    "radarr"
-    "sonarr"
-    "tailscale"
-    "tubearchivist"
-  ];
-
-  garageBun2nix = inputs.garage.inputs.bun2nix.packages.${pkgs.system}.default;
-  garageBunNix = import ./garage-bun.nix {garageSource = inputs.garage;};
-  garageBunDeps = garageBun2nix.fetchBunDeps {
-    bunNix = garageBunNix;
-  };
-
-  # garage CLIs only install on Linux (see home.packages), so the Darwin bun
-  # build workaround is no longer needed; the bunDeps fix still applies.
-  garageCli = name:
-    (inputs.garage.packages.${pkgs.system}.${name}).overrideAttrs (_old: {
-      bunDeps = garageBunDeps;
-    });
-in {
+}: {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs;
     [
@@ -116,7 +89,6 @@ in {
       inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi
     ]
-    ++ lib.optionals stdenv.isLinux (builtins.map garageCli garageCliNames)
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
       (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
