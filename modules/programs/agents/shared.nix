@@ -15,22 +15,11 @@
   personalSkillNames = dirNames ./shared/skills;
   googleWorkspaceSkillNames = dirNames gwsSkillsPath;
   homelabSkillNames = [
-    "adguard"
-    "autocaliweb"
-    "caddy"
     "freshrss"
     "home-assistant-manager"
     "homepage-add"
-    "immich"
-    "jellyfin"
-    "jellyseerr"
     "paperless"
-    "prowlarr"
     "proxmox"
-    "radarr"
-    "sabnzbd"
-    "sonarr"
-    "tubearchivist"
     "uptime-kuma"
   ];
   enabledPersonalSkillNames =
