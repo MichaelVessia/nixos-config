@@ -17,6 +17,7 @@
   homelabSkillNames = [
     "freshrss"
     "home-assistant-manager"
+    "homelab"
     "homepage-add"
     "paperless"
     "proxmox"
