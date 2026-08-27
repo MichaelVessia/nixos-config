@@ -32,6 +32,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Trust the homelab Caddy CA for internal HTTPS services such as Executor.
+  security.pki.certificateFiles = [./certs/caddy-local-root.crt];
+  # Bun does not automatically use the NixOS system trust bundle.
+  environment.sessionVariables.SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+
   # Set your time zone.
   time.timeZone = "America/New_York";
 
