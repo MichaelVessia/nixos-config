@@ -99,6 +99,30 @@
     },
     "bun2nix_3": {
       "inputs": {
+        "flake-parts": "flake-parts_3",
+        "nixpkgs": [
+          "garage",
+          "nixpkgs"
+        ],
+        "systems": "systems_5",
+        "treefmt-nix": "treefmt-nix_3"
+      },
+      "locked": {
+        "lastModified": 1778446047,
+        "narHash": "sha256-oQvcadh2BCkrog+SGrG6YffKJrveYpjj3TdQJWaKhaM=",
+        "owner": "nix-community",
+        "repo": "bun2nix",
+        "rev": "f2bc12af1a6369648aac41041ceeaa0b866599c6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "bun2nix",
+        "type": "github"
+      }
+    },
+    "bun2nix_4": {
+      "inputs": {
         "flake-parts": [
           "llm-agents",
           "flake-parts"
@@ -130,16 +154,16 @@
         "type": "github"
       }
     },
-    "bun2nix_4": {
+    "bun2nix_5": {
       "inputs": {
-        "flake-parts": "flake-parts_4",
+        "flake-parts": "flake-parts_5",
         "import-tree": "import-tree_3",
         "nixpkgs": [
           "paperless-cli",
           "nixpkgs"
         ],
-        "systems": "systems_7",
-        "treefmt-nix": "treefmt-nix_4"
+        "systems": "systems_9",
+        "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
         "lastModified": 1765198123,
@@ -155,16 +179,16 @@
         "type": "github"
       }
     },
-    "bun2nix_5": {
+    "bun2nix_6": {
       "inputs": {
-        "flake-parts": "flake-parts_5",
+        "flake-parts": "flake-parts_6",
         "import-tree": "import-tree_4",
         "nixpkgs": [
           "x-to-obsidian",
           "nixpkgs"
         ],
-        "systems": "systems_11",
-        "treefmt-nix": "treefmt-nix_5"
+        "systems": "systems_13",
+        "treefmt-nix": "treefmt-nix_6"
       },
       "locked": {
         "lastModified": 1765198123,
@@ -345,6 +369,28 @@
     "flake-parts_3": {
       "inputs": {
         "nixpkgs-lib": [
+          "garage",
+          "bun2nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1777988971,
+        "narHash": "sha256-qIoWPDs+0/8JecyYgE3gpKQxW/4bLW/gp45vow9ioCQ=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "0678d8986be1661af6bb555f3489f2fdfc31f6ff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_4": {
+      "inputs": {
+        "nixpkgs-lib": [
           "llm-agents",
           "nixpkgs"
         ]
@@ -363,7 +409,7 @@
         "type": "github"
       }
     },
-    "flake-parts_4": {
+    "flake-parts_5": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib_3"
       },
@@ -381,7 +427,7 @@
         "type": "github"
       }
     },
-    "flake-parts_5": {
+    "flake-parts_6": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib_4"
       },
@@ -440,7 +486,7 @@
     },
     "flake-utils_3": {
       "inputs": {
-        "systems": "systems_8"
+        "systems": "systems_6"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -458,7 +504,7 @@
     },
     "flake-utils_4": {
       "inputs": {
-        "systems": "systems_9"
+        "systems": "systems_10"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -476,7 +522,7 @@
     },
     "flake-utils_5": {
       "inputs": {
-        "systems": "systems_10"
+        "systems": "systems_11"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -495,6 +541,24 @@
     "flake-utils_6": {
       "inputs": {
         "systems": "systems_12"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_7": {
+      "inputs": {
+        "systems": "systems_14"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -552,12 +616,35 @@
         "type": "github"
       }
     },
+    "garage": {
+      "inputs": {
+        "bun2nix": "bun2nix_3",
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787841557,
+        "narHash": "sha256-574lqbfBhkc9fqX0eunp3uhT5Hu8gS1UmlADUCNkRoU=",
+        "ref": "master",
+        "rev": "8a4cbfff7939d6047e58325edd4ed7287245a42a",
+        "revCount": 174,
+        "type": "git",
+        "url": "ssh://git@github.com/MichaelVessia/garage.git"
+      },
+      "original": {
+        "ref": "master",
+        "type": "git",
+        "url": "ssh://git@github.com/MichaelVessia/garage.git"
+      }
+    },
     "ghostty": {
       "inputs": {
         "flake-compat": "flake-compat_2",
         "home-manager": "home-manager_2",
         "nixpkgs": "nixpkgs_3",
-        "systems": "systems_5",
+        "systems": "systems_7",
         "zig": "zig",
         "zon2nix": "zon2nix"
       },
@@ -716,11 +803,11 @@
     },
     "llm-agents": {
       "inputs": {
-        "bun2nix": "bun2nix_3",
-        "flake-parts": "flake-parts_3",
+        "bun2nix": "bun2nix_4",
+        "flake-parts": "flake-parts_4",
         "nixpkgs": "nixpkgs_4",
-        "systems": "systems_6",
-        "treefmt-nix": "treefmt-nix_3"
+        "systems": "systems_8",
+        "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
         "lastModified": 1786474833,
@@ -1096,8 +1183,8 @@
     },
     "paperless-cli": {
       "inputs": {
-        "bun2nix": "bun2nix_4",
-        "flake-utils": "flake-utils_3",
+        "bun2nix": "bun2nix_5",
+        "flake-utils": "flake-utils_4",
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
@@ -1122,6 +1209,7 @@
         "dms": "dms",
         "floai": "floai",
         "fmcal": "fmcal",
+        "garage": "garage",
         "ghostty": "ghostty",
         "googleworkspace-cli": "googleworkspace-cli",
         "home-manager": "home-manager_3",
@@ -1181,7 +1269,7 @@
     },
     "subq": {
       "inputs": {
-        "flake-utils": "flake-utils_4",
+        "flake-utils": "flake-utils_5",
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
@@ -1258,6 +1346,36 @@
         "type": "github"
       }
     },
+    "systems_13": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_14": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "systems_2": {
       "locked": {
         "path": "./nix/systems",
@@ -1302,7 +1420,6 @@
       }
     },
     "systems_5": {
-      "flake": false,
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
@@ -1333,6 +1450,7 @@
       }
     },
     "systems_7": {
+      "flake": false,
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
@@ -1424,6 +1542,28 @@
     "treefmt-nix_3": {
       "inputs": {
         "nixpkgs": [
+          "garage",
+          "bun2nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775636079,
+        "narHash": "sha256-pc20NRoMdiar8oPQceQT47UUZMBTiMdUuWrYu2obUP0=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "790751ff7fd3801feeaf96d7dc416a8d581265ba",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix_4": {
+      "inputs": {
+        "nixpkgs": [
           "llm-agents",
           "nixpkgs"
         ]
@@ -1442,7 +1582,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_4": {
+    "treefmt-nix_5": {
       "inputs": {
         "nixpkgs": [
           "paperless-cli",
@@ -1464,7 +1604,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_5": {
+    "treefmt-nix_6": {
       "inputs": {
         "nixpkgs": [
           "x-to-obsidian",
@@ -1489,7 +1629,7 @@
     "worktrunk": {
       "inputs": {
         "crane": "crane",
-        "flake-utils": "flake-utils_5",
+        "flake-utils": "flake-utils_6",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -1511,8 +1651,8 @@
     },
     "x-to-obsidian": {
       "inputs": {
-        "bun2nix": "bun2nix_5",
-        "flake-utils": "flake-utils_6",
+        "bun2nix": "bun2nix_6",
+        "flake-utils": "flake-utils_7",
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {

@@ -30,6 +30,10 @@
     ghostty.url = "github:ghostty-org/ghostty";
     niri.url = "github:sodiboo/niri-flake";
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
+    garage = {
+      url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     floai.url = "git+ssh://git@github.com/flocasts/floai.git?ref=master";
     subq.url = "github:MichaelVessia/subq";
 
@@ -69,6 +73,7 @@
     specialArgs = {
       inherit username inputs;
       pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+      enableHomelabSkills = false;
     };
   in {
     darwinConfigurations.flomac = darwin.lib.darwinSystem {

@@ -161,6 +161,13 @@
 
   sharedInstructions = builtins.readFile ../shared/instructions.md;
 
+  executorMcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" {
+    executor = {
+      type = "http";
+      url = "https://executor.lan/mcp";
+    };
+  };
+
   # Settings as Nix attrset
   settings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
@@ -374,6 +381,25 @@ in {
     home.activation.claudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       rm -f "$HOME/.claude/settings.json"
       install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
+    '';
+
+    # Claude stores user-scoped MCP configuration alongside mutable runtime
+    # state in ~/.claude.json. Replace only that field so the rest remains
+    # writable while keeping Executor as the sole user-scoped MCP server.
+    home.activation.claudeMcpConfig = lib.hm.dag.entryAfter ["claudeConfig"] ''
+      config_file="$HOME/.claude.json"
+      temporary_file="$(${pkgs.coreutils}/bin/mktemp)"
+
+      if [ -f "$config_file" ]; then
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} \
+          '.mcpServers = $mcpServers[0]' "$config_file" > "$temporary_file"
+      else
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} \
+          -n '{mcpServers: $mcpServers[0]}' > "$temporary_file"
+      fi
+
+      $DRY_RUN_CMD install -Dm600 "$temporary_file" "$config_file"
+      rm -f "$temporary_file"
     '';
 
     # Pre-cache the floai plugin marketplace on first activation so the

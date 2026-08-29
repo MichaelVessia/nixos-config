@@ -31,11 +31,15 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.hosts."192.168.1.252" = ["executor.lan"];
 
   # Trust the homelab Caddy CA for internal HTTPS services such as Executor.
   security.pki.certificateFiles = [./certs/caddy-local-root.crt];
-  # Bun does not automatically use the NixOS system trust bundle.
-  environment.sessionVariables.SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+  # Bun and Node do not consistently use the NixOS system trust bundle by default.
+  environment.sessionVariables = {
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+    NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-bundle.crt";
+  };
 
   # Set your time zone.
   time.timeZone = "America/New_York";
@@ -211,7 +215,22 @@
   };
 
   # Tailscale VPN
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "client";
+  };
+
+  # Keep the homelab subnet route enabled after reboots and Tailscale updates.
+  systemd.services.tailscale-accept-routes = {
+    description = "Accept Tailscale subnet routes";
+    after = ["tailscaled.service"];
+    wants = ["tailscaled.service"];
+    wantedBy = ["multi-user.target"];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      ${pkgs.tailscale}/bin/tailscale set --accept-routes=true
+    '';
+  };
 
   # ydotool for keyboard/mouse automation
   programs.ydotool.enable = true;

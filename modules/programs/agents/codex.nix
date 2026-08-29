@@ -18,8 +18,8 @@
         status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
       };
       mcp_servers = {
-        atlassian = {
-          url = "https://mcp.atlassian.com/v1/mcp";
+        executor = {
+          url = "https://executor.lan/mcp";
         };
       };
       otel = {

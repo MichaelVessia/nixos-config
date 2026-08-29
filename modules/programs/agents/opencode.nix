@@ -5,6 +5,11 @@
     experimental.openTelemetry = true;
     model = "openai/gpt-5.5-fast";
     provider.openai.models."gpt-5.5-fast".options.reasoningEffort = "xhigh";
+    mcp.executor = {
+      type = "remote";
+      url = "https://executor.lan/mcp";
+      enabled = true;
+    };
   };
   opencodeConfigFile = (pkgs.formats.json {}).generate "opencode.json" opencodeConfig;
 in {

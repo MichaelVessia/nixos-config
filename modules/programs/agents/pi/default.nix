@@ -6,20 +6,15 @@
   ...
 }: let
   piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
+  garagePiExtensions = inputs.garage.packages.${pkgs.system}.pi-extensions;
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
 
-  # Pi normally manages packages with npm. Garage is a Bun workspace and uses
-  # workspace: dependency specifiers that npm cannot install, so dispatch only
-  # that Git package to Bun while preserving npm for every other Pi package.
+  # Keep native build tools scoped to Pi's npm package installations.
   piPackageManager = pkgs.writeShellApplication {
     name = "pi-package-manager";
-    runtimeInputs = [pkgs.bun pkgs.jq pkgs.nodejs];
+    runtimeInputs = [pkgs.gcc pkgs.gnumake pkgs.nodejs pkgs.python3];
     text = ''
-      if [ -f package.json ] && jq -e '.name == "garage-monorepo"' package.json >/dev/null; then
-        exec bun "$@"
-      fi
-
       exec npm "$@"
     '';
   };
@@ -71,11 +66,8 @@ in {
   # reaching the repo.
   #
   # Notes on non-obvious values in settings.json (JSON can't hold comments):
-  #   - npmCommand ["pi-package-manager"]: uses plain npm installs (with
-  #     devDeps) for normal packages, but dispatches Garage to Bun because its
-  #     workspace: dependency specifiers are not supported by npm. Plain npm is
-  #     required for packages like pi-diff-review whose `prepare` script
-  #     depends on devDeps (husky).
+  #   - npmCommand ["pi-package-manager"]: uses plain npm installs with the
+  #     native build tools needed by some third-party Pi packages.
   #   - pi-autoresearch fork pin: pins Ctrl+Alt+X for the dashboard toggle to
   #     avoid pi's built-in Ctrl+X shortcut.
   home.file.".pi/agent/settings.json".source =
@@ -84,12 +76,20 @@ in {
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
 
+  home.file.".pi/agent/mcp.json".source =
+    config.lib.file.mkOutOfStoreSymlink "${piDir}/mcp.json";
+
   # Claude Bridge writes runtime state (for example startupNoticeShown) into
   # this file, so it cannot remain a Home Manager symlink into the Nix store.
   # Re-assert the declarative config as a writable file on each activation.
   home.activation.claudeBridgeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     install -Dm644 ${claudeBridgeConfig} "$HOME/.pi/agent/claude-bridge.json"
   '';
+
+  # Garage is a monorepo, so expose only its isolated Pi extension output
+  # instead of asking Pi's Git package manager to install the repository root.
+  home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
+  home.file.".pi/agent/extensions/session-model-default.js".source = "${garagePiExtensions}/extensions/session-model-default.js";
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
