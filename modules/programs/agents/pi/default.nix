@@ -10,6 +10,14 @@
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
 
+  # Pi and its MCP adapter run on Bun, which does not use NixOS's system CA
+  # bundle unless one of these variables is present. Set them in the wrapper so
+  # long-lived desktop/Herdr sessions cannot retain stale pre-rebuild values.
+  piCaWrapperFlags = lib.optionalString pkgs.stdenv.isLinux ''
+    --set SSL_CERT_FILE "/etc/ssl/certs/ca-bundle.crt" \
+    --set NODE_EXTRA_CA_CERTS "/etc/ssl/certs/ca-bundle.crt" \
+  '';
+
   # Keep native build tools scoped to Pi's npm package installations.
   piPackageManager = pkgs.writeShellApplication {
     name = "pi-package-manager";
@@ -33,7 +41,7 @@
         --set NPM_CONFIG_PREFIX "${npmGlobalDir}" \
         --set PI_SKIP_VERSION_CHECK 1 \
         --set PI_TELEMETRY 0 \
-        --prefix PATH : "${npmGlobalDir}/bin"
+        ${piCaWrapperFlags}--prefix PATH : "${npmGlobalDir}/bin"
     '';
   };
 
