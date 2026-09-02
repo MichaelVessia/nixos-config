@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   inputs,
@@ -19,7 +20,7 @@
       };
       mcp_servers = {
         executor = {
-          url = "https://executor.lan/mcp";
+          url = config.agentHarnesses.executor.url;
         };
       };
       otel = {

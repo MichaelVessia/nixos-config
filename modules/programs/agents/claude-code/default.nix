@@ -164,7 +164,7 @@
   executorMcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" {
     executor = {
       type = "http";
-      url = "https://executor.lan/mcp";
+      url = config.agentHarnesses.executor.url;
     };
   };
 

@@ -13,6 +13,8 @@
   home.username = "michael.vessia";
   home.homeDirectory = "/Users/michael.vessia";
 
+  agentHarnesses.executor.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+
   # Homebrew's tap-trust checks break `brew bundle --cleanup` during darwin
   # activation for third-party taps (humanlayer, nkzw-tech): `brew trust` state
   # does not survive brew bundle runs, so activation dies before home-manager

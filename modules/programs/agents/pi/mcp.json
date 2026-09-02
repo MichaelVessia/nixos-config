@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "executor": {
-      "url": "https://executor.lan/mcp",
-      "lifecycle": "lazy"
-    }
-  }
-}

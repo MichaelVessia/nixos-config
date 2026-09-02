@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   sharedInstructions = builtins.readFile ./shared/instructions.md;
   opencodeConfig = {
     "$schema" = "https://opencode.ai/config.json";
@@ -7,7 +11,7 @@
     provider.openai.models."gpt-5.5-fast".options.reasoningEffort = "xhigh";
     mcp.executor = {
       type = "remote";
-      url = "https://executor.lan/mcp";
+      url = config.agentHarnesses.executor.url;
       enabled = true;
     };
   };
