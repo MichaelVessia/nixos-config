@@ -27,13 +27,12 @@
     taps = [
       "humanlayer/humanlayer"
       "nkzw-tech/tap" # codiff
-      "rjyo/moshi"
+      "stablyai/orca"
     ];
 
     # CLI tools that work better from Homebrew
     brews = [
       "mas" # Mac App Store CLI
-      "moshi-hook"
       "mosh"
     ];
 
@@ -61,6 +60,7 @@
       "protonvpn"
       "raycast"
       "shottr"
+      "stablyai/orca/orca"
       "t3-code" # Minimal GUI for orchestrating AI coding agents (t3.codes)
       "tailscale-app"
       "libreoffice"
@@ -97,7 +97,7 @@
       if [ -x /opt/homebrew/bin/brew ]; then
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap humanlayer/humanlayer >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
-        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap rjyo/moshi >/dev/null
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap stablyai/orca >/dev/null
       fi
     '';
 
