@@ -12,7 +12,6 @@
     ./opencode.nix
     ./pi
     ./plannotator.nix
-    ./skill-cleanup.nix
     ./claude-code
   ];
 }

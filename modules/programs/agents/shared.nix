@@ -13,7 +13,29 @@
     lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir path));
   gwsSkillsPath = inputs.googleworkspace-cli + "/skills";
   personalSkillNames = dirNames ./shared/skills;
-  googleWorkspaceSkillNames = dirNames gwsSkillsPath;
+  enabledGoogleWorkspaceSkillNames = [
+    "gws-calendar"
+    "gws-calendar-agenda"
+    "gws-calendar-insert"
+    "gws-docs"
+    "gws-docs-write"
+    "gws-drive"
+    "gws-drive-upload"
+    "gws-gmail"
+    "gws-gmail-forward"
+    "gws-gmail-read"
+    "gws-gmail-reply"
+    "gws-gmail-reply-all"
+    "gws-gmail-send"
+    "gws-gmail-triage"
+    "gws-gmail-watch"
+    "gws-meet"
+    "gws-shared"
+    "gws-sheets"
+    "gws-sheets-append"
+    "gws-sheets-read"
+    "gws-slides"
+  ];
   homelabSkillNames = [
     "freshrss"
     "home-assistant-manager"
@@ -27,7 +49,7 @@
     if enableHomelabSkills
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
-  skillNames = enabledPersonalSkillNames ++ googleWorkspaceSkillNames;
+  skillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -55,10 +77,7 @@ in {
         personal.path = ./shared/skills;
         googleworkspace.path = gwsSkillsPath;
       };
-      skills = {
-        enable = enabledPersonalSkillNames;
-        enableAll = ["googleworkspace"];
-      };
+      skills.enable = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
       # top via perSkillSymlinks below. `structure = "link"` declares one
       # home.file entry per skill (recursive symlinks) so siblings written by

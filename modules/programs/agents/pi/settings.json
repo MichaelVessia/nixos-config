@@ -93,6 +93,6 @@
     }
   },
   "theme": "catppuccin-latte/catppuccin-mocha",
-  "lastChangelogVersion": "0.84.1",
-  "hideThinkingBlock": false
+  "lastChangelogVersion": "0.84.4",
+  "hideThinkingBlock": true
 }
