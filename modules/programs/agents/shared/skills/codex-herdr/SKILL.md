@@ -1,11 +1,18 @@
 ---
 name: codex-herdr
-description: "Control herdr from Codex. Use when the user says \"use Herder\" or asks to inspect, focus, prompt, spawn, or manage herdr workspaces, tabs, panes, or agents from a Codex session, without deciding whether they are inside or outside herdr."
+description: "Control herdr from the Codex Desktop app only. Use only when running in Codex Desktop and the user asks to inspect, focus, prompt, spawn, or manage herdr workspaces, tabs, panes, or agents. Do not invoke in Pi, Codex CLI, or other harnesses, even if they use a Codex model or the user says 'use Herder'."
 ---
 
 # codex-herdr
 
-Router for controlling herdr from Codex. "Herder" and "herder" in a request mean herdr; the CLI binary is always `herdr`. Pick the workflow from the environment; the user never has to.
+Router for controlling herdr from the **Codex Desktop app only**. The host
+application determines eligibility, not the model provider or model name. Pi
+running a Codex model is still Pi, not Codex Desktop. If the host is not known to
+be Codex Desktop, do not use this router; use the applicable native herdr skill
+instead.
+
+"Herder" and "herder" in a request mean herdr; the CLI binary is always `herdr`.
+Once the Desktop-only gate is satisfied, pick the workflow from the environment.
 
 1. Check the environment: `echo "${HERDR_ENV:-unset}"`.
 2. If `HERDR_ENV=1`, you are inside a herdr-managed pane. Read and follow the sibling `herdr` skill (`../herdr/SKILL.md`) — the native workflow.
