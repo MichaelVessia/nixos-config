@@ -1,15 +1,13 @@
 {
-  "defaultModel": "gpt-5.6-sol",
+  "defaultModel": "gpt-6-astra",
   "defaultProvider": "openai-codex",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "low",
   "enabledModels": [
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-terra",
     "claude-bridge/claude-fable-5",
-    "claude-bridge/claude-sonnet-5",
-    "claude-bridge/claude-haiku-4-5",
-    "claude-bridge/claude-opus-5"
+    "openai-codex/gpt-6-astra",
+    "claude-bridge/claude-opus-4-8"
   ],
   "npmCommand": [
     "pi-package-manager"
@@ -93,6 +91,6 @@
     }
   },
   "theme": "catppuccin-latte/catppuccin-mocha",
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "0.85.1",
   "hideThinkingBlock": true
 }
