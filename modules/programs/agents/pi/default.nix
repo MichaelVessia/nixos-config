@@ -56,7 +56,8 @@
 
   claudeBridgeConfig = (pkgs.formats.json {}).generate "claude-bridge.json" {
     askClaude = {
-      enabled = true;
+      # Delegate through Herdr; retain Claude Bridge only as a model provider.
+      enabled = false;
       defaultMode = "read";
       defaultIsolated = false;
       allowFullMode = true;
