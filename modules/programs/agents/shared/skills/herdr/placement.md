@@ -1,6 +1,6 @@
 # Local Herdr placement policy
 
-Shared by the native `herdr` skill and the external `herdr-dispatch` adapter. This is placement guidance, not authorization to control Herdr: follow the calling skill's environment and user-request gates first.
+Shared by the `herdr` CLI skill and the `herdr-dispatch` skill. This is placement guidance, not authorization to control Herdr: follow the calling skill's environment and user-request gates first.
 
 ## Choose the requested container
 
@@ -11,7 +11,7 @@ Shared by the native `herdr` skill and the external `herdr-dispatch` adapter. Th
 
 Inside Herdr, resolve caller context through `pane current --current` and live inventory, with inherited IDs as context—not the UI-focused pane. Outside Herdr, resolve the requested workspace/tab from live inventory and conversation context; do not use `--current` or assume the focused pane is yours. If the intended tab/workspace is ambiguous, ask before creating anything.
 
-If no container was requested, retain the calling skill's default: native Herdr uses a sibling split; external dispatch uses a named tab. Do not infer permission for a worktree from a request for a split or tab.
+If no container was requested, retain the calling skill's default: `herdr` CLI actions use a sibling split; dispatch uses a named tab, from inside or outside Herdr. Do not infer permission for a worktree from a request for a split or tab.
 
 ## Keep splits readable
 

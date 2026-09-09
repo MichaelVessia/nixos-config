@@ -1,18 +1,18 @@
 ---
 name: herdr-dispatch
-description: Dispatch self-contained work to Herdr agent tabs from a shell outside Herdr (HERDR_ENV unset). Use when the user explicitly asks to spawn, prompt, or follow up with a Herdr agent from outside Herdr.
+description: Dispatch self-contained work to a new Herdr agent, from inside or outside Herdr. Use when the user explicitly asks to spawn, dispatch, prompt, or follow up with a Herdr agent.
 ---
 
 # Herdr Dispatch
 
-External adapter for controlling Herdr from outside `HERDR_ENV=1`. The sibling `herdr` skill is the native, inside-Herdr workflow; do not load it here. Command syntax comes from the installed CLI's `--help`, not from this file.
+Works from inside Herdr (`HERDR_ENV=1`) or from an outside shell. The sibling `herdr` skill is the inside-only CLI reference for inspecting and controlling panes; dispatch does not need it. Command syntax comes from the installed CLI's `--help`, not from this file.
 
 Dispatch is a **handoff**: launch one self-contained session, verify the prompt arrived, return the **receipt**, and stop. The destination session owns the task. The sending chat does not poll, wait, or steer unless the user asks again.
 
 ## Rules
 
 - Act only on an explicit request to control Herdr. A request routed through `codex-herdr` counts.
-- Never treat the focused pane as yours. Resolve every destination from live inventory. IDs are opaque handles: re-resolve after moves, never derive them from sidebar order.
+- Inside Herdr, your own context comes from `herdr pane current --current`. Outside, never treat the focused pane as yours. Either way, resolve every destination from live inventory. IDs are opaque handles: re-resolve after moves, never derive them from sidebar order.
 - Follow the shared [placement policy](../herdr/placement.md) before creating any container. Unspecified placement means one short, task-named tab per agent with `--no-focus`.
 - Honor explicit harness, model, and effort. Unspecified choices come from Assignment type below. Ask when an explicit harness conflicts with the model family or the level is unsupported by the harness.
 - Never close or remove panes, tabs, workspaces, agents, or worktrees unless asked. If the requested workspace is not found, report the available ones; do not create a different context.
@@ -20,7 +20,7 @@ Dispatch is a **handoff**: launch one self-contained session, verify the prompt 
 
 ## Dispatch
 
-1. Verify connectivity and inventory with `herdr workspace list`. Resolve the requested workspace and tab from the JSON.
+1. Verify connectivity and inventory with `herdr workspace list`. Resolve the requested workspace and tab from the JSON; inside Herdr, an unspecified workspace is your current one.
 2. Create the requested split, tab, or worktree per the placement policy. Capture `result.pane.pane_id` for splits and `result.root_pane.pane_id` for tabs and worktrees.
 3. Pick the assignment type (see Assignment type) and start the agent in that pane: `herdr agent start <name> --kind <harness> --pane <pane-id> -- <flags>`. Names are short and unique; the pane ID is the fallback handle.
 4. Compose the handoff prompt (see Handoff) and submit it with `herdr agent prompt <name> "<prompt>"`, without `--wait`. The task goes in the prompt, not in startup argv.

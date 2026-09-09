@@ -14,10 +14,10 @@ instead.
 "Herder" and "herder" in a request mean herdr; the CLI binary is always `herdr`.
 Once the Desktop-only gate is satisfied, pick the workflow from the environment.
 
-1. Check the environment: `echo "${HERDR_ENV:-unset}"`.
-2. If `HERDR_ENV=1`, you are inside a herdr-managed pane. Read and follow the sibling `herdr` skill (`../herdr/SKILL.md`) — the native workflow.
-3. Otherwise, you are an external controller. The user's request that fired this skill is the explicit request `herdr-dispatch` requires. Read and follow the sibling `herdr-dispatch` skill (`../herdr-dispatch/SKILL.md`). Verify connectivity first with `herdr workspace list`; if it fails, herdr is not running — report that and stop.
+1. Spawning an agent and handing it a task is dispatch. Read and follow the sibling `herdr-dispatch` skill (`../herdr-dispatch/SKILL.md`) in either environment. The user's request that fired this skill is the explicit request it requires.
+2. Inspecting or controlling existing panes, tabs, and agents needs the CLI reference. Check `echo "${HERDR_ENV:-unset}"`. If `HERDR_ENV=1`, read and follow the sibling `herdr` skill (`../herdr/SKILL.md`). Otherwise use only the Follow-up commands in `herdr-dispatch`.
+3. Verify connectivity first with `herdr workspace list`; if it fails, herdr is not running. Report that and stop.
 
 ## Boundary
 
-The `herdr` skill's `HERDR_ENV` gate is intentional: it stops an outside shell from acting as if it owned the focused pane. Never set or fake `HERDR_ENV` to reach the native path, and never treat the focused pane as yours from outside. External control always goes through `herdr-dispatch`.
+The `herdr` skill's `HERDR_ENV` gate is intentional: it stops an outside shell from acting as if it owned the focused pane. Never set or fake `HERDR_ENV` to reach the native path, and never treat the focused pane as yours from outside. Outside Herdr, everything goes through `herdr-dispatch`.

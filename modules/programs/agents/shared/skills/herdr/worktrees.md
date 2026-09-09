@@ -1,6 +1,6 @@
 # Herdr worktree flow
 
-Shared by the native `herdr` skill and the external `herdr-dispatch` adapter. Applies only when the user asks for a Herdr worktree, worktree isolation, or a trackable worktree. Herdr has a first-class worktree flow (`herdr worktree create|open|list|remove`, plus the workspace menu's `New worktree` / `Open worktree...`); use it, never assemble the pieces by hand.
+Shared by the `herdr` CLI skill and the `herdr-dispatch` skill. Applies only when the user asks for a Herdr worktree, worktree isolation, or a trackable worktree. Herdr has a first-class worktree flow (`herdr worktree create|open|list|remove`, plus the workspace menu's `New worktree` / `Open worktree...`); use it, never assemble the pieces by hand.
 
 A worktree-backed child workspace is not a tab. `worktree create` makes a new workspace linked to the parent repo workspace; Herdr nests it under the parent and tracks branch, path, and removal. A tab whose cwd happens to be a worktree has none of that.
 
