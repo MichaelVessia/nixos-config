@@ -5,7 +5,7 @@ description: Dispatch self-contained work to a new Herdr agent, from inside or o
 
 # Herdr Dispatch
 
-Works from inside Herdr (`HERDR_ENV=1`) or from an outside shell. The sibling `herdr` skill is the inside-only CLI reference for inspecting and controlling panes; dispatch does not need it. Command syntax comes from the installed CLI's `--help`, not from this file.
+Works from inside Herdr (`HERDR_ENV=1`) or from an outside shell. Command syntax comes from the installed CLI's `--help`, not from this file. For CLI semantics that `--help` does not cover (agent lifecycle states, name rules, pane versus agent commands, JSON conventions), read the sibling [`herdr` skill](../herdr/SKILL.md) as reference. Its `HERDR_ENV` gate governs issuing control commands from inside Herdr, not reading the file.
 
 Dispatch is a **handoff**: launch one self-contained session, verify the prompt arrived, return the **receipt**, and stop. The destination session owns the task. The sending chat does not poll, wait, or steer unless the user asks again.
 
