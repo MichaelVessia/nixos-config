@@ -1,6 +1,6 @@
 ---
 name: adversarial-plan-review
-description: Run two heterogeneous fresh-context Herdr reviewers against both code quality and a governing plan, then synthesize evidence-backed feedback. Use when the user asks for a dual or adversarial review, code-versus-plan verification, or independent Claude and Pi reviewers before deciding whether a PR needs changes.
+description: Use two independent Herdr reviewers when a dual review or code-versus-plan review is requested.
 ---
 
 # Adversarial plan review

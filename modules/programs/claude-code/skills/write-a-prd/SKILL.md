@@ -1,12 +1,12 @@
 ---
 name: write-a-prd
-description: Create thorough PRDs through repo analysis and deep user interviews. Use for "create a PRD", "write requirements", "product spec", or "implementation plan". Writes PRDs to docs/prds and can optionally decompose them into local issue markdown files.
+description: Create thorough PRDs through repository analysis and detailed user interviews. Use for "create a PRD", "write requirements", "product spec", or "implementation plan". Writes PRDs to docs/prds and can optionally decompose them into local issue markdown files.
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion, Skill
 ---
 
 # Write a PRD
 
-Produce high-quality PRDs with explicit decisions, test strategy, and clear scope.
+Produce PRDs with explicit decisions, a test strategy, and clear scope.
 
 ## Arguments
 
@@ -17,7 +17,7 @@ Produce high-quality PRDs with explicit decisions, test strategy, and clear scop
 
 If mode is not explicit:
 - Default to `docs`
-- Use `issues` when user asks for issue decomposition, tracer bullets, or backlog generation
+- Use `issues` when the user asks for issue decomposition, vertical slices, or backlog generation
 
 ## Output Convention
 
@@ -58,11 +58,11 @@ Inspect the codebase before drafting:
 
 Call out mismatches between assumptions and repo reality.
 
-### 3. Interview Relentlessly
+### 3. Resolve Ambiguity
 
-Drive iterative questioning until major ambiguity is eliminated.
+Ask questions until all major ambiguities are resolved.
 
-Cover each branch of the design tree:
+Cover these decision areas:
 - Scope and explicit out-of-scope
 - Actors and workflows
 - Edge cases and failure recovery
@@ -70,7 +70,7 @@ Cover each branch of the design tree:
 - Performance, security, and operational constraints
 - UX states where relevant (loading, empty, error)
 
-Do not stop at vague answers, force concrete decisions.
+Ask for a concrete decision when an answer is vague.
 
 ### 4. Propose Deep Modules and Test Scope
 
@@ -143,7 +143,7 @@ Any further notes about the feature.
 
 ### 6. Optional Issue Decomposition (`issues` or `both`)
 
-Invoke `prd-to-issues` to decompose the approved PRD into tracer-bullet issue markdown files.
+Invoke `prd-to-issues` to decompose the approved PRD into vertical-slice issue markdown files.
 
 Requirements for generated issues:
 - Vertical slices, end-to-end behavior, not horizontal layer chunks
@@ -159,7 +159,7 @@ For docs PRD:
 - Check implementation/testing decisions are concrete and behavior-focused
 
 For issue output:
-- Check first issue is smallest end-to-end tracer bullet
+- Check that the first issue is the smallest end-to-end implementation
 - Check dependency graph is valid
 - Check each issue has status, blockers, and acceptance criteria
 

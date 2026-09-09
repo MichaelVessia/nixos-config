@@ -108,7 +108,7 @@ does not contain those artifacts.
 
 Previous report detection still applies. Check the user's home directory or
 the Plannotator plans directory (`${PLANNOTATOR_DATA_DIR:-~/.plannotator}/plans/`) for existing `compound-planning-report*.html` files. If
-found, offer the same incremental vs full choice as Plannotator mode. In
+found, use the requested scope, defaulting to a full analysis. For an update request, use the prior report's cutoff. In
 incremental mode, filter the parser output by timestamp rather than by filename
 date — use the `timestamp` field in each JSON record.
 
@@ -121,12 +121,8 @@ Treat the emitted JSON part files as the clean source dataset.
 
 ### Batching
 
-- **Small datasets (< 200 records):** read the part files directly without extra agents
-- **Medium datasets (200-800 records):** split by part file or time range into 2-4 agents
-- **Large datasets (800+ records):** split by part file groups or balanced time ranges
-
-All extraction agents should use `model: "haiku"` — they're doing straightforward
-file reading and structured extraction, not reasoning.
+Choose direct processing or batches based on record size and available context.
+Delegate only when available and authorized. Honor explicit model choices.
 
 Each extraction agent should read every record in its assigned part files and write
 clean markdown output to:
@@ -194,9 +190,8 @@ The reduction step stays conceptually the same:
 - evolution over time
 - corrective prompt instructions
 
-Use `model: "sonnet"` for reduction agents, same as Plannotator mode. The
-two-stage reduce (partial reduces for 21+ extraction files) also applies when
-there are many part files.
+Combine partial analyses when the extraction exceeds available context. The
+same requirements apply to direct processing and delegated analysis.
 
 But interpret the dataset correctly:
 

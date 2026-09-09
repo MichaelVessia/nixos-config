@@ -1,6 +1,6 @@
 ---
 name: freshrss
-description: Access and manage my FreshRSS instance. Use for RSS reading, search, recommendations, subscriptions, auto-categorization, uncategorized-feed cleanup, or subscribing to an email newsletter through Kill the Newsletter.
+description: Read, search, and organize the personal FreshRSS library, including email newsletter subscriptions.
 allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 

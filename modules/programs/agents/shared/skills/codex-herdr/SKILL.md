@@ -1,6 +1,6 @@
 ---
 name: codex-herdr
-description: "Control herdr from the Codex Desktop app only. Use only when running in Codex Desktop and the user asks to inspect, focus, prompt, spawn, or manage herdr workspaces, tabs, panes, or agents. Do not invoke in Pi, Codex CLI, or other harnesses, even if they use a Codex model or the user says 'use Herder'."
+description: Route explicit Herdr control requests from Codex Desktop. Not for Codex CLI or Pi.
 ---
 
 # codex-herdr

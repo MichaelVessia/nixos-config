@@ -1,9 +1,6 @@
 ---
 name: homepage-add
-description: |
-  Add a new service to the Homepage dashboard. Use when a new container or VM
-  has been set up on Proxmox and needs to be added to Homepage. Discovers IP
-  and port automatically from the container.
+description: Add a Proxmox-hosted service to the personal Homepage dashboard.
 allowed-tools: Bash, Read, Edit, Write, AskUserQuestion
 ---
 

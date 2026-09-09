@@ -29,9 +29,11 @@
 
 # Testing
 
-- Cover new observable contracts. Every bug fix needs a regression test.
-- Run focused validation locally. CI runs the full suite.
-- Test behavior, not implementation details.
+- Use focused checks for changed behavior and regression tests for reproducible
+  bugs. Documentation edits need content and link checks, not system builds.
+- Complete the requested work and relevant verification. Fix failures caused by
+  the change and rerun affected checks. Stop when checks pass or a specific
+  blocker prevents completion. CI runs the full suite.
 
 # Obsidian Vault
 

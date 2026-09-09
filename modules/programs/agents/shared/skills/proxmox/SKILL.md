@@ -1,9 +1,6 @@
 ---
 name: proxmox
-description: |
-  Proxmox VE sysadmin for home lab infrastructure. Use when triaging services,
-  checking container/VM status, viewing logs, managing resources, or debugging
-  self-hosted apps. Can discover infrastructure dynamically via SSH.
+description: Inspect or manage the personal Proxmox VE hosts, containers, and virtual machines through SSH.
 allowed-tools: Bash, Read
 ---
 

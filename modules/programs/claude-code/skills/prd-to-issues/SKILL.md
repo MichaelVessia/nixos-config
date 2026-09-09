@@ -1,12 +1,12 @@
 ---
 name: prd-to-issues
-description: Break a PRD into independently-grabbable implementation issues using vertical slices (tracer bullets). Use when user wants to decompose a PRD into actionable issues/tasks. Writes local markdown issue files next to the PRD instead of creating GitHub issues.
+description: Break a PRD into independently assignable implementation issues using vertical slices. Use when the user wants to decompose a PRD into actionable issues or tasks. Writes local markdown issue files next to the PRD instead of creating GitHub issues.
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
 # PRD to Issues
 
-Break a PRD into independently-grabbable issues using vertical slices (tracer bullets).
+Break a PRD into independently assignable vertical slices.
 
 ## Process
 
@@ -26,13 +26,13 @@ Read key modules and integration layers referenced in the PRD. Identify:
 
 ### 3. Draft vertical slices
 
-Break the PRD into tracer bullet issues. Each issue must be a thin vertical slice that cuts through all needed layers end-to-end, not a horizontal slice of one layer.
+Break the PRD into vertical-slice issues. Each issue must implement a narrow, complete path through all required layers, not one horizontal layer.
 
 <vertical-slice-rules>
 - Each slice delivers a narrow but complete path through all required layers
 - A completed slice is demoable or verifiable on its own
 - Prefer many thin slices over few thick slices
-- The first slice should be the simplest possible end-to-end tracer bullet
+- The first slice should be the simplest possible end-to-end implementation
 - Later slices add breadth: edge cases, additional user stories, polish
 </vertical-slice-rules>
 
@@ -50,7 +50,7 @@ Ask:
 - Is granularity right (too coarse or too fine)?
 - Are dependencies correct?
 - Should any slices be merged or split?
-- Is first tracer bullet ordered correctly?
+- Is the first end-to-end slice ordered correctly?
 - Are any slices missing?
 
 Iterate until approved.

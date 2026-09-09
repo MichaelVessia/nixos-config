@@ -1,13 +1,6 @@
 ---
 name: obsidian-save
-description: |
-  Save current session context to Obsidian vault. INVOKE THIS SKILL when user:
-  - Says "save to obsidian", "note this to obsidian", "add to vault"
-  - Wants to capture session insights to their notes
-  - Says "save this session", "dump to obsidian"
-  - Asks to "create a note from this conversation"
-  - Mentions wanting to remember or archive the current discussion
-  Trigger phrases: "save to obsidian", "note this", "add to vault", "save session", "dump to notes", "obsidian note"
+description: Save conversation decisions, solutions, or notes to the personal Obsidian vault when requested.
 allowed-tools: Bash, Write
 ---
 
@@ -59,27 +52,6 @@ source: claude-code
 ```
 
 5. **Confirm**: Echo the full path and brief summary of what was captured.
-
-## Prompt Steering
-
-The user's prompt is your primary guide. Examples:
-- **Title**: "save to obsidian: webpack config fixes" → title is "webpack-config-fixes"
-- **Focus**: "just the solution" → skip context, emphasize what worked
-- **Format**: "as a checklist" → use `- [ ]` items instead of prose
-- **Filter**: "only the API changes" → exclude unrelated discussion
-
-When no direction given, default to a balanced summary of key outcomes.
-
-## Examples
-
-| User says | Action |
-|-----------|--------|
-| "save this to obsidian" | Summarize full session, auto-generated title |
-| "note this discussion about auth" | Save with title "auth" as slug |
-| "save to obsidian, focus on the fix we found" | Emphasize the solution, minimize context |
-| "add to vault as a how-to guide for setting up the dev env" | Structure as step-by-step guide, not bullet summary |
-| "dump to obsidian, just the architecture decisions we made" | Filter to only architectural choices |
-| "save session, skip the debugging tangents" | Omit failed attempts, focus on outcomes |
 
 ## Notes
 

@@ -1,6 +1,6 @@
 ---
 name: uptime-kuma
-description: Manage Uptime Kuma monitors, tags, notifications, maintenance windows, and status pages. Use when the user asks about uptime monitoring, service health, adding monitors, checking status, or managing alerts.
+description: Inspect or configure monitors, notifications, maintenance windows, and status pages in Uptime Kuma.
 allowed-tools: Bash, AskUserQuestion
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: plannotator-setup-goal
 disable-model-invocation: true
-description: Turn an idea or objective into a goal package for /goal. Interviews the user, builds a reviewed fact sheet via Plannotator, then explores the codebase to produce an execution plan.
+description: Prepare a goal package for /goal with a Plannotator interview, reviewed facts, and an execution plan.
 ---
 
 # Setup Goal
@@ -12,7 +12,7 @@ Turn an idea into a goal package at `goals/<slug>/` through structured discovery
 
 ### 1. Rearticulate
 
-State back what the user wants in your own words. If the conversation already has rich context, summarize it. If the goal is bare or vague, do minimal shallow exploration of the codebase to ground your understanding. Keep it to 2-3 sentences. Wait for the user to confirm or correct before continuing.
+State back what the user wants in your own words. If the conversation already has rich context, summarize it. If the goal is bare or vague, do minimal shallow exploration of the codebase to ground your understanding. Keep it to 2-3 sentences. Ask for confirmation only when an unresolved interpretation would change the goal's scope. Otherwise continue with the stated understanding.
 
 Create the goal directory once the slug is clear:
 
@@ -24,12 +24,12 @@ Use `goals/<slug>/` for both working JSON files and final docs. The JSON files a
 
 **Browser session patience rule:** Plannotator goal setup is a user-driven browser session. After launching an interview or facts command, be absolutely patient and keep waiting on the user until they submit, dismiss, or explicitly ask you to stop. Do not close, kill, restart, refresh, or open a second copy just because the UI is idle or the user is taking time. Never close and reopen the session as a way to update state; if a rerun is needed after the prior session ends, update the working JSON file and launch a new command from that file.
 
-**Optional: grill first (deep, one-at-a-time interview).** Before building the compact interview bundle, *suggest* a grilling pass whenever the goal is vague or carries many interdependent decisions — and run one whenever the user asks for it ("grill me first"). This is opt-in: for a clear, well-scoped goal, skip it and go straight to the bundle, so grilling never fights the bundle's "fewer, higher-leverage questions" philosophy. When you grill, run the protocol below verbatim, then fold the resolved decisions forward into a higher-quality interview bundle (Phase 2) — or, if grilling fully resolves scope, straight into the fact sheet (Phase 3).
+**Optional: interview first.** Before building the compact interview bundle, suggest a one-question-at-a-time interview when the goal is vague or has many dependent decisions. Run it when the user asks for it ("grill me first"). For a clear, limited goal, start with the bundle. After the interview, include the decisions in the interview bundle (Phase 2). If the interview fully resolves the scope, continue to the fact sheet (Phase 3).
 
-<!-- Grilling protocol below adapted verbatim from the /grill-me skill by Matt Pocock (MIT-licensed):
+<!-- Grilling protocol below adapted from the /grill-me skill by Matt Pocock (MIT-licensed):
      https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md -->
 
-> Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+> Interview me about each part of this plan until we reach a shared understanding. Review each decision and its dependencies. For each question, provide your recommended answer.
 >
 > Ask the questions one at a time.
 >
@@ -52,7 +52,7 @@ Question areas that usually matter:
 - What edge cases to consider
 - What constraints or precedent apply
 
-**If a question can be answered by exploring the codebase, explore the codebase instead of asking.** Only include questions where the user's judgment is actually needed. Prefer fewer, higher-leverage questions over exhaustive obvious ones.
+**If code inspection can answer a question, inspect the code instead of asking.** Only include questions that need the user's judgment. Prefer a small set of questions that affect important decisions.
 
 Write the interview bundle before showing it to the user:
 

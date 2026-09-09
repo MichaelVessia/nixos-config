@@ -1,6 +1,6 @@
 ---
 name: paperless
-description: Search and manage documents in Paperless-ngx document management system. Use when the user asks about documents, invoices, receipts, tax forms, bills, or wants to search their document library.
+description: Search or manage invoices, receipts, and other documents stored in the personal Paperless-ngx library.
 allowed-tools: Bash, Read
 ---
 
