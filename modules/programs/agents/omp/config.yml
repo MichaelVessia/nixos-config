@@ -1,6 +1,6 @@
 setupVersion: 2
-enabledProviders:
-  - openai-codex
+enabledModels:
+  - openai-codex/*
 modelRoles:
   default: openai-codex/gpt-5.6-sol:medium
   slow: openai-codex/gpt-6-astra:xhigh
