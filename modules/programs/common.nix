@@ -89,13 +89,13 @@
       inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi
     ]
-    ++ lib.optionals stdenv.isDarwin [
+    ++ lib.optionals (stdenv.isDarwin && inputs ? firstmate) [
+      inputs.firstmate.packages.${pkgs.system}.default
       pngpaste # grab images from clipboard
       (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
-      inputs.llm-agents.packages.${pkgs.system}.orca
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       xclip # X11 clipboard provider
