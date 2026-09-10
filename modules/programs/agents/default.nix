@@ -10,6 +10,7 @@
     ./agentsview.nix
     ./codex.nix
     ./opencode.nix
+    ./omp
     ./pi
     ./plannotator.nix
     ./claude-code
