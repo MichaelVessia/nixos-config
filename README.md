@@ -36,6 +36,17 @@ run `nix flake update` without flocasts SAML access. `flomac` keeps that input i
 - `secrets/` - Encrypted secret files (safe to commit)
 - `scripts/` - Helper scripts (pre-commit hooks, etc.)
 
+## OMP Configuration
+
+OMP uses OpenAI only. Use Herdr for Claude sessions. The tracked
+[OMP configuration](modules/programs/agents/omp/config.yml) defines model roles,
+approval mode, and status-line settings. YOLO mode lets tools run without approval.
+
+Home Manager links `~/.omp/agent/config.yml` to the file under
+`~/nixos-config/modules/programs/agents/omp/`. Keep the checkout at
+`~/nixos-config`. Changes made through `/settings` or `omp config set` update
+the tracked file. Review its Git diff before committing.
+
 ## Secrets Management
 
 Uses [sops-nix](https://github.com/Mic92/sops-nix) with age encryption.
