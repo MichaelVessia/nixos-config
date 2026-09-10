@@ -2,7 +2,6 @@
 .opencode/
 .claude/
 result
-modules/programs/agents/omp/config.yml.lock
 result-*
 *.img
 .grove/*

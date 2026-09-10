@@ -89,7 +89,7 @@
       inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi
     ]
-    ++ lib.optionals (stdenv.isDarwin && inputs ? firstmate) [
+    ++ lib.optionals stdenv.isDarwin [
       inputs.firstmate.packages.${pkgs.system}.default
       pngpaste # grab images from clipboard
       (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
