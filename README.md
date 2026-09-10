@@ -18,13 +18,13 @@ Or manually:
 # NixOS
 sudo nixos-rebuild switch --flake .#framework13
 
-# macOS (nix-darwin; flomac has a host-local flake for private floai)
+# macOS (nix-darwin; flomac deployment entry point)
 sudo darwin-rebuild switch --flake ./hosts/flomac#flomac
 ```
 
-The root flake intentionally excludes the private `floai` input so Linux hosts can
-run `nix flake update` without flocasts SAML access. `flomac` keeps that input in
-`hosts/flomac/flake.nix` with its own `hosts/flomac/flake.lock`.
+Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
+input. Updating it requires GitHub SSH authentication and flocasts SAML access.
+The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
 ## Directory Structure
 
