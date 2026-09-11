@@ -8,7 +8,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-CACHE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/opencode-free-model"
+CACHE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/opencode2-free-model"
 CACHE_TTL=86400  # 24 hours
 
 get_free_model() {
@@ -38,4 +38,4 @@ if [ -z "${MODEL:-}" ]; then
     fi
 fi
 
-opencode run -m "$MODEL" "$*"
+opencode2 run -m "$MODEL" "$*"
