@@ -20,10 +20,6 @@
     };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
-    firstmate = {
-      url = "path:/Users/michael.vessia/projects/firstmate";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
 
     nvf = {
       url = "github:NotAShelf/nvf";

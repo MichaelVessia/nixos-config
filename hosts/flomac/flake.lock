@@ -212,23 +212,6 @@
         "type": "github"
       }
     },
-    "firstmate": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-unstable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1789052303,
-        "narHash": "sha256-B+3J11CfiHWGHOmmfDs/nVqBCdKX+5XulwPulkf3Oyc=",
-        "path": "/Users/michael.vessia/projects/firstmate",
-        "type": "path"
-      },
-      "original": {
-        "path": "/Users/michael.vessia/projects/firstmate",
-        "type": "path"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -1071,7 +1054,6 @@
         "agent-skills-nix": "agent-skills-nix",
         "bun2nix": "bun2nix",
         "darwin": "darwin",
-        "firstmate": "firstmate",
         "floai": "floai",
         "garage": "garage",
         "ghostty": "ghostty",
