@@ -95,6 +95,7 @@
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [
+      inputs.llm-agents.packages.${pkgs.system}.orca
       signal-desktop # secure messaging
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       xclip # X11 clipboard provider
