@@ -86,7 +86,6 @@
       inputs.llm-agents.packages.${pkgs.system}.herdr
       inputs.llm-agents.packages.${pkgs.system}.hunk
       inputs.llm-agents.packages.${pkgs.system}.omp
-      inputs.llm-agents.packages.${pkgs.system}.opencode
       # pi is installed (wrapped) from modules/programs/agents/pi
     ]
     ++ lib.optionals stdenv.isDarwin [

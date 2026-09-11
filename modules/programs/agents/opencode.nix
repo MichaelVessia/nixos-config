@@ -1,24 +1,33 @@
 {
   config,
+  inputs,
   pkgs,
   ...
 }: let
-  sharedInstructions = builtins.readFile ./shared/instructions.md;
-  opencodeConfig = {
-    "$schema" = "https://opencode.ai/config.json";
-    experimental.openTelemetry = true;
-    model = "openai/gpt-5.5-fast";
-    provider.openai.models."gpt-5.5-fast".options.reasoningEffort = "xhigh";
-    mcp.executor = {
-      type = "remote";
-      url = config.agentHarnesses.executor.url;
-      enabled = true;
-    };
+  opencodePkg = inputs.llm-agents.packages.${pkgs.system}.opencode2;
+  opencodeWrapped = pkgs.symlinkJoin {
+    name = "opencode2-wrapped-${opencodePkg.version or "0"}";
+    paths = [opencodePkg];
+    nativeBuildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram $out/bin/opencode2 \
+        --set OPENCODE_EXECUTOR_URL "${config.agentHarnesses.executor.url}"
+    '';
   };
-  opencodeConfigFile = (pkgs.formats.json {}).generate "opencode.json" opencodeConfig;
+  sharedInstructions = builtins.readFile ./shared/instructions.md;
+  opencodeDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/opencode";
 in {
   config = {
+    home.packages = [opencodeWrapped];
+
     home.file.".config/opencode/AGENTS.md".text = sharedInstructions;
-    home.file.".config/opencode/opencode.json".source = opencodeConfigFile;
+
+    # Keep OpenCode's server and terminal-client settings writable while
+    # recording changes made through the CLI/TUI in the repository. OpenCode 2
+    # follows these symlinks when updating either file.
+    home.file.".config/opencode/opencode.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${opencodeDir}/opencode.json";
+    home.file.".config/opencode/cli.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${opencodeDir}/cli.json";
   };
 }

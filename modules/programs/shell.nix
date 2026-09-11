@@ -68,12 +68,9 @@ in {
       [ -f "$SECRETS_DIR/dd_app_key" ] && export DD_APP_KEY="$(cat "$SECRETS_DIR/dd_app_key")"
       [ -f "$SECRETS_DIR/dd_api_key" ] && export DD_API_KEY="$(cat "$SECRETS_DIR/dd_api_key")"
 
-      # AI agent telemetry -> Datadog (shared key for Claude Code + Codex + opencode)
+      # AI agent telemetry -> Datadog (shared key for Claude Code + Codex)
       if [ -f "$SECRETS_DIR/dd_telemetry_api_key" ]; then
         export DD_TELEMETRY_API_KEY="$(cat "$SECRETS_DIR/dd_telemetry_api_key")"
-        # opencode only enables OTEL when the generic base endpoint is set.
-        export OTEL_EXPORTER_OTLP_ENDPOINT="https://otlp.datadoghq.com"
-        export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
         # Claude Code OTEL
         export CLAUDE_CODE_ENABLE_TELEMETRY=1
         export OTEL_LOGS_EXPORTER=otlp
@@ -119,7 +116,7 @@ in {
       co = "codex";
       coy = "codex --yolo";
       cory = "codex --resume --yolo";
-      oc = "opencode";
+      oc = "opencode2";
 
       # eza aliases (ls replacement)
       ls = "eza";

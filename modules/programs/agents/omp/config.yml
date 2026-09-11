@@ -1,0 +1,48 @@
+setupVersion: 2
+enabledModels:
+  - openai-codex/*
+modelRoles:
+  default: openai-codex/gpt-5.6-sol:medium
+  slow: openai-codex/gpt-6-astra:xhigh
+  plan: openai-codex/gpt-6-astra:xhigh
+  task: openai-codex/gpt-5.6-sol:medium
+  smol: openai-codex/gpt-5.6-sol:low
+  vision: openai-codex/gpt-6-astra:medium
+  designer: openai-codex/gpt-5.6-sol:high
+  advisor: openai-codex/gpt-5.6-sol:medium
+  commit: openai-codex/gpt-5.3-codex-spark:low
+cycleOrder:
+  - smol
+  - default
+  - slow
+defaultThinkingLevel: auto
+hideThinkingBlock: false
+autoResume: false
+advisor:
+  enabled: false
+prewalk:
+  enabled: false
+task:
+  isolation:
+    enabled: false
+tools:
+  approvalMode: yolo
+symbolPreset: unicode
+theme:
+  dark: titanium
+  light: light
+composer:
+  shape: pi
+statusLine:
+  preset: custom
+  compactThinkingLevel: false
+  leftSegments:
+    - model
+    - path
+    - git
+    - subagents
+  rightSegments:
+    - session_name
+    - context_pct
+dev:
+  autoqaConsent: denied
