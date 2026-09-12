@@ -47,6 +47,9 @@ Home Manager links `~/.omp/agent/config.yml` to the file under
 `~/nixos-config`. Changes made through `/settings` or `omp config set` update
 the tracked file. Review its Git diff before committing.
 
+Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
+`agentHarnesses.executor.url` as OMP's `executor` HTTP MCP server.
+
 ## Secrets Management
 
 Uses [sops-nix](https://github.com/Mic92/sops-nix) with age encryption.
