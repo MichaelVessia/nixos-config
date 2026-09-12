@@ -4,7 +4,7 @@ Reached from `herdr-dispatch` Assignment type. Recovery profiles, one per provid
 
 | Provider | Fallback launch |
 |---|---|
-| OpenAI | `--kind pi -- --model openai-codex/gpt-5.6-sol --thinking medium` |
+| OpenAI | `--kind omp -- --model openai-codex/gpt-5.6-sol --thinking medium` |
 | Anthropic | `--kind claude -- --model claude-opus-4-8 --effort high --dangerously-skip-permissions` |
 
 - Fallback applies to failures observed during launch or submission, or to an explicitly requested later recovery. It never applies to background supervision after handoff.

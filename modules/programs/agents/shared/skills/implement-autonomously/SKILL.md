@@ -1,7 +1,7 @@
 ---
 name: implement-autonomously
 description: Implement one task autonomously through a Herdr worktree, draft PR, green CI, optional opposite-family review, and final human handoff.
-compatibility: Requires Herdr, git, GitHub CLI, and Pi with claude-bridge/openai-codex
+compatibility: Requires Herdr, git, GitHub CLI, OMP with openai-codex, and Claude Code when review is enabled
 disable-model-invocation: true
 ---
 
@@ -13,29 +13,31 @@ opposite-family reviewer provides a higher-assurance path.
 ## Invariants
 
 - The PR stays draft and unmerged.
-- When review is enabled, the owner and reviewer use separate Pi sessions in the
-  same worktree. Only one writes at a time.
+- When review is enabled, the OMP owner and Claude Code reviewer use separate
+  sessions in the same worktree. Only one writes at a time.
 - The owner alone commits, pushes, and edits the PR.
 - Pause only for an irreversible action, a scope decision, unavailable access,
   or a persistent external failure.
 
 ## 1. Fix the profile and review policy
 
-Use an explicit user choice from available Pi models. Otherwise use:
+Use an explicit user choice from the models available in the corresponding
+harness. Otherwise use:
 
-| Role     | Model                          | Thinking | Extra mode |
-| -------- | ------------------------------ | -------- | ---------- |
-| Owner    | `openai-codex/gpt-5.6-sol`    | `high`   | none       |
-| Reviewer | `claude-bridge/claude-opus-5` | `high`   | none       |
+| Role     | Harness     | Model                       | Level  | Extra mode                       |
+| -------- | ----------- | --------------------------- | ------ | -------------------------------- |
+| Owner    | OMP         | `openai-codex/gpt-5.6-sol` | `high` | none                             |
+| Reviewer | Claude Code | `claude-opus-5`            | `high` | `--dangerously-skip-permissions` |
 
 When cross-family review selects a Claude-family reviewer, default to
-`claude-bridge/claude-opus-5`. Use Fable only when the user explicitly requests
-it. Preserve an explicit user model choice.
+`claude-opus-5` through Claude Code. Use Fable only when the user explicitly
+requests it. Preserve an explicit user model choice.
 
 Default to cross-family review. The user may select `no cross-family review` for
 a token-constrained run; then no reviewer session is created. They may also swap
-models or override thinking. GPT fast mode is opt-in only when the user requests
-it. Every selected model runs through Pi with `--kind pi`.
+models or override the applicable thinking or effort level. GPT fast mode is
+opt-in only when the user requests it. OpenAI models run through OMP; Claude
+models run through Claude Code.
 
 **Complete when:** the owner profile and review policy are explicit, and the
 reviewer profile is explicit when review is enabled.
@@ -44,15 +46,15 @@ reviewer profile is explicit when review is enabled.
 
 Read `../herdr-dispatch/SKILL.md` for worktree and agent lifecycle. When
 `HERDR_ENV=1`, also read `../herdr/SKILL.md` for in-session pane operations. The
-Pi profiles above override generic model routing in those adapters.
+owner profile above overrides generic model routing in those adapters.
 
 Verify Herdr, `git`, `gh`, GitHub authentication, repository instructions, task
 source, acceptance criteria, and base branch. Create one Herdr worktree. Start
-Pi in its root pane with the owner profile and verify the actual launch:
+OMP in its root pane with the owner profile and verify the actual launch:
 
 ```bash
 herdr agent start <owner> \
-  --kind pi \
+  --kind omp \
   --pane <root-pane> \
   -- --model <provider/model> --thinking <level>
 ```
@@ -86,11 +88,11 @@ idle.
 ## 4. Review from fresh context when enabled
 
 With `no cross-family review`, skip to Step 6 after confirming the Step 3 gate.
-Otherwise create a new Pi session in a separate tab at the same worktree. Launch
-and verify the reviewer profile. Inspect the review skills available to that
-session. Prefer a repository-specific or task-specific review skill when one is
-present. Otherwise use the best matching generic review skill. If no review
-skill is available, follow the reviewer brief directly. Read
+Otherwise create a new Claude Code session in a separate tab at the same
+worktree. Launch and verify the reviewer profile. Inspect the review skills
+available to that session. Prefer a repository-specific or task-specific review
+skill when one is present. Otherwise use the best matching generic review skill.
+If no review skill is available, follow the reviewer brief directly. Read
 [references/reviewer-brief.md](references/reviewer-brief.md), fill its fields,
 including the selected review skill, and send it asynchronously.
 

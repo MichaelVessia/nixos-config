@@ -47,10 +47,10 @@ Pick the type once, for the whole assignment. The session runs on one model for 
 
 | Type | When | Launch |
 |---|---|---|
-| Implement | Default. Any assignment that edits, including typos and renames. | `--kind pi -- --model openai-codex/gpt-5.6-sol --thinking high` |
+| Implement | Default. Any assignment that edits, including typos and renames. | `--kind omp -- --model openai-codex/gpt-5.6-sol --thinking high` |
 | Implement, big or risky | The user says so, or the ticket is a large ambiguous feature or a multi-file refactor. | `--kind claude -- --model fable --effort high --dangerously-skip-permissions` |
-| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind pi -- --model openai-codex/gpt-6-astra --thinking medium` |
-| Research | Read-only gathering and factual summary, only when the user asks for a report. The prompt must forbid edits and generated files. | `--kind pi -- --model openai-codex/gpt-5.6-luna --thinking low` |
+| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind omp -- --model openai-codex/gpt-6-astra --thinking medium` |
+| Research | Read-only gathering and factual summary, only when the user asks for a report. The prompt must forbid edits and generated files. | `--kind omp -- --model openai-codex/gpt-5.6-luna --thinking low` |
 
 Explicit user choices override the table. A model pin picks its harness from the routing table below; without a level, keep the harness default. A harness-only request keeps the type's model if that harness serves it, else uses that provider's Implement profile. An effort-only request overrides the type's level. The type never grants extra authority or starts a reviewer unless review was requested. On a launch or submission failure, follow [fallback](./fallback.md).
 
@@ -61,10 +61,10 @@ Routing table for pinned models. Match case-insensitively; spaces, hyphens, unde
 | `fable`, `opus`, `sonnet`, `haiku`, with or without `latest` | `claude` | `--model <family> --effort <level> --dangerously-skip-permissions` |
 | Versioned family: `opus 4.8`, `Sonnet 5`, `Haiku 4.5` | `claude` | `--model claude-<family>-<version>`, dots become hyphens |
 | Canonical `claude-*` | `claude` | `--model <as given>` |
-| `5.6 sol`, `5.6 luna`, `5.6 terra` | `pi` | `--model openai-codex/gpt-5.6-<name> --thinking <level>` |
-| `GPT6`, `GPT-6`, `Astra` | `pi` | `--model openai-codex/gpt-6-astra --thinking <level>` |
+| `5.6 sol`, `5.6 luna`, `5.6 terra` | `omp` | `--model openai-codex/gpt-5.6-<name> --thinking <level>` |
+| `GPT6`, `GPT-6`, `Astra` | `omp` | `--model openai-codex/gpt-6-astra --thinking <level>` |
 
-Levels: Claude Code `--effort low|medium|high|xhigh|max`; Pi `--thinking off|minimal|low|medium|high|xhigh|max`. Claude Code always runs with `--dangerously-skip-permissions`. Pi has no bypass flag; its `--approve` only trusts project-local resources. Never route Claude models through Pi's Claude bridge. Unclear family: ask.
+Levels: Claude Code `--effort low|medium|high|xhigh|max`; OMP `--thinking off|minimal|low|medium|high|xhigh|max`. Claude Code always runs with `--dangerously-skip-permissions`. OMP supports `--approval-mode yolo`; add it only when the user explicitly authorizes bypassing approvals. Never route Claude models through OMP; use Claude Code. Unclear family: ask.
 
 ## Handoff
 

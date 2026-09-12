@@ -38,7 +38,7 @@ For multiple related branches, include each branch's contract plus cross-branch 
 Read and follow the `herdr-dispatch` skill. Honor explicit harness, model, and reasoning choices. Otherwise default to:
 
 - Claude Code: Fable 5.1, high effort.
-- Pi: GPT-5.6 Sol, high thinking.
+- OMP: GPT-5.6 Sol, high thinking.
 
 The parent chooses and records the exact harness/model IDs. Reviewers direct tooling or scope questions to the parent, not the user.
 

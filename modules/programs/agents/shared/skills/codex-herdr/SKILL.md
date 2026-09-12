@@ -1,13 +1,13 @@
 ---
 name: codex-herdr
-description: Route explicit Herdr control requests from Codex Desktop. Not for Codex CLI or Pi.
+description: Route explicit Herdr control requests from Codex Desktop. Not for Codex CLI or OMP.
 ---
 
 # codex-herdr
 
 Router for controlling herdr from the **Codex Desktop app only**. The host
-application determines eligibility, not the model provider or model name. Pi
-running a Codex model is still Pi, not Codex Desktop. If the host is not known to
+application determines eligibility, not the model provider or model name. OMP
+running a Codex model is still OMP, not Codex Desktop. If the host is not known to
 be Codex Desktop, do not use this router; use the applicable native herdr skill
 instead.
 
