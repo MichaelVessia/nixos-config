@@ -6,11 +6,12 @@ modelRoles:
   slow: openai-codex/gpt-6-astra:xhigh
   plan: openai-codex/gpt-6-astra:xhigh
   task: openai-codex/gpt-5.6-sol:medium
-  smol: openai-codex/gpt-5.6-sol:low
+  smol: openai-codex/gpt-5.6-luna:low
+  tiny: openai-codex/gpt-5.6-luna:low
   vision: openai-codex/gpt-6-astra:medium
   designer: openai-codex/gpt-5.6-sol:high
   advisor: openai-codex/gpt-5.6-sol:medium
-  commit: openai-codex/gpt-5.3-codex-spark:low
+  commit: openai-codex/gpt-5.6-luna:low
 cycleOrder:
   - smol
   - default
@@ -43,6 +44,7 @@ statusLine:
     - subagents
   rightSegments:
     - session_name
+    - usage
     - context_pct
 dev:
   autoqaConsent: denied

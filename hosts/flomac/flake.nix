@@ -20,6 +20,7 @@
     };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
+    collie.url = "github:AltanS/collie";
 
     nvf = {
       url = "github:NotAShelf/nvf";
