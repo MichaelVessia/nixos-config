@@ -171,6 +171,38 @@
     shell = pkgs.zsh;
   };
 
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 4096;
+      cores = 4;
+      qemu.options = [
+        "-vga"
+        "none"
+        "-device"
+        "virtio-vga-gl"
+        "-display"
+        "gtk,gl=on"
+      ];
+    };
+
+    services.openssh.enable = true;
+    users.users.michaelvessia = {
+      initialPassword = "test";
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r"
+      ];
+    };
+
+    services.greetd.settings.initial_session = {
+      command = "niri-session";
+      user = "michaelvessia";
+    };
+
+    home-manager.users.michaelvessia.programs.niri.settings.spawn-at-startup = [
+      {command = ["${pkgs.foot}/bin/foot"];}
+    ];
+  };
+
   # Enable zsh system-wide (required for login shell)
   programs.zsh.enable = true;
 
