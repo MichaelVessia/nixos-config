@@ -50,6 +50,21 @@ the tracked file. Review its Git diff before committing.
 Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
 `agentHarnesses.executor.url` as OMP's `executor` HTTP MCP server.
 
+Pi, OMP, Codex, Claude Code, and OpenCode share that endpoint, with Executor as
+their only configured MCP server. Claude Code disables imported claude.ai
+connectors; activation also clears its saved project-scoped MCP servers so
+projects use the user-scoped Executor entry. This does not delete connectors
+from the claude.ai account.
+
+OAuth credentials are local to each harness and are not managed by Nix.
+Authorize once per harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
+in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`, and
+`/mcp` → Executor → Authenticate in Claude Code. Run OMP authorization in the
+session that needs access. OMP 18.1.13 caches credentials in memory, and
+`/mcp reload` does not refresh credentials saved by another process. After
+authorizing in a separate OMP process, exit the older session and resume it
+with `omp --continue`; a fresh process reads the saved credentials.
+
 ## Secrets Management
 
 Uses [sops-nix](https://github.com/Mic92/sops-nix) with age encryption.

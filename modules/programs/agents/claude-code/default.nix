@@ -182,6 +182,7 @@
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
     };
+    disableClaudeAiConnectors = true;
     skipDangerousModePermissionPrompt = true;
     enabledPlugins =
       {
@@ -383,16 +384,23 @@ in {
       install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
     '';
 
-    # Claude stores user-scoped MCP configuration alongside mutable runtime
-    # state in ~/.claude.json. Replace only that field so the rest remains
-    # writable while keeping Executor as the sole user-scoped MCP server.
+    # Claude stores user- and project-scoped MCP configuration alongside
+    # mutable runtime state in ~/.claude.json. Centralize Executor at user
+    # scope and clear project servers while preserving all other state.
     home.activation.claudeMcpConfig = lib.hm.dag.entryAfter ["claudeConfig"] ''
       config_file="$HOME/.claude.json"
       temporary_file="$(${pkgs.coreutils}/bin/mktemp)"
 
       if [ -f "$config_file" ]; then
-        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} \
-          '.mcpServers = $mcpServers[0]' "$config_file" > "$temporary_file"
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} '
+          .mcpServers = $mcpServers[0]
+          | if (.projects | type) == "object"
+            then .projects |= with_entries(
+              .value |= if type == "object" then .mcpServers = {} else . end
+            )
+            else .
+            end
+        ' "$config_file" > "$temporary_file"
       else
         ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} \
           -n '{mcpServers: $mcpServers[0]}' > "$temporary_file"

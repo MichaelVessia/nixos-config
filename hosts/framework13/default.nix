@@ -33,7 +33,7 @@
   networking.networkmanager.enable = true;
   networking.hosts."192.168.1.252" = [
     "executor.lan"
-    "grafana.lan"
+    "signoz.lan"
   ];
 
   # Trust the homelab Caddy CA for internal HTTPS services such as Executor.
