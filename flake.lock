@@ -697,6 +697,26 @@
         "type": "github"
       }
     },
+    "grok-bot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789719688,
+        "narHash": "sha256-EJUbIzT/pI9vzegK/L99lrE+8tYywSWUtW/cWq4fkfY=",
+        "owner": "jordangarrison",
+        "repo": "grok-bot-flake",
+        "rev": "88a22621e4469b01e6a5ec21b4604f1db2da9e65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jordangarrison",
+        "repo": "grok-bot-flake",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1248,6 +1268,7 @@
         "garage": "garage",
         "ghostty": "ghostty",
         "googleworkspace-cli": "googleworkspace-cli",
+        "grok-bot": "grok-bot",
         "home-manager": "home-manager_3",
         "llm-agents": "llm-agents",
         "niri": "niri",
