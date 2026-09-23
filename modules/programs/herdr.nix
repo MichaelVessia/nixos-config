@@ -94,6 +94,28 @@
       # but is the spelling ghostty accepts; keep prefix+v as a fallback in case
       # herdr rejects it.
       split_vertical = ["prefix+backslash" "prefix+v"];
+
+      # herdr-annotate plugin (Full variant, installed out of band with
+      # `herdr plugin install plannotator/herdr-annotate`). Keys follow the
+      # upstream README except annotate.open: its prefix+o collides with
+      # herdr's default open_notification_target, so it moves to prefix+f.
+      command = let
+        annotate = key: command: description: {
+          inherit key description;
+          type = "plugin_action";
+          command = "annotate.${command}";
+        };
+      in [
+        # Terminal annotations
+        (annotate "prefix+a" "capture" "annotate text")
+        (annotate "prefix+shift+a" "copy-context" "copy annotations as context")
+        (annotate "prefix+ctrl+a" "copy-archive" "copy annotations as context and archive them")
+        (annotate "prefix+m" "manage" "manage annotations")
+        # Document review (plannotator-tui)
+        (annotate "prefix+f" "open" "review documents in this folder")
+        (annotate "prefix+shift+o" "last" "review the agent's last reply")
+        (annotate "prefix+ctrl+o" "last-newest" "review the agent's newest reply")
+      ];
     };
 
     # Beep when background agents change state (settings > sound >
