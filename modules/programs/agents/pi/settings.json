@@ -66,6 +66,6 @@
     "npm:pi-context-view"
   ],
   "theme": "catppuccin-latte/catppuccin-mocha",
-  "lastChangelogVersion": "0.87.0",
+  "lastChangelogVersion": "0.87.1",
   "hideThinkingBlock": true
 }
