@@ -179,6 +179,7 @@
       pr = "";
     };
     teammateMode = "in-process";
+    autoMemoryEnabled = false;
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
     };
