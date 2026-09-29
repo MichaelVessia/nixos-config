@@ -191,6 +191,7 @@
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         "floai@flocasts" = true;
+        "slack@claude-plugins-official" = true;
       };
     extraKnownMarketplaces =
       {
