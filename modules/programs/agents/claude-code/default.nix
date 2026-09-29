@@ -179,6 +179,7 @@
       pr = "";
     };
     teammateMode = "in-process";
+    autoMemoryEnabled = false;
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
     };
@@ -190,6 +191,7 @@
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         "floai@flocasts" = true;
+        "slack@claude-plugins-official" = true;
       };
     extraKnownMarketplaces =
       {
