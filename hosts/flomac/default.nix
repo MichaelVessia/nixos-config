@@ -133,6 +133,8 @@
 
       # Mission Control / Spaces settings
       CustomUserPreferences = {
+        # Keep Brave as the default browser without repeated Chrome prompts.
+        "com.google.Chrome".DefaultBrowserSettingEnabled = false;
         "com.apple.dock" = {
           mru-spaces = false; # Don't auto-rearrange Spaces
         };

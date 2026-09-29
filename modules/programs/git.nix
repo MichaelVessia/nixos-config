@@ -3,9 +3,7 @@
     enable = true;
     settings = {
       alias = {
-        d = "diff";
-        dl = "log -p --ext-diff";
-        ds = "show --ext-diff";
+        d = "difftool";
       };
       user.name = "Michael Vessia";
       user.email = "michael@vessia.net";
@@ -13,7 +11,6 @@
       color.ui = true;
       push.default = "current";
       pull.rebase = false;
-      diff.external = "difft";
       diff.tool = "difftastic";
       difftool.prompt = false;
       pager.difftool = true;
