@@ -20,14 +20,7 @@
   sharedInstructions = builtins.readFile ./shared/instructions.md;
   codexAgents = sharedInstructions;
 
-  pstackPlugin = inputs.pstack + "/plugins/pstack";
-  pstackVersion = (lib.importJSON (pstackPlugin + "/.codex-plugin/plugin.json")).version;
-  pstackPromptNames = lib.attrNames (builtins.readDir (pstackPlugin + "/.codex-plugin/prompts"));
-
-  # recursiveUpdate keeps the shared marketplaces and plugins beside the
-  # Darwin-only ones.
   codexConfig =
-    lib.recursiveUpdate
     {
       personality = "pragmatic";
       model = "gpt-6.1-sol";
@@ -63,48 +56,26 @@
           };
         };
       };
-      marketplaces.pstack-claude = {
-        source_type = "local";
-        source = "${inputs.pstack}";
-      };
-      # The SessionStart routing hook stays untrusted, so it does not run,
-      # until Michael decides on automatic routing.
-      plugins."pstack@pstack-claude".enabled = true;
     }
-    (lib.optionalAttrs pkgs.stdenv.isDarwin {
+    // lib.optionalAttrs pkgs.stdenv.isDarwin {
       marketplaces.flocasts = {
         source_type = "git";
         source = "git@github.com:flocasts/floai.git";
       };
       plugins."floai@flocasts".enabled = true;
-    });
+    };
 
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
   config = {
     home.packages = [codexPkg];
 
-    home.file =
-      {
-        ".codex/AGENTS.md".text = codexAgents;
-      }
-      // lib.listToAttrs (map (name: {
-          name = ".codex/prompts/${name}";
-          value.source = pstackPlugin + "/.codex-plugin/prompts/${name}";
-        })
-        pstackPromptNames);
+    home.file.".codex/AGENTS.md".text = codexAgents;
 
     home.activation =
       {
         codexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
           install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
-        '';
-        # Codex loads plugins only from its cache, so copy the pinned version
-        # once from the declared local marketplace.
-        codexPluginPstack = lib.hm.dag.entryAfter ["codexConfig"] ''
-          if [ ! -d "$HOME/.codex/plugins/cache/pstack-claude/pstack/${pstackVersion}" ]; then
-            $DRY_RUN_CMD ${codexPkg}/bin/codex plugin add pstack@pstack-claude || true
-          fi
         '';
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {

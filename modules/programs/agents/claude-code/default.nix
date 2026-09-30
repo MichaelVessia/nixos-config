@@ -2,12 +2,8 @@
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }: let
-  # pstack loads from a directory marketplace in place. A writable copy of the
-  # pinned source lets its bun scripts (watch-pr, orch) install node_modules.
-  pstackMarketplaceDir = "${config.home.homeDirectory}/.local/share/pstack-claude";
   # Wrapped scripts with explicit deps
   claude-statusline = pkgs.writeShellApplication {
     name = "claude-statusline";
@@ -186,17 +182,12 @@
     autoMemoryEnabled = false;
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-      # pstack playbooks keep their step list in the task tools.
-      CLAUDE_CODE_ENABLE_TODO_TOOLS = "1";
     };
     disableClaudeAiConnectors = true;
     skipDangerousModePermissionPrompt = true;
     enabledPlugins =
       {
         "codex@openai-codex" = true;
-        "pstack@pstack-claude" = true;
-        # Skill-authoring guidance that pstack's authoring workflows name.
-        "plugin-dev@claude-plugins-official" = true;
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         "floai@flocasts" = true;
@@ -208,12 +199,6 @@
           source = {
             source = "github";
             repo = "openai/codex-plugin-cc";
-          };
-        };
-        pstack-claude = {
-          source = {
-            source = "directory";
-            path = pstackMarketplaceDir;
           };
         };
       }
@@ -394,18 +379,6 @@ in {
         recursive = true;
       };
     };
-
-    home.activation.pstackMarketplace = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD ${pkgs.rsync}/bin/rsync -a --delete --chmod=u+w \
-        --exclude node_modules --exclude .poteto-mode-tools-install-key \
-        ${inputs.pstack}/ ${lib.escapeShellArg pstackMarketplaceDir}/
-    '';
-
-    # Pending Michael's decision on automatic routing: pstack's SessionStart
-    # hook reads this sheet and stays silent while it says off.
-    home.file.".claude/pstack-models.md".text = ''
-      session hook: off
-    '';
 
     # Copy Claude config as a regular file (not symlink)
     home.activation.claudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
