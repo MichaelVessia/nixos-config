@@ -36,7 +36,7 @@ herdr workspace list
 herdr tab create --workspace <obsidian-workspace-id> \
   --cwd /Users/michael.vessia/obsidian --label hello-claude --no-focus
 herdr agent start hello-claude --kind claude --pane <result.root_pane.pane_id> \
-  -- --model claude-opus-5-5 --effort high --dangerously-skip-permissions
+  -- --model claude-opus-5-5 --effort medium --dangerously-skip-permissions
 herdr agent prompt hello-claude "Hello"
 herdr agent read hello-claude --source recent-unwrapped --lines 80
 ```
@@ -47,10 +47,9 @@ Pick the type once, for the whole assignment. The session runs on one model for 
 
 | Type | When | Launch |
 |---|---|---|
-| Implement | Default. Any assignment that edits, including typos and renames. | `--kind claude -- --model claude-opus-5-5 --effort high --dangerously-skip-permissions` |
-| Implement, big or risky | The user says so, or the ticket is a large ambiguous feature or a multi-file refactor. | `--kind claude -- --model fable --effort high --dangerously-skip-permissions` |
-| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking high` |
-| Research | Read-only gathering and factual summary, only when the user asks for a report. The prompt must forbid edits and generated files. | `--kind omp -- --model openai-codex/gpt-5.6-luna --thinking low` |
+| Implement | Default for implementation, architecture, and UI work. | `--kind claude -- --model claude-opus-5-5 --effort medium --dangerously-skip-permissions` |
+| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking medium` |
+| Research | Read-only debugging, unfamiliar-code investigation, computer use, visual verification, or factual summary. The prompt must forbid edits and generated files. | `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking medium` |
 
 Explicit user choices override the table. A model pin picks its harness from the routing table below; without a level, keep the harness default. A harness-only request keeps the type's model if that harness serves it, else uses that provider's Implement profile. An effort-only request overrides the type's level. The type never grants extra authority or starts a reviewer unless review was requested. On a launch or submission failure, follow [fallback](./fallback.md).
 

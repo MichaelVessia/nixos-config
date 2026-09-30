@@ -2,15 +2,15 @@ setupVersion: 2
 enabledModels:
   - openai-codex/*
 modelRoles:
-  default: openai-codex/gpt-5.6-sol:medium
-  slow: openai-codex/gpt-6-astra:xhigh
-  plan: openai-codex/gpt-6-astra:xhigh
-  task: openai-codex/gpt-5.6-sol:medium
+  default: openai-codex/gpt-6.1-sol:medium
+  slow: openai-codex/gpt-6.1-sol:medium
+  plan: openai-codex/gpt-6.1-sol:medium
+  task: openai-codex/gpt-6.1-sol:medium
   smol: openai-codex/gpt-5.6-luna:low
   tiny: openai-codex/gpt-5.6-luna:low
-  vision: openai-codex/gpt-6-astra:medium
-  designer: openai-codex/gpt-5.6-sol:high
-  advisor: openai-codex/gpt-5.6-sol:medium
+  vision: openai-codex/gpt-6.1-sol:medium
+  designer: openai-codex/gpt-6.1-sol:medium
+  advisor: openai-codex/gpt-6.1-sol:medium
   commit: openai-codex/gpt-5.6-luna:low
 cycleOrder:
   - smol
