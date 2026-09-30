@@ -47,6 +47,11 @@
   and completion condition. Keep computer use within the user's request.
   Explicit task instructions for provider, model, or reasoning take precedence.
 
+# pstack
+
+- pstack subagents: read-only work on your own model only. Give file-writing
+  work to a separate worker, not a subagent.
+
 # Obsidian Vault
 
 - Treat `/Users/michael.vessia/obsidian` as shared durable memory for agent

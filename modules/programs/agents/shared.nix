@@ -49,7 +49,24 @@
     if enableHomelabSkills
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
-  skillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
+
+  # pstack skills from the pinned pstack-claude port, installed as portable
+  # skill content (no plugin, agents, or hooks). Its bro and tdd share names
+  # with other skills (the personal bro, an unmanaged ~/.agents/skills/tdd),
+  # so they install as pstack-bro and pstack-tdd with a matching frontmatter
+  # name. Discovery rejects duplicate IDs, so the renamed pair is not
+  # discovered under the original names.
+  pstackSkillsPath = inputs.pstack + "/plugins/pstack/skills";
+  pstackRenamed = ["bro" "tdd"];
+  pstackSkillNames = lib.subtractLists pstackRenamed (dirNames pstackSkillsPath);
+  renamePstackSkill = name: {original, ...}: let
+    renamed = builtins.replaceStrings ["---\nname: ${name}\n"] ["---\nname: pstack-${name}\n"] original;
+  in
+    if renamed == original
+    then throw "pstack ${name}/SKILL.md no longer starts with `name: ${name}`"
+    else renamed;
+  catalogSkillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames;
+  skillNames = catalogSkillNames ++ map (name: "pstack-${name}") pstackRenamed;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -76,8 +93,21 @@ in {
       sources = {
         personal.path = ./shared/skills;
         googleworkspace.path = gwsSkillsPath;
+        pstack = {
+          path = pstackSkillsPath;
+          filter.nameRegex = lib.concatStringsSep "|" pstackSkillNames;
+        };
       };
-      skills.enable = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
+      skills.enable = catalogSkillNames;
+      skills.explicit = lib.listToAttrs (map (name: {
+          name = "pstack-${name}";
+          value = {
+            from = "pstack";
+            path = name;
+            transform = renamePstackSkill name;
+          };
+        })
+        pstackRenamed);
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
       # top via perSkillSymlinks below. `structure = "link"` declares one
       # home.file entry per skill (recursive symlinks) so siblings written by

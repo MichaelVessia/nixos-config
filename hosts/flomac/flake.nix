@@ -59,6 +59,13 @@
       url = "github:googleworkspace/cli";
       flake = false;
     };
+
+    # pstack-claude (Claude Code and Codex port of poteto's pstack). Pinned
+    # to a commit because the port changes skill instructions on each release.
+    pstack = {
+      url = "github:michael-denyer/pstack-claude/eefcfaf31343a0c98d4bf0dc74a55d62b35ce9f9";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {

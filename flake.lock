@@ -1256,6 +1256,23 @@
         "type": "github"
       }
     },
+    "pstack": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790724099,
+        "narHash": "sha256-W9TFcarTLFzkV4G/MN1NTZheXVPD5Oio0FvUQar1gMA=",
+        "owner": "michael-denyer",
+        "repo": "pstack-claude",
+        "rev": "eefcfaf31343a0c98d4bf0dc74a55d62b35ce9f9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "michael-denyer",
+        "repo": "pstack-claude",
+        "rev": "eefcfaf31343a0c98d4bf0dc74a55d62b35ce9f9",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agent-skills-nix": "agent-skills-nix",
@@ -1277,6 +1294,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nvf": "nvf",
         "paperless-cli": "paperless-cli",
+        "pstack": "pstack",
         "sops-nix": "sops-nix",
         "subq": "subq",
         "worktrunk": "worktrunk",
