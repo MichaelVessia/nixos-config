@@ -47,6 +47,23 @@
   and completion condition. Keep computer use within the user's request.
   Explicit task instructions for provider, model, or reasoning take precedence.
 
+# pstack
+
+- pstack skills (`poteto-mode`, its playbooks, and `principle-*`) are
+  installed for workers. These rules win over pstack text.
+- Owners select the playbook for each brief, for example `poteto-mode` Bug
+  fix, and supervise its gates. Owners do not load pstack.
+- Workers read `poteto-mode`, the named playbook, and each installed skill
+  that it references. Report the principles that changed decisions and
+  observed proof. Mark a step that names a skill that is not installed as
+  `skip: not installed`.
+- Do pstack subagent, panel, and fan-out steps yourself in sequence. When a
+  step needs parallel writers, another model, or an independent review, tell
+  the owner, who starts BB task threads.
+- Use the Babysit, Shipping, Autopilot, Orchestrate, Autonomous run, and
+  Worktree cleanup playbooks only when the brief names them. Never merge,
+  deploy, force-push shared branches, or send messages unless requested.
+
 # Obsidian Vault
 
 - Treat `/Users/michael.vessia/obsidian` as shared durable memory for agent

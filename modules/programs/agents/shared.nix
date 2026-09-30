@@ -49,7 +49,58 @@
     if enableHomelabSkills
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
-  skillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
+  # pstack skills that BB workers use. poteto-mode holds every playbook; the
+  # shared instructions list the playbooks that stay off. Omitted: arena,
+  # interrogate, swarm (BB task threads replace subagent fan-out); unslop,
+  # technical-writing, no-comments (STE and repo comment rules win);
+  # babysit (drives PRs to merge); setup-pstack (BB sets models per thread);
+  # reflect, automate-me, recall (transcript mining and skill rewrites);
+  # typescript-best-practices (coding-standards wins); bro (personal skill of
+  # the same name); tdd (name taken by an unmanaged ~/.agents/skills/tdd);
+  # principle-never-block-on-the-human (conflicts with the stop rules).
+  pstackSkillsPath = inputs.pstack + "/plugins/pstack/skills";
+  pstackSkillNames = [
+    "architect"
+    "blast-radius"
+    "create-verification-skill"
+    "deslop"
+    "figure-it-out"
+    "fix-ci"
+    "fix-merge-conflicts"
+    "get-pr-comments"
+    "how"
+    "maintain-verification-skill"
+    "make-pr-easy-to-review"
+    "poteto-mode"
+    "principle-attack-the-premise"
+    "principle-boundary-discipline"
+    "principle-build-the-lever"
+    "principle-encode-lessons-in-structure"
+    "principle-exhaust-the-design-space"
+    "principle-experience-first"
+    "principle-fix-root-causes"
+    "principle-foundational-thinking"
+    "principle-guard-the-context-window"
+    "principle-laziness-protocol"
+    "principle-make-operations-idempotent"
+    "principle-migrate-callers-then-delete-legacy-apis"
+    "principle-minimize-reader-load"
+    "principle-model-the-domain"
+    "principle-outcome-oriented-execution"
+    "principle-prove-it-works"
+    "principle-redesign-from-first-principles"
+    "principle-separate-before-serializing-shared-state"
+    "principle-sequence-verifiable-units"
+    "principle-subtract-before-you-add"
+    "principle-test-behavior-not-implementation"
+    "principle-type-system-discipline"
+    "show-me-your-work"
+    "teach"
+    "thermo-nuclear-code-quality-review"
+    "what-did-i-get-done"
+    "why"
+  ];
+  skillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -76,8 +127,14 @@ in {
       sources = {
         personal.path = ./shared/skills;
         googleworkspace.path = gwsSkillsPath;
+        # Discovery rejects duplicate IDs across sources, so only the selected
+        # names are discovered (pstack's bro would collide with ours).
+        pstack = {
+          path = pstackSkillsPath;
+          filter.nameRegex = lib.concatStringsSep "|" pstackSkillNames;
+        };
       };
-      skills.enable = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames;
+      skills.enable = skillNames;
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
       # top via perSkillSymlinks below. `structure = "link"` declares one
       # home.file entry per skill (recursive symlinks) so siblings written by
