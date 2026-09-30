@@ -18,7 +18,11 @@
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;
-  codexAgents = sharedInstructions;
+  # Codex has no include, so pstack's model rows go into AGENTS.md. The
+  # session hook line stays only in the sheet.
+  pstackSheet = builtins.readFile ./shared/pstack-models.md;
+  pstackRows = lib.concatStringsSep "\n" (lib.filter (line: !(lib.hasPrefix "session hook:" line)) (lib.splitString "\n" pstackSheet));
+  codexAgents = sharedInstructions + "\n" + pstackRows;
 
   codexConfig =
     {
@@ -71,6 +75,7 @@ in {
     home.packages = [codexPkg];
 
     home.file.".codex/AGENTS.md".text = codexAgents;
+    home.file.".codex/pstack-models.md".source = ./shared/pstack-models.md;
 
     home.activation =
       {

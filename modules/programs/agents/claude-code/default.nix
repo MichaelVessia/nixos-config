@@ -373,7 +373,9 @@
 in {
   config = {
     home.file = {
-      ".claude/CLAUDE.md".text = sharedInstructions;
+      # pstack reads its per-role model sheet through this include.
+      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/pstack-models.md\n";
+      ".claude/pstack-models.md".source = ../shared/pstack-models.md;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;
