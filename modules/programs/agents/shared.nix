@@ -56,8 +56,8 @@
   # babysit (drives PRs to merge); setup-pstack (BB sets models per thread);
   # reflect, automate-me, recall (transcript mining and skill rewrites);
   # typescript-best-practices (coding-standards wins); bro (personal skill of
-  # the same name); tdd (name taken by an unmanaged ~/.agents/skills/tdd);
-  # principle-never-block-on-the-human (conflicts with the stop rules).
+  # the same name); principle-never-block-on-the-human (conflicts with the
+  # stop rules). The personal pstack-bb skill maps each omitted step.
   pstackSkillsPath = inputs.pstack + "/plugins/pstack/skills";
   pstackSkillNames = [
     "architect"
@@ -100,7 +100,17 @@
     "what-did-i-get-done"
     "why"
   ];
-  skillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames;
+  # An unmanaged ~/.agents/skills/tdd (mattpocock/skills) owns the name, so
+  # pstack's tdd installs as pstack-tdd with a matching frontmatter name.
+  pstackTdd = "pstack-tdd";
+  renamePstackTdd = {original, ...}: let
+    renamed = builtins.replaceStrings ["---\nname: tdd\n"] ["---\nname: ${pstackTdd}\n"] original;
+  in
+    if renamed == original
+    then throw "pstack tdd/SKILL.md no longer starts with `name: tdd`"
+    else renamed;
+  catalogSkillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames;
+  skillNames = catalogSkillNames ++ [pstackTdd];
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -134,7 +144,12 @@ in {
           filter.nameRegex = lib.concatStringsSep "|" pstackSkillNames;
         };
       };
-      skills.enable = skillNames;
+      skills.enable = catalogSkillNames;
+      skills.explicit.${pstackTdd} = {
+        from = "pstack";
+        path = "tdd";
+        transform = renamePstackTdd;
+      };
       # Single bundle dest under ~/.agents/skills; per-tool paths layered on
       # top via perSkillSymlinks below. `structure = "link"` declares one
       # home.file entry per skill (recursive symlinks) so siblings written by
