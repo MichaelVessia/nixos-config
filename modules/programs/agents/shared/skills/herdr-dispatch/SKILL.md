@@ -45,11 +45,15 @@ herdr agent read hello-claude --source recent-unwrapped --lines 80
 
 Pick the type once, for the whole assignment. The session runs on one model for its whole life; there is no routing inside it.
 
+Workers default to Opus 5.5. Set effort to low for simple tasks, medium for normal
+tasks, and high for complex or risky tasks. In BB, owner and dispatcher threads
+use Codex GPT-6.1-Sol at low reasoning; create unique BB threads for workers.
+
 | Type | When | Launch |
 |---|---|---|
 | Implement | Default for implementation, architecture, and UI work. | `--kind claude -- --model claude-opus-5-5 --effort medium --dangerously-skip-permissions` |
-| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking medium` |
-| Research | Read-only debugging, unfamiliar-code investigation, computer use, visual verification, or factual summary. The prompt must forbid edits and generated files. | `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking medium` |
+| Review | Independent review or verification of an implementation in a fresh context. Beats Implement when both apply. | `--kind claude -- --model claude-opus-5-5 --effort <level> --dangerously-skip-permissions` |
+| Research | Read-only debugging, unfamiliar-code investigation, computer use, visual verification, or factual summary. The prompt must forbid edits and generated files. | `--kind claude -- --model claude-opus-5-5 --effort <level> --dangerously-skip-permissions` |
 
 Explicit user choices override the table. A model pin picks its harness from the routing table below; without a level, keep the harness default. A harness-only request keeps the type's model if that harness serves it, else uses that provider's Implement profile. An effort-only request overrides the type's level. The type never grants extra authority or starts a reviewer unless review was requested. On a launch or submission failure, follow [fallback](./fallback.md).
 

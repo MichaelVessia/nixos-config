@@ -37,14 +37,12 @@
 
 # Delegation
 
-- In BB, use Claude Opus 5.5 at medium reasoning to own implementation,
-  architecture, and UI work. Use Opus worker threads for bounded work when
-  useful. If Opus is unavailable, use Codex GPT-6.1-Sol at medium reasoning
-  for implementation.
-- Assign review, debugging investigation, unfamiliar-code investigation,
-  computer use, and visual verification to Codex GPT-6.1-Sol at medium
-  reasoning. Workers report observed findings and proof. The implementation
-  owner applies fixes.
+- In BB, all owner and dispatcher threads use Codex GPT-6.1-Sol at low
+  reasoning. Owners organize work, check for duplicate tasks, supervise workers
+  and required gates, and report results.
+- Workers default to Claude Opus 5.5. Use low effort for simple tasks, medium
+  for normal tasks, and high for complex or risky tasks. Workers report observed
+  findings and proof. The implementation owner applies fixes.
 - Give each worker a unique BB task thread and a goal, relevant context, scope,
   and completion condition. Keep computer use within the user's request.
   Explicit task instructions for provider, model, or reasoning take precedence.
