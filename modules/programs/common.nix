@@ -82,7 +82,7 @@
       inputs.llm-agents.packages.${pkgs.system}.agent-browser
       inputs.llm-agents.packages.${pkgs.system}.agentsview
       inputs.llm-agents.packages.${pkgs.system}.claude-code
-      inputs.llm-agents.packages.${pkgs.system}.codex
+      # codex is installed (wrapped) from modules/programs/agents/codex.nix
       inputs.llm-agents.packages.${pkgs.system}.herdr
       inputs.llm-agents.packages.${pkgs.system}.hunk
       inputs.llm-agents.packages.${pkgs.system}.omp

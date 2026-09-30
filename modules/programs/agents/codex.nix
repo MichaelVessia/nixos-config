@@ -5,15 +5,26 @@
   inputs,
   ...
 }: let
-  codexPkg = inputs.llm-agents.packages.${pkgs.system}.codex;
+  codexUnwrapped = inputs.llm-agents.packages.${pkgs.system}.codex;
+
+  # Codex starts a shared background server by default, which requires a
+  # packaged install (codex-package.json) that the Nix package does not ship.
+  codexPkg = pkgs.symlinkJoin {
+    name = "codex-wrapped-${codexUnwrapped.version or "0"}";
+    paths = [codexUnwrapped];
+    nativeBuildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram $out/bin/codex --add-flags --no-daemon
+    '';
+  };
   sharedInstructions = builtins.readFile ./shared/instructions.md;
   codexAgents = sharedInstructions;
 
   codexConfig =
     {
       personality = "pragmatic";
-      model = "gpt-5.5";
-      model_reasoning_effort = "xhigh";
+      model = "gpt-6.1-sol";
+      model_reasoning_effort = "medium";
       features.goals = true;
       tui = {
         status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
@@ -57,6 +68,8 @@
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
   config = {
+    home.packages = [codexPkg];
+
     home.file.".codex/AGENTS.md".text = codexAgents;
 
     home.activation =
@@ -68,7 +81,7 @@ in {
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         codexMarketplaceFloai = lib.hm.dag.entryAfter ["codexConfig"] ''
           if [ ! -d "$HOME/.codex/plugins/cache/flocasts" ]; then
-            PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:$PATH" $DRY_RUN_CMD ${codexPkg}/bin/codex marketplace add git@github.com:flocasts/floai.git || true
+            PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:$PATH" $DRY_RUN_CMD ${codexPkg}/bin/codex plugin marketplace add git@github.com:flocasts/floai.git || true
           fi
         '';
       };
