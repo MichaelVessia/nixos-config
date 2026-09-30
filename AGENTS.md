@@ -31,6 +31,10 @@ sops-nix. The flake configures `framework13`, `tts-pi`, `claude-casino`, and
 - Never activate a configuration (`reload`, `nh ... switch`, or
   `*-rebuild switch`) unless the user explicitly asks. Validate by formatting,
   checking, evaluating, or building first.
+- Work directly on local master. Do not create task branches, worktrees, or
+  PRs. Commit after checks; the user rebuilds to test. A Nix generation
+  rollback does not undo source changes; use `git revert`. Preserve unrelated
+  local edits.
 
 <important if="changing Nix files">
 - Run `nix develop --command alejandra --check $(git ls-files '*.nix')`.
