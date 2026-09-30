@@ -49,19 +49,8 @@
 
 # pstack
 
-- pstack skills are installed as plain skills (no plugin, agents, or hooks).
-  Owners route each task: name `poteto-mode` and the playbook in the worker
-  brief. Workers read them and the skills they reference.
-- pstack's `bro` and `tdd` are installed as `pstack-bro` and `pstack-tdd`.
-  Its agents (`pstack:poteto-agent`, `pstack:effort-*`, `comment-sicko`) are
-  not installed: start a general subagent that first reads `poteto-mode`.
-- Subagents do read-only work only (explore, investigate, review, run checks)
-  on your own session's model and effort, never another model family.
-  File-writing work goes to BB worker threads that the owner starts.
-- `gh stack` replaces Graphite `gt`: `init`, `add`, `view --json` (the
-  frontier), `rebase`, `sync`, `push`, `submit --auto`, and `link`.
-- `watch-pr`, `ship-pr`, and `orch` cannot install their Bun dependencies in
-  the read-only skill directory. Use `gh` directly for those steps.
+- pstack subagents: read-only work on your own model only. Give file-writing
+  work to a separate worker, not a subagent.
 
 # Obsidian Vault
 
