@@ -35,6 +35,20 @@
   the change and rerun affected checks. Stop when checks pass or a specific
   blocker prevents completion. CI runs the full suite.
 
+# Delegation
+
+- In BB, use Claude Opus 5.5 at medium reasoning to own implementation,
+  architecture, and UI work. Use Opus worker threads for bounded work when
+  useful. If Opus is unavailable, use Codex GPT-6.1-Sol at medium reasoning
+  for implementation.
+- Assign review, debugging investigation, unfamiliar-code investigation,
+  computer use, and visual verification to Codex GPT-6.1-Sol at medium
+  reasoning. Workers report observed findings and proof. The implementation
+  owner applies fixes.
+- Give each worker a unique BB task thread and a goal, relevant context, scope,
+  and completion condition. Keep computer use within the user's request.
+  Explicit task instructions for provider, model, or reasoning take precedence.
+
 # Obsidian Vault
 
 - Treat `/Users/michael.vessia/obsidian` as shared durable memory for agent
