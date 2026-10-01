@@ -246,6 +246,7 @@
         "Bash(git push --force origin master)"
         "Bash(git push -f origin main)"
         "Bash(git push -f origin master)"
+        "mcp__executor__resume"
       ];
       allow = [
         "Bash(git:*)"

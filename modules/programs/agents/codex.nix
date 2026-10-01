@@ -36,6 +36,7 @@
       mcp_servers = {
         executor = {
           url = config.agentHarnesses.executor.url;
+          disabled_tools = ["resume"];
         };
       };
       otel = {
