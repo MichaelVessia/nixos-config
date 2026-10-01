@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Run a heavy check (build, test suite, typecheck) under one host-wide lock.
+# lockf holds the lock, so the kernel releases it when the holder exits or dies.
+
+set -euo pipefail
+
+lock="${HEAVY_CHECK_LOCK:-/tmp/heavy-check.lock}"
+holder="$lock.holder"
+
+usage() {
+  echo "usage: heavy-check [--wait <seconds>] -- <command...>" >&2
+  exit 64
+}
+
+if [[ "${1:-}" == "--locked" ]]; then
+  marker="$2"
+  shift 2
+  printf 'pid=%s\ncwd=%s\ncommand=%s\nstarted=%s\n' \
+    "$$" "$PWD" "$*" "$(date '+%Y-%m-%dT%H:%M:%S%z')" >"$holder"
+  : >"$marker"
+  export NX_PARALLEL=1 JEST_MAX_WORKERS=2
+  echo "heavy-check: lock acquired; NX_PARALLEL=1 JEST_MAX_WORKERS=2 (pass --maxWorkers=2 to jest)" >&2
+  exec "$@"
+fi
+
+wait=3600
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --wait)
+      [[ "${2:-}" =~ ^[0-9]+$ ]] || usage
+      wait="$2"
+      shift 2
+      ;;
+    --) shift; break ;;
+    *) usage ;;
+  esac
+done
+[[ $# -gt 0 ]] || usage
+
+marker="$(mktemp -u "${TMPDIR:-/tmp}/heavy-check.XXXXXX")"
+trap 'rm -f "$marker"' EXIT
+
+rc=0
+/usr/bin/lockf -k -s -t "$wait" "$lock" "$0" --locked "$marker" "$@" || rc=$?
+
+if [[ $rc -eq 75 && ! -e "$marker" ]]; then
+  echo "heavy-check: lock $lock still held after ${wait}s. Current holder:" >&2
+  sed 's/^/  /' "$holder" >&2 2>/dev/null || echo "  (unknown)" >&2
+  exit 75
+fi
+exit "$rc"
