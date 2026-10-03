@@ -11,7 +11,8 @@
     nativeBuildInputs = [pkgs.makeWrapper];
     postBuild = ''
       wrapProgram $out/bin/opencode2 \
-        --set OPENCODE_EXECUTOR_URL "${config.agentHarnesses.executor.url}"
+        --set OPENCODE_EXECUTOR_URL "${config.agentHarnesses.executor.url}" \
+        --set OPENCODE_FIGMA_URL "${config.agentHarnesses.figma.url}"
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;

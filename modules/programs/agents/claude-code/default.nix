@@ -161,7 +161,11 @@
 
   sharedInstructions = builtins.readFile ../shared/instructions.md;
 
-  executorMcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" {
+  mcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" {
+    figma = {
+      type = "http";
+      url = config.agentHarnesses.figma.url;
+    };
     executor = {
       type = "http";
       url = config.agentHarnesses.executor.url;
@@ -191,7 +195,6 @@
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         "floai@flocasts" = true;
-        "slack@claude-plugins-official" = true;
       };
     extraKnownMarketplaces =
       {
@@ -390,14 +393,14 @@ in {
     '';
 
     # Claude stores user- and project-scoped MCP configuration alongside
-    # mutable runtime state in ~/.claude.json. Centralize Executor at user
+    # mutable runtime state in ~/.claude.json. Centralize MCP servers at user
     # scope and clear project servers while preserving all other state.
     home.activation.claudeMcpConfig = lib.hm.dag.entryAfter ["claudeConfig"] ''
       config_file="$HOME/.claude.json"
       temporary_file="$(${pkgs.coreutils}/bin/mktemp)"
 
       if [ -f "$config_file" ]; then
-        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} '
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} '
           .mcpServers = $mcpServers[0]
           | if (.projects | type) == "object"
             then .projects |= with_entries(
@@ -407,7 +410,7 @@ in {
             end
         ' "$config_file" > "$temporary_file"
       else
-        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${executorMcpServersFile} \
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} \
           -n '{mcpServers: $mcpServers[0]}' > "$temporary_file"
       fi
 

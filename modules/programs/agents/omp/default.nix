@@ -4,7 +4,11 @@
   ...
 }: let
   ompDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/omp";
-  executorMcpConfig = (pkgs.formats.json {}).generate "omp-mcp.json" {
+  mcpConfig = (pkgs.formats.json {}).generate "omp-mcp.json" {
+    mcpServers.figma = {
+      url = config.agentHarnesses.figma.url;
+      type = "http";
+    };
     mcpServers.executor = {
       type = "http";
       url = config.agentHarnesses.executor.url;
@@ -17,5 +21,5 @@ in {
   home.file.".omp/agent/config.yml".source =
     config.lib.file.mkOutOfStoreSymlink "${ompDir}/config.yml";
 
-  home.file.".omp/agent/mcp.json".source = executorMcpConfig;
+  home.file.".omp/agent/mcp.json".source = mcpConfig;
 }

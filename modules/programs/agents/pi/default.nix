@@ -47,7 +47,11 @@
 
   piDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/pi";
 
-  executorMcpConfig = (pkgs.formats.json {}).generate "pi-mcp.json" {
+  mcpConfig = (pkgs.formats.json {}).generate "pi-mcp.json" {
+    mcpServers.figma = {
+      url = config.agentHarnesses.figma.url;
+      lifecycle = "lazy";
+    };
     mcpServers.executor = {
       url = config.agentHarnesses.executor.url;
       lifecycle = "lazy";
@@ -92,7 +96,7 @@ in {
   home.file.".pi/agent/settings-extensions.json".source =
     config.lib.file.mkOutOfStoreSymlink "${piDir}/settings-extensions.json";
 
-  home.file.".pi/agent/mcp.json".source = executorMcpConfig;
+  home.file.".pi/agent/mcp.json".source = mcpConfig;
 
   # Claude Bridge writes runtime state (for example startupNoticeShown) into
   # this file, so it cannot remain a Home Manager symlink into the Nix store.

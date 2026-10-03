@@ -88,15 +88,19 @@ Home Manager links `~/.omp/agent/config.yml` to the file under
 the tracked file. Review its Git diff before committing.
 
 Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
-`agentHarnesses.executor.url` as OMP's `executor` HTTP MCP server.
+`agentHarnesses.executor.url` and `agentHarnesses.figma.url` as HTTP MCP servers.
 
-Pi, OMP, Codex, Claude Code, and OpenCode share that endpoint, with Executor as
-their only configured MCP server. Claude Code disables imported claude.ai
+Pi, OMP, Codex, Claude Code, and OpenCode use Executor and the
+[Figma remote MCP server](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/).
+Slack tools use Executor. Figma connects directly because it does not work
+through Executor. Claude Code disables imported claude.ai
 connectors; activation also clears its saved project-scoped MCP servers so
-projects use the user-scoped Executor entry. This does not delete connectors
+projects use the user-scoped entries. This does not delete connectors
 from the claude.ai account.
 
 OAuth credentials are local to each harness and are not managed by Nix.
+For Figma, use the commands below with `figma` in place of `executor`, or
+select Figma in Claude Code.
 Authorize once per harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
 in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`, and
 `/mcp` → Executor → Authenticate in Claude Code. Run OMP authorization in the
