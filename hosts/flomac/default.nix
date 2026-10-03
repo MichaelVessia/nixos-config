@@ -61,6 +61,7 @@
       "shottr"
       "stablyai/orca/orca"
       "t3-code" # Minimal GUI for orchestrating AI coding agents (t3.codes)
+      "t3-code@nightly"
       "tailscale-app"
       "libreoffice"
       "zed"
