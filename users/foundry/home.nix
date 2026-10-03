@@ -12,6 +12,7 @@
     ../../modules/programs/zellij.nix
     ../../modules/programs/ssh.nix
     ../../modules/programs/worktrunk.nix
+    ../../modules/secrets/foundry.nix
   ];
 
   home.username = "foundry";
