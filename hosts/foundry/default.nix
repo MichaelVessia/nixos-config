@@ -35,6 +35,8 @@
 
   programs.zsh.enable = true;
   environment.systemPackages = [pkgs.nano];
+  # SSH clients such as Ghostty need their terminfo for correct line editing.
+  environment.enableAllTerminfo = true;
   systemd.tmpfiles.rules = ["d /home/foundry/.cache/tmp 0700 foundry users -"];
 
   nixpkgs.config.allowUnfree = true;
