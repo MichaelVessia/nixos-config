@@ -192,6 +192,30 @@
             }
           ];
         };
+
+      foundry = let
+        username = "foundry";
+        specialArgs = {
+          inherit username inputs pkgs-unstable;
+          enableHomelabSkills = false;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/foundry
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [inputs.worktrunk.homeModules.default];
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username}/home.nix;
+            }
+          ];
+        };
     };
 
     # SD card image for tts-pi

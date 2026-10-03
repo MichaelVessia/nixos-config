@@ -21,6 +21,10 @@
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
       };
+      "foundry" = {
+        hostname = "192.168.1.18";
+        user = "foundry";
+      };
       "proxmox" = {
         hostname = "192.168.1.200";
         user = "root";
