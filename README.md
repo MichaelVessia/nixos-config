@@ -26,6 +26,44 @@ Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
 input. Updating it requires GitHub SSH authentication and flocasts SAML access.
 The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
+### Foundry headless devbox
+
+`foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,
+and a Btrfs SSD. Its installer-generated mounts are preserved in
+`hosts/foundry/hardware-configuration.nix`; regenerate that file on the machine
+if the disk layout changes. The headless Home Manager profile in
+`users/foundry/home.nix` reuses the shell, Git, Neovim, Zellij, Worktrunk, and
+agent modules without importing the desktop package collection.
+
+Keep the repository at `/home/foundry/nixos-config`: agent settings use writable
+links into that checkout. Agent OAuth credentials and private GitHub access
+must be authorized separately; no private credentials are copied automatically.
+SSH accepts the configured Framework and Mac public keys; password and root
+SSH logins are disabled. Sudo still requires the user's password. The `foundry`
+user is trusted by Nix, like the existing dev host's admin user.
+The shared SSH module defines `ssh foundry` as `foundry@192.168.1.18`.
+Rebuild the client machine to activate the shortcut.
+
+Build from an existing authenticated x86_64 machine:
+
+```bash
+nix build .#nixosConfigurations.foundry.config.system.build.toplevel --no-link
+```
+
+After the first deployment, remote updates can be built here without putting
+private GitHub credentials on the devbox:
+
+```bash
+nixos-rebuild switch --flake .#foundry \
+  --target-host foundry@192.168.1.18 --ask-sudo-password
+```
+
+The initial stock installation does not yet trust the `foundry` Nix user, so
+the first deployment needs a root import of the locally built closure before
+activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
+Confirm a fresh key-based SSH connection and a reboot before removing the
+monitor. Reserve its DHCP address, or update the target IP if it changes.
+
 ## Directory Structure
 
 - `modules/` - Modular configuration files
