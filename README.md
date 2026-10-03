@@ -41,8 +41,10 @@ must be authorized separately; no private credentials are copied automatically.
 SSH accepts the configured Framework and Mac public keys; password and root
 SSH logins are disabled. Sudo still requires the user's password. The `foundry`
 user is trusted by Nix, like the existing dev host's admin user.
-The shared SSH module defines `ssh foundry` as `foundry@192.168.1.18`.
-Rebuild the client machine to activate the shortcut.
+Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
+`foundry@foundry` through MagicDNS. Rebuild the client machine to activate the
+shortcut. The `foundry` user is a Tailscale operator and lingers, so the T3
+Code user service can publish itself with Tailscale Serve.
 
 Build from an existing authenticated x86_64 machine:
 
@@ -55,14 +57,14 @@ private GitHub credentials on the devbox:
 
 ```bash
 nixos-rebuild switch --flake .#foundry \
-  --target-host foundry@192.168.1.18 --ask-sudo-password
+  --target-host foundry@foundry --ask-sudo-password
 ```
 
 The initial stock installation does not yet trust the `foundry` Nix user, so
 the first deployment needs a root import of the locally built closure before
 activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
-monitor. Reserve its DHCP address, or update the target IP if it changes.
+monitor.
 
 ## Directory Structure
 

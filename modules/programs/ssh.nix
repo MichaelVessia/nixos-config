@@ -22,7 +22,7 @@
         identityFile = "~/.ssh/id_ed25519";
       };
       "foundry" = {
-        hostname = "192.168.1.18";
+        hostname = "foundry";
         user = "foundry";
       };
       "proxmox" = {

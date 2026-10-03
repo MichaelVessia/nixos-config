@@ -23,13 +23,19 @@
     description = "Foundry development user";
     extraGroups = ["wheel" "networkmanager"];
     shell = pkgs.zsh;
+    # Keeps T3 Code's systemd user service running without a login session.
+    linger = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r michaelvessia@framework13"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
     ];
   };
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    # Lets T3 Code configure Tailscale Serve without root.
+    extraSetFlags = ["--operator=foundry"];
+  };
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
 
