@@ -29,6 +29,10 @@
     ];
   };
 
+  services.tailscale.enable = true;
+  # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
+  programs.nix-ld.enable = true;
+
   programs.zsh.enable = true;
   environment.systemPackages = [pkgs.nano];
   systemd.tmpfiles.rules = ["d /home/foundry/.cache/tmp 0700 foundry users -"];
