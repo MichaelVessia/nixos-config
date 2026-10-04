@@ -11,9 +11,6 @@ keys:
   # Foundry key (headless dev box)
   - &user_foundry age18lajvpfr0lyyey0kvr865apxu7mlphs5sgq2jw0lkxuxwn747avq7dtw7x
 
-  # tts-pi host key (derived from SSH host key)
-  - &host_tts_pi age1myyasn6yljaqxxf2fwm3c8v7rt9ys0pf9l0002hv9c83je8acelq2mhr9y
-
 creation_rules:
   # Framework13 secrets
   - path_regex: secrets/framework13\.yaml$
@@ -34,17 +31,9 @@ creation_rules:
           - *user_foundry
           - *user_michael_flomac
 
-  # TTS Pi secrets
-  - path_regex: secrets/tts-pi\.yaml$
-    key_groups:
-      - age:
-          - *user_michael_framework13
-          - *host_tts_pi
-
   # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$
     key_groups:
       - age:
           - *user_michael_framework13
           - *user_michael_flomac
-          - *host_tts_pi

@@ -76,7 +76,6 @@
   };
 
   outputs = inputs @ {
-    self,
     nixpkgs,
     nixpkgs-unstable,
     home-manager,
@@ -158,46 +157,6 @@
           ];
         };
 
-      tts-pi = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        modules = [
-          nixos-hardware.nixosModules.raspberry-pi-3
-          sops-nix.nixosModules.sops
-          ./hosts/tts-pi/default.nix
-          ./modules/secrets/tts-pi.nix
-          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-        ];
-      };
-
-      claude-casino = let
-        username = "cc";
-        specialArgs = {
-          inherit username;
-          inherit inputs;
-          inherit pkgs-unstable;
-          enableHomelabSkills = false;
-        };
-      in
-        nixpkgs.lib.nixosSystem {
-          inherit specialArgs;
-          system = "x86_64-linux";
-
-          modules = [
-            ./hosts/claude-casino
-            sops-nix.nixosModules.sops
-
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-
-              home-manager.extraSpecialArgs = inputs // specialArgs;
-              home-manager.users.${username} = import ./users/${username}/home.nix;
-            }
-          ];
-        };
-
       foundry = let
         username = "foundry";
         specialArgs = {
@@ -225,9 +184,6 @@
           ];
         };
     };
-
-    # SD card image for tts-pi
-    images.tts-pi = self.nixosConfigurations.tts-pi.config.system.build.sdImage;
 
     darwinConfigurations = {
       flomac = let

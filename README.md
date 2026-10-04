@@ -138,7 +138,7 @@ Uses [sops-nix](https://github.com/Mic92/sops-nix) with age encryption.
 
 1. Edit the encrypted secrets file:
    ```bash
-   sops secrets/framework13.yaml  # or flomac.yaml, tts-pi.yaml
+   sops secrets/framework13.yaml  # or flomac.yaml
    ```
 
 2. Add your secret in YAML format:
@@ -185,8 +185,7 @@ systemd.services.myservice.serviceConfig = {
 |------|------|-------------|
 | `secrets/framework13.yaml` | framework13 | You (personal key) |
 | `secrets/flomac.yaml` | flomac | You (personal key) |
-| `secrets/tts-pi.yaml` | tts-pi | You + Pi (host key) |
-| `secrets/common.yaml` | All | You + Pi |
+| `secrets/common.yaml` (optional) | Shared | Framework13 + flomac keys |
 
 ### Adding a new host
 
