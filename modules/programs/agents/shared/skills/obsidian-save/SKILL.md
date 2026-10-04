@@ -1,65 +1,47 @@
 ---
 name: obsidian-save
-description: Save conversation decisions, solutions, or notes to the appropriate Obsidian vault when requested.
-allowed-tools: Bash, Write
+description: Save requested notes or conversation context to the correct Obsidian vault. Ask before saving when the destination is ambiguous.
 ---
 
-# obsidian-save - Save Session to Obsidian
+# Save to Obsidian
 
-Capture current session context as a note in the Obsidian vault.
+## Select the vault before writing
 
-## When to Use
+Choose by the note's content, not the current computer, repository, or working
+folder. A personal project is not automatically FloSports work. Respect a clear
+vault choice from the user, subject to the content and sharing checks below.
 
-Use when user wants to save conversation insights, decisions, or context to their Obsidian knowledge base.
+| Vault | Content | Devices |
+| --- | --- | --- |
+| `~/vaults/brain` | Reviewed general knowledge, public references, reusable instructions without work or private details | Work and personal devices |
+| `~/vaults/flosports` | FloSports projects, meetings, internal systems, and work context | flomac and foundry |
+| `~/vaults/private` | Personal records, journals, personal projects, and home infrastructure details | Personal devices only |
 
-## Process
+- If the destination is ambiguous, ask which vault to use and wait for the answer
+  before creating or updating any note. Do not save to a default vault first.
+- If a note mixes work, personal, and general information, ask whether to split it
+  or keep it in a specified restricted vault. Do not copy the full note to brain.
+- If the user selects brain but the proposed note contains work or private details,
+  identify the conflict and ask what to remove or which restricted vault to use.
+- General instructions can belong in brain after checking their content. Device
+  lists, internal addresses, credentials, and personal context do not become
+  general knowledge merely because they appear in a technical note.
+- Check that the selected vault exists and read its `AGENTS.md` before writing.
+  If it is unavailable, report that fact. Do not create a replacement vault, write
+  to a different vault, or copy private notes onto a work device as a fallback.
 
-1. **Parse user prompt**: The text accompanying the skill invocation guides the note:
-   - **Focus areas**: "just the debugging steps", "only architecture decisions"
-   - **Exclusions**: "skip the failed attempts", "don't include the tangents"
-   - **Structure**: "as a how-to guide", "as bullet points", "as a decision log"
-   - **Title**: Extract explicit title if given, otherwise derive from topic
+## Save the note
 
-2. **Generate filename**: `YYYY-MM-DDTHH-MM-SS-<slug>.md`
-   - Use provided title as slug, or derive from session topic
-   - Slugify: lowercase, hyphens for spaces, no special chars
-
-3. **Summarize session** based on user's direction:
-   - Default (no direction): decisions, solutions, key insights, action items
-   - With direction: prioritize what user asked for, shape content accordingly
-   - Use concise bullet points unless user requests different structure
-
-4. **Select a vault** by content: `~/vaults/flosports` for work,
-   `~/vaults/private` for personal information, or `~/vaults/brain` for reviewed
-   general knowledge. Read that vault's `AGENTS.md`. If the vault is absent, stop
-   and report it. Never use another vault as a fallback.
-
-5. **Create note** at `<selected-vault>/Notes/<filename>`:
-
-```markdown
----
-date: <ISO8601 timestamp>
-daily: [[YYYY-MM-DD]]
-tags:
-  - claude-session
-source: claude-code
----
-
-# <Title>
-
-## Summary
-
-<Bulleted summary of session>
-
-## Details
-
-<Any additional context, code snippets, or specifics worth preserving>
-```
-
-6. **Confirm**: Echo the full path and brief summary of what was captured.
-
-## Notes
-
-- Always include `daily: [[YYYY-MM-DD]]` for today's date to create backlink
-- Keep summaries focused on actionable/memorable content
-- Include code snippets only if they're the key takeaway
+1. Follow the requested focus, exclusions, title, and structure. Check for an
+   existing note on the same topic and update it when appropriate. If its current
+   vault conflicts with its content, resolve the destination before editing.
+2. For a new note, use `<selected-vault>/Notes/YYYY-MM-DDTHH-MM-SS-<slug>.md`, unless
+   the user or vault instructions specify another location. Use a lowercase slug
+   with hyphens.
+3. Keep the content limited to the requested information. Include relevant decisions,
+   actions, and code examples without copying unrelated conversation details.
+4. Include the date, a quoted `daily: "[[YYYY-MM-DD]]"` backlink, and the actual
+   agent name in `source`. Do not label another agent's work as Claude Code.
+5. Read the saved note to check its content and destination. Report the chosen vault
+   and full path. Put the path in a code block so the app does not hide its folders.
+   Confirm remote delivery only when sync status provides evidence.

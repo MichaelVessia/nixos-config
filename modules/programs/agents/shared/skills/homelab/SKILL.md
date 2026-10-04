@@ -38,3 +38,12 @@ Discovery is complete only when the service identity, runtime location, user-fac
 - Never print credentials or decrypted secret values. Refer to secret and environment variable names only.
 - Verify a mutation through the owning service or Executor, not only through command exit status.
 - After topology changes, update `~/vaults/private/Notes/PROXMOX_SETUP.md`; add or update Homepage and Uptime Kuma only when the change requires them.
+
+
+## Save notes
+
+Home infrastructure details belong in private. Before writing, check that the
+vault exists and read its `AGENTS.md`. If it is absent, report the pending note
+update without creating a private vault or using brain or flosports instead.
+For general lessons or mixed content, follow [obsidian-save](../obsidian-save/SKILL.md).
+Ask before saving if the destination is ambiguous.

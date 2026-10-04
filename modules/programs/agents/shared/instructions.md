@@ -73,6 +73,10 @@
   and foundry. Use `~/vaults/private` for personal context on personal devices.
 - Read the selected vault's `AGENTS.md` before writing. If the vault is absent,
   do not substitute another vault or create a private vault on a work device.
+- Choose the vault by content, not the current computer or repository. If the
+  destination is ambiguous or the note mixes categories, ask the user and wait
+  before creating or updating any note. Do not save to a default vault first.
+- If a requested brain note contains work or private details, ask what to remove
+  or which restricted vault to use before saving.
 - Update the appropriate vault when work reveals durable context, decisions,
-  people context, or reusable notes. Keep uncertain notes in the restricted
-  vault until the user reviews them.
+  people context, or reusable notes.

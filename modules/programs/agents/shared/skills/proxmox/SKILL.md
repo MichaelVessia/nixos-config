@@ -208,3 +208,10 @@ Read this file if you need static reference info not discoverable via commands.
 containers or VMs, resizing disks, changing IPs, modifying mounts, updating
 services), read and update `~/vaults/private/Notes/PROXMOX_SETUP.md` to reflect the
 new state. Keep the note in sync with reality.
+
+
+Before writing, check that the private vault exists and read its `AGENTS.md`.
+If it is absent, report the pending note update. Do not create the vault or save
+its contents in brain or flosports as a fallback. For general lessons or mixed
+content, follow [obsidian-save](../obsidian-save/SKILL.md). Ask before saving if
+the destination is ambiguous.
