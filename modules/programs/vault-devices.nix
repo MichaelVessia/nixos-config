@@ -14,4 +14,12 @@
     profile = "personal";
     address = "tcp://framework13-1:22000";
   };
+  pixel-7 = {
+    id = "IUB6NVS-ZDCYQAU-MGFIL7U-2TIJK2G-ZXKNLSW-XI7E6XA-IAPACDL-NH7XFAV";
+    profile = "personal";
+  };
+  proxmox-syncthing = {
+    id = "53X5OBQ-575VJ2E-CA2ELH5-AHEOHON-C7EAMX6-YFXUWQM-KKA6S3Y-DSQZDQ4";
+    profile = "personal";
+  };
 }
