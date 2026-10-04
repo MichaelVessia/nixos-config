@@ -26,6 +26,11 @@ Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
 input. Updating it requires GitHub SSH authentication and flocasts SAML access.
 The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
+Framework13 installs the T3 Code desktop app through Home Manager from the
+locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
+Its first-run setup connects to the local backend; remote computers can be
+added from the app.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,
