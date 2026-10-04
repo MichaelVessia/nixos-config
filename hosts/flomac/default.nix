@@ -136,6 +136,8 @@
       CustomUserPreferences = {
         # Keep Brave as the default browser without repeated Chrome prompts.
         "com.google.Chrome".DefaultBrowserSettingEnabled = false;
+        # Start Tailscale at login so MagicDNS works after a reboot.
+        "io.tailscale.ipn.macsys".TailscaleStartOnLogin = true;
         "com.apple.dock" = {
           mru-spaces = false; # Don't auto-rearrange Spaces
         };
