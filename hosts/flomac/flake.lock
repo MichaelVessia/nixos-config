@@ -1086,17 +1086,17 @@
     "pstack": {
       "flake": false,
       "locked": {
-        "lastModified": 1791035522,
-        "narHash": "sha256-Q/+IFjLVv8LU/7keh2s9pA6CnBvsxnVJg5p8S8t7Jqg=",
-        "owner": "michael-denyer",
-        "repo": "pstack-claude",
-        "rev": "55430ba22ccc751ab608422761aff14b2f063e5d",
+        "lastModified": 1791072408,
+        "narHash": "sha256-AZlQa2TypJr8W8Y6YDwRc65LWK+CEbrTiM2BRYU+Rok=",
+        "owner": "cursor",
+        "repo": "plugins",
+        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
         "type": "github"
       },
       "original": {
-        "owner": "michael-denyer",
-        "repo": "pstack-claude",
-        "rev": "55430ba22ccc751ab608422761aff14b2f063e5d",
+        "owner": "cursor",
+        "repo": "plugins",
+        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
         "type": "github"
       }
     },

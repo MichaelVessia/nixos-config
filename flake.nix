@@ -68,10 +68,9 @@
       url = "github:googleworkspace/cli";
       flake = false;
     };
-    # pstack-claude (Claude Code and Codex port of poteto's pstack). Pinned
-    # to a commit because the port changes skill instructions on each release.
+    # Upstream pstack 0.15.9 and its cursor-team-kit dependencies.
     pstack = {
-      url = "github:michael-denyer/pstack-claude/55430ba22ccc751ab608422761aff14b2f063e5d";
+      url = "github:cursor/plugins/e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a";
       flake = false;
     };
   };
