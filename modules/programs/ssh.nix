@@ -22,8 +22,14 @@
         identityFile = "~/.ssh/id_ed25519";
       };
       "foundry" = {
-        hostname = "foundry";
+        hostname =
+          if pkgs.stdenv.isDarwin
+          then "foundry.bison-gray.ts.net"
+          else "foundry";
         user = "foundry";
+        extraOptions = lib.optionalAttrs pkgs.stdenv.isDarwin {
+          HostKeyAlias = "192.168.1.18";
+        };
       };
       "proxmox" = {
         hostname = "192.168.1.200";
