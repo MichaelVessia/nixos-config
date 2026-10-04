@@ -132,10 +132,9 @@ in {
           };
         })
         pstackExplicitNames);
-      # Single bundle dest under ~/.agents/skills; per-tool paths layered on
-      # top via perSkillSymlinks below. `structure = "link"` declares one
-      # home.file entry per skill (recursive symlinks) so siblings written by
-      # `flo skills add` (and similar tools) survive home-manager activation.
+      # Build the bundle for ~/.agents/skills. Replace the module's recursive
+      # home.file target with per-skill directory links below so siblings written
+      # by `flo skills add` survive home-manager activation.
       # `symlink-tree` would run an activation sync script that owns the whole
       # directory and deletes anything it didn't put there.
       targets = {
@@ -158,6 +157,10 @@ in {
 
     home.file =
       {".agents/pstack/agents".source = inputs.pstack + "/pstack/agents";}
+      # Keep each skill as a directory link. Recursive links can write through
+      # an old directory link into the read-only store when a skill adds files.
+      // {".agents/skills".enable = false;}
+      // perSkillSymlinks ".agents/skills"
       // perSkillSymlinks ".claude/skills"
       // perSkillSymlinks ".codex/skills"
       // perSkillSymlinks ".config/opencode/skills";
