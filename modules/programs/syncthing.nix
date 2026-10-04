@@ -36,7 +36,7 @@ in {
       devices =
         lib.mapAttrs (_: device: {
           inherit (device) id;
-          addresses = [device.address "dynamic"];
+          addresses = lib.optional (device ? address) device.address ++ ["dynamic"];
           autoAcceptFolders = false;
           introducer = false;
         })

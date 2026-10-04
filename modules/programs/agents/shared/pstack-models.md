@@ -8,7 +8,7 @@ bug-fix: inherit-parent
 perf-issue: inherit-parent
 hillclimb: inherit-parent
 judgment and prose: inherit-parent
-strongest judgment: inherit-parent
+hardest tasks: inherit-parent
 how explorer: inherit-parent
 how explainer: inherit-parent
 why investigators: inherit-parent

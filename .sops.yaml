@@ -8,6 +8,9 @@ keys:
   # Flomac key (macOS)
   - &user_michael_flomac age1plsygq83qvax8s7qq0vywsm29qc32q2kdlpgh6j6eqn7hpvszghsl325ee
 
+  # Foundry key (headless dev box)
+  - &user_foundry age18lajvpfr0lyyey0kvr865apxu7mlphs5sgq2jw0lkxuxwn747avq7dtw7x
+
 creation_rules:
   # Framework13 secrets
   - path_regex: secrets/framework13\.yaml$
@@ -19,6 +22,13 @@ creation_rules:
   - path_regex: secrets/flomac\.yaml$
     key_groups:
       - age:
+          - *user_michael_flomac
+
+  # Foundry secrets (flomac can also edit)
+  - path_regex: secrets/foundry\.yaml$
+    key_groups:
+      - age:
+          - *user_foundry
           - *user_michael_flomac
 
   # Shared secrets (accessible from all machines)

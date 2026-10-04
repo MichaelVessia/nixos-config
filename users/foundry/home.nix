@@ -14,6 +14,7 @@
     ../../modules/programs/vaults.nix
     ../../modules/programs/syncthing.nix
     ../../modules/programs/worktrunk.nix
+    ../../modules/secrets/foundry.nix
   ];
 
   vaults = {
@@ -50,6 +51,7 @@
     lazygit
     lsof
     cloudflared
+    google-cloud-sdk
     nix-output-monitor
     devbox
     devenv

@@ -31,6 +31,11 @@
           HostKeyAlias = "192.168.1.18";
         };
       };
+      # Tailnet name differs from the macOS hostname.
+      "flomac" = {
+        hostname = "c6dwvf3hjg";
+        user = "michael.vessia";
+      };
       "proxmox" = {
         hostname = "192.168.1.200";
         user = "root";

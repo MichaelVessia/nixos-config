@@ -51,6 +51,19 @@
 
 - pstack subagents: read-only work on your own model only. Give file-writing
   work to a separate worker, not a subagent.
+- The installed skills use upstream Cursor tool names. Use the current
+  runtime's equivalent tools. `Task` means a subagent, `AskQuestion` means
+  a user question, and `create-skill` means the available skill authoring tool.
+- If a runtime has no named pstack agent type, read the matching prompt in
+  `~/.agents/pstack/agents/` and pass it to a generic subagent.
+- Use the model rows in these instructions or the runtime's `pstack-models.md`.
+  Manage changes through `modules/programs/agents/shared/pstack-models.md`
+  in nixos-config. Do not create a Cursor rules file on another runtime.
+- For transcript and project skill paths, use the current runtime's paths.
+  Discover MCP servers from the available tools, not a Cursor `mcps/` directory.
+- Use the available browser tools for `control-ui`. For recurring work,
+  use the runtime's scheduler or a bounded polling loop. For PR checks,
+  use pstack's Babysit playbook.
 
 # Obsidian Vault
 
@@ -60,6 +73,11 @@
   and foundry. Use `~/vaults/private` for personal context on personal devices.
 - Read the selected vault's `AGENTS.md` before writing. If the vault is absent,
   do not substitute another vault or create a private vault on a work device.
+- Choose the vault by content, not the current computer or repository. If the
+  destination is ambiguous or the note mixes categories, ask the user and wait
+  before creating or updating any note. Do not save to a default vault first.
+- If a requested brain note contains work or private details, ask what to remove
+  or which restricted vault to use before saving.
 - Update the appropriate vault when work reveals durable context, decisions,
   people context, or reusable notes. Keep uncertain notes in the restricted
   vault until the user reviews them.

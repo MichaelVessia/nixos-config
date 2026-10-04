@@ -253,6 +253,11 @@ If the Raycast Obsidian quicklink still uses `flo-notes` or `obsidian`, change i
 `obsidian://open?vault=flosports`. Reopen agent workspaces that still use the old
 vault path. Historical notes and saved session records retain their original paths.
 
+Pixel 7 and `proxmox-syncthing` are also registered as personal peers for `brain`
+and `private`. Their existing Syncthing installations still need matching folder
+shares. They are excluded from `flosports`. Devices without a fixed address use
+Syncthing discovery. Keep their old vault shares until the new shares are checked.
+
 ### Finish the personal migration
 
 1. Keep the existing personal vault and sync shares until the migration is checked.

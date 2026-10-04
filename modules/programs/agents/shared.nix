@@ -50,23 +50,43 @@
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
 
-  # pstack skills from the pinned pstack-claude port, installed as portable
-  # skill content (no plugin, agents, or hooks). Its bro and tdd share names
+  # Upstream pstack skills (no plugin, agents, or hooks). Its bro and tdd share names
   # with other skills (the personal bro, an unmanaged ~/.agents/skills/tdd),
   # so they install as pstack-bro and pstack-tdd with a matching frontmatter
   # name. Discovery rejects duplicate IDs, so the renamed pair is not
   # discovered under the original names.
-  pstackSkillsPath = inputs.pstack + "/plugins/pstack/skills";
+  pstackSkillsPath = inputs.pstack + "/pstack/skills";
   pstackRenamed = ["bro" "tdd"];
-  pstackSkillNames = lib.subtractLists pstackRenamed (dirNames pstackSkillsPath);
+  pstackNormalized = {
+    poteto-mode = "Poteto Mode";
+    make-bot-ui = "Make Bot UI";
+  };
+  pstackExplicitNames = pstackRenamed ++ lib.attrNames pstackNormalized;
+  pstackSkillId = name:
+    if lib.elem name pstackRenamed
+    then "pstack-${name}"
+    else name;
+  pstackSkillNames = lib.subtractLists pstackExplicitNames (dirNames pstackSkillsPath);
   renamePstackSkill = name: {original, ...}: let
-    renamed = builtins.replaceStrings ["---\nname: ${name}\n"] ["---\nname: pstack-${name}\n"] original;
+    originalName = pstackNormalized.${name} or name;
+    renamed = builtins.replaceStrings ["---\nname: ${originalName}\n"] ["---\nname: ${pstackSkillId name}\n"] original;
   in
     if renamed == original
-    then throw "pstack ${name}/SKILL.md no longer starts with `name: ${name}`"
+    then throw "pstack ${name}/SKILL.md no longer starts with `name: ${originalName}`"
     else renamed;
-  catalogSkillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames;
-  skillNames = catalogSkillNames ++ map (name: "pstack-${name}") pstackRenamed;
+  teamKitSkillNames = [
+    "control-cli"
+    "control-ui"
+    "deslop"
+    "fix-ci"
+    "fix-merge-conflicts"
+    "get-pr-comments"
+    "make-pr-easy-to-review"
+    "thermo-nuclear-code-quality-review"
+    "what-did-i-get-done"
+  ];
+  catalogSkillNames = enabledPersonalSkillNames ++ enabledGoogleWorkspaceSkillNames ++ pstackSkillNames ++ teamKitSkillNames;
+  skillNames = catalogSkillNames ++ map pstackSkillId pstackExplicitNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -97,21 +117,24 @@ in {
           path = pstackSkillsPath;
           filter.nameRegex = lib.concatStringsSep "|" pstackSkillNames;
         };
+        cursor-team-kit = {
+          path = inputs.pstack + "/cursor-team-kit/skills";
+          filter.nameRegex = lib.concatStringsSep "|" teamKitSkillNames;
+        };
       };
       skills.enable = catalogSkillNames;
       skills.explicit = lib.listToAttrs (map (name: {
-          name = "pstack-${name}";
+          name = pstackSkillId name;
           value = {
             from = "pstack";
             path = name;
             transform = renamePstackSkill name;
           };
         })
-        pstackRenamed);
-      # Single bundle dest under ~/.agents/skills; per-tool paths layered on
-      # top via perSkillSymlinks below. `structure = "link"` declares one
-      # home.file entry per skill (recursive symlinks) so siblings written by
-      # `flo skills add` (and similar tools) survive home-manager activation.
+        pstackExplicitNames);
+      # Build the bundle for ~/.agents/skills. Replace the module's recursive
+      # home.file target with per-skill directory links below so siblings written
+      # by `flo skills add` survive home-manager activation.
       # `symlink-tree` would run an activation sync script that owns the whole
       # directory and deletes anything it didn't put there.
       targets = {
@@ -133,7 +156,12 @@ in {
     '';
 
     home.file =
-      perSkillSymlinks ".claude/skills"
+      {".agents/pstack/agents".source = inputs.pstack + "/pstack/agents";}
+      # Keep each skill as a directory link. Recursive links can write through
+      # an old directory link into the read-only store when a skill adds files.
+      // {".agents/skills".enable = false;}
+      // perSkillSymlinks ".agents/skills"
+      // perSkillSymlinks ".claude/skills"
       // perSkillSymlinks ".codex/skills"
       // perSkillSymlinks ".config/opencode/skills";
   };
