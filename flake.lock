@@ -1259,17 +1259,17 @@
     "pstack": {
       "flake": false,
       "locked": {
-        "lastModified": 1790724099,
-        "narHash": "sha256-W9TFcarTLFzkV4G/MN1NTZheXVPD5Oio0FvUQar1gMA=",
+        "lastModified": 1791035522,
+        "narHash": "sha256-Q/+IFjLVv8LU/7keh2s9pA6CnBvsxnVJg5p8S8t7Jqg=",
         "owner": "michael-denyer",
         "repo": "pstack-claude",
-        "rev": "eefcfaf31343a0c98d4bf0dc74a55d62b35ce9f9",
+        "rev": "55430ba22ccc751ab608422761aff14b2f063e5d",
         "type": "github"
       },
       "original": {
         "owner": "michael-denyer",
         "repo": "pstack-claude",
-        "rev": "eefcfaf31343a0c98d4bf0dc74a55d62b35ce9f9",
+        "rev": "55430ba22ccc751ab608422761aff14b2f063e5d",
         "type": "github"
       }
     },
