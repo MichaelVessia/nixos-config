@@ -8,7 +8,6 @@
     # Declare secrets here (must match keys in secrets/framework13.yaml)
     secrets.paperless_url.owner = "michaelvessia";
     secrets.paperless_token.owner = "michaelvessia";
-    secrets.x_to_obsidian_vault_path.owner = "michaelvessia";
     secrets.x_to_obsidian_llm_provider.owner = "michaelvessia";
     secrets.x_to_obsidian_google_api_key.owner = "michaelvessia";
     secrets.fmcal_username.owner = "michaelvessia";

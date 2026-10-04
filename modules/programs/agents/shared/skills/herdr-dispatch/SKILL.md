@@ -34,7 +34,7 @@ Example, "create a tab in the Obsidian workspace and send `Hello` to Claude":
 ```bash
 herdr workspace list
 herdr tab create --workspace <obsidian-workspace-id> \
-  --cwd /Users/michael.vessia/obsidian --label hello-claude --no-focus
+  --cwd /Users/michael.vessia/vaults/flosports --label hello-claude --no-focus
 herdr agent start hello-claude --kind claude --pane <result.root_pane.pane_id> \
   -- --model claude-opus-5-5 --effort medium --dangerously-skip-permissions
 herdr agent prompt hello-claude "Hello"

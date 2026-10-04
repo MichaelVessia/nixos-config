@@ -3,7 +3,7 @@
 # This file documents our keybind conventions.
 #
 # Keybinds (configured in Raycast as Quicklinks/Hotkeys):
-#   Ctrl+O  Obsidian    obsidian://open?vault=flo-notes
+#   Ctrl+O  Obsidian    obsidian://open?vault=flosports
 #   Ctrl+B  Browser
 #   Ctrl+C  Claude
 #   Ctrl+T  Terminal

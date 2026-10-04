@@ -17,7 +17,7 @@ Use live discovery before relying on remembered IPs, ports, or topology.
 | Add a service to the dashboard | `homepage-add` skill |
 | Find a friendly hostname or reverse-proxy upstream | Caddy config in Proxmox CT 115 |
 | Confirm the dashboard's service catalog | Homepage config in Proxmox CT 103 |
-| Recover setup history or operational notes | `~/obsidian/Notes/PROXMOX_SETUP.md` |
+| Recover setup history or operational notes | `~/vaults/private/Notes/PROXMOX_SETUP.md` |
 
 Use a service-specific skill when one exists.
 
@@ -37,4 +37,4 @@ Discovery is complete only when the service identity, runtime location, user-fac
 - Keep discovery read-only until the user authorizes a mutation.
 - Never print credentials or decrypted secret values. Refer to secret and environment variable names only.
 - Verify a mutation through the owning service or Executor, not only through command exit status.
-- After topology changes, update `~/obsidian/Notes/PROXMOX_SETUP.md`; add or update Homepage and Uptime Kuma only when the change requires them.
+- After topology changes, update `~/vaults/private/Notes/PROXMOX_SETUP.md`; add or update Homepage and Uptime Kuma only when the change requires them.

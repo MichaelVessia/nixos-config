@@ -8,9 +8,6 @@ keys:
   # Flomac key (macOS)
   - &user_michael_flomac age1plsygq83qvax8s7qq0vywsm29qc32q2kdlpgh6j6eqn7hpvszghsl325ee
 
-  # tts-pi host key (derived from SSH host key)
-  - &host_tts_pi age1myyasn6yljaqxxf2fwm3c8v7rt9ys0pf9l0002hv9c83je8acelq2mhr9y
-
 creation_rules:
   # Framework13 secrets
   - path_regex: secrets/framework13\.yaml$
@@ -24,17 +21,9 @@ creation_rules:
       - age:
           - *user_michael_flomac
 
-  # TTS Pi secrets
-  - path_regex: secrets/tts-pi\.yaml$
-    key_groups:
-      - age:
-          - *user_michael_framework13
-          - *host_tts_pi
-
   # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$
     key_groups:
       - age:
           - *user_michael_framework13
           - *user_michael_flomac
-          - *host_tts_pi

@@ -1,4 +1,9 @@
-{pkgs, ...}: let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   direnvPackage =
     if pkgs.stdenv.hostPlatform.isDarwin
     then
@@ -49,7 +54,7 @@ in {
 
       [ -f "$SECRETS_DIR/paperless_url" ] && export PAPERLESS_URL="$(cat "$SECRETS_DIR/paperless_url")"
       [ -f "$SECRETS_DIR/paperless_token" ] && export PAPERLESS_TOKEN="$(cat "$SECRETS_DIR/paperless_token")"
-      [ -f "$SECRETS_DIR/x_to_obsidian_vault_path" ] && export X_TO_OBSIDIAN_VAULT_PATH="$(cat "$SECRETS_DIR/x_to_obsidian_vault_path")"
+      export X_TO_OBSIDIAN_VAULT_PATH=${lib.escapeShellArg config.vaults.capturePath}
       [ -f "$SECRETS_DIR/x_to_obsidian_llm_provider" ] && export X_TO_OBSIDIAN_LLM_PROVIDER="$(cat "$SECRETS_DIR/x_to_obsidian_llm_provider")"
       [ -f "$SECRETS_DIR/x_to_obsidian_google_api_key" ] && export X_TO_OBSIDIAN_GOOGLE_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_google_api_key")"
       [ -f "$SECRETS_DIR/fmcal_username" ] && export FMCAL_USERNAME="$(cat "$SECRETS_DIR/fmcal_username")"

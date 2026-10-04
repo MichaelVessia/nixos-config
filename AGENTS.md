@@ -1,7 +1,7 @@
 # nixos-config
 
 Personal declarative configuration for NixOS, nix-darwin, Home Manager, and
-sops-nix. The flake configures `framework13`, `tts-pi`, `claude-casino`, and
+sops-nix. The flake configures `framework13`, `foundry`, and
 `flomac`; most user programs are shared across hosts through Home Manager.
 
 ## Repository map

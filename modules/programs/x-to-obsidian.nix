@@ -8,6 +8,7 @@
 #   systemctl --user stop x-to-obsidian     # stop
 #   journalctl --user -u x-to-obsidian -f   # tail logs
 {
+  config,
   lib,
   pkgs,
   x-to-obsidian,
@@ -18,7 +19,7 @@
     SECRETS_DIR="/run/secrets"
     [ -d "$HOME/.config/sops-nix/secrets" ] && SECRETS_DIR="$HOME/.config/sops-nix/secrets"
 
-    [ -f "$SECRETS_DIR/x_to_obsidian_vault_path" ] && export VAULT_PATH="$(cat "$SECRETS_DIR/x_to_obsidian_vault_path")"
+    export VAULT_PATH=${lib.escapeShellArg config.vaults.capturePath}
     [ -f "$SECRETS_DIR/x_to_obsidian_llm_provider" ] && export LLM_PROVIDER="$(cat "$SECRETS_DIR/x_to_obsidian_llm_provider")"
     [ -f "$SECRETS_DIR/x_to_obsidian_google_api_key" ] && export GOOGLE_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_google_api_key")"
     [ -f "$SECRETS_DIR/x_to_obsidian_anthropic_api_key" ] && export ANTHROPIC_API_KEY="$(cat "$SECRETS_DIR/x_to_obsidian_anthropic_api_key")"
