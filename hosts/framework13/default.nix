@@ -250,6 +250,8 @@
   };
 
   # Tailscale VPN
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22000];
+
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "client";

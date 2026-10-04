@@ -207,3 +207,67 @@ Lefthook prevents committing unencrypted secrets. Install hooks:
 nix develop  # auto-installs via shellHook
 # or manually: lefthook install
 ```
+
+## Obsidian vaults
+
+Home Manager manages Syncthing devices, folder shares, ignore rules, and versioning.
+Open each folder below as a separate Obsidian vault. Do not open or sync `~/vaults`
+as one folder.
+
+| Vault | flomac | foundry | framework13 |
+| --- | --- | --- | --- |
+| `~/vaults/brain` | Shared | Shared | Shared after rebuild |
+| `~/vaults/flosports` | Shared | Shared | Absent |
+| `~/vaults/private` | Absent | Absent | Personal notes, initially empty |
+
+`brain` is for reviewed general knowledge. Work notes stay in `flosports` until
+reviewed. Personal notes stay in `private`. Capture tools default to the restricted
+vault for the host, never to `brain`.
+
+- `modules/programs/vaults.nix` defines paths and ignore rules.
+- `modules/programs/vault-devices.nix` records public device IDs, profiles, and
+  Tailscale addresses. Identity keys stay on each device, outside Git.
+- `modules/programs/syncthing.nix` shares `brain` with all registered peers and
+  restricts `flosports` and `private` to peers with the same profile.
+- Each user configuration selects its device name and `work` or `personal` profile.
+- Obsidian settings, Git history, local trash, and local Claude permissions do not
+  sync. Notes, attachments, and vault instructions do sync.
+- Syncthing keeps staggered versions for 90 days on each device. This protects
+  against incoming changes, not local changes. Keep separate backups.
+- TCP port 22000 is allowed on the NixOS Tailscale interface. The Syncthing API
+  stays on localhost. Routine setup does not require the web interface.
+
+### Activate the prepared work vaults
+
+The work vault was moved from `~/obsidian` to `~/vaults/flosports`. Obsidian's vault
+registry and active Codex automation paths on flomac were updated. `brain` contains
+only its sharing instructions. Foundry has initial copies of both vaults.
+
+The new Syncthing identities are already generated in
+`~/Library/Application Support/Syncthing` on flomac and `~/.local/state/syncthing`
+on foundry. Preserve these directories when rebuilding. Syncthing is not started
+by the migration itself. Rebuild both hosts to apply the service configuration.
+Use `hosts/flomac` as the macOS deployment entry point described above.
+
+If the Raycast Obsidian quicklink still uses `flo-notes` or `obsidian`, change it to
+`obsidian://open?vault=flosports`. Reopen agent workspaces that still use the old
+vault path. Historical notes and saved session records retain their original paths.
+
+### Finish the personal migration
+
+1. Keep the existing personal vault and sync shares until the migration is checked.
+2. Framework13 is registered with its existing device ID. For another personal
+   device, read its existing identity with `syncthing device-id`. Do not generate
+   a replacement identity for an existing installation.
+3. Add each additional device ID, `profile = "personal"`, and Tailscale TCP address
+   to `modules/programs/vault-devices.nix`.
+4. Rebuild all participating hosts so both sides have the device and folder shares.
+5. Copy personal notes and attachments into `~/vaults/private`, then open that
+   folder in Obsidian. Keep its `.stignore` file managed by Home Manager.
+6. Check note edits and attachments on each intended device before retiring the old
+   vault share. Move only reviewed general notes into `brain`.
+
+Framework13 temporarily preserves unmanaged devices and folders because its current
+configuration has not been inventoried. After all existing shares are declared in
+Nix, remove its `overrideDevices = false` and `overrideFolders = false` overrides.
+Never include flomac or foundry in the personal-only `private` share.

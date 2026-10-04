@@ -67,8 +67,12 @@
 
 # Obsidian Vault
 
-- Treat `/Users/michael.vessia/obsidian` as shared durable memory for agent
-  work, regardless of the repository or working directory.
-- Update the vault when work reveals durable project context, decisions, people
-  context, or reusable notes that future agents should inherit.
-- Before editing the vault, read `/Users/michael.vessia/obsidian/AGENTS.md`.
+- Use `~/vaults/brain` for reviewed general knowledge shared across work and
+  personal devices. Do not put work details or private information there.
+- Use `~/vaults/flosports` for work context. It is shared only between flomac
+  and foundry. Use `~/vaults/private` for personal context on personal devices.
+- Read the selected vault's `AGENTS.md` before writing. If the vault is absent,
+  do not substitute another vault or create a private vault on a work device.
+- Update the appropriate vault when work reveals durable context, decisions,
+  people context, or reusable notes. Keep uncertain notes in the restricted
+  vault until the user reviews them.

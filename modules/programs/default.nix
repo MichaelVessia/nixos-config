@@ -20,6 +20,7 @@
     ./zellij.nix
     ./ssh.nix
     ./stack.nix
+    ./vaults.nix
     ./syncthing.nix
     ./transcribe.nix
     ./worktrunk.nix

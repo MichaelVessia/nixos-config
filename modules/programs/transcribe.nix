@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -15,7 +16,7 @@
         set -u
         set -o pipefail
 
-        VOICE_NOTES_DIR="$HOME/obsidian/VoiceNotes"
+        VOICE_NOTES_DIR="${config.vaults.capturePath}/VoiceNotes"
         RECORDINGS_DIR="$VOICE_NOTES_DIR/Recordings"
         TRANSCRIPTIONS_DIR="$VOICE_NOTES_DIR/Transcriptions"
         WHISPER_CLI="${pkgs.whisper-cpp}/bin/whisper-cli"

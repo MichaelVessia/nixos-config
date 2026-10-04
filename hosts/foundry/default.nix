@@ -31,6 +31,8 @@
     ];
   };
 
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22000];
+
   services.tailscale = {
     enable = true;
     # Lets T3 Code configure Tailscale Serve without root.

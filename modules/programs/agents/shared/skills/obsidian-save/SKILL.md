@@ -1,6 +1,6 @@
 ---
 name: obsidian-save
-description: Save conversation decisions, solutions, or notes to the personal Obsidian vault when requested.
+description: Save conversation decisions, solutions, or notes to the appropriate Obsidian vault when requested.
 allowed-tools: Bash, Write
 ---
 
@@ -29,7 +29,12 @@ Use when user wants to save conversation insights, decisions, or context to thei
    - With direction: prioritize what user asked for, shape content accordingly
    - Use concise bullet points unless user requests different structure
 
-4. **Create note** at `~/obsidian/Notes/<filename>`:
+4. **Select a vault** by content: `~/vaults/flosports` for work,
+   `~/vaults/private` for personal information, or `~/vaults/brain` for reviewed
+   general knowledge. Read that vault's `AGENTS.md`. If the vault is absent, stop
+   and report it. Never use another vault as a fallback.
+
+5. **Create note** at `<selected-vault>/Notes/<filename>`:
 
 ```markdown
 ---
@@ -51,7 +56,7 @@ source: claude-code
 <Any additional context, code snippets, or specifics worth preserving>
 ```
 
-5. **Confirm**: Echo the full path and brief summary of what was captured.
+6. **Confirm**: Echo the full path and brief summary of what was captured.
 
 ## Notes
 

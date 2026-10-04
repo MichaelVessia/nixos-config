@@ -10,6 +10,11 @@
     ../../modules/secrets/flomac.nix
   ];
 
+  vaults = {
+    deviceName = "flomac";
+    profile = "work";
+  };
+
   home.username = "michael.vessia";
   home.homeDirectory = "/Users/michael.vessia";
 
