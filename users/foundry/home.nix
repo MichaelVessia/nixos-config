@@ -44,6 +44,7 @@
     lazygit
     lsof
     cloudflared
+    google-cloud-sdk
     nix-output-monitor
     devbox
     devenv

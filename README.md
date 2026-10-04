@@ -41,6 +41,14 @@ must be authorized separately; no private credentials are copied automatically.
 SSH accepts the configured Framework and Mac public keys; password and root
 SSH logins are disabled. Sudo still requires the user's password. The `foundry`
 user is trusted by Nix, like the existing dev host's admin user.
+
+Foundry includes the Google Cloud CLI. After rebuilding, sign in as the
+`foundry` user on Foundry with `gcloud auth login --no-launch-browser`.
+Follow the printed URL in your browser and enter the authorization code in
+that terminal. Agents on Foundry can then use this login. For Cloud Build
+checks, pass `--project=flosports-174016`; the account needs permission to
+read the build and its logs. Credentials remain outside this repository.
+
 Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
 `foundry@foundry` through MagicDNS. Rebuild the client machine to activate the
 shortcut. The `foundry` user is a Tailscale operator and lingers, so the T3
