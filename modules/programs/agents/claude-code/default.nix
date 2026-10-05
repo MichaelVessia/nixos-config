@@ -166,6 +166,10 @@
       type = "http";
       url = config.agentHarnesses.figma.url;
     };
+    executor-flosports = {
+      type = "http";
+      url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+    };
     executor = {
       type = "http";
       url = config.agentHarnesses.executor.url;
@@ -186,6 +190,8 @@
     autoMemoryEnabled = false;
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+      # Agent shells exit, but the Nx daemon detaches and outlives them.
+      NX_DAEMON = "false";
     };
     disableClaudeAiConnectors = true;
     skipDangerousModePermissionPrompt = true;

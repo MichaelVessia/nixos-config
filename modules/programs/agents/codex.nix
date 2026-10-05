@@ -30,6 +30,8 @@
       model = "gpt-6.1-sol";
       model_reasoning_effort = "medium";
       features.goals = true;
+      # Agent shells exit, but the Nx daemon detaches and outlives them.
+      shell_environment_policy.set.NX_DAEMON = "false";
       tui = {
         status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
       };
