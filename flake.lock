@@ -415,11 +415,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788450739,
-        "narHash": "sha256-glZLQlzIn1fXH6PazR2iUmTo7kzzyYSshrWhLS9TqCU=",
+        "lastModified": 1790898470,
+        "narHash": "sha256-zTwuwezD0w3hpga6a6P8emidzAZFyWqlNeRBlpWOOl8=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "31729ca8cbdb4fa927b34e5f4353e6a83f39e993",
+        "rev": "024633cd702b10285db5cb19b40ad48d2399ba60",
         "type": "github"
       },
       "original": {
@@ -601,11 +601,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1791084305,
-        "narHash": "sha256-xivfHf/GD23QlALSMMcsqffXbN1lA9ZmycIieMj5kY0=",
+        "lastModified": 1791167532,
+        "narHash": "sha256-QsIBhn0B13HtMQjpkJkyHjePdpTENu1mNnlbOnk+CNs=",
         "ref": "master",
-        "rev": "071b18677676661c1d59b5ca3e95d6e1cdb1ca71",
-        "revCount": 1006,
+        "rev": "723d6a9d37771c4167bbfab804134f8b26c3abec",
+        "revCount": 1036,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
@@ -849,11 +849,11 @@
         "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
-        "lastModified": 1790724431,
-        "narHash": "sha256-TiRnh+o2PoCAiQo8s/RoaJ6aEKseAbTLBDBZ4LWZxc8=",
+        "lastModified": 1791159248,
+        "narHash": "sha256-ehhRufG37vDruU5yA7yuCLCW1hB9HO96khjD7/XBAqA=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "ca2e9d5f14679c3fce79fa812c1cbd3a6d2ba745",
+        "rev": "8202284fa5c5aeec7f18d58d18ad2575e7c87b7e",
         "type": "github"
       },
       "original": {
