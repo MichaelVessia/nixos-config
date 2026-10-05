@@ -601,11 +601,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1790632351,
-        "narHash": "sha256-AASPlG/7lJCyiglbEtCHB4tcpYCM8/5GTYQN2SpEHPM=",
+        "lastModified": 1791084305,
+        "narHash": "sha256-xivfHf/GD23QlALSMMcsqffXbN1lA9ZmycIieMj5kY0=",
         "ref": "master",
-        "rev": "1fa1ec2541c020ff315ba46778c7be6ac2cf277e",
-        "revCount": 971,
+        "rev": "071b18677676661c1d59b5ca3e95d6e1cdb1ca71",
+        "revCount": 1006,
         "type": "git",
         "url": "ssh://git@github.com/flocasts/floai.git"
       },
