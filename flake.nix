@@ -185,7 +185,7 @@
         };
 
       foundry = let
-        username = "foundry";
+        username = "michaelvessia";
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
@@ -206,7 +206,7 @@
                 inputs.worktrunk.homeModules.default
               ];
               home-manager.extraSpecialArgs = inputs // specialArgs;
-              home-manager.users.${username} = import ./users/${username}/home.nix;
+              home-manager.users.${username} = import ./users/foundry/home.nix;
             }
           ];
         };

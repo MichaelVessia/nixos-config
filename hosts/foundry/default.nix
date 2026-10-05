@@ -1,5 +1,12 @@
-{pkgs, ...}: {
-  imports = [./hardware-configuration.nix];
+{
+  pkgs,
+  username,
+  ...
+}: {
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/homelab-ca/nixos.nix
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -18,8 +25,10 @@
     };
   };
 
-  users.users.foundry = {
+  users.users.${username} = {
     isNormalUser = true;
+    # Keep the UID from the original foundry user so existing files stay owned.
+    uid = 1000;
     description = "Foundry development user";
     extraGroups = ["wheel" "networkmanager"];
     shell = pkgs.zsh;
@@ -31,12 +40,27 @@
     ];
   };
 
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22000];
+  networking.firewall.interfaces.tailscale0 = {
+    allowedTCPPorts = [22000];
+    # mosh sessions survive foundry stalls and client network changes.
+    allowedUDPPortRanges = [
+      {
+        from = 60000;
+        to = 61000;
+      }
+    ];
+  };
+
+  # Open mosh only on the tailnet, not on the LAN.
+  programs.mosh = {
+    enable = true;
+    openFirewall = false;
+  };
 
   services.tailscale = {
     enable = true;
     # Lets T3 Code configure Tailscale Serve without root.
-    extraSetFlags = ["--operator=foundry"];
+    extraSetFlags = ["--operator=${username}"];
   };
 
   services.opentelemetry-collector = {
@@ -101,6 +125,19 @@
       };
     };
   };
+  # Parallel agent checks can exhaust RAM and swap until sshd stops answering.
+  # Kill type checkers and linters first; keep SSH, Tailscale, and T3 alive.
+  services.earlyoom = {
+    enable = true;
+    freeSwapThreshold = 20;
+    extraArgs = [
+      "--prefer"
+      "^(tsc|tsgolint|jest-worker)$"
+      "--avoid"
+      "^(sshd|sshd-session|tailscaled|t3|systemd|systemd-journal|systemd-logind)$"
+    ];
+  };
+
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
 
@@ -108,20 +145,24 @@
   environment.systemPackages = [pkgs.nano];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
-  systemd.tmpfiles.rules = ["d /home/foundry/.cache/tmp 0700 foundry users -"];
+  systemd.tmpfiles.rules = [
+    "d /home/${username}/.cache/tmp 0700 ${username} users -"
+    # T3 worktrees and Git worktree metadata store absolute paths from the old home.
+    "L /home/foundry - - - - /home/${username}"
+  ];
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     accept-flake-config = true;
-    trusted-users = ["root" "foundry"];
+    trusted-users = ["root" username];
     extra-substituters = ["https://cache.numtide.com"];
     extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
   };
 
   programs.nh = {
     enable = true;
-    flake = "/home/foundry/nixos-config";
+    flake = "/home/${username}/nixos-config";
   };
 
   system.stateVersion = "26.05";

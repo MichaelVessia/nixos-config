@@ -3,7 +3,9 @@
   pkgs,
   username,
   ...
-}: {
+}: let
+  homelabCa = ../../modules/homelab-ca/caddy-local-root.crt;
+in {
   # System-level nix-darwin configuration
   # Manages Homebrew and macOS system settings
 
@@ -99,6 +101,13 @@
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap stablyai/orca >/dev/null
       fi
+
+      # Trust the homelab Caddy CA for internal HTTPS services such as SigNoz.
+      if ! /usr/bin/security verify-cert -c ${homelabCa} >/dev/null 2>&1; then
+        /usr/bin/security add-trusted-cert -d -r trustRoot \
+          -k /Library/Keychains/System.keychain ${homelabCa} ||
+          echo "warning: could not trust the homelab Caddy CA" >&2
+      fi
     '';
 
     stateVersion = 5;
@@ -136,6 +145,8 @@
       CustomUserPreferences = {
         # Keep Brave as the default browser without repeated Chrome prompts.
         "com.google.Chrome".DefaultBrowserSettingEnabled = false;
+        # Start Tailscale at login so MagicDNS works after a reboot.
+        "io.tailscale.ipn.macsys".TailscaleStartOnLogin = true;
         "com.apple.dock" = {
           mru-spaces = false; # Don't auto-rearrange Spaces
         };
@@ -238,9 +249,15 @@
     localHostName = "flomac";
   };
 
+  # Tailscale MagicDNS is the default resolver and does not know .lan names.
+  environment.etc."resolver/lan".text = ''
+    nameserver 192.168.1.109
+  '';
+
   # Environment variables
   environment.systemPackages = with pkgs; [
     _1password-cli
+    (callPackage ./namespace-devbox.nix {})
     coreutils # provides gtimeout, gdate, etc.
     vim
   ];

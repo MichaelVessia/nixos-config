@@ -79,4 +79,5 @@
 - If a requested brain note contains work or private details, ask what to remove
   or which restricted vault to use before saving.
 - Update the appropriate vault when work reveals durable context, decisions,
-  people context, or reusable notes.
+  people context, or reusable notes. Keep uncertain notes in the restricted
+  vault until the user reviews them.

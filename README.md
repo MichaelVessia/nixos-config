@@ -31,6 +31,12 @@ locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
 Its first-run setup connects to the local backend; remote computers can be
 added from the app.
 
+Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
+Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
+Use `namespace-devbox configure-ssh <name>` to configure a Namespace devbox
+for the T3 Code SSH connection. Run it without `sudo`; Home Manager includes
+the generated `~/.namespace/ssh/*.ssh` files in its managed SSH configuration.
+
 ### Forge desktop
 
 `forge` reuses Framework13's Niri desktop and `michaelvessia` Home Manager
@@ -69,30 +75,30 @@ before expecting bidirectional vault synchronization.
 
 ### Foundry headless devbox
 
-`foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,
+`foundry` is an x86_64 NixOS devbox with the login user `michaelvessia`, no desktop,
 and a Btrfs SSD. Its installer-generated mounts are preserved in
 `hosts/foundry/hardware-configuration.nix`; regenerate that file on the machine
 if the disk layout changes. The headless Home Manager profile in
 `users/foundry/home.nix` reuses the shell, Git, Neovim, Zellij, Worktrunk, and
 agent modules without importing the desktop package collection.
 
-Keep the repository at `/home/foundry/nixos-config`: agent settings use writable
+Keep the repository at `/home/michaelvessia/nixos-config`: agent settings use writable
 links into that checkout. Agent OAuth credentials and private GitHub access
 must be authorized separately; no private credentials are copied automatically.
 SSH accepts the configured Framework and Mac public keys; password and root
-SSH logins are disabled. Sudo still requires the user's password. The `foundry`
+SSH logins are disabled. Sudo still requires the user's password. The `michaelvessia`
 user is trusted by Nix, like the existing dev host's admin user.
 
 Foundry includes the Google Cloud CLI. After rebuilding, sign in as the
-`foundry` user on Foundry with `gcloud auth login --no-launch-browser`.
+`michaelvessia` user on Foundry with `gcloud auth login --no-launch-browser`.
 Follow the printed URL in your browser and enter the authorization code in
 that terminal. Agents on Foundry can then use this login. For Cloud Build
 checks, pass `--project=flosports-174016`; the account needs permission to
 read the build and its logs. Credentials remain outside this repository.
 
 Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
-`foundry@foundry` through MagicDNS. Rebuild the client machine to activate the
-shortcut. The `foundry` user is a Tailscale operator and lingers, so the T3
+`michaelvessia@foundry` through MagicDNS. Rebuild the client machine to activate the
+shortcut. The `michaelvessia` user is a Tailscale operator and lingers, so the T3
 Code user service can publish itself with Tailscale Serve.
 
 Foundry's `opentelemetry-collector.service` sends host metrics to SigNoz every
@@ -115,10 +121,10 @@ private GitHub credentials on the devbox:
 
 ```bash
 nixos-rebuild switch --flake .#foundry \
-  --target-host foundry@foundry --ask-sudo-password
+  --target-host michaelvessia@foundry --ask-sudo-password
 ```
 
-The initial stock installation does not yet trust the `foundry` Nix user, so
+The initial stock installation does not yet trust the `michaelvessia` Nix user, so
 the first deployment needs a root import of the locally built closure before
 activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
