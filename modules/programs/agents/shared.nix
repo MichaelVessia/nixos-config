@@ -17,6 +17,7 @@
     "home-assistant-manager"
     "homelab"
     "homepage-add"
+    "immich-albums"
     "paperless"
     "proxmox"
     "uptime-kuma"

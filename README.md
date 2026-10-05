@@ -89,6 +89,19 @@ monitor.
 - `secrets/` - Encrypted secret files (safe to commit)
 - `scripts/` - Helper scripts (pre-commit hooks, etc.)
 
+## Shared Agent Skills
+
+Personal skills live under `modules/programs/agents/shared/skills/` and are
+discovered automatically by `modules/programs/agents/shared.nix`. Home Manager
+installs per-skill links for the shared bundle and agent-specific skill directories,
+preserving externally installed sibling skills.
+
+The `immich-albums` skill searches event photos and videos through Executor,
+checks visual samples and capture metadata, handles motion-photo companions, and
+creates verified private albums without changing originals. It is enabled only
+on homelab-enabled hosts (`framework13`), not `foundry` or `flomac`. Rebuild to
+install it, then start a new agent session to load its catalog entry.
+
 ## OMP Configuration
 
 OMP uses OpenAI only. Use Herdr for Claude sessions. The tracked
