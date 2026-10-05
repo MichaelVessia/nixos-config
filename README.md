@@ -31,6 +31,33 @@ locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
 Its first-run setup connects to the local backend; remote computers can be
 added from the app.
 
+### Forge desktop
+
+`forge` reuses Framework13's Niri desktop and `michaelvessia` Home Manager
+profile. Shared system settings live in `modules/desktop-system.nix`;
+Framework-specific audio rules and VM settings remain in `hosts/framework13`.
+Forge uses its installer-generated Btrfs mounts, initial `system.stateVersion`
+of `26.05`, and the proprietary NVIDIA driver with Wayland modesetting.
+
+Keep the checkout at `/home/michaelvessia/nixos-config`. Before the first
+activation, securely provision the personal age key at
+`~/.config/sops/age/keys.txt` with mode `600`. Forge reuses the encrypted personal
+secrets declared in `modules/secrets/default.nix`; no private keys belong in Git.
+Build on an authenticated machine if Forge does not yet have private GitHub access:
+
+```bash
+nix build .#nixosConfigurations.forge.config.system.build.toplevel --no-link
+```
+
+On Forge, apply the configuration with
+`sudo nixos-rebuild switch --flake ~/nixos-config#forge` once GitHub access is
+configured, or import an authenticated machine's built closure as root and use
+`sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
+Tailscale and agent OAuth authorization are separate machine-local steps.
+Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identity.
+Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
+before expecting bidirectional vault synchronization.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,

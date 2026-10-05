@@ -3,6 +3,7 @@
   pkgs,
   pkgs-unstable,
   inputs,
+  osConfig,
   ...
 }: {
   imports = [
@@ -21,7 +22,7 @@
   services.syncthing.overrideFolders = false;
 
   vaults = {
-    deviceName = "framework13";
+    deviceName = osConfig.networking.hostName;
     profile = "personal";
   };
 
