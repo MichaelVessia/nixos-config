@@ -54,6 +54,11 @@ On Forge, apply the configuration with
 configured, or import an authenticated machine's built closure as root and use
 `sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
 Tailscale and agent OAuth authorization are separate machine-local steps.
+Forge authorizes the Framework and Flomac SSH public keys. For T3 Code's
+desktop-managed SSH connection, use `michaelvessia@forge` over Tailscale,
+not its LAN address. Establish a normal SSH connection from the client first
+to trust the host key. The desktop app starts the remote T3 backend; provider
+authentication remains local to Forge.
 Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identity.
 Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
 before expecting bidirectional vault synchronization.
