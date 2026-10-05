@@ -64,10 +64,6 @@
       url = "github:Kyure-A/agent-skills-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    googleworkspace-cli = {
-      url = "github:googleworkspace/cli";
-      flake = false;
-    };
     # Upstream pstack 0.15.9 and its cursor-team-kit dependencies.
     pstack = {
       url = "github:cursor/plugins/e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a";
