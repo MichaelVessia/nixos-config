@@ -59,6 +59,15 @@ Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
 shortcut. The `foundry` user is a Tailscale operator and lingers, so the T3
 Code user service can publish itself with Tailscale Serve.
 
+Foundry's `opentelemetry-collector.service` sends host metrics to SigNoz every
+30 seconds after rebuilding. CPU, memory, filesystem, disk, network, paging,
+load, and process counts use `host.name=foundry` and `service.name=foundry-host`;
+application logs and traces are not collected. In SigNoz, filter host metrics
+by `host.name=foundry`. Collection is outbound-only and opens no Foundry ports.
+The private-LAN OTLP endpoint is `192.168.1.10:4317`; SigNoz CT 124 must allow
+Foundry's LAN address (`192.168.1.18`) through its ingestion firewall. Keep that
+address stable in DHCP or update the allowlist when it changes.
+
 Build from an existing authenticated x86_64 machine:
 
 ```bash
