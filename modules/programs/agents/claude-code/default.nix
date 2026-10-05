@@ -166,6 +166,10 @@
       type = "http";
       url = config.agentHarnesses.figma.url;
     };
+    executor-flosports = {
+      type = "http";
+      url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+    };
     executor = {
       type = "http";
       url = config.agentHarnesses.executor.url;
