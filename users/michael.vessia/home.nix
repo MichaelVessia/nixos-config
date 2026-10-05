@@ -18,6 +18,8 @@
   home.username = "michael.vessia";
   home.homeDirectory = "/Users/michael.vessia";
 
+  programs.ssh.includes = ["~/.namespace/ssh/*.ssh"];
+
   agentHarnesses.executor.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
 
   # Homebrew's tap-trust checks break `brew bundle --cleanup` during darwin

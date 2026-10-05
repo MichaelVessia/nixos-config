@@ -34,7 +34,8 @@ added from the app.
 Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
 Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
 Use `namespace-devbox configure-ssh <name>` to configure a Namespace devbox
-for the T3 Code SSH connection.
+for the T3 Code SSH connection. Run it without `sudo`; Home Manager includes
+the generated `~/.namespace/ssh/*.ssh` files in its managed SSH configuration.
 
 ### Foundry headless devbox
 
