@@ -31,6 +31,11 @@ locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
 Its first-run setup connects to the local backend; remote computers can be
 added from the app.
 
+Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
+Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
+Use `namespace-devbox configure-ssh <name>` to configure a Namespace devbox
+for the T3 Code SSH connection.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,

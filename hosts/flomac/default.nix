@@ -255,6 +255,7 @@ in {
   # Environment variables
   environment.systemPackages = with pkgs; [
     _1password-cli
+    (callPackage ./namespace-devbox.nix {})
     coreutils # provides gtimeout, gdate, etc.
     vim
   ];
