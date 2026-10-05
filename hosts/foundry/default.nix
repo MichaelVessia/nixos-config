@@ -119,6 +119,19 @@
       };
     };
   };
+  # Parallel agent checks can exhaust RAM and swap until sshd stops answering.
+  # Kill type checkers and linters first; keep SSH, Tailscale, and T3 alive.
+  services.earlyoom = {
+    enable = true;
+    freeSwapThreshold = 20;
+    extraArgs = [
+      "--prefer"
+      "^(tsc|tsgolint|jest-worker)$"
+      "--avoid"
+      "^(sshd|sshd-session|tailscaled|t3|systemd|systemd-journal|systemd-logind)$"
+    ];
+  };
+
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
 
