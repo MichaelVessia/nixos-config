@@ -26,6 +26,11 @@ Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
 input. Updating it requires GitHub SSH authentication and flocasts SAML access.
 The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
+Framework13 installs the T3 Code desktop app through Home Manager from the
+locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
+Its first-run setup connects to the local backend; remote computers can be
+added from the app.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `foundry`, no desktop,
@@ -53,6 +58,15 @@ Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
 `foundry@foundry` through MagicDNS. Rebuild the client machine to activate the
 shortcut. The `foundry` user is a Tailscale operator and lingers, so the T3
 Code user service can publish itself with Tailscale Serve.
+
+Foundry's `opentelemetry-collector.service` sends host metrics to SigNoz every
+30 seconds after rebuilding. CPU, memory, filesystem, disk, network, paging,
+load, and process counts use `host.name=foundry` and `service.name=foundry-host`;
+application logs and traces are not collected. In SigNoz, filter host metrics
+by `host.name=foundry`. Collection is outbound-only and opens no Foundry ports.
+The private-LAN OTLP endpoint is `192.168.1.10:4317`; SigNoz CT 124 must allow
+Foundry's LAN address (`192.168.1.18`) through its ingestion firewall. Keep that
+address stable in DHCP or update the allowlist when it changes.
 
 Build from an existing authenticated x86_64 machine:
 
@@ -83,6 +97,19 @@ monitor.
 - `hosts/` - Host-specific configurations
 - `secrets/` - Encrypted secret files (safe to commit)
 - `scripts/` - Helper scripts (pre-commit hooks, etc.)
+
+## Shared Agent Skills
+
+Personal skills live under `modules/programs/agents/shared/skills/` and are
+discovered automatically by `modules/programs/agents/shared.nix`. Home Manager
+installs per-skill links for the shared bundle and agent-specific skill directories,
+preserving externally installed sibling skills.
+
+The `immich-albums` skill searches event photos and videos through Executor,
+checks visual samples and capture metadata, handles motion-photo companions, and
+creates verified private albums without changing originals. It is enabled only
+on homelab-enabled hosts (`framework13`), not `foundry` or `flomac`. Rebuild to
+install it, then start a new agent session to load its catalog entry.
 
 ## OMP Configuration
 

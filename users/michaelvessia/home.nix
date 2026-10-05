@@ -13,6 +13,7 @@
 
   home.packages = [
     inputs.grok-bot.packages.${pkgs.system}.default
+    inputs.llm-agents.packages.${pkgs.system}.t3code-desktop
   ];
 
   # Preserve existing shares until this device can be inventoried.
