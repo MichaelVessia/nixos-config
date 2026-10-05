@@ -34,6 +34,13 @@
           HostKeyAlias = "192.168.1.18";
         };
       };
+      "forge" = {
+        hostname =
+          if pkgs.stdenv.isDarwin
+          then "forge.bison-gray.ts.net"
+          else "forge";
+        user = "michaelvessia";
+      };
       "flomac" = {
         hostname = "flomac";
         user = "michael.vessia";
