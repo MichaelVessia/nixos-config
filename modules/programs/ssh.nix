@@ -12,6 +12,9 @@
     # Host-specific configurations
     matchBlocks = {
       "*" = {
+        # Fail stalled sessions after about 90 seconds instead of hanging.
+        serverAliveInterval = 30;
+        serverAliveCountMax = 3;
         extraOptions = {
           AddKeysToAgent = "yes";
         };
@@ -25,9 +28,8 @@
         hostname = "foundry";
         user = "foundry";
       };
-      # Tailnet name differs from the macOS hostname.
       "flomac" = {
-        hostname = "c6dwvf3hjg";
+        hostname = "flomac";
         user = "michael.vessia";
       };
       "proxmox" = {
