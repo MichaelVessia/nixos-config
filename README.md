@@ -59,6 +59,10 @@ desktop-managed SSH connection, use `michaelvessia@forge` over Tailscale,
 not its LAN address. Establish a normal SSH connection from the client first
 to trust the host key. The desktop app starts the remote T3 backend; provider
 authentication remains local to Forge.
+Forge disables accepted Tailscale subnet routes because it is already on the
+advertised homelab LAN. Accepting that subnet sends LAN replies through
+`tailscale0`, breaking direct SSH access. The Framework keeps route acceptance
+enabled for access away from home. Forge's Tailscale operator is `michaelvessia`.
 Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identity.
 Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
 before expecting bidirectional vault synchronization.
