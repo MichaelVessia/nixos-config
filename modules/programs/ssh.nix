@@ -29,7 +29,7 @@
           if pkgs.stdenv.isDarwin
           then "foundry.bison-gray.ts.net"
           else "foundry";
-        user = "foundry";
+        user = "michaelvessia";
         extraOptions = lib.optionalAttrs pkgs.stdenv.isDarwin {
           HostKeyAlias = "192.168.1.18";
         };

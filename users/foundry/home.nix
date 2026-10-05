@@ -22,8 +22,8 @@
     profile = "work";
   };
 
-  home.username = "foundry";
-  home.homeDirectory = "/home/foundry";
+  home.username = "michaelvessia";
+  home.homeDirectory = "/home/michaelvessia";
 
   # Keep the headless profile independent of common.nix's desktop packages.
   home.packages = with pkgs; [
