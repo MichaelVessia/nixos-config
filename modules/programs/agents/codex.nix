@@ -35,6 +35,7 @@
       };
       mcp_servers = {
         figma.url = config.agentHarnesses.figma.url;
+        executor-flosports.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
         executor = {
           url = config.agentHarnesses.executor.url;
           disabled_tools = ["resume"];

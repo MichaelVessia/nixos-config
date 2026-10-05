@@ -1,5 +1,8 @@
 {pkgs, ...}: {
-  imports = [./hardware-configuration.nix];
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/homelab-ca/nixos.nix
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -31,7 +34,22 @@
     ];
   };
 
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22000];
+  networking.firewall.interfaces.tailscale0 = {
+    allowedTCPPorts = [22000];
+    # mosh sessions survive foundry stalls and client network changes.
+    allowedUDPPortRanges = [
+      {
+        from = 60000;
+        to = 61000;
+      }
+    ];
+  };
+
+  # Open mosh only on the tailnet, not on the LAN.
+  programs.mosh = {
+    enable = true;
+    openFirewall = false;
+  };
 
   services.tailscale = {
     enable = true;
