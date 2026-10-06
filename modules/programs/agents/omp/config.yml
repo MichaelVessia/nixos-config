@@ -48,3 +48,5 @@ statusLine:
     - context_pct
 dev:
   autoqaConsent: denied
+codexResets:
+  autoRedeem: "no"
