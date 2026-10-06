@@ -37,6 +37,53 @@ Use `namespace-devbox configure-ssh <name>` to configure a Namespace devbox
 for the T3 Code SSH connection. Run it without `sudo`; Home Manager includes
 the generated `~/.namespace/ssh/*.ssh` files in its managed SSH configuration.
 
+### Forge desktop
+
+`forge` reuses Framework13's Niri desktop and `michaelvessia` Home Manager
+profile. Shared system settings live in `modules/desktop-system.nix`;
+Framework-specific audio rules and VM settings remain in `hosts/framework13`.
+Forge uses its installer-generated Btrfs mounts, initial `system.stateVersion`
+of `26.05`, and the proprietary NVIDIA driver with Wayland modesetting.
+
+Keep the checkout at `/home/michaelvessia/nixos-config`. Before the first
+activation, securely provision the personal age key at
+`~/.config/sops/age/keys.txt` with mode `600`. Forge reuses the encrypted personal
+secrets declared in `modules/secrets/default.nix`; no private keys belong in Git.
+Build on an authenticated machine if Forge does not yet have private GitHub access:
+
+```bash
+nix build .#nixosConfigurations.forge.config.system.build.toplevel --no-link
+```
+
+On Forge, apply the configuration with
+`sudo nixos-rebuild switch --flake ~/nixos-config#forge` once GitHub access is
+configured, or import an authenticated machine's built closure as root and use
+`sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
+Tailscale and agent OAuth authorization are separate machine-local steps.
+Forge authorizes the Framework and Flomac SSH public keys. For T3 Code's
+desktop-managed SSH connection, use `michaelvessia@forge` over Tailscale,
+not its LAN address. Establish a normal SSH connection from the client first
+to trust the host key. The desktop app starts the remote T3 backend; provider
+authentication remains local to Forge.
+Forge disables accepted Tailscale subnet routes because it is already on the
+advertised homelab LAN. Accepting that subnet sends LAN replies through
+`tailscale0`, breaking direct SSH access. The Framework keeps route acceptance
+enabled for access away from home. Forge's Tailscale operator is `michaelvessia`.
+Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identity.
+Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
+before expecting bidirectional vault synchronization.
+
+Forge and Foundry share `modules/host-metrics.nix`. After rebuilding,
+`opentelemetry-collector.service` sends CPU, memory, filesystem, disk, network,
+paging, load, and process counts to SigNoz every 30 seconds. Forge metrics use
+`host.name=forge` and `service.name=forge-host`; no application logs or traces
+are collected, and no inbound Forge ports are opened.
+The [Forge — Host Overview](https://signoz.lan/dashboard/01a10f26-2585-725a-83c9-1998505cc7c3)
+dashboard mirrors Foundry's 18 panels with Forge-only filters.
+SigNoz CT 124 allows Forge's LAN address (`192.168.1.24`) on TCP 4317 for the
+private-LAN OTLP endpoint `192.168.1.10:4317`. Keep the address stable in DHCP
+or update the ingestion allowlist when it changes.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `michaelvessia`, no desktop,
@@ -93,6 +140,43 @@ the first deployment needs a root import of the locally built closure before
 activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
 monitor.
+
+## Physical Fleet Dashboard
+
+[Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)
+covers Forge, Foundry, Framework13, Flomac, the Proxmox node and the Synology NAS.
+It excludes VM/container totals and compares CPU, used RAM, fullest local
+filesystem/storage and physical-interface RX/TX per machine.
+
+The inventory always shows all six machines. Collection is `fresh` within two
+minutes, `stale` afterward, or `unmonitored` when no sample exists within the
+30-day retention window. Missing/stale capacity renders `n/a`, never zero.
+Collection freshness is not a device-up probe. The inventory is a **current**
+snapshot even when viewing historical charts. Click a memory-chart datapoint
+for the six host-detail links. Enable the separate Auto Refresh control at
+30 seconds if desired.
+
+Workstation metrics share `modules/host-metrics-settings.nix`. NixOS uses
+`modules/host-metrics.nix`; Flomac uses `modules/host-metrics-darwin.nix` and a
+root launchd daemon with logs in `/var/log/otelcol-host-metrics.log`. Both send
+host metrics every 30 seconds to `192.168.1.10:4317`, without application
+logs/traces. Darwin omits unsupported process-created and paging metrics rather
+than reporting false zeros. Framework13's development VM disables collection
+so it cannot impersonate the physical laptop.
+
+Framework13 and Flomac require the user to rebuild using the commands above
+before their collectors run continuously; bounded foreground runs verified
+both without activating either system. Forge and Foundry already collect
+continuously. CT 124's OTLP-gRPC source allowlist includes Forge `.24`,
+Framework13 `.221`, Flomac `.105` and the Tailscale subnet-router `.247`;
+keep these LAN addresses stable or update `/etc/nftables.conf`.
+
+The NAS's existing Glances deployment has a separate native Prometheus-exporter
+sidecar on `192.168.1.176:9091`, scraped by SigNoz every 30 seconds; the original
+Glances web UI remains on port 61208. Storage represents its data pool.
+Proxmox reuses its existing node API metrics and local/local-lvm storage,
+excluding NAS mounts. That exporter has no node network counter, so Proxmox is
+absent from RX/TX rather than shown as zero.
 
 ## Directory Structure
 

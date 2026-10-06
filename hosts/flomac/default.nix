@@ -8,6 +8,9 @@
 in {
   # System-level nix-darwin configuration
   # Manages Homebrew and macOS system settings
+  imports = [
+    ../../modules/host-metrics-darwin.nix
+  ];
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono

@@ -118,6 +118,7 @@
           inherit inputs;
           inherit pkgs-unstable;
           enableHomelabSkills = true;
+          enableFloCli = false;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -153,11 +154,44 @@
           ];
         };
 
+      forge = let
+        username = "michaelvessia";
+        specialArgs = {
+          inherit username inputs pkgs-unstable;
+          enableHomelabSkills = true;
+          enableFloCli = true;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/forge
+            ./modules/secrets
+            sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [
+                niri.homeModules.niri
+                dms.homeModules.dank-material-shell
+                dms.homeModules.niri
+                inputs.worktrunk.homeModules.default
+              ];
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username}/home.nix;
+            }
+          ];
+        };
+
       foundry = let
         username = "michaelvessia";
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
+          enableFloCli = true;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -190,6 +224,7 @@
           inherit inputs;
           pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
           enableHomelabSkills = false;
+          enableFloCli = true;
         };
       in
         darwin.lib.darwinSystem {
