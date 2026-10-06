@@ -12,7 +12,8 @@ and the cursor-team-kit skills it uses. Edit any file here directly; the
 - `agents/`: subagent prompts, installed at `~/.agents/vessia/agents/`.
 - `LICENSE`: upstream MIT license. Keep it.
 - `upstream.conf`: the upstream repository, the last synced revision, the
-  vendored team-kit skills, and the dropped upstream skills.
+  vendored team-kit skills, the dropped upstream skills, and the tools you do
+  not have.
 
 ## Rename
 
@@ -31,3 +32,6 @@ changes in the files themselves.
   `upstream.conf`. Without the `drop` line, the next sync restores it.
 - Add a team-kit skill: add `team-kit <name>` to `upstream.conf` and sync.
 - Show your local changes: `pstack-sync --local-diff`.
+- Mark a tool you do not have: add `unavailable <name> <perl regex>` to
+  `upstream.conf`. Syncs flag new upstream lines that match, and
+  `pstack-sync --scan` lists every current match.

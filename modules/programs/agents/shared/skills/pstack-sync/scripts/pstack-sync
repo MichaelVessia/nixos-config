@@ -7,6 +7,7 @@
 #
 # Usage: pstack-sync [--dry-run] [--to REV] [--init]
 #        pstack-sync --local-diff
+#        pstack-sync --scan   (list mentions of `unavailable` tools)
 set -euo pipefail
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -19,12 +20,14 @@ cache="${XDG_CACHE_HOME:-$HOME/.cache}/pstack-sync/plugins.git"
 dry_run=0
 init=0
 local_diff=0
+scan=0
 target=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) dry_run=1 ;;
     --init) init=1 ;;
     --local-diff) local_diff=1 ;;
+    --scan) scan=1 ;;
     --to)
       target="$2"
       shift
@@ -51,6 +54,19 @@ branch=$(conf branch)
 base_rev=$(conf rev)
 mapfile -t team_kit < <(conf team-kit)
 mapfile -t dropped < <(conf drop)
+# `unavailable <name> <perl regex>`: tools and services Michael does not have.
+mapfile -t unavailable < <(awk '$1 == "unavailable" { n = $2; $1 = ""; $2 = ""; sub(/^ +/, ""); print n "\t" $0 }' "$manifest")
+
+if [ "$scan" = 1 ]; then
+  for entry in "${unavailable[@]}"; do
+    name="${entry%%$'\t'*}" regex="${entry#*$'\t'}"
+    files=$(cd "$vendor" && grep -rlP -i -- "$regex" skills agents || true)
+    echo "## $name ($(printf '%s' "$files" | grep -c . || true) files)"
+    [ -z "$files" ] || printf '%s\n' "$files" | sed 's/^/- /'
+    echo
+  done
+  exit 0
+fi
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
@@ -214,6 +230,20 @@ if ! up diff --quiet "${base_rev}" "$target_rev" -- pstack/LICENSE 2>/dev/null &
   report judge "upstream changed pstack/LICENSE"
 fi
 [ -f "$tmp/collisions" ] && while read -r l; do report judge "$l"; done <"$tmp/collisions"
+
+# Flag new upstream lines that rely on tools Michael does not have.
+{ cat "$tmp"/report.{updated,merged,conflict,added} 2>/dev/null || true; } | sed 's/ (added on both sides)$//' | sort -u | while IFS= read -r rel; do
+  if [ -f "$base/$rel" ]; then
+    { diff "$base/$rel" "$theirs/$rel" || true; } | sed -n 's/^> //p'
+  else
+    cat "$theirs/$rel"
+  fi >"$tmp/new-lines"
+  for entry in "${unavailable[@]}"; do
+    name="${entry%%$'\t'*}" regex="${entry#*$'\t'}"
+    hit=$(grep -m1 -oP -i -- ".{0,60}(?:$regex).{0,60}" "$tmp/new-lines" | head -1 || true)
+    [ -z "$hit" ] || report judge "upstream adds $name (unavailable) in $rel: ...$hit..."
+  done
+done
 
 if [ "$dry_run" = 0 ]; then
   sed -i.bak "s/^rev .*/rev $target_rev/" "$manifest" && rm -f "$manifest.bak"

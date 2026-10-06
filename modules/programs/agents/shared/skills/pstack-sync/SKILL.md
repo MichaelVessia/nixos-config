@@ -48,6 +48,12 @@ calls that need his judgement.
      content, port the local edits from the old path to the new one.
    - Name mismatch: add a rule to `transform.pl`, then rerun from a clean tree.
    - License change: always list it.
+   - Unavailable tool: `upstream.conf` lists tools Michael does not have as
+     `unavailable` lines, and the script flags new upstream lines that match.
+     Rewrite the line to a tool he has when the swap is obvious (for example,
+     a Grok model slug to the GPT Sol default). Otherwise list it. When a skill
+     only exists for an unavailable tool, recommend `drop <name>`. If you find
+     another tool he lacks, add an `unavailable` line for it.
 7. Check what the merge brought in against Michael's instructions
    (`modules/programs/agents/shared/instructions.md`): new Cursor-only paths or
    tools, new model or provider defaults, or behavior that contradicts a rule.
@@ -59,6 +65,8 @@ calls that need his judgement.
    effort. Rewrite any new upstream model slug, family list, or budget to fit
    that rule.
 8. Verify:
+   - `pstack-sync --scan` lists every remaining match for the `unavailable`
+     tools. Compare it with the scan before the sync.
    - `grep -rnE '^(<<<<<<<|=======|>>>>>>>)' modules/programs/agents/vessia`
      prints nothing.
    - Every `skills/*/SKILL.md` `name:` matches its directory.
