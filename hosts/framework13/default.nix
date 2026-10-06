@@ -1,8 +1,15 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     ./hardware-configuration.nix
     ../../modules/desktop-system.nix
+    ../../modules/host-metrics.nix
   ];
+  # Push-only host agent: disable the Collector's default telemetry listener.
+  services.opentelemetry-collector.settings.service.telemetry.metrics.level = "none";
   # Enable aarch64 emulation for cross-compiling Pi images
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   networking.hostName = "framework13"; # Define your hostname.
@@ -85,6 +92,8 @@
     '';
   };
   virtualisation.vmVariant = {
+    # A test VM must not publish metrics under this physical laptop's identity.
+    services.opentelemetry-collector.enable = lib.mkForce false;
     virtualisation = {
       memorySize = 4096;
       cores = 4;

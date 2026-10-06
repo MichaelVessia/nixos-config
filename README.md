@@ -141,6 +141,43 @@ activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
 monitor.
 
+## Physical Fleet Dashboard
+
+[Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)
+covers Forge, Foundry, Framework13, Flomac, the Proxmox node and the Synology NAS.
+It excludes VM/container totals and compares CPU, used RAM, fullest local
+filesystem/storage and physical-interface RX/TX per machine.
+
+The inventory always shows all six machines. Collection is `fresh` within two
+minutes, `stale` afterward, or `unmonitored` when no sample exists within the
+30-day retention window. Missing/stale capacity renders `n/a`, never zero.
+Collection freshness is not a device-up probe. The inventory is a **current**
+snapshot even when viewing historical charts. Click a memory-chart datapoint
+for the six host-detail links. Enable the separate Auto Refresh control at
+30 seconds if desired.
+
+Workstation metrics share `modules/host-metrics-settings.nix`. NixOS uses
+`modules/host-metrics.nix`; Flomac uses `modules/host-metrics-darwin.nix` and a
+root launchd daemon with logs in `/var/log/otelcol-host-metrics.log`. Both send
+host metrics every 30 seconds to `192.168.1.10:4317`, without application
+logs/traces. Darwin omits unsupported process-created and paging metrics rather
+than reporting false zeros. Framework13's development VM disables collection
+so it cannot impersonate the physical laptop.
+
+Framework13 and Flomac require the user to rebuild using the commands above
+before their collectors run continuously; bounded foreground runs verified
+both without activating either system. Forge and Foundry already collect
+continuously. CT 124's OTLP-gRPC source allowlist includes Forge `.24`,
+Framework13 `.221`, Flomac `.105` and the Tailscale subnet-router `.247`;
+keep these LAN addresses stable or update `/etc/nftables.conf`.
+
+The NAS's existing Glances deployment has a separate native Prometheus-exporter
+sidecar on `192.168.1.176:9091`, scraped by SigNoz every 30 seconds; the original
+Glances web UI remains on port 61208. Storage represents its data pool.
+Proxmox reuses its existing node API metrics and local/local-lvm storage,
+excluding NAS mounts. That exporter has no node network counter, so Proxmox is
+absent from RX/TX rather than shown as zero.
+
 ## Directory Structure
 
 - `modules/` - Modular configuration files
