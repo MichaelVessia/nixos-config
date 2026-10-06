@@ -54,6 +54,10 @@ calls that need his judgement.
    Adapt the vendored file when the fix is mechanical and obvious; list the
    rest. Look for new `pstack`/`poteto` spellings that the rename missed, and
    for URLs that the rename broke.
+   Model defaults are a local rule: Opus (`claude-opus-5-5-high`) and GPT Sol
+   (`gpt-6.1-sol-xhigh`) only. Michael has no Grok and does not use `max`
+   effort. Rewrite any new upstream model slug, family list, or budget to fit
+   that rule.
 8. Verify:
    - `grep -rnE '^(<<<<<<<|=======|>>>>>>>)' modules/programs/agents/vessia`
      prints nothing.
