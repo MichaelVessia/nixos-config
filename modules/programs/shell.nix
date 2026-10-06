@@ -241,5 +241,11 @@ in {
     enableZshIntegration = true;
     package = direnvPackage;
     nix-direnv.enable = true;
+    # T3 creates web-monorepo worktrees with a fresh .envrc that would otherwise
+    # stay blocked until `direnv allow`, leaving devbox (node, pnpm) unloaded.
+    config.whitelist.prefix = [
+      "${config.home.homeDirectory}/projects/web-monorepo"
+      "${config.home.homeDirectory}/.t3/worktrees/web-monorepo"
+    ];
   };
 }
