@@ -7,6 +7,7 @@
     ../common.nix
     ../../modules/programs/agents
     ../../modules/programs/floai.nix
+    ../../modules/programs/gcloud.nix
     ../../modules/programs/nvf
     ../../modules/programs/git.nix
     ../../modules/programs/shell.nix
@@ -52,7 +53,6 @@
     lazygit
     lsof
     cloudflared
-    google-cloud-sdk
     nix-output-monitor
     devbox
     devenv

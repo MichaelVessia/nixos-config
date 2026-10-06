@@ -27,6 +27,7 @@
     ./x-to-obsidian.nix
     ./fmcal.nix
     ./floai.nix
+    ./gcloud.nix
     ./paperless-cli.nix
     ./hass-cli.nix
     ./kuma-cli.nix
