@@ -1030,11 +1030,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1789684949,
-        "narHash": "sha256-ZKhUe/2IJUq1JhKxKMu8rbkgSGmPP2ZCqlIPn40aGCM=",
+        "lastModified": 1791260994,
+        "narHash": "sha256-Miqqk/ammqnTUxaoCyvtwoPeLbI1ksFyLxi/CazZpWY=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "e554fab72f81915600f3f449b786fd9af40439a5",
+        "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
         "type": "github"
       },
       "original": {
@@ -1240,23 +1240,6 @@
         "type": "github"
       }
     },
-    "pstack": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791072408,
-        "narHash": "sha256-AZlQa2TypJr8W8Y6YDwRc65LWK+CEbrTiM2BRYU+Rok=",
-        "owner": "cursor",
-        "repo": "plugins",
-        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "cursor",
-        "repo": "plugins",
-        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "agent-skills-nix": "agent-skills-nix",
@@ -1277,7 +1260,6 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nvf": "nvf",
         "paperless-cli": "paperless-cli",
-        "pstack": "pstack",
         "sops-nix": "sops-nix",
         "subq": "subq",
         "worktrunk": "worktrunk",

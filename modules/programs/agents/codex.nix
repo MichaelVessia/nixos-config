@@ -18,11 +18,11 @@
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;
-  # Codex has no include, so pstack's model rows go into AGENTS.md. The
+  # Codex has no include, so vessia's model rows go into AGENTS.md. The
   # session hook line stays only in the sheet.
-  pstackSheet = builtins.readFile ./shared/pstack-models.md;
-  pstackRows = lib.concatStringsSep "\n" (lib.filter (line: !(lib.hasPrefix "session hook:" line)) (lib.splitString "\n" pstackSheet));
-  codexAgents = sharedInstructions + "\n" + pstackRows;
+  vessiaSheet = builtins.readFile ./shared/vessia-models.md;
+  vessiaRows = lib.concatStringsSep "\n" (lib.filter (line: !(lib.hasPrefix "session hook:" line)) (lib.splitString "\n" vessiaSheet));
+  codexAgents = sharedInstructions + "\n" + vessiaRows;
 
   codexConfig =
     {
@@ -80,7 +80,7 @@ in {
     home.packages = [codexPkg];
 
     home.file.".codex/AGENTS.md".text = codexAgents;
-    home.file.".codex/pstack-models.md".source = ./shared/pstack-models.md;
+    home.file.".codex/vessia-models.md".source = ./shared/vessia-models.md;
 
     home.activation =
       {

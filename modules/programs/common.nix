@@ -60,7 +60,7 @@
       # with more details log output
       nix-output-monitor
       nh # nix helper - better CLI for nixos-rebuild/darwin-rebuild
-      devbox # portable development environments
+      pkgs-unstable.devbox # portable development environments; repos pin devbox.lock to newer releases than stable ships
       devenv # developer environments with nix
 
       # productivity
