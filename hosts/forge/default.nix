@@ -8,6 +8,10 @@
   networking.hostName = "forge";
   system.stateVersion = "26.05";
 
+  # Trust this host's portless CA for floai `mono pitch verify`. `portless trust`
+  # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
+  security.pki.certificateFiles = [./portless-ca.crt];
+
   services.openssh.enable = true;
   users.users.michaelvessia = {
     # Keeps T3 Code's systemd user service running without a login session.
