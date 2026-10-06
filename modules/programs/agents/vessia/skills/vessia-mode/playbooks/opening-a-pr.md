@@ -31,7 +31,19 @@ After these sections, attach videos or screenshots when they prove a claim. Do n
 
 **Readiness.** Open every PR ready, never as a draft. A built-in PR tool can default to draft, so set `draft: false` on every creation call through it. With `gh`, omit `--draft`. If a PR still opens as a draft, mark it ready through the PR tool, or run `gh pr ready <number>`. Run `gh pr view <number>` before you refer to PR status.
 
-**Media.** When a change is visible, attach the proof to the PR: before and after screenshots, or a short recording. Use `gh pr create --attach <file>` or `gh pr edit <pr> --attach <file>`, and `gh pr comment <pr> --attach <file>` for a later verdict or update. Reference the file in the body as `![alt](./path.png)` and `gh` replaces the path with the uploaded URL. Give each image alt text, as in `--attach './after.png#The new empty state'`. A video has no alt text, so say what it shows in the body. When a built-in PR tool made the PR, attach with `gh pr comment`. Never attach media from a privacy-sensitive workspace without the user's agreement.
+**Media.** When a change is visible, put the proof in the PR description: before and after screenshots, or a short recording. Place it in a collapsed section at the end of the body, with a blank line after `</summary>` so the Markdown renders:
+
+```
+<details>
+<summary>Screenshots</summary>
+
+![The empty state before the change](./before.png)
+![The new empty state](./after.png)
+
+</details>
+```
+
+Write the whole body to a file with the local paths in place, then run `gh pr create --body-file <file> --attach ./before.png --attach ./after.png`, or `gh pr edit <pr> --body-file <file> --attach ...` for an existing PR. `gh` uploads each file and replaces its path with the uploaded URL. Always pass the full body: without a body flag, `gh` appends the attachments to the end, outside the section. Give each image alt text. A video has no alt text, so say what it shows in the summary line. When a built-in PR tool made the PR, add the media afterward with `gh pr edit`. Never attach media from a privacy-sensitive workspace without the user's agreement.
 
 **Babysit.** Opening a PR does not start a babysit. Post the URL and keep building. Finish the phase or stack first. Run a separate babysit pass only when the user asks for one after the whole stack exists. A babysit for each new PR stalls the build and spends checks on commits that later waves restart. Push back when feedback drifts from intent.
 
