@@ -31,7 +31,7 @@
     # Keep the UID from the original foundry user so existing files stay owned.
     uid = 1000;
     description = "Foundry development user";
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = ["wheel" "networkmanager" "docker"];
     shell = pkgs.zsh;
     # Keeps T3 Code's systemd user service running without a login session.
     linger = true;
@@ -75,6 +75,12 @@
       "--avoid"
       "^(sshd|sshd-session|tailscaled|t3|systemd|systemd-journal|systemd-logind)$"
     ];
+  };
+
+  # Project checks, such as flobot's check:runtime, need a Docker daemon.
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs.docker_29;
   };
 
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
