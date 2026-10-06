@@ -73,6 +73,17 @@ Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identit
 Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
 before expecting bidirectional vault synchronization.
 
+Forge and Foundry share `modules/host-metrics.nix`. After rebuilding,
+`opentelemetry-collector.service` sends CPU, memory, filesystem, disk, network,
+paging, load, and process counts to SigNoz every 30 seconds. Forge metrics use
+`host.name=forge` and `service.name=forge-host`; no application logs or traces
+are collected, and no inbound Forge ports are opened.
+The [Forge — Host Overview](https://signoz.lan/dashboard/01a10f26-2585-725a-83c9-1998505cc7c3)
+dashboard mirrors Foundry's 18 panels with Forge-only filters.
+SigNoz CT 124 allows Forge's LAN address (`192.168.1.24`) on TCP 4317 for the
+private-LAN OTLP endpoint `192.168.1.10:4317`. Keep the address stable in DHCP
+or update the ingestion allowlist when it changes.
+
 ### Foundry headless devbox
 
 `foundry` is an x86_64 NixOS devbox with the login user `michaelvessia`, no desktop,

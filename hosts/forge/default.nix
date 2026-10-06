@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/desktop-system.nix
+    ../../modules/host-metrics.nix
   ];
 
   networking.hostName = "forge";
