@@ -1074,23 +1074,6 @@
         "type": "github"
       }
     },
-    "pstack": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791072408,
-        "narHash": "sha256-AZlQa2TypJr8W8Y6YDwRc65LWK+CEbrTiM2BRYU+Rok=",
-        "owner": "cursor",
-        "repo": "plugins",
-        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "cursor",
-        "repo": "plugins",
-        "rev": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "agent-skills-nix": "agent-skills-nix",
@@ -1107,7 +1090,6 @@
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nvf": "nvf",
-        "pstack": "pstack",
         "sops-nix": "sops-nix",
         "subq": "subq",
         "worktrunk": "worktrunk",

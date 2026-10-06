@@ -415,9 +415,9 @@
 in {
   config = {
     home.file = {
-      # pstack reads its per-role model sheet through this include.
-      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/pstack-models.md\n";
-      ".claude/pstack-models.md".source = ../shared/pstack-models.md;
+      # vessia reads its per-role model sheet through this include.
+      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/vessia-models.md\n";
+      ".claude/vessia-models.md".source = ../shared/vessia-models.md;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;

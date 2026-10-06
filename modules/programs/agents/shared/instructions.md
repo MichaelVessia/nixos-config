@@ -47,23 +47,26 @@
   and completion condition. Keep computer use within the user's request.
   Explicit task instructions for provider, model, or reasoning take precedence.
 
-# pstack
+# vessia
 
-- pstack subagents: read-only work on your own model only. Give file-writing
+- vessia is a vendored fork of upstream pstack. Edit it in
+  `modules/programs/agents/vessia/` in nixos-config. Use the `pstack-sync`
+  skill to merge upstream releases.
+- vessia subagents: read-only work on your own model only. Give file-writing
   work to a separate worker, not a subagent.
 - The installed skills use upstream Cursor tool names. Use the current
   runtime's equivalent tools. `Task` means a subagent, `AskQuestion` means
   a user question, and `create-skill` means the available skill authoring tool.
-- If a runtime has no named pstack agent type, read the matching prompt in
-  `~/.agents/pstack/agents/` and pass it to a generic subagent.
-- Use the model rows in these instructions or the runtime's `pstack-models.md`.
-  Manage changes through `modules/programs/agents/shared/pstack-models.md`
+- If a runtime has no named vessia agent type, read the matching prompt in
+  `~/.agents/vessia/agents/` and pass it to a generic subagent.
+- Use the model rows in these instructions or the runtime's `vessia-models.md`.
+  Manage changes through `modules/programs/agents/shared/vessia-models.md`
   in nixos-config. Do not create a Cursor rules file on another runtime.
 - For transcript and project skill paths, use the current runtime's paths.
   Discover MCP servers from the available tools, not a Cursor `mcps/` directory.
 - Use the available browser tools for `control-ui`. For recurring work,
   use the runtime's scheduler or a bounded polling loop. For PR checks,
-  use pstack's Babysit playbook.
+  use vessia's Babysit playbook.
 
 # Obsidian Vault
 

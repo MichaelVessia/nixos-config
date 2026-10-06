@@ -27,34 +27,9 @@
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
 
-  # Normalize upstream names that are not valid skill IDs.
-  pstackSkillsPath = inputs.pstack + "/pstack/skills";
-  pstackNormalized = {
-    poteto-mode = "Poteto Mode";
-    make-bot-ui = "Make Bot UI";
-  };
-  pstackExplicitNames = lib.attrNames pstackNormalized;
-  pstackSkillNames = lib.subtractLists pstackExplicitNames (dirNames pstackSkillsPath);
-  renamePstackSkill = name: {original, ...}: let
-    originalName = pstackNormalized.${name};
-    renamed = builtins.replaceStrings ["---\nname: ${originalName}\n"] ["---\nname: ${name}\n"] original;
-  in
-    if renamed == original
-    then throw "pstack ${name}/SKILL.md no longer starts with `name: ${originalName}`"
-    else renamed;
-  teamKitSkillNames = [
-    "control-cli"
-    "control-ui"
-    "deslop"
-    "fix-ci"
-    "fix-merge-conflicts"
-    "get-pr-comments"
-    "make-pr-easy-to-review"
-    "thermo-nuclear-code-quality-review"
-    "what-did-i-get-done"
-  ];
-  catalogSkillNames = enabledPersonalSkillNames ++ pstackSkillNames ++ teamKitSkillNames;
-  skillNames = catalogSkillNames ++ pstackExplicitNames;
+  # Vendored from upstream pstack; the pstack-sync skill merges new releases.
+  vessiaSkillNames = dirNames ./vessia/skills;
+  skillNames = enabledPersonalSkillNames ++ vessiaSkillNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -80,25 +55,9 @@ in {
       enable = true;
       sources = {
         personal.path = ./shared/skills;
-        pstack = {
-          path = pstackSkillsPath;
-          filter.nameRegex = lib.concatStringsSep "|" pstackSkillNames;
-        };
-        cursor-team-kit = {
-          path = inputs.pstack + "/cursor-team-kit/skills";
-          filter.nameRegex = lib.concatStringsSep "|" teamKitSkillNames;
-        };
+        vessia.path = ./vessia/skills;
       };
-      skills.enable = catalogSkillNames;
-      skills.explicit = lib.listToAttrs (map (name: {
-          inherit name;
-          value = {
-            from = "pstack";
-            path = name;
-            transform = renamePstackSkill name;
-          };
-        })
-        pstackExplicitNames);
+      skills.enable = skillNames;
       # Build the bundle for ~/.agents/skills. Replace the module's recursive
       # home.file target with per-skill directory links below so siblings written
       # by `flo skills add` survive home-manager activation.
@@ -123,7 +82,7 @@ in {
     '';
 
     home.file =
-      {".agents/pstack/agents".source = inputs.pstack + "/pstack/agents";}
+      {".agents/vessia/agents".source = ./vessia/agents;}
       # Keep each skill as a directory link. Recursive links can write through
       # an old directory link into the read-only store when a skill adds files.
       // {".agents/skills".enable = false;}
