@@ -64,6 +64,11 @@ calls that need his judgement.
    (`gpt-6.1-sol-xhigh`) only. Michael has no Grok and does not use `max`
    effort. Rewrite any new upstream model slug, family list, or budget to fit
    that rule.
+   Other local rules: PRs are GitHub PRs through `gh`, and stacks use GitHub's
+   stacked PRs through `gh stack` (no Graphite or Origin). Review bots are
+   generic AI reviewers (no Bugbot), and some repos have none. Parallel work
+   runs as new agent threads that the current tool starts its own way (no
+   Cursor cloud agents or `environment: "cloud"`); do not name a tool.
 8. Verify:
    - `pstack-sync --scan` lists every remaining match for the `unavailable`
      tools. Compare it with the scan before the sync.

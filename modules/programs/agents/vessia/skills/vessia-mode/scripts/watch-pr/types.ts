@@ -57,6 +57,7 @@ export interface OpenPullRequest {
 }
 export interface ReviewComment {
   readonly authorLogin: string | null;
+  readonly authorIsBot: boolean;
   readonly body: string;
   readonly path: string | null;
   readonly line: number | null;
@@ -65,8 +66,8 @@ export interface ReviewComment {
 export interface ReviewThread {
   readonly id: string;
   readonly firstComment: ReviewComment | null;
-  readonly isBugbot: boolean;
-  readonly bugbotReviewPasses: number;
+  readonly isAiReview: boolean;
+  readonly aiReviewPasses: number;
 }
 interface CheckDetails {
   readonly name: string;
