@@ -57,6 +57,26 @@
     '';
   };
 
+  # SessionStart hook: agent Bash shells skip the zsh direnv hook and ~/.zshrc,
+  # so load the project's allowed .envrc (devbox node/pnpm) and the npm token
+  # into CLAUDE_ENV_FILE. direnv exports nothing for a blocked .envrc.
+  claude-direnv-env = pkgs.writeShellApplication {
+    name = "claude-direnv-env";
+    runtimeInputs = [config.programs.direnv.package pkgs.coreutils];
+    text = ''
+      [ -n "''${CLAUDE_ENV_FILE:-}" ] || exit 0
+      secrets_dir="/run/secrets"
+      [ -d "$HOME/.config/sops-nix/secrets" ] && secrets_dir="$HOME/.config/sops-nix/secrets"
+      if [ -z "''${FLOCASTS_NPM_TOKEN:-}" ] && [ -r "$secrets_dir/flocasts_npm_token" ]; then
+        FLOCASTS_NPM_TOKEN="$(cat "$secrets_dir/flocasts_npm_token")"
+        export FLOCASTS_NPM_TOKEN
+        echo "export FLOCASTS_NPM_TOKEN=\"\$(cat '$secrets_dir/flocasts_npm_token')\"" >> "$CLAUDE_ENV_FILE"
+      fi
+      cd "''${CLAUDE_PROJECT_DIR:-$PWD}"
+      direnv export bash >> "$CLAUDE_ENV_FILE" 2>/dev/null || true
+    '';
+  };
+
   # Destructive Command Guard - blocks dangerous commands for AI agents
   # https://github.com/Dicklesworthstone/destructive_command_guard
   dcg = let
@@ -224,6 +244,18 @@
       command = "claude-statusline";
     };
     hooks = {
+      SessionStart = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = "claude-direnv-env";
+              # The devbox init hook runs pnpm install.
+              timeout = 300;
+            }
+          ];
+        }
+      ];
       PreToolUse = [
         {
           matcher = "Bash";
@@ -440,6 +472,7 @@ in {
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
       claude-statusline
+      claude-direnv-env
       dcg
       pkgs.nodejs
     ];
