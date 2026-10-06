@@ -90,7 +90,6 @@
     ]
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
-      (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [

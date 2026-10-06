@@ -2,6 +2,9 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  pkg-config,
+  openssl,
+  stdenv,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "pup";
@@ -15,6 +18,10 @@ rustPlatform.buildRustPackage rec {
   };
 
   cargoHash = "sha256-xwayUDimovu/nEDenD18nYoHxWCr5unCM3AMoqfUVNQ=";
+
+  # Darwin uses the system TLS framework; Linux links openssl-sys.
+  nativeBuildInputs = lib.optionals stdenv.isLinux [pkg-config];
+  buildInputs = lib.optionals stdenv.isLinux [openssl];
 
   # Tests rely on runtime environment and network-adjacent behavior
   doCheck = false;
