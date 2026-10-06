@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   inputs,
   ...
 }: {
@@ -54,7 +55,7 @@
     lsof
     cloudflared
     nix-output-monitor
-    devbox
+    pkgs-unstable.devbox
     devenv
     lefthook
     sops
