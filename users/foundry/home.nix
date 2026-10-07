@@ -16,7 +16,7 @@
     ../../modules/programs/ssh.nix
     ../../modules/programs/vaults.nix
     ../../modules/programs/syncthing.nix
-    ../../modules/programs/t3update.nix
+    ../../modules/programs/t3.nix
     ../../modules/programs/worktrunk.nix
     ../../modules/secrets/foundry.nix
   ];
