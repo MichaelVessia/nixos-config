@@ -2,7 +2,8 @@
 #
 # Updating from the desktop app can start an extra server over SSH next to
 # t3code.service. This updates through `t3 update`, stops SSH-launched
-# servers, and checks that one server remains.
+# servers, and checks that one server remains. Without the service, the
+# desktop app starts the new version when it connects.
 #
 # Usage:
 #   ssh forge t3update
@@ -36,6 +37,11 @@
         kill "$pid"
         stopped=1
       done
+
+      if ! systemctl --user cat t3code.service >/dev/null 2>&1; then
+        echo "No t3code.service. The desktop app starts the new version when it connects."
+        exit 0
+      fi
 
       if [ "$stopped" = 1 ]; then
         sleep 2
