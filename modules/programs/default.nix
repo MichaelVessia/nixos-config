@@ -31,6 +31,7 @@
     ./paperless-cli.nix
     ./hass-cli.nix
     ./kuma-cli.nix
+    ./t3update.nix
     ./karabiner.nix
     ./hammerspoon.nix
     ./raycast.nix
