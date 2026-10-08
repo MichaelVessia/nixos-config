@@ -1,6 +1,7 @@
 {config, ...}: {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/agent-memory.nix
     ../../modules/desktop-system.nix
     ../../modules/host-metrics.nix
   ];
@@ -11,10 +12,6 @@
   # Trust this host's portless CA for floai `mono pitch verify`. `portless trust`
   # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
   security.pki.certificateFiles = [./portless-ca.crt];
-
-  # Agent builds can fill RAM. Compressed RAM swap keeps the T3 Code server
-  # responsive; the SATA swap partition stalls it long enough to drop clients.
-  zramSwap.enable = true;
 
   services.openssh.enable = true;
   users.users.michaelvessia = {
