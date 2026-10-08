@@ -12,6 +12,10 @@
   # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
   security.pki.certificateFiles = [./portless-ca.crt];
 
+  # Agent builds can fill RAM. Compressed RAM swap keeps the T3 Code server
+  # responsive; the SATA swap partition stalls it long enough to drop clients.
+  zramSwap.enable = true;
+
   services.openssh.enable = true;
   users.users.michaelvessia = {
     # Keeps T3 Code's systemd user service running without a login session.
