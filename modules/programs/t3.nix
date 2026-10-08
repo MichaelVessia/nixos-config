@@ -7,7 +7,8 @@
 # reconnect kills and restarts the managed server. Two servers on one SQLite
 # database also cause lock timeouts and event loop stalls, which drop clients.
 #
-# t3guard runs when server-runtime.json changes. If t3code.service is enabled,
+# t3guard runs when server-runtime.json changes and every 30 seconds, because
+# newer servers do not always rewrite that file. If t3code.service is enabled,
 # it stops SSH-launched servers and points server-runtime.json back to the
 # service, so the next reconnect reuses the service.
 #
@@ -123,6 +124,15 @@ in {
       Unit.Description = "Keep T3 Code clients on t3code.service";
       Path.PathChanged = "%h/.t3/userdata/server-runtime.json";
       Install.WantedBy = ["default.target"];
+    };
+
+    systemd.user.timers.t3guard = {
+      Unit.Description = "Check for SSH-launched T3 Code servers";
+      Timer = {
+        OnStartupSec = "30s";
+        OnUnitActiveSec = "30s";
+      };
+      Install.WantedBy = ["timers.target"];
     };
 
     systemd.user.services.t3guard = {
