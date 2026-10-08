@@ -1,6 +1,7 @@
 {config, ...}: {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/agent-memory.nix
     ../../modules/desktop-system.nix
     ../../modules/host-metrics.nix
   ];

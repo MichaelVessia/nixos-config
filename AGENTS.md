@@ -13,15 +13,16 @@ source of truth instead of trusting summaries:
 - Put configuration at the narrowest scope (`hosts/`, `users/`, `modules/`) and
   follow nearby patterns.
 - Never activate a configuration (`reload`, `nh ... switch`,
-  `*-rebuild switch`) unless the user asks. Validate instead.
+  `*-rebuild switch`) unless the user asks.
 - Work on local master; no branches, worktrees, or PRs. Commit after checks.
   Preserve unrelated local edits.
 - Keep `stateVersion` values. Do not hand-edit generated hardware files.
-- `git add` new files before evaluating; flakes ignore untracked files.
+- `git add` new files; flakes ignore untracked files.
 
 <important if="changing Nix files">
 - `nix develop --command alejandra --check $(git ls-files '*.nix')`
-- `nix flake check --no-build`, then evaluate or build the affected host.
+- Do not run `nix eval`, `nix flake check`, or host builds. The user's
+  `nh os switch` shows whether the change evaluates and builds.
 - Flake input changes need the matching `flake.lock` update. Flomac also
   deploys from `hosts/flomac/flake.nix`; keep it aligned (see `README.md`).
 </important>

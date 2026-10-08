@@ -60,20 +60,32 @@
   # SessionStart hook: agent Bash shells skip the zsh direnv hook and ~/.zshrc,
   # so load the project's allowed .envrc (devbox node/pnpm) and the npm token
   # into CLAUDE_ENV_FILE. direnv exports nothing for a blocked .envrc.
+  # The hook runs again on each resume, so it replaces its own marked block.
+  # Appending grew the file past the 128 KB argument limit for Bash commands.
   claude-direnv-env = pkgs.writeShellApplication {
     name = "claude-direnv-env";
-    runtimeInputs = [config.programs.direnv.package pkgs.coreutils];
+    runtimeInputs = [config.programs.direnv.package pkgs.coreutils pkgs.gnused];
     text = ''
       [ -n "''${CLAUDE_ENV_FILE:-}" ] || exit 0
+      begin="# >>> claude-direnv-env"
+      end="# <<< claude-direnv-env"
+      tmp="$(mktemp "$CLAUDE_ENV_FILE.XXXXXX")"
+      trap 'rm -f "$tmp"' EXIT
+      if [ -f "$CLAUDE_ENV_FILE" ]; then
+        sed "/^$begin\$/,/^$end\$/d" "$CLAUDE_ENV_FILE" > "$tmp"
+      fi
       secrets_dir="/run/secrets"
       [ -d "$HOME/.config/sops-nix/secrets" ] && secrets_dir="$HOME/.config/sops-nix/secrets"
-      if [ -z "''${FLOCASTS_NPM_TOKEN:-}" ] && [ -r "$secrets_dir/flocasts_npm_token" ]; then
-        FLOCASTS_NPM_TOKEN="$(cat "$secrets_dir/flocasts_npm_token")"
-        export FLOCASTS_NPM_TOKEN
-        echo "export FLOCASTS_NPM_TOKEN=\"\$(cat '$secrets_dir/flocasts_npm_token')\"" >> "$CLAUDE_ENV_FILE"
-      fi
-      cd "''${CLAUDE_PROJECT_DIR:-$PWD}"
-      direnv export bash >> "$CLAUDE_ENV_FILE" 2>/dev/null || true
+      {
+        echo "$begin"
+        if [ -r "$secrets_dir/flocasts_npm_token" ]; then
+          echo "export FLOCASTS_NPM_TOKEN=\"\$(cat '$secrets_dir/flocasts_npm_token')\""
+        fi
+        cd "''${CLAUDE_PROJECT_DIR:-$PWD}"
+        direnv export bash 2>/dev/null || true
+        echo "$end"
+      } >> "$tmp"
+      mv "$tmp" "$CLAUDE_ENV_FILE"
     '';
   };
 
