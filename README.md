@@ -26,10 +26,16 @@ Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
 input. Updating it requires GitHub SSH authentication and flocasts SAML access.
 The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
-Framework13 installs the T3 Code desktop app through Home Manager from the
-locked `llm-agents` input. After rebuilding, launch it with `t3code-desktop`.
+Framework13 installs the official T3 Code nightly desktop AppImage through
+Home Manager, pinned by version and checksum in
+`modules/programs/t3code-nightly/package.nix`. After rebuilding, launch it
+with `t3code-desktop` or **T3 Code (Nightly)** from the application launcher.
+Coding-agent executables still come from the locked `llm-agents` input.
+In-app automatic updates are disabled because Nix manages the installed
+version; update the package's version and checksum to upgrade.
 Its first-run setup connects to the local backend; remote computers can be
-added from the app.
+added from the app. Forge's desktop package and the independently installed
+nightly servers on Foundry and Forge are unchanged.
 
 Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
 Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
