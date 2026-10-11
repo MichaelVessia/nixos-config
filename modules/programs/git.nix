@@ -20,4 +20,8 @@
   };
 
   home.packages = [pkgs-unstable.gh];
+
+  # GitHub stacked PRs. Link only the extension: programs.gh would take over
+  # the writable ~/.config/gh/config.yml.
+  xdg.dataFile."gh/extensions/gh-stack/gh-stack".source = "${pkgs-unstable.gh-stack}/bin/gh-stack";
 }

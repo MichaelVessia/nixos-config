@@ -57,6 +57,38 @@
     '';
   };
 
+  # SessionStart hook: agent Bash shells skip the zsh direnv hook and ~/.zshrc,
+  # so load the project's allowed .envrc (devbox node/pnpm) and the npm token
+  # into CLAUDE_ENV_FILE. direnv exports nothing for a blocked .envrc.
+  # The hook runs again on each resume, so it replaces its own marked block.
+  # Appending grew the file past the 128 KB argument limit for Bash commands.
+  claude-direnv-env = pkgs.writeShellApplication {
+    name = "claude-direnv-env";
+    runtimeInputs = [config.programs.direnv.package pkgs.coreutils pkgs.gnused];
+    text = ''
+      [ -n "''${CLAUDE_ENV_FILE:-}" ] || exit 0
+      begin="# >>> claude-direnv-env"
+      end="# <<< claude-direnv-env"
+      tmp="$(mktemp "$CLAUDE_ENV_FILE.XXXXXX")"
+      trap 'rm -f "$tmp"' EXIT
+      if [ -f "$CLAUDE_ENV_FILE" ]; then
+        sed "/^$begin\$/,/^$end\$/d" "$CLAUDE_ENV_FILE" > "$tmp"
+      fi
+      secrets_dir="/run/secrets"
+      [ -d "$HOME/.config/sops-nix/secrets" ] && secrets_dir="$HOME/.config/sops-nix/secrets"
+      {
+        echo "$begin"
+        if [ -r "$secrets_dir/flocasts_npm_token" ]; then
+          echo "export FLOCASTS_NPM_TOKEN=\"\$(cat '$secrets_dir/flocasts_npm_token')\""
+        fi
+        cd "''${CLAUDE_PROJECT_DIR:-$PWD}"
+        direnv export bash 2>/dev/null || true
+        echo "$end"
+      } >> "$tmp"
+      mv "$tmp" "$CLAUDE_ENV_FILE"
+    '';
+  };
+
   # Destructive Command Guard - blocks dangerous commands for AI agents
   # https://github.com/Dicklesworthstone/destructive_command_guard
   dcg = let
@@ -224,6 +256,18 @@
       command = "claude-statusline";
     };
     hooks = {
+      SessionStart = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = "claude-direnv-env";
+              # The devbox init hook runs pnpm install.
+              timeout = 300;
+            }
+          ];
+        }
+      ];
       PreToolUse = [
         {
           matcher = "Bash";
@@ -383,9 +427,9 @@
 in {
   config = {
     home.file = {
-      # pstack reads its per-role model sheet through this include.
-      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/pstack-models.md\n";
-      ".claude/pstack-models.md".source = ../shared/pstack-models.md;
+      # vessia reads its per-role model sheet through this include.
+      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/vessia-models.md\n";
+      ".claude/vessia-models.md".source = ../shared/vessia-models.md;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;
@@ -440,6 +484,7 @@ in {
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
       claude-statusline
+      claude-direnv-env
       dcg
       pkgs.nodejs
     ];

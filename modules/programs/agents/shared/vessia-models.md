@@ -1,6 +1,6 @@
-# pstack model configuration
+# vessia model configuration
 
-pstack roles run on the session's own model and effort. Panels keep their
+vessia roles run on the session's own model and effort. Panels keep their
 size but use one model family.
 
 feature, refactoring: inherit-parent

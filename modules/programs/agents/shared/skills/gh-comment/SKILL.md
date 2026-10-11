@@ -46,6 +46,13 @@ only when:
 - There are no existing review threads to reply to.
 - The user's message is a single general remark not tied to specific code.
 
+### Images and videos
+
+Inline replies through `gh api` cannot upload files. To include a screenshot or
+video, post a top-level comment with `--attach`, and keep the AI disclaimer:
+`gh pr comment <number> --body-file <file> --attach './shot.png#Alt text'`
+(or `gh issue comment`). Repeat `--attach` for more files.
+
 ### Steps
 
 1. Determine whether the target is a PR or issue. If a number is given without

@@ -60,7 +60,7 @@
       # with more details log output
       nix-output-monitor
       nh # nix helper - better CLI for nixos-rebuild/darwin-rebuild
-      devbox # portable development environments
+      pkgs-unstable.devbox # portable development environments; repos pin devbox.lock to newer releases than stable ships
       devenv # developer environments with nix
 
       # productivity
@@ -90,7 +90,6 @@
     ]
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard
-      (pkgs-unstable.callPackage ./pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
       (pkgs.callPackage ./rootly {}) # Rootly incident management CLI
     ]
     ++ lib.optionals stdenv.isLinux [

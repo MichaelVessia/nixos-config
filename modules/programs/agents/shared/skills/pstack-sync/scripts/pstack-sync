@@ -1,0 +1,287 @@
+#!/usr/bin/env bash
+# Three-way merge upstream pstack into the vendored vessia tree.
+#
+# Base is the upstream revision recorded in upstream.conf, ours is the vendored
+# tree, and theirs is the new upstream revision. Base and theirs both pass
+# through transform.pl first, so the rename never registers as a local edit.
+#
+# Usage: pstack-sync [--dry-run] [--to REV] [--init]
+#        pstack-sync --local-diff
+#        pstack-sync --scan   (list mentions of `unavailable` tools)
+set -euo pipefail
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+transform="$script_dir/transform.pl"
+repo=$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/nixos-config")
+vendor="${VESSIA_DIR:-$repo/modules/programs/agents/vessia}"
+manifest="$vendor/upstream.conf"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/pstack-sync/plugins.git"
+
+dry_run=0
+init=0
+local_diff=0
+scan=0
+target=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run) dry_run=1 ;;
+    --init) init=1 ;;
+    --local-diff) local_diff=1 ;;
+    --scan) scan=1 ;;
+    --to)
+      target="$2"
+      shift
+      ;;
+    -h | --help)
+      sed -n '2,10p' "$0"
+      exit 0
+      ;;
+    *)
+      echo "pstack-sync: unknown argument $1" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+[ -f "$manifest" ] || {
+  echo "pstack-sync: missing $manifest" >&2
+  exit 1
+}
+conf() { awk -v k="$1" '$1 == k { print $2 }' "$manifest"; }
+url=$(conf repo)
+branch=$(conf branch)
+base_rev=$(conf rev)
+mapfile -t team_kit < <(conf team-kit)
+mapfile -t dropped < <(conf drop)
+# `unavailable <name> <perl regex>`: tools and services Michael does not have.
+mapfile -t unavailable < <(awk '$1 == "unavailable" { n = $2; $1 = ""; $2 = ""; sub(/^ +/, ""); print n "\t" $0 }' "$manifest")
+
+if [ "$scan" = 1 ]; then
+  for entry in "${unavailable[@]}"; do
+    name="${entry%%$'\t'*}" regex="${entry#*$'\t'}"
+    files=$(cd "$vendor" && grep -rlP -i -- "$regex" skills agents || true)
+    echo "## $name ($(printf '%s' "$files" | grep -c . || true) files)"
+    [ -z "$files" ] || printf '%s\n' "$files" | sed 's/^/- /'
+    echo
+  done
+  exit 0
+fi
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+if [ ! -d "$cache" ]; then
+  mkdir -p "$(dirname "$cache")"
+  git clone --quiet --bare --filter=blob:none "$url" "$cache"
+fi
+git -C "$cache" fetch --quiet --filter=blob:none origin "+refs/heads/$branch:refs/heads/$branch"
+up() { git -C "$cache" "$@"; }
+
+# Export the vendored subset of an upstream revision into $2, laid out and
+# renamed like the vendored tree.
+export_rev() {
+  local rev="$1" out="$2" raw="$2.raw" paths=(pstack/skills pstack/agents pstack/LICENSE) name
+  for name in "${team_kit[@]}"; do
+    if up cat-file -e "$rev:cursor-team-kit/skills/$name" 2>/dev/null; then
+      paths+=("cursor-team-kit/skills/$name")
+    fi
+  done
+  mkdir -p "$raw" "$out/skills"
+  up archive "$rev" -- "${paths[@]}" | tar -x -C "$raw"
+  for name in "$raw"/cursor-team-kit/skills/*; do
+    [ -e "$name" ] || continue
+    if [ -e "$raw/pstack/skills/${name##*/}" ]; then
+      echo "collision: team-kit skill ${name##*/} shadows a pstack skill of the same name" >>"$tmp/collisions"
+      continue
+    fi
+    mv "$name" "$out/skills/"
+  done
+  cp -R "$raw"/pstack/skills/. "$out/skills/"
+  cp -R "$raw/pstack/agents" "$out/agents"
+  cp "$raw/pstack/LICENSE" "$out/LICENSE"
+  rm -rf "$raw"
+
+  (cd "$out" && find . -type f | sed 's|^\./||' | sort) >"$out.paths"
+  perl -p "$transform" <"$out.paths" | paste -d '\t' "$out.paths" - | while IFS=$'\t' read -r from to; do
+    if [ "$from" != "$to" ]; then
+      mkdir -p "$out/$(dirname "$to")"
+      mv "$out/$from" "$out/$to"
+    fi
+  done
+  find "$out" -depth -type d -empty -delete
+  find "$out" -type f -exec perl -pi "$transform" {} +
+  for name in "${dropped[@]}"; do rm -rf "${out:?}/skills/$name"; done
+  rm -f "$out.paths"
+}
+
+list_files() { [ -d "$1" ] && (cd "$1" && find . -type f | sed 's|^\./||') || true; }
+same() { cmp -s "$1" "$2"; }
+skill_of() { case "$1" in skills/*/*) echo "${1#skills/}" | cut -d/ -f1 ;; esac; }
+
+base="$tmp/base"
+mkdir -p "$base"
+[ "$init" = 1 ] || export_rev "$base_rev" "$base"
+
+if [ "$local_diff" = 1 ]; then
+  diff -ruN -x upstream.conf -x README.md "$base" "$vendor" || true
+  exit 0
+fi
+
+target_rev=$(up rev-parse "${target:-refs/heads/$branch}^{commit}")
+theirs="$tmp/theirs"
+export_rev "$target_rev" "$theirs"
+
+if [ "$dry_run" = 1 ]; then
+  ours="$tmp/ours"
+  cp -R "$vendor" "$ours"
+else
+  ours="$vendor"
+  if [ "$init" = 0 ] && [ -n "$(git -C "$repo" status --porcelain -- "$vendor")" ]; then
+    echo "pstack-sync: commit or stash changes under $vendor first" >&2
+    exit 1
+  fi
+fi
+
+report() { echo "$2" >>"$tmp/report.$1"; }
+
+{
+  list_files "$base"
+  list_files "$theirs"
+  list_files "$ours" | grep -v '^upstream.conf$\|^README.md$' || true
+} | sort -u >"$tmp/all"
+
+while IFS= read -r rel; do
+  b="$base/$rel" t="$theirs/$rel" o="$ours/$rel"
+  skill=$(skill_of "$rel")
+  if [ -f "$b" ] && [ -f "$t" ]; then
+    if [ -f "$o" ]; then
+      if same "$b" "$t"; then
+        same "$o" "$b" || report customized "$rel"
+      elif same "$o" "$b"; then
+        cp "$t" "$o"
+        report updated "$rel"
+      elif same "$o" "$t"; then
+        :
+      elif git merge-file -q -L local -L base -L upstream "$o" "$b" "$t"; then
+        report merged "$rel"
+      else
+        report conflict "$rel"
+      fi
+    elif [ -n "$skill" ] && [ ! -d "$ours/skills/$skill" ]; then
+      mkdir -p "$(dirname "$o")"
+      cp "$t" "$o"
+      report restored "$skill"
+    elif ! same "$b" "$t"; then
+      report judge "upstream changed $rel, which you deleted locally"
+    fi
+  elif [ -f "$b" ]; then
+    [ -f "$o" ] || continue
+    if same "$o" "$b"; then
+      rm "$o"
+      report removed "$rel"
+    else
+      report judge "upstream removed $rel, which you customized (kept yours)"
+    fi
+  elif [ -f "$t" ]; then
+    if [ ! -f "$o" ]; then
+      mkdir -p "$(dirname "$o")"
+      cp "$t" "$o"
+      report added "$rel"
+    elif ! same "$o" "$t"; then
+      : >"$tmp/empty"
+      git merge-file -q -L local -L base -L upstream "$o" "$tmp/empty" "$t" || true
+      report conflict "$rel (added on both sides)"
+    fi
+  fi
+done <"$tmp/all"
+find "$ours" -depth -type d -empty -delete
+
+# New skills, upstream renames, and names that need normalization.
+if [ "$init" = 0 ]; then
+  comm -13 <(list_files "$base/skills" | cut -d/ -f1 | sort -u) \
+    <(list_files "$theirs/skills" | cut -d/ -f1 | sort -u) | while read -r s; do
+    report judge "new upstream skill $s (vendored; add 'drop $s' to upstream.conf to skip it)"
+  done
+fi
+if [ -f "$tmp/report.removed" ] && [ -f "$tmp/report.added" ]; then
+  comm -12 <(xargs -n1 basename <"$tmp/report.removed" | sort -u) \
+    <(xargs -n1 basename <"$tmp/report.added" | sort -u) | while read -r n; do
+    report judge "possible upstream rename or move of $n (removed and added in different places)"
+  done
+fi
+for f in "$ours"/skills/*/SKILL.md; do
+  [ -f "$f" ] || continue
+  dir=$(basename "$(dirname "$f")")
+  name=$(awk '/^name:/ { sub(/^name: */, ""); print; exit }' "$f")
+  [ "$name" = "$dir" ] || report judge "skills/$dir/SKILL.md has name '$name'; skill IDs must match the directory (add a rule to transform.pl)"
+done
+up ls-tree --name-only "$target_rev" cursor-team-kit/skills/ | xargs -n1 basename >"$tmp/kit-target"
+if [ "$init" = 0 ]; then
+  up ls-tree --name-only "$base_rev" cursor-team-kit/skills/ | xargs -n1 basename >"$tmp/kit-base"
+  comm -13 <(sort "$tmp/kit-base") <(sort "$tmp/kit-target") | while read -r s; do
+    report judge "new cursor-team-kit skill $s (not vendored; add 'team-kit $s' to upstream.conf to take it)"
+  done
+fi
+for s in "${team_kit[@]}"; do
+  grep -qx "$s" "$tmp/kit-target" || report judge "upstream removed team-kit skill $s"
+done
+if ! up diff --quiet "${base_rev}" "$target_rev" -- pstack/LICENSE 2>/dev/null && [ "$init" = 0 ]; then
+  report judge "upstream changed pstack/LICENSE"
+fi
+[ -f "$tmp/collisions" ] && while read -r l; do report judge "$l"; done <"$tmp/collisions"
+
+# Flag new upstream lines that rely on tools Michael does not have.
+{ cat "$tmp"/report.{updated,merged,conflict,added} 2>/dev/null || true; } | sed 's/ (added on both sides)$//' | sort -u | while IFS= read -r rel; do
+  if [ -f "$base/$rel" ]; then
+    { diff "$base/$rel" "$theirs/$rel" || true; } | sed -n 's/^> //p'
+  else
+    cat "$theirs/$rel"
+  fi >"$tmp/new-lines"
+  for entry in "${unavailable[@]}"; do
+    name="${entry%%$'\t'*}" regex="${entry#*$'\t'}"
+    hit=$(grep -m1 -oP -i -- ".{0,60}(?:$regex).{0,60}" "$tmp/new-lines" | head -1 || true)
+    [ -z "$hit" ] || report judge "upstream adds $name (unavailable) in $rel: ...$hit..."
+  done
+done
+
+if [ "$dry_run" = 0 ]; then
+  sed -i.bak "s/^rev .*/rev $target_rev/" "$manifest" && rm -f "$manifest.bak"
+fi
+
+echo "# pstack-sync report"
+echo
+echo "- base: $([ "$init" = 1 ] && echo none || echo "$base_rev")"
+echo "- target: $target_rev"
+echo "- mode: $([ "$dry_run" = 1 ] && echo dry run || echo applied to "$vendor")"
+if [ "$init" = 0 ]; then
+  echo
+  echo "## Upstream commits in scope"
+  echo
+  kit_paths=()
+  for s in "${team_kit[@]}"; do kit_paths+=("cursor-team-kit/skills/$s"); done
+  up log --no-merges --format='- %h %s' "$base_rev..$target_rev" -- pstack/skills pstack/agents pstack/LICENSE "${kit_paths[@]}"
+fi
+for section in conflict judge merged updated added removed restored customized; do
+  f="$tmp/report.$section"
+  [ -f "$f" ] || continue
+  echo
+  case "$section" in
+    conflict) echo "## Conflicts (markers left in place, resolve each)" ;;
+    judge) echo "## Needs judgement" ;;
+    merged) echo "## Merged cleanly with local customizations" ;;
+    updated) echo "## Updated from upstream (no local edits)" ;;
+    added) echo "## Added from upstream" ;;
+    removed) echo "## Removed upstream (no local edits)" ;;
+    restored) echo "## Restored skills (missing locally and not dropped)" ;;
+    customized) echo "## Local customizations upstream did not touch" ;;
+  esac
+  echo
+  if [ "$section" = added ] || [ "$section" = customized ] || [ "$section" = restored ]; then
+    sort -u "$f" | sed 's/^/- /' | head -40
+    n=$(sort -u "$f" | wc -l)
+    [ "$n" -le 40 ] || echo "- ... and $((n - 40)) more"
+  else
+    sort -u "$f" | sed 's/^/- /'
+  fi
+done

@@ -20,6 +20,7 @@
     secrets.kuma_url.owner = "michaelvessia";
     secrets.kuma_username.owner = "michaelvessia";
     secrets.kuma_password.owner = "michaelvessia";
+    secrets.flocasts_npm_token.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────

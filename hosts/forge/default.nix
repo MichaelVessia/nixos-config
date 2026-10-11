@@ -1,12 +1,17 @@
 {config, ...}: {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/agent-memory.nix
     ../../modules/desktop-system.nix
     ../../modules/host-metrics.nix
   ];
 
   networking.hostName = "forge";
   system.stateVersion = "26.05";
+
+  # Trust this host's portless CA for floai `mono pitch verify`. `portless trust`
+  # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
+  security.pki.certificateFiles = [./portless-ca.crt];
 
   services.openssh.enable = true;
   users.users.michaelvessia = {
