@@ -14,7 +14,14 @@
 
   home.packages = [
     inputs.grok-bot.packages.${pkgs.system}.default
-    inputs.llm-agents.packages.${pkgs.system}.t3code-desktop
+    (
+      if osConfig.networking.hostName == "framework13"
+      then
+        pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
+          providerPackages = inputs.llm-agents.packages.${pkgs.system}.t3code.providerPackages;
+        }
+      else inputs.llm-agents.packages.${pkgs.system}.t3code-desktop
+    )
   ];
 
   # Preserve existing shares until this device can be inventoried.
