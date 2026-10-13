@@ -73,9 +73,44 @@
 
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
+  # Cypress's downloaded Electron binary, used by repository E2E suites.
+  programs.nix-ld.libraries = with pkgs; [
+    alsa-lib
+    at-spi2-atk
+    at-spi2-core
+    atk
+    cairo
+    cups
+    dbus
+    expat
+    gdk-pixbuf
+    glib
+    gtk3
+    libdrm
+    libgbm
+    libGL
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxi
+    libxkbcommon
+    libxrandr
+    libxscrnsaver
+    libxshmfence
+    libxtst
+    mesa
+    nspr
+    nss
+    pango
+    systemd
+  ];
 
   programs.zsh.enable = true;
-  environment.systemPackages = [pkgs.nano];
+  # Cypress starts Xvfb itself for headless runs.
+  environment.systemPackages = [pkgs.nano pkgs.xorg-server];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
   systemd.tmpfiles.rules = [
