@@ -15,6 +15,11 @@
 # T3 does not change. The cap is hard, with little swap, so the kernel kills
 # the largest agent process (usually a test worker). MemoryHigh throttles
 # instead: the agents swap without end, and the disk I/O stalls the server too.
+#
+# The server itself leaks memory (35G after a day), and t3code.service is
+# outside app-t3code.slice. So the service has its own hard cap: the kernel
+# kills the server and Restart=always starts a new one, instead of letting it
+# stall on swap.
 {
   lib,
   pkgs,
@@ -25,6 +30,8 @@
       [Service]
       Environment=T3CODE_TAILSCALE_SERVE=true
       MemoryLow=2G
+      MemoryMax=8G
+      MemorySwapMax=1G
     '';
 
     xdg.configFile."systemd/user/app-t3code.slice.d/90-nix.conf".text = ''
