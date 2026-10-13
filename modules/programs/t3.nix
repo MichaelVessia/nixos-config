@@ -11,7 +11,10 @@
 # near total RAM. When agents fill RAM, the server stalls on swap, clients drop,
 # and the desktop app starts extra servers over SSH on the same database. These
 # drop-ins sort after T3's 50-Memory*.conf, cap the agents well below RAM, and
-# reserve memory for the server.
+# reserve memory for the server. The cap is hard, with little swap, so the
+# kernel kills the largest agent process (usually a test worker). MemoryHigh
+# throttles instead: the agents swap without end, and the disk I/O stalls the
+# server too.
 {
   lib,
   pkgs,
@@ -26,9 +29,9 @@
 
     xdg.configFile."systemd/user/app-t3code-agents.slice.d/90-nix.conf".text = ''
       [Slice]
-      MemoryHigh=50%
-      MemoryMax=65%
-      MemorySwapMax=4G
+      MemoryHigh=infinity
+      MemoryMax=60%
+      MemorySwapMax=1G
     '';
   };
 }
