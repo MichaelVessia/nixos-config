@@ -7,14 +7,14 @@
 # while another server holds 3773). T3CODE_TAILSCALE_SERVE makes the server
 # point Tailscale Serve at its current port on each start.
 #
-# T3 runs agents in app-t3code-agents.slice and sets that slice's memory limits
-# near total RAM. When agents fill RAM, the server stalls on swap, clients drop,
-# and the desktop app starts extra servers over SSH on the same database. These
-# drop-ins sort after T3's 50-Memory*.conf, cap the agents well below RAM, and
-# reserve memory for the server. The cap is hard, with little swap, so the
-# kernel kills the largest agent process (usually a test worker). MemoryHigh
-# throttles instead: the agents swap without end, and the disk I/O stalls the
-# server too.
+# T3 runs agents in app-t3code-agents.slice. Each server start sets that
+# slice's memory limits near total RAM with `systemctl set-property --runtime`,
+# which overrides drop-ins on that slice. When agents fill RAM, the server
+# stalls on swap, clients drop, and the desktop app starts extra servers over
+# SSH on the same database. So the cap is on the parent app-t3code.slice, which
+# T3 does not change. The cap is hard, with little swap, so the kernel kills
+# the largest agent process (usually a test worker). MemoryHigh throttles
+# instead: the agents swap without end, and the disk I/O stalls the server too.
 {
   lib,
   pkgs,
@@ -27,9 +27,8 @@
       MemoryLow=2G
     '';
 
-    xdg.configFile."systemd/user/app-t3code-agents.slice.d/90-nix.conf".text = ''
+    xdg.configFile."systemd/user/app-t3code.slice.d/90-nix.conf".text = ''
       [Slice]
-      MemoryHigh=infinity
       MemoryMax=60%
       MemorySwapMax=1G
     '';
