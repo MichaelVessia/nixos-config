@@ -153,14 +153,16 @@ monitor.
 `dev-machine` Terraform module in `flocasts/floai`
 (`devops/terraform/env/dev/michaelvessia/`). First boot runs
 `nixos-rebuild switch --flake github:MichaelVessia/nixos-config#dev-machine`
-without GitHub credentials, so the host gets no private inputs: no `garage` Pi
-extensions, no `flo` CLI, and no sops secrets. Follow the module README for
+without GitHub credentials, so the host must not use private inputs such as
+`garage` or `floai`, or sops secrets. Follow the module README for
 first access (Session Manager, then `sudo tailscale up`), and keep Tailscale
 and sshd enabled, or the box becomes unreachable once `bootstrap_access` is off.
 
-`users/dev-machine/home.nix` is the Foundry headless profile without Syncthing.
-Agents write notes to the local `~/vaults/flosports`, which does not sync. Sudo
-needs no password because the user has none.
+`users/dev-machine/home.nix` keeps only Claude Code, Codex, herdr, the shell
+and Git modules, a short skill list (`agentSkills.personal`), and some
+`scripts/` groups (`scripts.groups`). Agents write notes to the local
+`~/vaults/flosports`, which does not sync. Sudo needs no password because the
+user has none.
 
 ## Physical Fleet Dashboard
 

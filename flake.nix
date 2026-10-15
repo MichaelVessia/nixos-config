@@ -211,10 +211,7 @@
       dev-machine = let
         username = "michaelvessia";
         specialArgs = {
-          inherit username pkgs-unstable;
-          # First boot fetches this flake without GitHub credentials, so the
-          # host gets no private inputs.
-          inputs = removeAttrs inputs ["garage" "floai"];
+          inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
           enableFloCli = false;
         };
@@ -232,7 +229,7 @@
               home-manager.sharedModules = [
                 inputs.worktrunk.homeModules.default
               ];
-              home-manager.extraSpecialArgs = specialArgs.inputs // specialArgs;
+              home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/dev-machine/home.nix;
             }
           ];

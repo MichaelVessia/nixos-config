@@ -47,11 +47,6 @@
   };
   networking.firewall.trustedInterfaces = ["tailscale0"];
 
-  programs.mosh = {
-    enable = true;
-    openFirewall = false;
-  };
-
   # Project checks, such as flobot's check:runtime, need a Docker daemon.
   virtualisation.docker = {
     enable = true;
@@ -62,7 +57,7 @@
   programs.nix-ld.enable = true;
 
   programs.zsh.enable = true;
-  environment.systemPackages = [pkgs.git pkgs.nano];
+  environment.systemPackages = [pkgs.git];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
   systemd.tmpfiles.rules = [
@@ -76,11 +71,6 @@
     trusted-users = ["root" username];
     extra-substituters = ["https://cache.numtide.com"];
     extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
-  };
-
-  programs.nh = {
-    enable = true;
-    flake = "/home/${username}/nixos-config";
   };
 
   system.stateVersion = "26.05";

@@ -1,13 +1,14 @@
 {
   pkgs,
-  pkgs-unstable,
   inputs,
   ...
 }: {
   imports = [
     ../common.nix
-    ../../modules/programs/agents
-    ../../modules/programs/nvf
+    ../../modules/programs/agents/options.nix
+    ../../modules/programs/agents/shared.nix
+    ../../modules/programs/agents/claude-code
+    ../../modules/programs/agents/codex.nix
     ../../modules/programs/git.nix
     ../../modules/programs/shell.nix
     ../../modules/programs/zellij.nix
@@ -15,6 +16,17 @@
     ../../modules/programs/vaults.nix
     ../../modules/programs/t3.nix
     ../../modules/programs/worktrunk.nix
+  ];
+
+  scripts.groups = ["file-management" "git" "process-management"];
+
+  agentSkills.personal = [
+    "agent-browser"
+    "effect-service-design"
+    "gh-comment"
+    "herdr"
+    "herdr-dispatch"
+    "pstack-sync"
   ];
 
   # Agents write notes to a local work vault. Syncthing does not run here, so
@@ -27,38 +39,14 @@
   home.username = "michaelvessia";
   home.homeDirectory = "/home/michaelvessia";
 
-  # Keep the headless profile independent of common.nix's desktop packages.
   home.packages = with pkgs; [
-    bun
-    nodejs
-    python3
-    gcc
-    gnumake
-    pkg-config
     ripgrep
-    ast-grep
-    jq
-    yq-go
     fd
+    jq
     curl
-    wget
-    zip
-    unzip
-    file
-    tree
-    tmux
     btop
-    ncdu
     difftastic
-    lazygit
-    lsof
-    nix-output-monitor
-    pkgs-unstable.devbox
-    devenv
-    lefthook
     inputs.llm-agents.packages.${pkgs.system}.claude-code
-    inputs.llm-agents.packages.${pkgs.system}.omp
     inputs.llm-agents.packages.${pkgs.system}.herdr
-    inputs.llm-agents.packages.${pkgs.system}.hunk
   ];
 }
