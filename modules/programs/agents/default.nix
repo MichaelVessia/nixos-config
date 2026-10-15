@@ -15,7 +15,6 @@
     ./shared.nix
     ./agentsview.nix
     ./codex.nix
-    ./collie.nix
     ./opencode.nix
     ./omp
     ./pi
