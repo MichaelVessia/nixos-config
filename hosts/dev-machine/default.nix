@@ -7,19 +7,14 @@
   username,
   ...
 }: {
-  imports = [
-    "${modulesPath}/virtualisation/amazon-image.nix"
-    ../../modules/agent-memory.nix
-  ];
+  imports = ["${modulesPath}/virtualisation/amazon-image.nix"];
 
   networking.hostName = "dev-machine";
   time.timeZone = "America/New_York";
-  i18n.defaultLocale = "en_US.UTF-8";
 
   services.openssh.settings = {
     PasswordAuthentication = false;
     KbdInteractiveAuthentication = false;
-    PermitRootLogin = "no";
   };
 
   users.users.${username} = {
@@ -27,8 +22,6 @@
     description = "Dev Machine user";
     extraGroups = ["wheel" "docker"];
     shell = pkgs.zsh;
-    # Keeps T3 Code's systemd user service running without a login session.
-    linger = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r michaelvessia@framework13"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
@@ -42,16 +35,11 @@
   services.tailscale = {
     enable = true;
     openFirewall = true;
-    # Lets T3 Code configure Tailscale Serve without root.
-    extraSetFlags = ["--operator=${username}"];
   };
   networking.firewall.trustedInterfaces = ["tailscale0"];
 
   # Project checks, such as flobot's check:runtime, need a Docker daemon.
-  virtualisation.docker = {
-    enable = true;
-    package = pkgs.docker_29;
-  };
+  virtualisation.docker.enable = true;
 
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
@@ -60,6 +48,7 @@
   environment.systemPackages = [pkgs.git];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
+  # shell.nix sets TMPDIR here.
   systemd.tmpfiles.rules = [
     "d /home/${username}/.cache/tmp 0700 ${username} users -"
   ];

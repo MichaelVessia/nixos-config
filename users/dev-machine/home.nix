@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   inputs,
   ...
@@ -14,7 +15,6 @@
     ../../modules/programs/zellij.nix
     ../../modules/programs/ssh.nix
     ../../modules/programs/vaults.nix
-    ../../modules/programs/t3.nix
     ../../modules/programs/worktrunk.nix
   ];
 
@@ -34,6 +34,12 @@
   vaults = {
     deviceName = "dev-machine";
     profile = "work";
+  };
+
+  # shell.nix defaults to nvim, which comes from nvf. NixOS installs nano.
+  home.sessionVariables = {
+    EDITOR = lib.mkForce "nano";
+    VISUAL = lib.mkForce "nano";
   };
 
   home.username = "michaelvessia";
