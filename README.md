@@ -147,6 +147,21 @@ activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
 monitor.
 
+### Dev Machine (EC2)
+
+`dev-machine` is an x86_64 NixOS EC2 instance in flostag, created by the
+`dev-machine` Terraform module in `flocasts/floai`
+(`devops/terraform/env/dev/michaelvessia/`). First boot runs
+`nixos-rebuild switch --flake github:MichaelVessia/nixos-config#dev-machine`
+without GitHub credentials, so the host gets no private inputs: no `garage` Pi
+extensions, no `flo` CLI, and no sops secrets. Follow the module README for
+first access (Session Manager, then `sudo tailscale up`), and keep Tailscale
+and sshd enabled, or the box becomes unreachable once `bootstrap_access` is off.
+
+`users/dev-machine/home.nix` is the Foundry headless profile without Syncthing.
+Agents write notes to the local `~/vaults/flosports`, which does not sync. Sudo
+needs no password because the user has none.
+
 ## Physical Fleet Dashboard
 
 [Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)

@@ -207,6 +207,36 @@
             }
           ];
         };
+
+      dev-machine = let
+        username = "michaelvessia";
+        specialArgs = {
+          inherit username pkgs-unstable;
+          # First boot fetches this flake without GitHub credentials, so the
+          # host gets no private inputs.
+          inputs = removeAttrs inputs ["garage" "floai"];
+          enableHomelabSkills = false;
+          enableFloCli = false;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/dev-machine
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [
+                inputs.worktrunk.homeModules.default
+              ];
+              home-manager.extraSpecialArgs = specialArgs.inputs // specialArgs;
+              home-manager.users.${username} = import ./users/dev-machine/home.nix;
+            }
+          ];
+        };
     };
 
     darwinConfigurations = {

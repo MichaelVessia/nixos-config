@@ -6,6 +6,8 @@
   ...
 }: let
   piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
+  # Hosts that cannot fetch private inputs, such as dev-machine, omit garage.
+  hasGarage = inputs ? garage;
   garagePiExtensions = inputs.garage.packages.${pkgs.system}.pi-extensions;
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
@@ -107,8 +109,12 @@ in {
 
   # Garage is a monorepo, so expose only its isolated Pi extension output
   # instead of asking Pi's Git package manager to install the repository root.
-  home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
-  home.file.".pi/agent/extensions/session-model-default.js".source = "${garagePiExtensions}/extensions/session-model-default.js";
+  home.file.".pi/agent/extensions/gpt-fast-mode.js" = lib.mkIf hasGarage {
+    source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
+  };
+  home.file.".pi/agent/extensions/session-model-default.js" = lib.mkIf hasGarage {
+    source = "${garagePiExtensions}/extensions/session-model-default.js";
+  };
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
