@@ -147,6 +147,29 @@ activation (`sudo nixos-rebuild switch --store-path <system-store-path>`).
 Confirm a fresh key-based SSH connection and a reboot before removing the
 monitor.
 
+### Dev Machine (EC2)
+
+`dev-machine` is an x86_64 NixOS EC2 instance in flostag, created by the
+`dev-machine` Terraform module in `flocasts/floai`
+(`devops/terraform/env/dev/michaelvessia/`). First boot runs
+`nixos-rebuild switch --flake github:MichaelVessia/nixos-config#dev-machine`
+without GitHub credentials, so the host must not use private inputs such as
+`garage` or `floai`, or sops secrets. Follow the module README for
+first access (Session Manager, then `sudo tailscale up`), and keep Tailscale
+and sshd enabled, or the box becomes unreachable once `bootstrap_access` is off.
+
+`users/dev-machine/home.nix` keeps only Claude Code, Codex, herdr, the shell
+and Git modules, a short skill list (`agentSkills.personal`), and some
+`scripts/` groups (`scripts.groups`). Agents write notes to the local
+`~/vaults/flosports`, which does not sync. Sudo needs no password because the
+user has none.
+
+`devm` (`scripts/dev-machine/devm`) wraps the floai workflow and the box:
+`devm start`, `devm stop`, `devm ssh`, `devm rebuild` (switch to this flake's
+`master`), `devm status` and `devm session` (need the `flostag` AWS profile, or
+set `DEVM_AWS_PROFILE`), `devm apply`, and `devm destroy`. Run `devm help` for
+the list. `ssh dev-machine` reaches the box over Tailscale.
+
 ## Physical Fleet Dashboard
 
 [Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)
