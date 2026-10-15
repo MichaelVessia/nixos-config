@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# Manage the EC2 Dev Machine from flocasts/floai's dev-machine workflow.
+set -e
+set -u
+set -o pipefail
+
+repo="flocasts/floai"
+workflow="dev-machine.yml"
+developer="michaelvessia"
+host="dev-machine"
+flake="github:MichaelVessia/nixos-config#dev-machine"
+aws_profile="${DEVM_AWS_PROFILE:-flostag}"
+region="us-west-2"
+
+usage() {
+    cat <<EOF
+Usage: devm <command>
+
+  start      Start the stopped machine (about \$0.20 an hour while it runs)
+  stop       Stop the machine; the disk stays (about \$16 a month)
+  status     Show the machine state (needs AWS access)
+  ssh        SSH to the machine over Tailscale
+  rebuild    Switch the machine to $flake
+  apply      Run Terraform apply (create the machine or apply root changes)
+  plan       Run Terraform plan
+  session    Open a Session Manager shell (first access, break-glass)
+  destroy    Delete the machine and its disk
+EOF
+}
+
+latest_run_id() {
+    gh run list -R "$repo" --workflow "$workflow" --event workflow_dispatch \
+        --user "$(gh api user --jq .login)" --limit 1 --json databaseId --jq '.[0].databaseId // ""'
+}
+
+run_workflow() {
+    local action="$1"
+    shift
+    local before
+    local run_id=""
+
+    before=$(latest_run_id)
+    gh workflow run "$workflow" -R "$repo" --ref master \
+        -f developer="$developer" -f action="$action" "$@"
+
+    # The dispatched run takes a few seconds to appear.
+    for _ in $(seq 30); do
+        run_id=$(latest_run_id)
+        if [ -n "$run_id" ] && [ "$run_id" != "$before" ]; then
+            break
+        fi
+        sleep 2
+    done
+    if [ -z "$run_id" ] || [ "$run_id" = "$before" ]; then
+        echo "devm: could not find the $action run; see gh run list -R $repo --workflow $workflow" >&2
+        exit 1
+    fi
+
+    gh run watch -R "$repo" "$run_id" --exit-status
+}
+
+instance_id() {
+    aws ec2 describe-instances --profile "$aws_profile" --region "$region" \
+        --filters "Name=tag:app_name,Values=dev-machine" "Name=tag:owner,Values=$developer" \
+        "Name=instance-state-name,Values=pending,running,stopping,stopped" \
+        --query 'Reservations[0].Instances[0].InstanceId' --output text
+}
+
+main() {
+    if [ $# -lt 1 ]; then
+        usage
+        exit 1
+    fi
+
+    local command="$1"
+    shift
+
+    case "$command" in
+    start | stop | apply | plan)
+        run_workflow "$command"
+        ;;
+    status)
+        aws ec2 describe-instances --profile "$aws_profile" --region "$region" \
+            --filters "Name=tag:app_name,Values=dev-machine" "Name=tag:owner,Values=$developer" \
+            --query 'Reservations[].Instances[].[InstanceId,State.Name,InstanceType,LaunchTime]' --output table
+        ;;
+    ssh)
+        exec ssh "$host" "$@"
+        ;;
+    rebuild)
+        # --refresh skips Nix's cached copy of the GitHub branch.
+        exec ssh -t "$host" sudo nixos-rebuild switch --refresh --flake "$flake"
+        ;;
+    session)
+        local id
+        id=$(instance_id)
+        if [ -z "$id" ] || [ "$id" = "None" ]; then
+            echo "devm: no Dev Machine found for $developer" >&2
+            exit 1
+        fi
+        exec aws ssm start-session --profile "$aws_profile" --region "$region" --target "$id"
+        ;;
+    destroy)
+        echo "This deletes the machine, its disk (home, clones, logins), and every"
+        echo "machine in $developer's root. Remove the tailnet device afterwards."
+        read -r -p "Type $developer to confirm: " answer
+        if [ "$answer" != "$developer" ]; then
+            echo "devm: cancelled" >&2
+            exit 1
+        fi
+        run_workflow destroy -f confirm="$developer"
+        ;;
+    -h | --help | help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
+    esac
+}
+
+main "$@"

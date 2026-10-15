@@ -164,6 +164,12 @@ and Git modules, a short skill list (`agentSkills.personal`), and some
 `~/vaults/flosports`, which does not sync. Sudo needs no password because the
 user has none.
 
+`devm` (`scripts/dev-machine/devm`) wraps the floai workflow and the box:
+`devm start`, `devm stop`, `devm ssh`, `devm rebuild` (switch to this flake's
+`master`), `devm status` and `devm session` (need the `flostag` AWS profile, or
+set `DEVM_AWS_PROFILE`), `devm apply`, and `devm destroy`. Run `devm help` for
+the list. `ssh dev-machine` reaches the box over Tailscale.
+
 ## Physical Fleet Dashboard
 
 [Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)
