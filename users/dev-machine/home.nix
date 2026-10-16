@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  pkgs-unstable,
   inputs,
   ...
 }: {
@@ -52,6 +53,9 @@
     curl
     btop
     difftastic
+    python3
+    awscli2
+    (pkgs-unstable.callPackage ../../modules/programs/pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
     inputs.llm-agents.packages.${pkgs.system}.claude-code
     inputs.llm-agents.packages.${pkgs.system}.herdr
   ];
