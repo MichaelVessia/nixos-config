@@ -44,6 +44,14 @@
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
 
+  # nh - nix helper for better CLI experience
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 7d --keep 3";
+    flake = "/home/${username}/nixos-config";
+  };
+
   programs.zsh.enable = true;
   environment.systemPackages = [pkgs.git];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
