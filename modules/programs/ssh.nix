@@ -41,6 +41,14 @@
           else "forge";
         user = "michaelvessia";
       };
+      # EC2 Dev Machine; manage it with scripts/dev-machine/devm.
+      "dev-machine" = {
+        hostname =
+          if pkgs.stdenv.isDarwin
+          then "dev-machine.bison-gray.ts.net"
+          else "dev-machine";
+        user = "michaelvessia";
+      };
       "flomac" = {
         hostname = "flomac";
         user = "michael.vessia";

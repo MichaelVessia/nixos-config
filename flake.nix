@@ -23,7 +23,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
-    collie.url = "github:AltanS/collie";
     grok-bot = {
       url = "github:jordangarrison/grok-bot-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -205,6 +204,33 @@
               ];
               home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/foundry/home.nix;
+            }
+          ];
+        };
+
+      dev-machine = let
+        username = "michaelvessia";
+        specialArgs = {
+          inherit username inputs pkgs-unstable;
+          enableHomelabSkills = false;
+          enableFloCli = false;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/dev-machine
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.sharedModules = [
+                inputs.worktrunk.homeModules.default
+              ];
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/dev-machine/home.nix;
             }
           ];
         };

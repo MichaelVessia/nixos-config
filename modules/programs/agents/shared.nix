@@ -22,14 +22,14 @@
     "proxmox"
     "uptime-kuma"
   ];
-  enabledPersonalSkillNames =
+  defaultPersonalSkillNames =
     if enableHomelabSkills
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
 
   # Vendored from upstream pstack; the pstack-sync skill merges new releases.
   vessiaSkillNames = dirNames ./vessia/skills;
-  skillNames = enabledPersonalSkillNames ++ vessiaSkillNames;
+  skillNames = config.agentSkills.personal ++ vessiaSkillNames;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -49,6 +49,12 @@
       skillNames);
 in {
   imports = [inputs.agent-skills-nix.homeManagerModules.default];
+
+  options.agentSkills.personal = lib.mkOption {
+    type = lib.types.listOf (lib.types.enum personalSkillNames);
+    default = defaultPersonalSkillNames;
+    description = "Personal skills from shared/skills to install. Vendored vessia skills are always installed.";
+  };
 
   config = {
     programs.agent-skills = {
