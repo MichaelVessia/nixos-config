@@ -16,6 +16,12 @@
 # the largest agent process (usually a test worker). MemoryHigh throttles
 # instead: the agents swap without end, and the disk I/O stalls the server too.
 #
+# T3 starts each agent scope with OOMPolicy=stop, so one kill stops the whole
+# scope. Codex runs all threads in one shared app server in one scope, and T3
+# does not restart it after it exits: every new Codex thread then fails with
+# "Codex App Server process exited with code 0" until the server restarts. The
+# drop-in keeps Codex scopes running, so only the killed process dies.
+#
 # The server itself leaks memory (35G after a day), and t3code.service is
 # outside app-t3code.slice. So the service has its own hard cap: the kernel
 # kills the server and Restart=always starts a new one, instead of letting it
@@ -38,6 +44,11 @@
       [Slice]
       MemoryMax=60%
       MemorySwapMax=1G
+    '';
+
+    xdg.configFile."systemd/user/t3code-codex-.scope.d/90-nix.conf".text = ''
+      [Scope]
+      OOMPolicy=continue
     '';
   };
 }
