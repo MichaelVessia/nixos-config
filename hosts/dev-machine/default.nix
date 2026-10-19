@@ -50,6 +50,28 @@
 
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
+  # T3 Code's preview browser, a downloaded chrome-headless-shell.
+  programs.nix-ld.libraries = with pkgs; [
+    alsa-lib
+    at-spi2-atk
+    at-spi2-core
+    atk
+    dbus
+    expat
+    glib
+    libgbm
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxkbcommon
+    libxrandr
+    nspr
+    nss
+    systemd
+  ];
 
   # nh - nix helper for better CLI experience
   programs.nh = {

@@ -41,6 +41,9 @@
   home.sessionVariables = {
     EDITOR = lib.mkForce "nano";
     VISUAL = lib.mkForce "nano";
+    # agent-browser does not search PATH for Chrome, and its downloaded
+    # Chrome does not run on NixOS.
+    AGENT_BROWSER_EXECUTABLE_PATH = lib.getExe pkgs.chromium;
   };
 
   home.username = "michaelvessia";
@@ -55,7 +58,9 @@
     difftastic
     python3
     awscli2
+    pkgs-unstable.devbox # repos pin devbox.lock to newer releases than stable ships
     (pkgs-unstable.callPackage ../../modules/programs/pup {}) # Datadog API CLI; needs newer rustc than 25.11 ships
+    inputs.llm-agents.packages.${pkgs.system}.agent-browser
     inputs.llm-agents.packages.${pkgs.system}.claude-code
     inputs.llm-agents.packages.${pkgs.system}.herdr
   ];
