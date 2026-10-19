@@ -245,12 +245,8 @@ in {
     ];
   };
 
-  # Set macOS hostname
-  networking = {
-    hostName = "flomac";
-    computerName = "flomac";
-    localHostName = "flomac";
-  };
+  # Set macOS hostname. IT MDM manages ComputerName and LocalHostName.
+  networking.hostName = "flomac";
 
   # Tailscale MagicDNS is the default resolver and does not know .lan names.
   environment.etc."resolver/lan".text = ''
