@@ -35,6 +35,13 @@
   services.tailscale = {
     enable = true;
     openFirewall = true;
+    # Send internet traffic out through the home gateway so services see a
+    # residential IP. LAN access keeps VPC DNS and instance metadata direct.
+    useRoutingFeatures = "client";
+    extraSetFlags = [
+      "--exit-node=tailscale-gateway"
+      "--exit-node-allow-lan-access"
+    ];
   };
   networking.firewall.trustedInterfaces = ["tailscale0"];
 
