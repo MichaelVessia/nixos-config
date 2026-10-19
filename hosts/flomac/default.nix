@@ -43,7 +43,6 @@ in {
     casks = [
       "1password"
       "aws-vpn-client"
-      "bb"
       "brave-browser"
       "chatgpt"
       "claude" # Desktop app; llm-agents claude-desktop is currently Linux-only
