@@ -244,7 +244,7 @@ the tracked file. Review its Git diff before committing.
 Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
 `agentHarnesses.executor.url` and `agentHarnesses.figma.url` as HTTP MCP servers.
 
-Pi, OMP, Codex, Claude Code, and OpenCode use Executor and the
+Pi, OMP, Codex, Claude Code, OpenCode, and Cursor use Executor and the
 [Figma remote MCP server](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/).
 Slack tools use Executor. Figma connects directly because it does not work
 through Executor. Claude Code disables imported claude.ai
@@ -252,12 +252,19 @@ connectors; activation also clears its saved project-scoped MCP servers so
 projects use the user-scoped entries. This does not delete connectors
 from the claude.ai account.
 
+Cursor gets the same Executor, Executor Flosports, and Figma endpoints as
+Claude Code and Codex. Activation replaces `~/.cursor/mcp.json`. The shared
+instructions and vessia model sheet are always-applied rules in
+`~/.cursor/rules/`. The model sheet is generated from
+`modules/programs/agents/shared/vessia-models.md`.
+
 OAuth credentials are local to each harness and are not managed by Nix.
 For Figma, use the commands below with `figma` in place of `executor`, or
 select Figma in Claude Code.
 Authorize once per harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
-in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`, and
-`/mcp` → Executor → Authenticate in Claude Code. Run OMP authorization in the
+in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`,
+`/mcp` → Executor → Authenticate in Claude Code, and Cursor's MCP settings
+for Executor and Figma. Run OMP authorization in the
 session that needs access. OMP 18.1.13 caches credentials in memory, and
 `/mcp reload` does not refresh credentials saved by another process. After
 authorizing in a separate OMP process, exit the older session and resume it

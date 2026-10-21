@@ -6,6 +6,7 @@
     ./shared.nix
     ./agentsview.nix
     ./codex.nix
+    ./cursor.nix
     ./opencode.nix
     ./omp
     ./pi
