@@ -46,8 +46,7 @@ herdr agent read hello-claude --source recent-unwrapped --lines 80
 Pick the type once, for the whole assignment. The session runs on one model for its whole life; there is no routing inside it.
 
 Workers default to Opus 5.5. Set effort to low for simple tasks, medium for normal
-tasks, and high for complex or risky tasks. In BB, owner and dispatcher threads
-use Codex GPT-6.1-Sol at low reasoning; create unique BB threads for workers.
+tasks, and high for complex or risky tasks.
 
 | Type | When | Launch |
 |---|---|---|

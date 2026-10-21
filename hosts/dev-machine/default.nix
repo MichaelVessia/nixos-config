@@ -35,6 +35,13 @@
   services.tailscale = {
     enable = true;
     openFirewall = true;
+    # Send internet traffic out through the home gateway so services see a
+    # residential IP. LAN access keeps VPC DNS and instance metadata direct.
+    useRoutingFeatures = "client";
+    extraSetFlags = [
+      "--exit-node=tailscale-gateway"
+      "--exit-node-allow-lan-access"
+    ];
   };
   networking.firewall.trustedInterfaces = ["tailscale0"];
 
@@ -43,6 +50,36 @@
 
   # T3 Code's SSH backend runs its downloaded generic-Linux release binary.
   programs.nix-ld.enable = true;
+  # T3 Code's preview browser, a downloaded chrome-headless-shell.
+  programs.nix-ld.libraries = with pkgs; [
+    alsa-lib
+    at-spi2-atk
+    at-spi2-core
+    atk
+    dbus
+    expat
+    glib
+    libgbm
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxkbcommon
+    libxrandr
+    nspr
+    nss
+    systemd
+  ];
+
+  # nh - nix helper for better CLI experience
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 7d --keep 3";
+    flake = "/home/${username}/nixos-config";
+  };
 
   programs.zsh.enable = true;
   environment.systemPackages = [pkgs.git];
