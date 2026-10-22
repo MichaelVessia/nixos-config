@@ -277,6 +277,10 @@ Foundry's Home Manager configuration adds `t3-forge`, `t3-flomac`, and
 `orchestration:read` and `orchestration:operate`. Other hosts have no remote
 T3 entries by default.
 
+Flomac's Tailscale name is `c6dwvf3hjg`, matching its company-managed Mac name.
+The `t3-flomac` MCP entry and `flomac` SSH alias use
+`c6dwvf3hjg.bison-gray.ts.net`. The macOS `HostName` remains `flomac`.
+
 T3 `0.1.1-nightly.20261020.3411` on Foundry starts the installed
 `codex app-server` with no `CODEX_HOME` override. Its user configuration is
 `~/.codex/config.toml`. T3 adds the local `t3-code` MCP entry through thread
@@ -327,8 +331,8 @@ Renew before expiry or after revocation. A CLI session token from
 After activation and login, run `systemctl --user restart t3code.service` on
 Foundry when no threads are active. Then start or resume the dispatcher.
 Existing threads may retain their previous MCP connections until restart.
-Before Flomac login, connect Flomac to Tailscale and
-check that its HTTPS `/mcp` endpoint responds with an OAuth `401` challenge.
+Before Flomac login, check that
+`https://c6dwvf3hjg.bison-gray.ts.net/mcp` responds with an OAuth `401` challenge.
 
 See the [Codex MCP documentation](https://developers.openai.com/codex/mcp/)
 and [configuration reference](https://developers.openai.com/codex/config-reference/).

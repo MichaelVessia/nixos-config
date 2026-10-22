@@ -50,7 +50,7 @@
         user = "michaelvessia";
       };
       "flomac" = {
-        hostname = "flomac";
+        hostname = "c6dwvf3hjg.bison-gray.ts.net";
         user = "michael.vessia";
       };
       "proxmox" = {

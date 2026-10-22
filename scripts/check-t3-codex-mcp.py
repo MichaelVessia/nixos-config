@@ -16,7 +16,7 @@ def main():
     args = parser.parse_args()
     expected = {
         "t3-forge": "https://forge.bison-gray.ts.net/mcp",
-        "t3-flomac": "https://flomac.bison-gray.ts.net/mcp",
+        "t3-flomac": "https://c6dwvf3hjg.bison-gray.ts.net/mcp",
         "t3-dev-machine": "https://dev-machine.bison-gray.ts.net/mcp",
     }
     scopes = {"orchestration:read", "orchestration:operate"}
