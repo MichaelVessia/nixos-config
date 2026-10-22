@@ -1,4 +1,10 @@
 {lib, ...}: {
+  options.agentHarnesses.codex.t3Servers = lib.mkOption {
+    type = lib.types.attrsOf lib.types.str;
+    default = {};
+    description = "Remote T3 MCP endpoints used by Codex, keyed by server name.";
+  };
+
   options.agentHarnesses.executor.url = lib.mkOption {
     type = lib.types.str;
     default = "https://executor.lan/mcp";

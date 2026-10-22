@@ -35,14 +35,20 @@
       tui = {
         status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
       };
-      mcp_servers = {
-        figma.url = config.agentHarnesses.figma.url;
-        executor-flosports.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
-        executor = {
-          url = config.agentHarnesses.executor.url;
-          disabled_tools = ["resume"];
-        };
-      };
+      mcp_servers =
+        {
+          figma.url = config.agentHarnesses.figma.url;
+          executor-flosports.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+          executor = {
+            url = config.agentHarnesses.executor.url;
+            disabled_tools = ["resume"];
+          };
+        }
+        // lib.mapAttrs (_: url: {
+          inherit url;
+          scopes = ["orchestration:read" "orchestration:operate"];
+        })
+        config.agentHarnesses.codex.t3Servers;
       otel = {
         environment = "dev";
         log_user_prompt = false;
