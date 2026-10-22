@@ -270,6 +270,17 @@ session that needs access. OMP 18.1.13 caches credentials in memory, and
 authorizing in a separate OMP process, exit the older session and resume it
 with `omp --continue`; a fresh process reads the saved credentials.
 
+## T3 threads through Executor
+
+T3 servers can connect to Executor as remote MCP integrations over Tailscale.
+The Executor runtime needs network access to each server's private HTTPS
+endpoint. Each server requires a separate authenticated connection.
+
+Keep machine addresses, network routes, and connection permissions in private
+operational notes. Store OAuth credentials in Executor, outside Git.
+T3 MCP authorization lasts 30 days. Renew the authorization through
+Executor's OAuth flow before it expires.
+
 ## Secrets Management
 
 Uses [sops-nix](https://github.com/Mic92/sops-nix) with age encryption.
