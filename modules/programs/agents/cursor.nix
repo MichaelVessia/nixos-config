@@ -27,7 +27,7 @@
   mcpConfig = (pkgs.formats.json {}).generate "cursor-mcp.json" {
     mcpServers = {
       figma.url = config.agentHarnesses.figma.url;
-      executor-flosports.url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+      executor-flosports.url = config.agentHarnesses.executorFlosports.url;
       executor.url = config.agentHarnesses.executor.url;
     };
   };

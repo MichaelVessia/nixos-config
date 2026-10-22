@@ -13,6 +13,10 @@
       type = "http";
       url = config.agentHarnesses.executor.url;
     };
+    mcpServers.executor-flosports = {
+      type = "http";
+      url = config.agentHarnesses.executorFlosports.url;
+    };
   };
 in {
   # Keep OMP's mutable configuration in the repository. OMP 17.4+ resolves

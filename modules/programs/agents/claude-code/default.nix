@@ -245,7 +245,7 @@
     };
     executor-flosports = {
       type = "http";
-      url = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+      url = config.agentHarnesses.executorFlosports.url;
     };
     executor = {
       type = "http";

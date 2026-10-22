@@ -21,12 +21,6 @@
     ../../modules/secrets/foundry.nix
   ];
 
-  agentHarnesses.codex.t3Servers = {
-    t3-forge = "https://forge.bison-gray.ts.net/mcp";
-    t3-flomac = "https://c6dwvf3hjg.bison-gray.ts.net/mcp";
-    t3-dev-machine = "https://dev-machine.bison-gray.ts.net/mcp";
-  };
-
   vaults = {
     deviceName = "foundry";
     profile = "work";

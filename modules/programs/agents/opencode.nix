@@ -12,6 +12,7 @@
     postBuild = ''
       wrapProgram $out/bin/opencode2 \
         --set OPENCODE_EXECUTOR_URL "${config.agentHarnesses.executor.url}" \
+        --set OPENCODE_EXECUTOR_FLOSPORTS_URL "${config.agentHarnesses.executorFlosports.url}" \
         --set OPENCODE_FIGMA_URL "${config.agentHarnesses.figma.url}"
     '';
   };

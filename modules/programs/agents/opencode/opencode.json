@@ -21,6 +21,10 @@
       "executor": {
         "type": "remote",
         "url": "{env:OPENCODE_EXECUTOR_URL}"
+      },
+      "executor-flosports": {
+        "type": "remote",
+        "url": "{env:OPENCODE_EXECUTOR_FLOSPORTS_URL}"
       }
     }
   }

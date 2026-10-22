@@ -259,6 +259,7 @@ instructions and vessia model sheet are always-applied rules in
 `modules/programs/agents/shared/vessia-models.md`.
 
 OAuth credentials are local to each harness and are not managed by Nix.
+Use `executor-flosports` in place of `executor` to authorize the work instance.
 For Figma, use the commands below with `figma` in place of `executor`, or
 select Figma in Claude Code.
 Authorize once per harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
@@ -270,83 +271,53 @@ session that needs access. OMP 18.1.13 caches credentials in memory, and
 authorizing in a separate OMP process, exit the older session and resume it
 with `omp --continue`; a fresh process reads the saved credentials.
 
-## Dispatch from Foundry to remote T3 servers
-
-Foundry's Home Manager configuration adds `t3-forge`, `t3-flomac`, and
-`t3-dev-machine` to Codex's `~/.codex/config.toml`. Each entry requests
-`orchestration:read` and `orchestration:operate`. Other hosts have no remote
-T3 entries by default.
-
-Flomac's Tailscale name is `c6dwvf3hjg`, matching its company-managed Mac name.
-The `t3-flomac` MCP entry and `flomac` SSH alias use
-`c6dwvf3hjg.bison-gray.ts.net`. The macOS `HostName` remains `flomac`.
-
-T3 `0.1.1-nightly.20261020.3411` on Foundry starts the installed
-`codex app-server` with no `CODEX_HOME` override. Its user configuration is
-`~/.codex/config.toml`. T3 adds the local `t3-code` MCP entry through thread
-settings. The remote entries use separate names.
-
-After you apply the Foundry configuration, run this check on Foundry:
-
-```bash
-python3 scripts/check-t3-codex-mcp.py
-```
-
-The check reads the app server's effective configuration and checks the remote
-entries with T3's local MCP override. It starts no model turn. For a custom
-T3 Codex provider, use the same binary and `CODEX_HOME` as that provider.
-
-Authorize each server from a terminal on Foundry:
-
-```bash
-codex mcp login t3-forge --scopes orchestration:read,orchestration:operate
-codex mcp login t3-flomac --scopes orchestration:read,orchestration:operate
-codex mcp login t3-dev-machine --scopes orchestration:read,orchestration:operate
-```
-
-Approve both scopes in each server's browser flow. Select **Auto** for
-unattended dispatch with these scopes. The mode also limits remote operations.
-If the browser runs on another computer, first open an SSH tunnel to Foundry:
-
-```bash
-ssh -N -L 14555:127.0.0.1:14555 foundry
-```
-
-In the Foundry terminal, add `-c mcp_oauth_callback_port=14555 --no-browser`
-to each login command. Open the displayed authorization URL in your browser.
-Keep callback URLs and pairing codes in the terminal and browser.
-
-Codex stores MCP OAuth credentials outside the Nix configuration. Its default
-`auto` store uses the operating system keyring when available, with a local
-`~/.codex/.credentials.json` file as the fallback. Foundry currently uses that
-file. Nix activation replaces the configuration, but keeps these credentials.
-Do not copy credentials into Nix, Git, chat, or logs.
-
-This T3 version issues MCP credentials for 30 days. It supports only the
-`authorization_code` grant and issues no refresh token. To renew, run
-`codex mcp logout <server-name>`, then repeat the login and browser approval.
-Renew before expiry or after revocation. A CLI session token from
-`t3 auth session issue` cannot authenticate MCP.
-
-After activation and login, run `systemctl --user restart t3code.service` on
-Foundry when no threads are active. Then start or resume the dispatcher.
-Existing threads may retain their previous MCP connections until restart.
-Before Flomac login, check that
-`https://c6dwvf3hjg.bison-gray.ts.net/mcp` responds with an OAuth `401` challenge.
-
-See the [Codex MCP documentation](https://developers.openai.com/codex/mcp/)
-and [configuration reference](https://developers.openai.com/codex/config-reference/).
-
 ## T3 threads through Executor
 
-T3 servers can connect to Executor as remote MCP integrations over Tailscale.
-The Executor runtime needs network access to each server's private HTTPS
-endpoint. Each server requires a separate authenticated connection.
+Codex, Claude Code, Cursor, Pi, OMP, and OpenCode use two shared MCP entries:
 
-Keep machine addresses, network routes, and connection permissions in private
-operational notes. Store OAuth credentials in Executor, outside Git.
-T3 MCP authorization lasts 30 days. Renew the authorization through
-Executor's OAuth flow before it expires.
+- `executor` connects to the personal Executor at
+  `https://executor-mcp.bison-gray.ts.net/mcp`.
+- `executor-flosports` connects to the FloSports Executor at
+  `https://executor.flostag-us-west-2.flokubernetes.com/mcp`.
+
+Home Manager generates both entries from `modules/programs/agents/options.nix`,
+including on Flomac. Use the personal Executor for remote T3 control. The
+FloSports instance cannot reach these private Tailscale addresses.
+
+Use Executor's advertised Tailscale origin. The old `executor.lan` alias
+returns OAuth metadata for a different origin, which Codex rejects.
+After a rebuild changes the endpoint, authorize `executor` in each harness
+that requests a new login. The authorization commands are listed above.
+
+The personal Executor already stores authenticated, user-owned connections
+for Forge, Flomac, dev-machine, and Foundry. Discover their tools through
+Executor's `tools.search`, or inspect
+`tools.executor.coreTools.connections.list({})`. Their tool addresses are:
+
+- `tools.t3_forge.user.forge`
+- `tools.t3_flomac.user.flomac`
+- `tools.t3_dev_machine.user.devMachine`
+- `tools.t3_foundry.user.foundry`
+
+Each agent needs its Executor login. Executor keeps the remote T3 OAuth
+credentials, so agents need no direct remote T3 MCP entries or separate
+T3 logins. T3 also supplies a local `t3-code` connection for its own environment.
+
+Check the installed Codex configuration and all four connections with:
+
+```bash
+python3 scripts/check-executor-t3.py
+```
+
+The check calls T3 through Executor without starting agent work.
+
+Flomac's Tailscale name is `c6dwvf3hjg`, matching its company-managed Mac name.
+The `flomac` SSH alias uses `c6dwvf3hjg.bison-gray.ts.net`.
+
+T3 `0.1.1-nightly.20261020.3411` issues MCP credentials for 30 days and supports
+no refresh-token grant. Renew each T3 connection through Executor's OAuth flow
+before expiry. Keep OAuth credentials in Executor and each client's local
+credential store, outside Nix, Git, chat, and logs.
 
 ## Secrets Management
 

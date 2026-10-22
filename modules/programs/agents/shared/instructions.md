@@ -26,6 +26,9 @@
 - Prefer the repository's existing Nix environment. Do not mutate it without
   evidence that the missing dependency belongs to the project. Use
   `nix run nixpkgs#<package>` for one-off tools.
+- Use the personal Executor's `t3_*` integrations for remote T3 control.
+  Discover them with Executor's tool search. T3's native `t3-code` connection
+  controls the current environment. Keep remote T3 authorization in Executor.
 
 # Testing
 

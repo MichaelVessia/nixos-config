@@ -1,14 +1,14 @@
 {lib, ...}: {
-  options.agentHarnesses.codex.t3Servers = lib.mkOption {
-    type = lib.types.attrsOf lib.types.str;
-    default = {};
-    description = "Remote T3 MCP endpoints used by Codex, keyed by server name.";
-  };
-
   options.agentHarnesses.executor.url = lib.mkOption {
     type = lib.types.str;
-    default = "https://executor.lan/mcp";
-    description = "Executor MCP endpoint shared by configured agent harnesses.";
+    default = "https://executor-mcp.bison-gray.ts.net/mcp";
+    description = "Personal Executor MCP endpoint shared by configured agent harnesses.";
+  };
+
+  options.agentHarnesses.executorFlosports.url = lib.mkOption {
+    type = lib.types.str;
+    default = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+    description = "FloSports Executor MCP endpoint shared by configured agent harnesses.";
   };
 
   options.agentHarnesses.figma.url = lib.mkOption {
