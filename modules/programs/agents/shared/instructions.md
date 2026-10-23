@@ -30,6 +30,18 @@
   Discover them with Executor's tool search. T3's native `t3-code` connection
   controls the current environment. Keep remote T3 authorization in Executor.
 
+# Tool discovery
+
+- If a needed tool is missing, search the connected Executor instances before
+  reporting it unavailable or asking the user to supply data or connect a service.
+  Check both `executor` and `executor-flosports` when available.
+- Read each instance's `execute` instructions. Search by service and task, inspect
+  the matching tool's schema, and use the tool within the user's authorized scope.
+- A missing tool or authentication failure in one instance does not establish
+  that another instance lacks access. Distinguish a missing tool from an
+  authentication or permission failure. Report the specific blocker after checking
+  the available instances.
+
 # Testing
 
 - Use focused checks for changed behavior and regression tests for reproducible
