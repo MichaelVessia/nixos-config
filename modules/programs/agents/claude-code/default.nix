@@ -282,10 +282,6 @@
       };
     extraKnownMarketplaces =
       {
-        t3-pstack.source = {
-          source = "directory";
-          path = "${config.home.homeDirectory}/.local/share/t3-pstack/source";
-        };
         openai-codex = {
           source = {
             source = "github";
