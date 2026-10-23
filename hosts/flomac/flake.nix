@@ -19,6 +19,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    t3-pstack = {
+      url = "github:chhoumann/t3-pstack/67f446a00cc46e28455bcdec796069c75a809e37";
+      flake = false;
+    };
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     nvf = {

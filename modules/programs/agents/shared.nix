@@ -27,9 +27,7 @@
     then personalSkillNames
     else lib.subtractLists homelabSkillNames personalSkillNames;
 
-  # Vendored from upstream pstack; the pstack-sync skill merges new releases.
-  vessiaSkillNames = dirNames ./vessia/skills;
-  skillNames = config.agentSkills.personal ++ vessiaSkillNames;
+  skillNames = config.agentSkills.personal;
 
   # Point each per-tool symlink at the agent-skills bundle directly.
   # Going through `~/.agents/skills/${name}` via `mkOutOfStoreSymlink` made
@@ -49,12 +47,12 @@
       })
       skillNames);
 in {
-  imports = [inputs.agent-skills-nix.homeManagerModules.default];
+  imports = [inputs.agent-skills-nix.homeManagerModules.default ./pstack.nix];
 
   options.agentSkills.personal = lib.mkOption {
     type = lib.types.listOf (lib.types.enum personalSkillNames);
     default = defaultPersonalSkillNames;
-    description = "Personal skills from shared/skills to install. Vendored vessia skills are always installed.";
+    description = "Personal skills from shared/skills to install.";
   };
 
   config = {
@@ -62,7 +60,6 @@ in {
       enable = true;
       sources = {
         personal.path = ./shared/skills;
-        vessia.path = ./vessia/skills;
       };
       skills.enable = skillNames;
       # Build the bundle for ~/.agents/skills. Replace the module's recursive
@@ -89,10 +86,9 @@ in {
     '';
 
     home.file =
-      {".agents/vessia/agents".source = ./vessia/agents;}
       # Keep each skill as a directory link. Recursive links can write through
       # an old directory link into the read-only store when a skill adds files.
-      // {".agents/skills".enable = false;}
+      {".agents/skills".enable = false;}
       // perSkillSymlinks ".agents/skills"
       // perSkillSymlinks ".claude/skills"
       // perSkillSymlinks ".codex/skills"

@@ -254,9 +254,13 @@ from the claude.ai account.
 
 Cursor gets the same Executor, Executor Flosports, and Figma endpoints as
 Claude Code and Codex. Activation replaces `~/.cursor/mcp.json`. The shared
-instructions and vessia model sheet are always-applied rules in
-`~/.cursor/rules/`. The model sheet is generated from
-`modules/programs/agents/shared/vessia-models.md`.
+instructions are always-applied rules in `~/.cursor/rules/`.
+
+Claude and Codex use the Nix-pinned t3-pstack plugin. Activation installs it
+into their default and configured T3 homes. Personal skills remain separate.
+See [t3-pstack setup](modules/programs/agents/pstack/README.md) for model rules,
+checks, and updates. The upstream plugin supports Claude and Codex in T3;
+Cursor and OpenCode retain shared instructions and personal skills.
 
 T3 runs Cursor through its local SDK and enables the user and project setting
 sources. The SDK loads these MCP entries but cannot start an OAuth login.

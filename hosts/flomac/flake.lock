@@ -1057,6 +1057,7 @@
         "nvf": "nvf",
         "sops-nix": "sops-nix",
         "subq": "subq",
+        "t3-pstack": "t3-pstack",
         "worktrunk": "worktrunk",
         "x-to-obsidian": "x-to-obsidian"
       }
@@ -1298,6 +1299,23 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "t3-pstack": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792698642,
+        "narHash": "sha256-X9C/9pJ97JL3JyfAb93ZF1pmBLtmYssVY9MnKdsz85I=",
+        "owner": "chhoumann",
+        "repo": "t3-pstack",
+        "rev": "67f446a00cc46e28455bcdec796069c75a809e37",
+        "type": "github"
+      },
+      "original": {
+        "owner": "chhoumann",
+        "repo": "t3-pstack",
+        "rev": "67f446a00cc46e28455bcdec796069c75a809e37",
         "type": "github"
       }
     },

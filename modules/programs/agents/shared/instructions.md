@@ -59,26 +59,31 @@
   Keep computer use within the user's request. Explicit task instructions for
   provider, model, or reasoning take precedence.
 
-# vessia
+# t3-pstack
 
-- vessia is a vendored fork of upstream pstack. Edit it in
-  `modules/programs/agents/vessia/` in nixos-config. Use the `pstack-sync`
-  skill to merge upstream releases.
-- vessia subagents: read-only work on your own model only. Give file-writing
-  work to a separate worker, not a subagent.
-- The installed skills use upstream Cursor tool names. Use the current
-  runtime's equivalent tools. `Task` means a subagent, `AskQuestion` means
-  a user question, and `create-skill` means the available skill authoring tool.
-- If a runtime has no named vessia agent type, read the matching prompt in
-  `~/.agents/vessia/agents/` and pass it to a generic subagent.
-- Use the model rows in these instructions or the runtime's `vessia-models.md`.
-  Manage changes through `modules/programs/agents/shared/vessia-models.md`
-  in nixos-config. Do not create a Cursor rules file on another runtime.
-- For transcript and project skill paths, use the current runtime's paths.
-  Discover MCP servers from the available tools, not a Cursor `mcps/` directory.
-- Use the available browser tools for `control-ui`. For recurring work,
-  use the runtime's scheduler or a bounded polling loop. For PR checks,
-  use vessia's Babysit playbook.
+- t3-pstack is pinned by Nix. Use the installed upstream skills. Manage the pin
+  and local rules in nixos-config. Do not install a second copy from npm.
+- Read ~/.config/t3-pstack/models.md before delegation. All roles inherit the
+  session model and effort, including panels. These choices override skill
+  defaults and mixed-model recommendations. Discover live T3 capabilities.
+- Subagents do read-only work on the session model. Give file-writing work to
+  a separate worker. Explicit task instructions take precedence.
+- Use the current runtime's tools and paths. Use T3 preview tools for browser
+  work. Search connected Executors for missing service tools.
+- Use GitHub and gh for PRs. Do not select Origin or Graphite from skill defaults.
+- Keep the requested outcome separate from PR milestones. A request to complete
+  work authorizes its remaining steps. Do not require another go after planning
+  or stop at one PR while agreed work remains. Planning-only requests stop at
+  the plan. Merge only with authorization.
+- Before PR handoff, check the final diff, base, title, and description. Update
+  stale metadata. Register every worked PR with T3, including each stack layer,
+  and verify registration before finishing.
+- When asked to monitor or get PRs merge-ready, use native T3 PR watches. Keep
+  one monitoring owner and confirm ownership when transferring work. Do not run
+  a polling script or watcher subagent when native watches are available.
+  Delegated children return PR URLs and pending checks to the parent.
+- Opening a PR alone does not authorize indefinite monitoring. An agreed request
+  to finish a migration or make its PRs merge-ready does not need a babysit keyword.
 
 # Obsidian Vault
 

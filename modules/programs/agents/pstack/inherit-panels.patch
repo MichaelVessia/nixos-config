@@ -1,0 +1,11 @@
+--- a/plugins/pstack/skills/setup-pstack/scripts/t3-sheet.mjs
++++ b/plugins/pstack/skills/setup-pstack/scripts/t3-sheet.mjs
+@@ -113,7 +113,7 @@
+     if (new Set(targets).size < targets.length) problems.push(`${key}: lists the same target twice`);
+     if (role.tier === "panel") {
+       const families = panelFamilies(runnable);
+-      if (families.size < 2) {
++      if (families.size < 2 && !texts.every((text) => INHERIT.includes(text.trim()))) {
+         problems.push(
+           `${key}: a panel needs at least two model families among its targets (inherit-parent does not count), got ${[...families].join(", ") || "none"}`,
+         );

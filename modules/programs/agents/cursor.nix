@@ -6,10 +6,8 @@
   ...
 }: let
   sharedInstructions = builtins.readFile ./shared/instructions.md;
-  vessiaSheet = builtins.readFile ./shared/vessia-models.md;
 
-  # Cursor applies ~/.cursor/rules/*.mdc. It does not inline @file mentions,
-  # so the model sheet is its own always-applied rule. Skills read that path.
+  # Cursor applies ~/.cursor/rules/*.mdc.
   rule = name: description: body:
     pkgs.writeText name (
       ''
@@ -37,8 +35,6 @@ in {
   home.packages = [inputs.llm-agents.packages.${pkgs.system}.cursor-agent];
 
   home.file.".cursor/rules/instructions.mdc".source = rule "cursor-instructions.mdc" "Shared agent instructions" sharedInstructions;
-
-  home.file.".cursor/rules/vessia-models.mdc".source = rule "cursor-vessia-models.mdc" "vessia per-role model choices (overrides skill defaults)" vessiaSheet;
 
   home.activation.cursorMcpConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     $DRY_RUN_CMD install -Dm644 ${mcpConfig} "$HOME/.cursor/mcp.json"

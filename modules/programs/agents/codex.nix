@@ -18,11 +18,6 @@
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;
-  # Codex has no include, so vessia's model rows go into AGENTS.md. The
-  # session hook line stays only in the sheet.
-  vessiaSheet = builtins.readFile ./shared/vessia-models.md;
-  vessiaRows = lib.concatStringsSep "\n" (lib.filter (line: !(lib.hasPrefix "session hook:" line)) (lib.splitString "\n" vessiaSheet));
-  codexAgents = sharedInstructions + "\n" + vessiaRows;
 
   codexConfig =
     {
@@ -30,6 +25,11 @@
       model = "gpt-6.1-sol";
       model_reasoning_effort = "medium";
       features.goals = true;
+      marketplaces.t3-pstack = {
+        source_type = "local";
+        source = "${config.home.homeDirectory}/.local/share/t3-pstack/source";
+      };
+      plugins."t3-pstack@t3-pstack".enabled = true;
       # Agent shells exit, but the Nx daemon detaches and outlives them.
       shell_environment_policy.set.NX_DAEMON = "false";
       tui = {
@@ -79,8 +79,7 @@ in {
   config = {
     home.packages = [codexPkg];
 
-    home.file.".codex/AGENTS.md".text = codexAgents;
-    home.file.".codex/vessia-models.md".source = ./shared/vessia-models.md;
+    home.file.".codex/AGENTS.md".text = sharedInstructions;
 
     home.activation =
       {

@@ -275,12 +275,17 @@
     enabledPlugins =
       {
         "codex@openai-codex" = true;
+        "t3-pstack@t3-pstack" = true;
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         "floai@flocasts" = true;
       };
     extraKnownMarketplaces =
       {
+        t3-pstack.source = {
+          source = "directory";
+          path = "${config.home.homeDirectory}/.local/share/t3-pstack/source";
+        };
         openai-codex = {
           source = {
             source = "github";
@@ -472,9 +477,7 @@
 in {
   config = {
     home.file = {
-      # vessia reads its per-role model sheet through this include.
-      ".claude/CLAUDE.md".text = sharedInstructions + "\n@~/.claude/vessia-models.md\n";
-      ".claude/vessia-models.md".source = ../shared/vessia-models.md;
+      ".claude/CLAUDE.md".text = sharedInstructions;
       ".claude/agents" = {
         source = ./agents;
         recursive = true;
