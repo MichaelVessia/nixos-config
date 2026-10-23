@@ -1,0 +1,25 @@
+--- a/tools/install/codex.mjs
++++ b/tools/install/codex.mjs
+@@ -203,6 +203,22 @@
+   }
+   // Nothing installs from a marketplace of another source; doctor names it.
+   if (!marketplaceCheck(before.sources, trusted).ok) return steps;
++  // Keep the stable Nix source link. The CLI resolves it to a store path,
++  // which would leave additional provider homes on the old pin after an update.
++  if (source.local) {
++    await withServer(home, async (server) => {
++      const { config, layers } = await server.request("config/read", { includeLayers: true });
++      if (!marketplaceCheck(marketplaceSources(config), trusted).ok) return;
++      if (config.marketplaces?.[MARKETPLACE]?.source === source.arg) return;
++      await server.request("config/value/write", {
++        keyPath: "marketplaces.t3-pstack.source",
++        mergeStrategy: "replace",
++        value: source.arg,
++        expectedVersion: layers.find((layer) => layer.name.type === "user").version,
++      });
++      steps.push("kept the stable local marketplace path");
++    });
++  }
+   const step = codexStep(before, version);
+   if (step) {
+     // A local marketplace is read in place; a Git one is a snapshot to refresh.

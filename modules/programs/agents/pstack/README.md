@@ -28,13 +28,19 @@ by Home Manager. External skill folders remain untouched.
 Do not run setup-pstack to replace the Nix-managed model sheet. Edit the source
 sheet and activate the configuration.
 
+- `stable-source.patch` keeps the stable source link in additional Codex homes.
+  The Codex CLI otherwise saves the resolved store path, which prevents the
+  next Nix pin from reaching those homes.
+
 ## Update and check
 
 Update the same commit in both flakes and their locks. Apply the patch to a
-copy of that upstream source, then run:
+copy of that upstream source, then run the checks. The install check needs
+Claude and Codex on PATH and uses temporary configuration homes:
 
 ```sh
 node modules/programs/agents/pstack/check-policy.mjs /path/to/patched/source
+node modules/programs/agents/pstack/check-install.mjs /path/to/patched/source
 nix develop --command alejandra --check $(git ls-files '*.nix')
 ```
 
