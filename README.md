@@ -258,14 +258,30 @@ instructions and vessia model sheet are always-applied rules in
 `~/.cursor/rules/`. The model sheet is generated from
 `modules/programs/agents/shared/vessia-models.md`.
 
+T3 runs Cursor through its local SDK and enables the user and project setting
+sources. The SDK loads these MCP entries but cannot start an OAuth login.
+The Cursor module installs `cursor-agent` for this step. On the execution host,
+run the login from the same project directory used by the T3 thread:
+
+```bash
+cursor-agent mcp login executor
+cursor-agent mcp list-tools executor
+```
+
+Cursor stores this authorization under
+`~/.cursor/projects/<project>/mcp-auth.json`. It is local to that host and
+project. Start a new Cursor run in T3 after login. The Cursor desktop app is
+not required.
+
 OAuth credentials are local to each harness and are not managed by Nix.
 Use `executor-flosports` in place of `executor` to authorize the work instance.
 For Figma, use the commands below with `figma` in place of `executor`, or
 select Figma in Claude Code.
-Authorize once per harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
+Authorize in each harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
 in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`,
-`/mcp` → Executor → Authenticate in Claude Code, and Cursor's MCP settings
-for Executor and Figma. Run OMP authorization in the
+`/mcp` → Executor → Authenticate in Claude Code, and
+`cursor-agent mcp login executor` from the T3 project directory for Cursor.
+Run OMP authorization in the
 session that needs access. OMP 18.1.13 caches credentials in memory, and
 `/mcp reload` does not refresh credentials saved by another process. After
 authorizing in a separate OMP process, exit the older session and resume it
