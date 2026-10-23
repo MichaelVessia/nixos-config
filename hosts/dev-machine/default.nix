@@ -38,7 +38,7 @@
     enable = true;
     openFirewall = true;
     # Send internet traffic out through the home gateway so services see a
-    # residential IP. LAN access keeps VPC DNS and instance metadata direct.
+    # residential IP. LAN access keeps VPC DNS direct.
     useRoutingFeatures = "client";
     extraSetFlags = [
       "--exit-node=tailscale-gateway"
@@ -46,6 +46,21 @@
     ];
   };
   networking.firewall.trustedInterfaces = ["tailscale0"];
+
+  # Metadata belongs to this instance, even when an exit node owns the default route.
+  systemd.services.ec2-metadata-route = {
+    before = ["fetch-ec2-metadata.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.iproute2}/bin/ip rule add priority 5200 to 169.254.169.254/32 lookup main";
+      ExecStop = "${pkgs.iproute2}/bin/ip rule del priority 5200 to 169.254.169.254/32 lookup main";
+    };
+  };
+  systemd.services.fetch-ec2-metadata = {
+    requires = ["ec2-metadata-route.service"];
+    after = ["ec2-metadata-route.service"];
+  };
 
   # Project checks, such as flobot's check:runtime, need a Docker daemon.
   virtualisation.docker.enable = true;
