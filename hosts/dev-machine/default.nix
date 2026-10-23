@@ -10,6 +10,8 @@
   imports = ["${modulesPath}/virtualisation/amazon-image.nix"];
 
   networking.hostName = "dev-machine";
+  # Docker veth link-local routes can capture EC2 metadata traffic.
+  networking.dhcpcd.denyInterfaces = ["veth*"];
   time.timeZone = "America/New_York";
 
   services.openssh.settings = {
