@@ -56,8 +56,8 @@ in {
     openFirewall = true;
     settings = {
       capture = "wlr";
-      # Index from Sunshine's Wayland monitor list: 1 is the ONN monitor (DP-2).
-      output_name = 1;
+      # Stream the ONN monitor. Sessions match by output name, not by index.
+      output_name = "DP-2";
     };
   };
 
