@@ -1,8 +1,16 @@
 {
   config,
+  inputs,
   pkgs,
   ...
-}: {
+}: let
+  # The shared pkgs-unstable does not allow unfree packages, which the CUDA
+  # build of Sunshine needs.
+  pkgs-unstable-unfree = import inputs.nixpkgs-unstable {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config.allowUnfree = true;
+  };
+in {
   imports = [
     ./hardware-configuration.nix
     ../../modules/agent-memory.nix
@@ -37,15 +45,16 @@
   systemd.services.tailscale-accept-routes.enable = false;
 
   # Game streaming host for Moonlight clients (Fire TV). NVENC needs the CUDA
-  # build, which nixpkgs disables by default. Wayland capture fails with NVENC
-  # on NVIDIA, so use KMS capture, which needs CAP_SYS_ADMIN.
+  # build, which nixpkgs disables by default. Take it from unstable for
+  # security fixes that 26.05 does not have. Use Wayland screencopy capture
+  # on niri without the CAP_SYS_ADMIN wrapper.
   services.sunshine = {
     enable = true;
-    package = pkgs.sunshine.override {cudaSupport = true;};
+    package = pkgs-unstable-unfree.sunshine.override {cudaSupport = true;};
     autoStart = true;
-    capSysAdmin = true;
+    capSysAdmin = false;
     openFirewall = true;
-    settings.capture = "kms";
+    settings.capture = "wlr";
   };
 
   # NVIDIA PCI device 10de:1e84 (Turing). Use the proprietary driver with Wayland modesetting.
