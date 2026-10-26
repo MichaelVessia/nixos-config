@@ -32,6 +32,15 @@
   ];
   systemd.services.tailscale-accept-routes.enable = false;
 
+  # Game streaming host for Moonlight clients (Fire TV). Niri is not wlroots,
+  # so Sunshine uses KMS capture, which needs CAP_SYS_ADMIN.
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
   # NVIDIA PCI device 10de:1e84 (Turing). Use the proprietary driver with Wayland modesetting.
   services.xserver.videoDrivers = ["nvidia"];
   hardware.nvidia = {
