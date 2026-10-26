@@ -58,6 +58,13 @@ in {
       capture = "wlr";
       # Stream the ONN monitor. Sessions match by output name, not by index.
       output_name = "DP-2";
+      # niri opens windows and sends controller input on the focused monitor.
+      global_prep_cmd = builtins.toJSON [
+        {
+          do = "niri msg action focus-monitor DP-2";
+          undo = "";
+        }
+      ];
     };
   };
 
