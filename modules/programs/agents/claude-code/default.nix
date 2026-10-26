@@ -266,6 +266,7 @@
     teammateMode = "in-process";
     autoMemoryEnabled = false;
     env = {
+      CLAUDE_CODE_CERT_STORE = "bundled,system";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # Agent shells exit, but the Nx daemon detaches and outlives them.
       NX_DAEMON = "false";
