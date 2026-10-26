@@ -388,6 +388,11 @@ in
             matches = [{app-id = "^nm-connection-editor$";}];
             open-floating = true;
           }
+          # Fullscreen Stardew Valley
+          {
+            matches = [{app-id = "^Stardew Valley$";}];
+            open-fullscreen = true;
+          }
         ];
 
         # Keybindings
