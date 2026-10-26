@@ -1,4 +1,8 @@
-{config, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./hardware-configuration.nix
     ../../modules/agent-memory.nix
@@ -32,13 +36,16 @@
   ];
   systemd.services.tailscale-accept-routes.enable = false;
 
-  # Game streaming host for Moonlight clients (Fire TV). Niri is not wlroots,
-  # so Sunshine uses KMS capture, which needs CAP_SYS_ADMIN.
+  # Game streaming host for Moonlight clients (Fire TV). NVENC needs the CUDA
+  # build, which nixpkgs disables by default. Wayland capture fails with NVENC
+  # on NVIDIA, so use KMS capture, which needs CAP_SYS_ADMIN.
   services.sunshine = {
     enable = true;
+    package = pkgs.sunshine.override {cudaSupport = true;};
     autoStart = true;
     capSysAdmin = true;
     openFirewall = true;
+    settings.capture = "kms";
   };
 
   # NVIDIA PCI device 10de:1e84 (Turing). Use the proprietary driver with Wayland modesetting.
