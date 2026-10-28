@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  enableFloCli,
   ...
 }: let
   # Wrapped scripts with explicit deps
@@ -284,7 +285,7 @@
         "codex@openai-codex" = true;
         "t3-pstack@t3-pstack" = true;
       }
-      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      // lib.optionalAttrs enableFloCli {
         "floai@flocasts" = true;
       };
     extraKnownMarketplaces =
@@ -296,7 +297,7 @@
           };
         };
       }
-      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      // lib.optionalAttrs enableFloCli {
         flocasts = {
           source = {
             source = "github";
@@ -523,7 +524,7 @@ in {
     # plugin is ready to use without a manual /plugin install. Mirrors the
     # codex marketplace activation in agents/codex.nix. HTTPS clone uses
     # the gh credential helper configured in programs/git.nix.
-    home.activation.claudeMarketplaceFloai = lib.mkIf pkgs.stdenv.isDarwin (
+    home.activation.claudeMarketplaceFloai = lib.mkIf enableFloCli (
       lib.hm.dag.entryAfter ["claudeConfig"] ''
         if [ ! -d "$HOME/.claude/plugins/marketplaces/flocasts" ]; then
           PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.gh}/bin:$PATH" \

@@ -217,7 +217,7 @@
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
-          enableFloCli = false;
+          enableFloCli = true;
         };
       in
         nixpkgs.lib.nixosSystem {

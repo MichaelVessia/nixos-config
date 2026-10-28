@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  enableFloCli,
   ...
 }: let
   codexUnwrapped = inputs.llm-agents.packages.${pkgs.system}.codex;
@@ -66,7 +67,7 @@
         };
       };
     }
-    // lib.optionalAttrs pkgs.stdenv.isDarwin {
+    // lib.optionalAttrs enableFloCli {
       marketplaces.flocasts = {
         source_type = "git";
         source = "git@github.com:flocasts/floai.git";
@@ -87,7 +88,7 @@ in {
           install -Dm644 ${codexConfigFile} "$HOME/.codex/config.toml"
         '';
       }
-      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      // lib.optionalAttrs enableFloCli {
         codexMarketplaceFloai = lib.hm.dag.entryAfter ["codexConfig"] ''
           if [ ! -d "$HOME/.codex/plugins/cache/flocasts" ]; then
             PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:$PATH" $DRY_RUN_CMD ${codexPkg}/bin/codex plugin marketplace add git@github.com:flocasts/floai.git || true
