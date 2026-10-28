@@ -15,6 +15,8 @@
 # Git
 
 - Never use `--no-verify` to bypass commit hooks unless explicitly instructed.
+- dcg blocks `git worktree remove`. Use `worktree-gc <path>...` to remove
+  linked worktrees. Remove a worktree that you created when its work is pushed.
 
 # Issue Tracking
 

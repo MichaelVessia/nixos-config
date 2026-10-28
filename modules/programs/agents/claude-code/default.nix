@@ -89,48 +89,54 @@
     '';
   };
 
-  # Removes one T3 worktree for the janitor agent. dcg blocks every
+  # Removes linked git worktrees for agents. dcg blocks every
   # `git worktree remove`, and its allowlist cannot scope a path, so the safety
-  # checks live here: the target must be a linked worktree directly under
-  # ~/.t3/worktrees/<project>/, have no changes or untracked files, have no
-  # process inside it, and keep its HEAD reachable from a ref. Never forces.
-  t3-worktree-gc = pkgs.writeShellApplication {
-    name = "t3-worktree-gc";
+  # checks live here: each target must be a linked worktree root, have no
+  # changes or untracked files, have no process inside it, and keep its HEAD
+  # reachable from a ref. Never forces. Checks every path before removing any.
+  worktree-gc = pkgs.writeShellApplication {
+    name = "worktree-gc";
     runtimeInputs = [pkgs.git pkgs.coreutils];
     text = ''
       fail() {
-        echo "t3-worktree-gc: $*" >&2
+        echo "worktree-gc: $*" >&2
         exit 1
       }
 
-      [ "$#" -eq 1 ] || fail "usage: t3-worktree-gc <worktree-path>"
-      root="$(realpath -e "$HOME/.t3/worktrees")"
-      path="$(realpath -e "$1")" || fail "no such path: $1"
-      [ "$(dirname "$(dirname "$path")")" = "$root" ] || fail "not directly under $root/<project>/: $path"
+      check() {
+        path="$(realpath -e "$1")" || fail "no such path: $1"
 
-      [ "$(git -C "$path" rev-parse --show-toplevel)" = "$path" ] || fail "not a worktree root: $path"
-      git_dir="$(realpath -e "$(git -C "$path" rev-parse --git-dir)")"
-      common_dir="$(realpath -e "$(git -C "$path" rev-parse --git-common-dir)")"
-      [ "$git_dir" != "$common_dir" ] || fail "main worktree, not a linked worktree: $path"
+        [ "$(git -C "$path" rev-parse --show-toplevel)" = "$path" ] || fail "not a worktree root: $path"
+        git_dir="$(realpath -e "$(git -C "$path" rev-parse --git-dir)")"
+        common_dir="$(realpath -e "$(git -C "$path" rev-parse --git-common-dir)")"
+        [ "$git_dir" != "$common_dir" ] || fail "main worktree, not a linked worktree: $path"
 
-      [ -z "$(git -C "$path" status --porcelain --untracked-files=all)" ] || fail "has changes or untracked files: $path"
-      if ! git -C "$path" symbolic-ref -q HEAD > /dev/null; then
-        [ -n "$(git -C "$path" for-each-ref --contains HEAD --count=1)" ] || fail "detached HEAD not reachable from any ref: $path"
-      fi
+        [ -z "$(git -C "$path" status --porcelain --untracked-files=all)" ] || fail "has changes or untracked files: $path"
+        if ! git -C "$path" symbolic-ref -q HEAD > /dev/null; then
+          [ -n "$(git -C "$path" for-each-ref --contains HEAD --count=1)" ] || fail "detached HEAD not reachable from any ref: $path"
+        fi
 
-      for cwd in /proc/[0-9]*/cwd; do
-        target="$(readlink "$cwd" 2> /dev/null)" || continue
-        case "$target/" in
-          "$path"/*)
-            pid="''${cwd#/proc/}"
-            fail "process ''${pid%/cwd} is using $path"
-            ;;
-        esac
+        for cwd in /proc/[0-9]*/cwd; do
+          target="$(readlink "$cwd" 2> /dev/null)" || continue
+          case "$target/" in
+            "$path"/*)
+              pid="''${cwd#/proc/}"
+              fail "process ''${pid%/cwd} is using $path"
+              ;;
+          esac
+        done
+      }
+
+      [ "$#" -ge 1 ] || fail "usage: worktree-gc <worktree-path>..."
+      for arg in "$@"; do check "$arg"; done
+
+      for arg in "$@"; do
+        path="$(realpath -e "$arg")"
+        common_dir="$(realpath -e "$(git -C "$path" rev-parse --git-common-dir)")"
+        git -C "$common_dir" worktree remove "$path"
+        git -C "$common_dir" worktree prune
+        echo "removed $path"
       done
-
-      git -C "$common_dir" worktree remove "$path"
-      git -C "$common_dir" worktree prune
-      echo "removed $path"
     '';
   };
 
@@ -530,7 +536,7 @@ in {
     home.packages = [
       claude-statusline
       claude-direnv-env
-      t3-worktree-gc
+      worktree-gc
       dcg
       pkgs.nodejs
     ];
