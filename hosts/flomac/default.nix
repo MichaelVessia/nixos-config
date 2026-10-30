@@ -55,7 +55,6 @@ in {
       "hammerspoon"
       "google-drive"
       "anomalyco/tap/hex"
-      # "handy" # Temporarily disabled while trying Hex.
       "humanlayer/humanlayer/humanlayer"
       "jordanbaird-ice"
       "karabiner-elements"
