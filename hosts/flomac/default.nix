@@ -243,6 +243,7 @@ in {
     home = "/Users/${username}";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP8SJbl7L0SDb3HveKQNN+TAoyq9/aHFEBHm4mBGhfWG foundry"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINXfbQ30QBeY6SUElJIU3ZSXo5cdpNkfVfr1PrgdSwlc michaelvessia@forge"
     ];
   };
 
