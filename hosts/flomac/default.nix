@@ -28,6 +28,7 @@ in {
 
     # Third-party taps
     taps = [
+      "anomalyco/tap" # Hex
       "humanlayer/humanlayer"
       "nkzw-tech/tap" # codiff
       "stablyai/orca"
@@ -53,7 +54,8 @@ in {
       "ghostty"
       "hammerspoon"
       "google-drive"
-      "handy"
+      "anomalyco/tap/hex"
+      # "handy" # Temporarily disabled while trying Hex.
       "humanlayer/humanlayer/humanlayer"
       "jordanbaird-ice"
       "karabiner-elements"
@@ -99,6 +101,7 @@ in {
     # run; invoke it the same way the homebrew module does.
     activationScripts.extraActivation.text = ''
       if [ -x /opt/homebrew/bin/brew ]; then
+        sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap anomalyco/tap >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap humanlayer/humanlayer >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap nkzw-tech/tap >/dev/null
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap stablyai/orca >/dev/null
