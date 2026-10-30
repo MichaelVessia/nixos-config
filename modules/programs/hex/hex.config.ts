@@ -9,7 +9,7 @@ export default defineHexConfig({
       action: openApplication("/Applications/T3 Code (Nightly).app"),
     },
     "open-ghostty": {
-      phrases: ["open ghostty"],
+      phrases: ["open ghostty", "open ghostie", "open ghosty", "open terminal"],
       group: "Applications",
       description: "Open Ghostty",
       action: openApplication("Ghostty"),
