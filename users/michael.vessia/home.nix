@@ -26,6 +26,20 @@
     run ${pkgs.coreutils}/bin/install -D -m 0644 \
       ${../../modules/programs/hex/hex.config.ts} \
       ${lib.escapeShellArg "${config.home.homeDirectory}/.config/hex/hex.config.ts"}
+    run ${pkgs.coreutils}/bin/install -D -m 0644 \
+      ${../../modules/programs/hex/transformations.ts} \
+      ${lib.escapeShellArg "${config.home.homeDirectory}/.config/hex/transformations.ts"}
+
+    # Use Hex's live API; never overwrite settings.json while Hex runs.
+    if [ -x /Applications/Hex.app/Contents/MacOS/hex ] && \
+      /Applications/Hex.app/Contents/MacOS/hex status --json >/dev/null 2>&1; then
+      run /Applications/Hex.app/Contents/MacOS/hex settings set \
+        dictation_processing.default_mode \
+        "$(${pkgs.coreutils}/bin/cat ${../../modules/programs/hex/default-mode.json})"
+      run /Applications/Hex.app/Contents/MacOS/hex settings set \
+        dictation_processing.modes \
+        "$(${pkgs.coreutils}/bin/cat ${../../modules/programs/hex/modes.json})"
+    fi
   '';
 
   # Homebrew's tap-trust checks break `brew bundle --cleanup` during darwin

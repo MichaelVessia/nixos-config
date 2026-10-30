@@ -1,0 +1,21 @@
+[
+  {
+    "applications": [
+      "Slack"
+    ],
+    "browser_hosts": [],
+    "name": "Slack",
+    "post_processing": {
+      "deadline_seconds": 30,
+      "enabled": false,
+      "model": null,
+      "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's intended meaning.",
+      "variant": null
+    },
+    "replacements": [],
+    "transformations": [
+      "clean-speech",
+      "slack-style"
+    ]
+  }
+]

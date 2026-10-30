@@ -1,6 +1,19 @@
 import { defineHexConfig, openApplication } from "@hex/commands"
+import { cleanSpeech, slackStyle } from "./transformations.ts"
 
 export default defineHexConfig({
+  transformations: {
+    "clean-speech": {
+      name: "Clean speech",
+      description: "Remove um, uh, erm, and repeated I, I'll, and, or but",
+      transform: cleanSpeech,
+    },
+    "slack-style": {
+      name: "Slack style",
+      description: "Lowercase prose and omit its final period; keep questions, code, and URLs",
+      transform: slackStyle,
+    },
+  },
   commands: {
     "open-t3-code": {
       phrases: ["open t3 code", "open t three code"],
