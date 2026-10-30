@@ -5,7 +5,7 @@ export default defineHexConfig({
   transformations: {
     "clean-speech": {
       name: "Clean speech",
-      description: "Remove um, uh, erm, and repeated I, I'll, and, or but",
+      description: "Remove um, uh, erm, punctuated you know fillers, and selected repeated words",
       transform: cleanSpeech,
     },
     "slack-style": {

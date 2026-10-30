@@ -16,6 +16,21 @@ test("keeps meaningful words, emphasis, and paragraph breaks", () => {
     "uh-huh, summer, human, and spectrum")
 })
 
+test("removes you know when punctuation marks it as a filler", () => {
+  assert.equal(cleanSpeech("You know, I think, you know, this looks good."),
+    "I think this looks good.")
+  assert.equal(cleanSpeech("We want people interested, you know, so they'll click."),
+    "We want people interested so they'll click.")
+  assert.equal(cleanSpeech("It looks good, you know."), "It looks good.")
+  assert.equal(cleanSpeech("You know,"), "")
+  assert.equal(cleanSpeech("Ready?\nYou know, I think so."), "Ready?\nI think so.")
+})
+
+test("keeps you know when it carries meaning or is quoted", () => {
+  const text = 'Do you know what happened? I will let you know. Say "you know," or `you know,`.'
+  assert.equal(cleanSpeech(text), text)
+})
+
 test("keeps code, URLs, and quoted words unchanged", () => {
   const text = 'Um, use `UM` and https://Example.com/Um then say "um".\n```ts\nconst UM = "uh"\n```'
   assert.equal(cleanSpeech(text),
