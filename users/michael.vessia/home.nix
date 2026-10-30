@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
@@ -19,6 +20,13 @@
   home.homeDirectory = "/Users/michael.vessia";
 
   programs.ssh.includes = ["~/.namespace/ssh/*.ssh"];
+
+  # Hex rejects symlinks that point outside its configuration directory.
+  home.activation.hexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run ${pkgs.coreutils}/bin/install -D -m 0644 \
+      ${../../modules/programs/hex/hex.config.ts} \
+      ${lib.escapeShellArg "${config.home.homeDirectory}/.config/hex/hex.config.ts"}
+  '';
 
   # Homebrew's tap-trust checks break `brew bundle --cleanup` during darwin
   # activation for third-party taps (humanlayer, nkzw-tech): `brew trust` state
