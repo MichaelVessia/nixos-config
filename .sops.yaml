@@ -31,6 +31,12 @@ creation_rules:
           - *user_foundry
           - *user_michael_flomac
 
+  # Garage frame deploy (personal machines only; read with `sops exec-env`)
+  - path_regex: secrets/frame\.yaml$
+    key_groups:
+      - age:
+          - *user_michael_framework13
+
   # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$
     key_groups:
