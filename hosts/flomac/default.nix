@@ -54,6 +54,7 @@ in {
       "ghostty"
       "hammerspoon"
       "google-drive"
+      "grok-bot"
       "anomalyco/tap/hex"
       "humanlayer/humanlayer/humanlayer"
       "jordanbaird-ice"
