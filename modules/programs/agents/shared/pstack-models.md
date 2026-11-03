@@ -3,19 +3,19 @@
 # budget: medium (high)
 feature, refactoring: claudeAgent/claude-opus-5-5 effort=high
 bug-fix: claudeAgent/claude-opus-5-5 effort=high
-perf-issue: codex/gpt-6.1-sol reasoningEffort=high
-hillclimb: codex/gpt-6.1-sol reasoningEffort=high
+perf-issue: cursor/grok-4.7 reasoning_effort=high
+hillclimb: cursor/grok-4.7 reasoning_effort=high
 judgment and prose: claudeAgent/claude-opus-5-5 effort=high
 hardest tasks: claudeAgent/claude-opus-5-5 effort=high
-how explorer: codex/gpt-6.1-terra reasoningEffort=high
+how explorer: cursor/grok-4.7 reasoning_effort=high
 how explainer: claudeAgent/claude-opus-5-5 effort=high
-why investigators: codex/gpt-6.1-terra reasoningEffort=high
+why investigators: cursor/grok-4.7 reasoning_effort=high
 why synthesizer: claudeAgent/claude-opus-5-5 effort=high
-reflect tooling: codex/gpt-6.1-sol reasoningEffort=high
+reflect tooling: cursor/grok-4.7 reasoning_effort=high
 reflect judgment, divergent, synthesizer: claudeAgent/claude-opus-5-5 effort=high
 arena runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
 arena cross-judge pool: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
-swarm workers: codex/gpt-6.1-sol reasoningEffort=high
+swarm workers: cursor/grok-4.7 reasoning_effort=high
 architect runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
 interrogate reviewers: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
 session hook: on
