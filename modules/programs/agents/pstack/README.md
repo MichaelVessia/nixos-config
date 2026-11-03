@@ -17,13 +17,12 @@ by Home Manager. External skill folders remain untouched.
 
 ## Local policy
 
-- `shared/pstack-models.md` sets every role to inherit the session model and
-  effort. The session hook is off. Invoke `/t3-pstack:poteto-mode` when needed.
+- `shared/pstack-models.md` follows upstream's split on Claude and GPT, at the
+  stock `medium` budget (`high` start). GPT Sol takes code, tooling, and swarm
+  work. GPT Terra takes fast exploration. Opus takes judgment, prose, and the
+  hardest tasks. Panels mix Opus, Sol, and Grok. The session hook is on.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,
   full-scope completion, and native T3 PR watches.
-- `inherit-panels.patch` lets upstream's model check accept panels made only
-  of inheritance aliases. Other model validation stays in place. Shared
-  instructions override upstream's mixed-family advice.
 
 Do not run setup-pstack to replace the Nix-managed model sheet. Edit the source
 sheet and activate the configuration.

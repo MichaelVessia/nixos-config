@@ -8,11 +8,7 @@ const {parseSheet, checkSheet} = await import(pathToFileURL(`${root}/plugins/pst
 const {roles, tiers: defaults} = JSON.parse(readFileSync(`${root}/plugins/pstack/models.json`, 'utf8'));
 const sheet = parseSheet(readFileSync(new URL('../shared/pstack-models.md', import.meta.url), 'utf8'));
 assert.deepEqual(checkSheet(sheet, {roles, defaults}), []);
-for (const {role, tier} of roles) {
-  const row = sheet.find(({key}) => key === role);
-  assert.ok(row, `Missing model policy for ${role}`);
-  assert.equal(row.value, tier === 'panel' ? 'inherit-parent, inherit-parent, inherit-parent' : 'inherit-parent');
-}
+for (const {role} of roles) assert.ok(sheet.some(({key}) => key === role), `Missing model policy for ${role}`);
 assert.ok(checkSheet(parseSheet('arena runners: codex/gpt-6.1-sol, codex/gpt-6.1-sol'), {roles, defaults}).length > 0);
 assert.ok(checkSheet(parseSheet('arena runners: unknown'), {roles, defaults}).length > 0);
-console.log('Model policy passes. All roles inherit; malformed and duplicate targets fail.');
+console.log('Model policy passes. Every role has a line; malformed and duplicate targets fail.');

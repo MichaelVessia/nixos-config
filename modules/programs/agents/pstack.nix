@@ -9,7 +9,6 @@
     cp -R ${inputs.t3-pstack}/. "$out"
     chmod -R u+w "$out"
     cd "$out"
-    patch -p1 < ${./pstack/inherit-panels.patch}
     patch -p1 < ${./pstack/stable-source.patch}
   '';
   # A stable path lets each CLI keep its marketplace registration across updates.

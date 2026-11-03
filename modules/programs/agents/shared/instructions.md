@@ -65,11 +65,8 @@
 
 - t3-pstack is pinned by Nix. Use the installed upstream skills. Manage the pin
   and local rules in nixos-config. Do not install a second copy from npm.
-- Read ~/.config/t3-pstack/models.md before delegation. All roles inherit the
-  session model and effort, including panels. These choices override skill
-  defaults and mixed-model recommendations. Discover live T3 capabilities.
-- Subagents do read-only work on the session model. Give file-writing work to
-  a separate worker. Explicit task instructions take precedence.
+- Read ~/.config/t3-pstack/models.md before delegation. Discover live T3
+  capabilities.
 - Use the current runtime's tools and paths. Use T3 preview tools for browser
   work. Search connected Executors for missing service tools.
 - Use GitHub and gh for PRs. Do not select Origin or Graphite from skill defaults.
