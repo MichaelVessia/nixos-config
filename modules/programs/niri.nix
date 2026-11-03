@@ -234,7 +234,6 @@ in
       enableVPN = true;
       enableAudioWavelength = true;
       enableCalendarEvents = false;
-      dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
 
     # DMS emits obsolete `include optional=true` syntax that niri 25.11 rejects.

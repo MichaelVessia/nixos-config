@@ -233,26 +233,6 @@
         "type": "github"
       }
     },
-    "dgop": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792684000,
-        "narHash": "sha256-b2Wn6ySG7aqvi/6hF1t+DWpQzg0qA9rixrKIGe9IQ+Q=",
-        "owner": "AvengeMedia",
-        "repo": "dgop",
-        "rev": "c1dbfaf3d2fab4fb602ef564da9462d3a1482712",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AvengeMedia",
-        "repo": "dgop",
-        "type": "github"
-      }
-    },
     "dms": {
       "inputs": {
         "dank-qml-common": "dank-qml-common",
@@ -1182,7 +1162,6 @@
       "inputs": {
         "agent-skills-nix": "agent-skills-nix",
         "darwin": "darwin",
-        "dgop": "dgop",
         "dms": "dms",
         "floai": "floai",
         "fmcal": "fmcal",
