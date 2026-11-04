@@ -54,12 +54,10 @@
 
 # Delegation
 
-- Workers default to Claude Opus 5.5. Use low effort for simple tasks, medium
-  for normal tasks, and high for complex or risky tasks. Workers report observed
-  findings and proof. The implementation owner applies fixes.
+- Workers report observed findings and proof. The implementation owner applies
+  fixes.
 - Give each worker a goal, relevant context, scope, and completion condition.
-  Keep computer use within the user's request. Explicit task instructions for
-  provider, model, or reasoning take precedence.
+  Keep computer use within the user's request.
 
 # t3-pstack
 
