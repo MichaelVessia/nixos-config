@@ -62,6 +62,23 @@
     after = ["ec2-metadata-route.service"];
   };
 
+  # The dev-machine module's workspace volume. Clones, worktrees, and agent
+  # sessions go in /workspace/${username}, so a full workspace never fills the
+  # root volume.
+  fileSystems."/workspace" = {
+    device = "/dev/sdf";
+    fsType = "ext4";
+    autoFormat = true;
+    autoResize = true;
+    options = ["nofail"];
+  };
+  systemd.services.dev-machine-workspace = {
+    wantedBy = ["multi-user.target"];
+    unitConfig.RequiresMountsFor = "/workspace";
+    serviceConfig.Type = "oneshot";
+    script = "install -d -m 0700 -o ${username} -g users /workspace/${username}";
+  };
+
   # Project checks, such as flobot's check:runtime, need a Docker daemon.
   virtualisation.docker.enable = true;
 
