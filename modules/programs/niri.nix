@@ -33,7 +33,7 @@
   audioDefaultDevicePatch = pkgs.writeText "dms-audio-default-device-button.patch" ''
     --- Services/AudioService.qml
     +++ Services/AudioService.qml
-    @@ -67,6 +67,36 @@
+    @@ -162,6 +162,36 @@
          signal wireplumberReloadStarted
          signal wireplumberReloadCompleted(bool success)
 
@@ -68,81 +68,94 @@
     +    }
     +
          function getMaxVolumePercent(node) {
-             if (!node?.name)
+             if (freebsdAudio)
                  return 100;
+    @@ -246,6 +276,7 @@
+             if (freebsdAudio)
+                 return setFreeBsdDefaultDevice(node);
+             root.pipewireBackend.setDefaultSink(node);
+    +        setPulseDefaultSinkByName(node.name);
+             return true;
+         }
+
+    @@ -255,6 +286,7 @@
+             if (freebsdAudio)
+                 return setFreeBsdDefaultDevice(node);
+             root.pipewireBackend.setDefaultSource(node);
+    +        setPulseDefaultSourceByName(node.name);
+             return true;
+         }
+
     --- Modules/Settings/Widgets/DeviceAliasRow.qml
     +++ Modules/Settings/Widgets/DeviceAliasRow.qml
-    @@ -15,10 +15,13 @@ Rectangle {
-
+    @@ -12,12 +12,15 @@
+         property string deviceType: "output"
          property bool showHideButton: false
          property bool isHidden: false
     +    property bool showDefaultButton: false
     +    property bool isDefaultDevice: false
 
+         readonly property bool hasCustomAlias: AudioService.hasDeviceAlias(deviceNode?.name ?? "")
+         readonly property string displayedName: AudioService.displayName(deviceNode)
+
          signal editRequested(var deviceNode)
-         signal resetRequested(var deviceNode)
          signal hideRequested(var deviceNode)
     +    signal defaultRequested(var deviceNode)
 
-         width: parent?.width ?? 0
-         height: deviceRowContent.height + Theme.spacingM * 2
-    @@ -119,6 +122,23 @@ Rectangle {
-                 anchors.verticalCenter: parent.verticalCenter
-                 spacing: Theme.spacingS
+         title: displayedName
+         subtitle: hasCustomAlias ? I18n.tr("Original: %1").arg(AudioService.originalName(deviceNode)) : (deviceNode?.name ?? "")
+    @@ -27,6 +30,19 @@
+         onResetRequested: AudioService.removeDeviceAlias(deviceNode.name)
 
-    +            DankActionButton {
-    +                id: defaultButton
-    +                visible: root.showDefaultButton && !root.isHidden
-    +                buttonSize: 36
-    +                iconName: root.isDefaultDevice ? "radio_button_checked" : "radio_button_unchecked"
-    +                iconSize: 20
-    +                backgroundColor: root.isDefaultDevice ? Theme.withAlpha(Theme.primary, 0.15) : Theme.surfaceContainerHigh
-    +                iconColor: root.isDefaultDevice ? Theme.primary : Theme.surfaceVariantText
-    +                tooltipText: root.isDefaultDevice ? I18n.tr("Default device") : I18n.tr("Set default device")
-    +                anchors.verticalCenter: parent.verticalCenter
-    +                onClicked: {
-    +                    if (!root.isDefaultDevice) {
-    +                        root.defaultRequested(root.deviceNode);
-    +                    }
-    +                }
-    +            }
+         DActionButton {
+    +        visible: root.showDefaultButton && !root.isHidden
+    +        iconName: root.isDefaultDevice ? "radio_button_checked" : "radio_button_unchecked"
+    +        iconSize: Theme.iconSizeMedium
+    +        iconColor: root.isDefaultDevice ? Theme.primary : Theme.surfaceVariantText
+    +        backgroundColor: root.isDefaultDevice ? Theme.withAlpha(Theme.primary, 0.15) : "transparent"
+    +        tooltipText: root.isDefaultDevice ? I18n.tr("Default device") : I18n.tr("Set default device")
+    +        onClicked: {
+    +            if (!root.isDefaultDevice)
+    +                root.defaultRequested(root.deviceNode);
+    +        }
+    +    }
     +
-                 DankActionButton {
-                     id: resetButton
-                     visible: root.hasCustomAlias
+    +    DActionButton {
+             visible: root.showHideButton
+             iconName: root.isHidden ? "visibility" : "visibility_off"
+             iconSize: Theme.iconSizeMedium
     --- Modules/Settings/AudioTab.qml
     +++ Modules/Settings/AudioTab.qml
-    @@ -136,7 +136,7 @@ Item {
+    @@ -180,7 +180,7 @@
+                 SettingsRow {
+                     body: StyledText {
+                         width: parent.width
+    -                    text: I18n.tr("Set custom names for your audio output devices", "Audio settings description")
+    +                    text: I18n.tr("Choose the default output device, set custom names, and adjust limits", "Audio settings description")
+                         font.pixelSize: Theme.fontSizeSmall
+                         color: Theme.surfaceVariantText
+                         wrapMode: Text.WordWrap
+    @@ -200,12 +200,19 @@
+                             deviceNode: modelData
+                             deviceType: "output"
+                             showHideButton: true
+    +                        showDefaultButton: true
+    +                        isDefaultDevice: modelData === AudioService.sink
 
-                         StyledText {
-                             width: parent.width
-    -                        text: I18n.tr("Set custom names for your audio output devices", "Audio settings description")
-    +                        text: I18n.tr("Choose the default output device, set custom names, and adjust limits", "Audio settings description")
-                             font.pixelSize: Theme.fontSizeSmall
-                             color: Theme.surfaceVariantText
-                             wrapMode: Text.WordWrap
-    @@ -164,6 +164,8 @@ Item {
-                                     deviceNode: modelData
-                                     deviceType: "output"
-                                     showHideButton: true
-    +                                showDefaultButton: true
-    +                                isDefaultDevice: modelData === AudioService.sink
+                             onEditRequested: device => root.openRenameDialog(device, "output")
 
-                                     onEditRequested: device => {
-                                         root.editingDevice = device;
-    @@ -180,6 +182,11 @@ Item {
-                                     onHideRequested: device => {
-                                         root.persistHiddenOutputDeviceNames([...root.hiddenOutputDeviceNames, device.name]);
-                                     }
+                             onHideRequested: device => {
+                                 root.persistHiddenOutputDeviceNames([...root.hiddenOutputDeviceNames, device.name]);
+                             }
     +
-    +                                onDefaultRequested: device => {
-    +                                    AudioService.setDefaultSinkByName(device.name);
-    +                                    root.updateDeviceList();
-    +                                }
-                                 }
+    +                        onDefaultRequested: device => {
+    +                            AudioService.setDefaultSinkByName(device.name);
+    +                            root.updateDeviceList();
+    +                        }
+                         }
 
-                                 Item {
-    @@ -327,7 +334,7 @@ Item {
+                         Item {
+    @@ -348,7 +355,7 @@
 
                          StyledText {
                              width: parent.width
@@ -151,16 +164,15 @@
                              font.pixelSize: Theme.fontSizeSmall
                              color: Theme.surfaceVariantText
                              wrapMode: Text.WordWrap
-    @@ -350,6 +357,8 @@ Item {
+    @@ -364,12 +371,19 @@
                                  deviceNode: modelData
                                  deviceType: "input"
                                  showHideButton: true
     +                            showDefaultButton: true
     +                            isDefaultDevice: modelData === AudioService.source
 
-                                 onEditRequested: device => {
-                                     root.editingDevice = device;
-    @@ -366,6 +375,11 @@ Item {
+                                 onEditRequested: device => root.openRenameDialog(device, "input")
+
                                  onHideRequested: device => {
                                      root.persistHiddenInputDeviceNames([...root.hiddenInputDeviceNames, device.name]);
                                  }
@@ -184,12 +196,6 @@
       chmod -R u+w $out
 
       patch -d $out/share/quickshell/dms -p0 < ${audioDefaultDevicePatch}
-
-      substituteInPlace $out/share/quickshell/dms/Services/AudioService.qml \
-        --replace-fail 'Pipewire.preferredDefaultAudioSink = node;' 'Pipewire.preferredDefaultAudioSink = node;
-                setPulseDefaultSinkByName(name);' \
-        --replace-fail 'Pipewire.preferredDefaultAudioSource = node;' 'Pipewire.preferredDefaultAudioSource = node;
-                setPulseDefaultSourceByName(name);'
 
       substituteInPlace $out/bin/dms $out/share/systemd/user/dms.service \
         --replace-fail ${unpatchedDmsPackage} $out
