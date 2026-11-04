@@ -50,6 +50,7 @@ in {
       "cmux"
       "nkzw-tech/tap/codiff"
       "codex-app"
+      "cursor"
       "figma"
       "ghostty"
       "hammerspoon"
