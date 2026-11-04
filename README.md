@@ -34,8 +34,8 @@ Coding-agent executables still come from the locked `llm-agents` input.
 In-app automatic updates are disabled because Nix manages the installed
 version; update the package's version and checksum to upgrade.
 Its first-run setup connects to the local backend; remote computers can be
-added from the app. Forge's desktop package and the independently installed
-nightly servers on Foundry and Forge are unchanged.
+added from the app. The independently installed nightly server on Foundry is
+unchanged. Forge does not run T3 Code.
 
 Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
 Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
@@ -66,11 +66,9 @@ On Forge, apply the configuration with
 configured, or import an authenticated machine's built closure as root and use
 `sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
 Tailscale and agent OAuth authorization are separate machine-local steps.
-Forge authorizes the Framework and Flomac SSH public keys. For T3 Code's
-desktop-managed SSH connection, use `michaelvessia@forge` over Tailscale,
-not its LAN address. Establish a normal SSH connection from the client first
-to trust the host key. The desktop app starts the remote T3 backend; provider
-authentication remains local to Forge.
+Forge authorizes the Framework, Flomac, and Foundry SSH public keys. It is not
+a T3 Code environment or a remote agent host, and it does not install the `flo`
+CLI.
 Forge disables accepted Tailscale subnet routes because it is already on the
 advertised homelab LAN. Accepting that subnet sends LAN replies through
 `tailscale0`, breaking direct SSH access. The Framework keeps route acceptance
@@ -310,11 +308,10 @@ After a rebuild changes the endpoint, authorize `executor` in each harness
 that requests a new login. The authorization commands are listed above.
 
 The personal Executor already stores authenticated, user-owned connections
-for Forge, Flomac, dev-machine, and Foundry. Discover their tools through
+for Flomac, dev-machine, and Foundry. Discover their tools through
 Executor's `tools.search`, or inspect
 `tools.executor.coreTools.connections.list({})`. Their tool addresses are:
 
-- `tools.t3_forge.user.forge`
 - `tools.t3_flomac.user.flomac`
 - `tools.t3_dev_machine.user.devMachine`
 - `tools.t3_foundry.user.foundry`
@@ -323,7 +320,7 @@ Each agent needs its Executor login. Executor keeps the remote T3 OAuth
 credentials, so agents need no direct remote T3 MCP entries or separate
 T3 logins. T3 also supplies a local `t3-code` connection for its own environment.
 
-Check the installed Codex configuration and all four connections with:
+Check the installed Codex configuration and all three connections with:
 
 ```bash
 python3 scripts/check-executor-t3.py

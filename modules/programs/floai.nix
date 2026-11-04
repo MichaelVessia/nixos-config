@@ -9,7 +9,7 @@
   hasFloai = floai != null;
   floCli = floai.packages.${pkgs.system}.default;
 in {
-  # Hosts opt in with enableFloCli (dev-machine, flomac, forge, foundry). The
+  # Hosts opt in with enableFloCli (dev-machine, flomac, foundry). The
   # floai input is SAML-protected, so hosts without access leave it off.
   home.packages =
     pkgs.lib.optionals (enableFloCli && hasFloai) [floCli]

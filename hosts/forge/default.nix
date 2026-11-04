@@ -13,7 +13,6 @@
 in {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/agent-memory.nix
     ../../modules/desktop-system.nix
     ../../modules/host-metrics.nix
   ];
@@ -27,8 +26,6 @@ in {
 
   services.openssh.enable = true;
   users.users.michaelvessia = {
-    # Keeps T3 Code's systemd user service running without a login session.
-    linger = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"

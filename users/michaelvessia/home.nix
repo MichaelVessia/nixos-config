@@ -12,17 +12,13 @@
     ../../modules/programs/niri.nix
   ];
 
-  home.packages = [
-    inputs.grok-bot.packages.${pkgs.system}.default
-    (
-      if osConfig.networking.hostName == "framework13"
-      then
-        pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
-          providerPackages = inputs.llm-agents.packages.${pkgs.system}.t3code.providerPackages;
-        }
-      else inputs.llm-agents.packages.${pkgs.system}.t3code-desktop
-    )
-  ];
+  home.packages =
+    [inputs.grok-bot.packages.${pkgs.system}.default]
+    ++ pkgs.lib.optional (osConfig.networking.hostName == "framework13") (
+      pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
+        providerPackages = inputs.llm-agents.packages.${pkgs.system}.t3code.providerPackages;
+      }
+    );
 
   # Preserve existing shares until this device can be inventoried.
   services.syncthing.overrideDevices = false;

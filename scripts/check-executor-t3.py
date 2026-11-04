@@ -13,7 +13,7 @@ CHECK_CONNECTIONS = """
 const inventory = await tools.executor.coreTools.connections.list({});
 if (!inventory.ok) return { error: inventory.error.message };
 const checks = [];
-for (const integration of ['t3_forge', 't3_flomac', 't3_dev_machine', 't3_foundry']) {
+for (const integration of ['t3_flomac', 't3_dev_machine', 't3_foundry']) {
   const connection = inventory.data.connections.find(c => c.integration === integration);
   if (!connection) return { error: integration + ': no saved connection' };
   const path = connection.address.replace(/^tools\\./, '') + '.t3_environment_read';
@@ -77,7 +77,7 @@ def main():
         servers = config.get("mcp_servers", {})
         if servers.get("executor", {}).get("url") != "https://executor-mcp.bison-gray.ts.net/mcp":
             raise RuntimeError("Executor must use its advertised Tailscale origin")
-        if {"t3-forge", "t3-flomac", "t3-dev-machine"} & servers.keys():
+        if {"t3-flomac", "t3-dev-machine"} & servers.keys():
             raise RuntimeError("Remove the direct remote T3 entries from Codex")
         session = request("thread/start", {
             "ephemeral": True,
@@ -97,8 +97,8 @@ def main():
         if result.get("error"):
             raise RuntimeError(result["error"])
         checks = result.get("checks", [])
-        if len(checks) != 4:
-            raise RuntimeError("Executor did not verify all four T3 connections")
+        if len(checks) != 3:
+            raise RuntimeError("Executor did not verify all three T3 connections")
         for check in checks:
             print(f"PASS: {check['integration']} through {check['address']} ({check['label']})")
     finally:
