@@ -66,7 +66,8 @@ On Forge, apply the configuration with
 configured, or import an authenticated machine's built closure as root and use
 `sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
 Tailscale and agent OAuth authorization are separate machine-local steps.
-Forge authorizes the Framework, Flomac, and Foundry SSH public keys. It is not
+Forge authorizes the Framework and Foundry SSH public keys, and Flomac has no
+`forge` SSH alias. It is not
 a T3 Code environment or a remote agent host, and it does not install the `flo`
 CLI.
 Forge disables accepted Tailscale subnet routes because it is already on the
