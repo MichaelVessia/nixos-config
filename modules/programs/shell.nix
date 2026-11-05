@@ -242,4 +242,30 @@ in {
     package = direnvPackage;
     nix-direnv.enable = true;
   };
+
+  # Tools such as nix develop, bun, and Vitest leave data in TMPDIR, so remove
+  # entries after 3 days.
+  systemd.user.tmpfiles.rules = lib.mkIf pkgs.stdenv.hostPlatform.isLinux [
+    "d %h/.cache/tmp 0700 - - 3d"
+  ];
+  launchd.agents.clean-tmpdir = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "/usr/bin/find"
+        "${config.home.homeDirectory}/.cache/tmp"
+        "-mindepth"
+        "1"
+        "-mtime"
+        "+3"
+        "-delete"
+      ];
+      StartCalendarInterval = [
+        {
+          Hour = 4;
+          Minute = 0;
+        }
+      ];
+    };
+  };
 }

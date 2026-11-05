@@ -114,7 +114,6 @@
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
   systemd.tmpfiles.rules = [
-    "d /home/${username}/.cache/tmp 0700 ${username} users -"
     # T3 worktrees and Git worktree metadata store absolute paths from the old home.
     "L /home/foundry - - - - /home/${username}"
   ];

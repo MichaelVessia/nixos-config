@@ -119,10 +119,6 @@
   environment.systemPackages = [pkgs.git];
   # SSH clients such as Ghostty need their terminfo for correct line editing.
   environment.enableAllTerminfo = true;
-  # shell.nix sets TMPDIR here.
-  systemd.tmpfiles.rules = [
-    "d /home/${username}/.cache/tmp 0700 ${username} users -"
-  ];
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
