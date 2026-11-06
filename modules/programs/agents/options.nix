@@ -7,7 +7,7 @@
 
   options.agentHarnesses.executorFlosports.url = lib.mkOption {
     type = lib.types.str;
-    default = "https://executor.flostag-us-west-2.flokubernetes.com/mcp";
+    default = "https://executor.flosports.tv/mcp";
     description = "FloSports Executor MCP endpoint shared by configured agent harnesses.";
   };
 

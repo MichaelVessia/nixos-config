@@ -297,7 +297,7 @@ Codex, Claude Code, Cursor, Pi, OMP, and OpenCode use two shared MCP entries:
 - `executor` connects to the personal Executor at
   `https://executor-mcp.bison-gray.ts.net/mcp`.
 - `executor-flosports` connects to the FloSports Executor at
-  `https://executor.flostag-us-west-2.flokubernetes.com/mcp`.
+  `https://executor.flosports.tv/mcp`.
 
 Home Manager generates both entries from `modules/programs/agents/options.nix`,
 including on Flomac. Use the personal Executor for remote T3 control. The
