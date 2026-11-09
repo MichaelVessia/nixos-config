@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  enableFloCli,
   ...
 }: let
   # Wrapped scripts with explicit deps
@@ -280,31 +279,18 @@
     };
     disableClaudeAiConnectors = true;
     skipDangerousModePermissionPrompt = true;
-    enabledPlugins =
-      {
-        "codex@openai-codex" = true;
-        "t3-pstack@t3-pstack" = true;
-      }
-      // lib.optionalAttrs enableFloCli {
-        "floai@flocasts" = true;
-      };
-    extraKnownMarketplaces =
-      {
-        openai-codex = {
-          source = {
-            source = "github";
-            repo = "openai/codex-plugin-cc";
-          };
-        };
-      }
-      // lib.optionalAttrs enableFloCli {
-        flocasts = {
-          source = {
-            source = "github";
-            repo = "flocasts/floai";
-          };
+    enabledPlugins = {
+      "codex@openai-codex" = true;
+      "t3-pstack@t3-pstack" = true;
+    };
+    extraKnownMarketplaces = {
+      openai-codex = {
+        source = {
+          source = "github";
+          repo = "openai/codex-plugin-cc";
         };
       };
+    };
     statusLine = {
       type = "command";
       command = "claude-statusline";
@@ -519,19 +505,6 @@ in {
       $DRY_RUN_CMD install -Dm600 "$temporary_file" "$config_file"
       rm -f "$temporary_file"
     '';
-
-    # Pre-cache the floai plugin marketplace on first activation so the
-    # plugin is ready to use without a manual /plugin install. Mirrors the
-    # codex marketplace activation in agents/codex.nix. HTTPS clone uses
-    # the gh credential helper configured in programs/git.nix.
-    home.activation.claudeMarketplaceFloai = lib.mkIf enableFloCli (
-      lib.hm.dag.entryAfter ["claudeConfig"] ''
-        if [ ! -d "$HOME/.claude/plugins/marketplaces/flocasts" ]; then
-          PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.gh}/bin:$PATH" \
-            $DRY_RUN_CMD claude plugin marketplace add flocasts/floai || true
-        fi
-      ''
-    );
 
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
