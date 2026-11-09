@@ -53,9 +53,13 @@ be in Nix `trusted-users`. With the current keys:
 
 | Deploy from | Hosts |
 |---|---|
-| framework13 | foundry, forge, dev-machine |
+| framework13 | foundry, forge |
 | forge | framework13 |
 | flomac | foundry, dev-machine |
+| foundry | dev-machine, once foundry has private GitHub access |
+
+Dev-machine deploys nothing. Only flomac and foundry may reach it, and its key
+on flomac is for scrawl captures.
 
 Keep forge and framework13 isolated from flomac: do not authorize flomac's key
 on them or give flomac SSH aliases for them. Forge and framework13 trust their
