@@ -22,6 +22,48 @@ sudo nixos-rebuild switch --flake .#framework13
 sudo darwin-rebuild switch --flake .#flomac
 ```
 
+### Deploying to other hosts
+
+`deploy` ([deploy-rs](https://github.com/serokell/deploy-rs), in the dev shell)
+pushes a host's configuration over SSH. Run it from the repository root, where
+direnv loads the dev shell, or prefix it with `nix develop --command`.
+
+```bash
+deploy -s .#foundry                          # one host
+deploy -s --targets .#foundry .#dev-machine  # several hosts
+deploy -s .                                  # every host in deploy.nodes
+deploy -s --dry-activate .#foundry           # build and show changes only
+```
+
+- `-s` (`--skip-checks`) skips `nix flake check`. The flake defines no deploy
+  checks, and the check evaluates every host.
+- Nodes are in `deploy.nodes` in `flake.nix`: foundry, forge, dev-machine, and
+  flomac. Framework13 runs no sshd, so apply it with `reload`. Use `reload` for
+  the machine you are on.
+- The deploying machine evaluates the flake, so only it needs private GitHub
+  access (`garage`). Each target builds its own closure (`remoteBuild`), so
+  flomac can deploy Linux hosts.
+- deploy-rs logs in as the host's `sshUser` and activates as root. Foundry,
+  forge, and flomac ask for the sudo password. Dev-machine has passwordless sudo.
+- If a host stops answering SSH after activation, deploy-rs rolls it back
+  (magic rollback). If one host fails in a multi-host run, deploy-rs also rolls
+  back the hosts it already deployed in that run.
+
+A target must authorize the deploying machine's SSH key, and its SSH user must
+be in Nix `trusted-users`. With the current keys:
+
+| Deploy from | Hosts |
+|---|---|
+| framework13 | foundry, forge, dev-machine |
+| flomac | foundry, dev-machine |
+
+Forge trusts its user only after one `reload` on forge applies
+`hosts/forge/default.nix`. Flomac uses Determinate Nix, so its
+`trusted-users` is in `/etc/nix/nix.custom.conf`. Foundry, forge, and
+dev-machine can reach flomac over SSH, but a deploy from them also needs
+private GitHub access there and macOS Remote Login on flomac. Until then, use
+`reload` on flomac.
+
 Framework13 installs the official T3 Code nightly desktop AppImage through
 Home Manager, pinned by version and checksum in
 `modules/programs/t3code-nightly/package.nix`. After rebuilding, launch it
@@ -128,13 +170,9 @@ Build from an existing authenticated x86_64 machine:
 nix build .#nixosConfigurations.foundry.config.system.build.toplevel --no-link
 ```
 
-After the first deployment, remote updates can be built here without putting
-private GitHub credentials on the devbox:
-
-```bash
-nixos-rebuild switch --flake .#foundry \
-  --target-host michaelvessia@foundry --ask-sudo-password
-```
+After the first deployment, deploy updates from an authenticated machine with
+`deploy -s .#foundry` (see "Deploying to other hosts"). Foundry needs no
+private GitHub credentials.
 
 The initial stock installation does not yet trust the `michaelvessia` Nix user, so
 the first deployment needs a root import of the locally built closure before

@@ -62,9 +62,14 @@
       url = "github:Kyure-A/agent-skills-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
+    self,
     nixpkgs,
     nixpkgs-unstable,
     home-manager,
@@ -77,6 +82,7 @@
     dms,
     sops-nix,
     agent-skills-nix,
+    deploy-rs,
     ...
   }: let
     system = "x86_64-linux";
@@ -92,6 +98,7 @@
         pkgs.mkShell {
           packages = with pkgs; [
             alejandra
+            deploy-rs.packages.${system}.default
             lefthook
             sops
             age
@@ -229,6 +236,33 @@
             }
           ];
         };
+    };
+
+    # `deploy .#<host>` pushes a host's configuration over SSH. Framework13
+    # runs no sshd, so it applies its own configuration with `reload`.
+    deploy = {
+      # Each host builds its own closure, so any machine can deploy any host.
+      remoteBuild = true;
+      user = "root";
+      nodes = let
+        nixosNode = name: {
+          hostname = name;
+          sshUser = "michaelvessia";
+          profiles.system.path =
+            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.${name};
+        };
+      in {
+        foundry = nixosNode "foundry" // {interactiveSudo = true;};
+        forge = nixosNode "forge" // {interactiveSudo = true;};
+        dev-machine = nixosNode "dev-machine";
+        flomac = {
+          hostname = "flomac";
+          sshUser = "michael.vessia";
+          interactiveSudo = true;
+          profiles.system.path =
+            deploy-rs.lib.aarch64-darwin.activate.darwin self.darwinConfigurations.flomac;
+        };
+      };
     };
 
     darwinConfigurations = {

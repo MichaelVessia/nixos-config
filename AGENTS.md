@@ -12,8 +12,10 @@ source of truth instead of trusting summaries:
 
 - Put configuration at the narrowest scope (`hosts/`, `users/`, `modules/`) and
   follow nearby patterns.
-- Never activate a configuration (`reload`, `nh ... switch`,
-  `*-rebuild switch`) unless the user asks.
+- Never activate a configuration (`reload`, `deploy`, `nh ... switch`,
+  `*-rebuild switch`) unless the user asks. For remote hosts, use
+  `deploy -s .#<host>` (README "Deploying to other hosts"). Add new hosts to
+  `deploy.nodes` in `flake.nix` when they run sshd.
 - Work on local master; no branches, worktrees, or PRs. Commit after checks.
   Preserve unrelated local edits.
 - Keep `stateVersion` values. Do not hand-edit generated hardware files.

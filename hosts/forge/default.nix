@@ -25,6 +25,8 @@ in {
   security.pki.certificateFiles = [./portless-ca.crt];
 
   services.openssh.enable = true;
+  # deploy-rs copies closures as this user.
+  nix.settings.trusted-users = ["root" "michaelvessia"];
   users.users.michaelvessia = {
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r"
