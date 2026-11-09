@@ -35,14 +35,6 @@
             HostKeyAlias = "192.168.1.18";
           };
         };
-        # EC2 Dev Machine; manage it with scripts/dev-machine/devm.
-        "dev-machine" = {
-          hostname =
-            if pkgs.stdenv.isDarwin
-            then "dev-machine.bison-gray.ts.net"
-            else "dev-machine";
-          user = "michaelvessia";
-        };
         "flomac" = {
           hostname = "c6dwvf3hjg.bison-gray.ts.net";
           user = "michael.vessia";

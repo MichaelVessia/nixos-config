@@ -22,6 +22,12 @@
   home.homeDirectory = "/Users/michael.vessia";
 
   programs.ssh.includes = ["~/.namespace/ssh/*.ssh"];
+  # EC2 Dev Machine; manage it with scripts/dev-machine/devm. Only flomac and
+  # foundry may reach it.
+  programs.ssh.matchBlocks."dev-machine" = {
+    hostname = "dev-machine.bison-gray.ts.net";
+    user = "michaelvessia";
+  };
 
   # Hex rejects symlinks that point outside its configuration directory.
   home.activation.hexConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''

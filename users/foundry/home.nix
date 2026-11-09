@@ -26,6 +26,12 @@
     profile = "work";
   };
 
+  # EC2 Dev Machine. Only flomac and foundry may reach it.
+  programs.ssh.matchBlocks."dev-machine" = {
+    hostname = "dev-machine";
+    user = "michaelvessia";
+  };
+
   home.username = "michaelvessia";
   home.homeDirectory = "/home/michaelvessia";
 
