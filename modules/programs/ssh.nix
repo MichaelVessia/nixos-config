@@ -10,60 +10,56 @@
     enableDefaultConfig = false;
 
     # Host-specific configurations
-    matchBlocks =
-      {
-        "*" = {
-          # Fail stalled sessions after about 90 seconds instead of hanging.
-          serverAliveInterval = 30;
-          serverAliveCountMax = 3;
-          extraOptions = {
-            AddKeysToAgent = "yes";
-          };
-        };
-        "github.com" = {
-          hostname = "github.com";
-          user = "git";
-          identityFile = "~/.ssh/id_ed25519";
-        };
-        "foundry" = {
-          hostname =
-            if pkgs.stdenv.isDarwin
-            then "foundry.bison-gray.ts.net"
-            else "foundry";
-          user = "michaelvessia";
-          extraOptions = lib.optionalAttrs pkgs.stdenv.isDarwin {
-            HostKeyAlias = "192.168.1.18";
-          };
-        };
-        "flomac" = {
-          hostname = "c6dwvf3hjg.bison-gray.ts.net";
-          user = "michael.vessia";
-        };
-        "proxmox" = {
-          hostname = "192.168.1.200";
-          user = "root";
-        };
-        "nas" = {
-          hostname = "192.168.1.176";
-          user = "michaelvessia";
-          port = 8222;
-        };
-        "homeassistant" = {
-          hostname = "192.168.1.227";
-          user = "hassio";
-        };
-        "udm" = {
-          hostname = "192.168.1.1";
-          user = "root";
-        };
-      }
-      # Forge is a personal desktop; the work laptop gets no alias for it.
-      // lib.optionalAttrs pkgs.stdenv.isLinux {
-        "forge" = {
-          hostname = "forge";
-          user = "michaelvessia";
+    matchBlocks = {
+      "*" = {
+        # Fail stalled sessions after about 90 seconds instead of hanging.
+        serverAliveInterval = 30;
+        serverAliveCountMax = 3;
+        extraOptions = {
+          AddKeysToAgent = "yes";
         };
       };
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+      };
+      "foundry" = {
+        hostname =
+          if pkgs.stdenv.isDarwin
+          then "foundry.bison-gray.ts.net"
+          else "foundry";
+        user = "michaelvessia";
+        extraOptions = lib.optionalAttrs pkgs.stdenv.isDarwin {
+          HostKeyAlias = "192.168.1.18";
+        };
+      };
+      "flomac" = {
+        hostname = "c6dwvf3hjg.bison-gray.ts.net";
+        user = "michael.vessia";
+      };
+      "forge" = {
+        hostname = "forge";
+        user = "michaelvessia";
+      };
+      "proxmox" = {
+        hostname = "192.168.1.200";
+        user = "root";
+      };
+      "nas" = {
+        hostname = "192.168.1.176";
+        user = "michaelvessia";
+        port = 8222;
+      };
+      "homeassistant" = {
+        hostname = "192.168.1.227";
+        user = "hassio";
+      };
+      "udm" = {
+        hostname = "192.168.1.1";
+        user = "root";
+      };
+    };
   };
 
   # Enable SSH agent service (Linux only)

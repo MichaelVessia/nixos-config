@@ -254,7 +254,7 @@
         };
       in {
         foundry = nixosNode "foundry" ["from-flomac" "from-framework13"] // {interactiveSudo = true;};
-        forge = nixosNode "forge" ["from-framework13"] // {interactiveSudo = true;};
+        forge = nixosNode "forge" ["from-flomac" "from-framework13"] // {interactiveSudo = true;};
         framework13 = nixosNode "framework13" ["from-forge"] // {interactiveSudo = true;};
         dev-machine = nixosNode "dev-machine" ["from-flomac"];
         flomac = {

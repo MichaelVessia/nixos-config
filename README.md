@@ -60,14 +60,14 @@ be in Nix `trusted-users`. With the current keys:
 |---|---|
 | framework13 | foundry, forge |
 | forge | framework13 |
-| flomac | foundry, dev-machine |
+| flomac | foundry, forge, dev-machine |
 | foundry | dev-machine, once foundry has private GitHub access |
 
 Dev-machine deploys nothing. Only flomac and foundry may reach it, and its key
 on flomac is for scrawl captures.
 
-Keep forge and framework13 isolated from flomac: do not authorize flomac's key
-on them or give flomac SSH aliases for them. Forge and framework13 trust their
+Keep framework13 isolated from flomac: do not authorize flomac's key on it or
+give flomac an SSH alias for it. Forge and framework13 trust their
 user and framework13 accepts forge's key (sshd on Tailscale only) only after
 one `reload` on each applies `hosts/<name>/default.nix`. A forge deploy needs
 private GitHub access on forge. Flomac uses Determinate Nix, so its
@@ -116,9 +116,8 @@ On Forge, apply the configuration with
 configured, or import an authenticated machine's built closure as root and use
 `sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
 Tailscale and agent OAuth authorization are separate machine-local steps.
-Forge authorizes the Framework and Foundry SSH public keys, and Flomac has no
-`forge` SSH alias. It is not
-a T3 Code environment or a remote agent host, and it does not install the `flo`
+Forge authorizes the Framework, Foundry, and Flomac SSH public keys. It is not
+a remote agent host, and it does not install the `flo`
 CLI.
 Forge disables accepted Tailscale subnet routes because it is already on the
 advertised homelab LAN. Accepting that subnet sends LAN replies through
