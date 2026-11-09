@@ -1,9 +1,18 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }: let
+  # opencode.json is shared by every host, so the personal Executor comes from
+  # OPENCODE_CONFIG_CONTENT, which OpenCode merges into it.
+  executorConfig = builtins.toJSON {
+    mcp.servers.executor = {
+      type = "remote";
+      url = config.agentHarnesses.executor.url;
+    };
+  };
   opencodePkg = inputs.llm-agents.packages.${pkgs.system}.opencode2;
   opencodeWrapped = pkgs.symlinkJoin {
     name = "opencode2-wrapped-${opencodePkg.version or "0"}";
@@ -11,9 +20,11 @@
     nativeBuildInputs = [pkgs.makeWrapper];
     postBuild = ''
       wrapProgram $out/bin/opencode2 \
-        --set OPENCODE_EXECUTOR_URL "${config.agentHarnesses.executor.url}" \
         --set OPENCODE_EXECUTOR_FLOSPORTS_URL "${config.agentHarnesses.executorFlosports.url}" \
-        --set OPENCODE_FIGMA_URL "${config.agentHarnesses.figma.url}"
+        --set OPENCODE_FIGMA_URL "${config.agentHarnesses.figma.url}" ${
+        lib.optionalString config.agentHarnesses.executor.enable
+        "--set OPENCODE_CONFIG_CONTENT ${lib.escapeShellArg executorConfig}"
+      }
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;

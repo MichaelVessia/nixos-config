@@ -1,4 +1,7 @@
 {lib, ...}: {
+  # Only personal hosts reach the homelab Executor.
+  options.agentHarnesses.executor.enable = lib.mkEnableOption "the personal Executor MCP server";
+
   options.agentHarnesses.executor.url = lib.mkOption {
     type = lib.types.str;
     default = "https://executor-mcp.bison-gray.ts.net/mcp";

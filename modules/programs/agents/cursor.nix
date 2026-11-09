@@ -24,11 +24,14 @@
   # Activation installs a regular file. A store symlink is read-only, and
   # Cursor rewrites this path when MCP servers change.
   mcpConfig = (pkgs.formats.json {}).generate "cursor-mcp.json" {
-    mcpServers = {
-      figma.url = config.agentHarnesses.figma.url;
-      executor-flosports.url = config.agentHarnesses.executorFlosports.url;
-      executor.url = config.agentHarnesses.executor.url;
-    };
+    mcpServers =
+      {
+        figma.url = config.agentHarnesses.figma.url;
+        executor-flosports.url = config.agentHarnesses.executorFlosports.url;
+      }
+      // lib.optionalAttrs config.agentHarnesses.executor.enable {
+        executor.url = config.agentHarnesses.executor.url;
+      };
   };
 in {
   # T3's local Cursor SDK reuses MCP credentials but cannot start OAuth login.

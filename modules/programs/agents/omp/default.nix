@@ -1,22 +1,28 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
   ompDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/omp";
   mcpConfig = (pkgs.formats.json {}).generate "omp-mcp.json" {
-    mcpServers.figma = {
-      url = config.agentHarnesses.figma.url;
-      type = "http";
-    };
-    mcpServers.executor = {
-      type = "http";
-      url = config.agentHarnesses.executor.url;
-    };
-    mcpServers.executor-flosports = {
-      type = "http";
-      url = config.agentHarnesses.executorFlosports.url;
-    };
+    mcpServers =
+      {
+        figma = {
+          url = config.agentHarnesses.figma.url;
+          type = "http";
+        };
+        executor-flosports = {
+          type = "http";
+          url = config.agentHarnesses.executorFlosports.url;
+        };
+      }
+      // lib.optionalAttrs config.agentHarnesses.executor.enable {
+        executor = {
+          type = "http";
+          url = config.agentHarnesses.executor.url;
+        };
+      };
   };
 in {
   # Keep OMP's mutable configuration in the repository. OMP 17.4+ resolves

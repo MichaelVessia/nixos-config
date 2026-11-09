@@ -244,20 +244,24 @@
 
   sharedInstructions = builtins.readFile ../shared/instructions.md;
 
-  mcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" {
-    figma = {
-      type = "http";
-      url = config.agentHarnesses.figma.url;
-    };
-    executor-flosports = {
-      type = "http";
-      url = config.agentHarnesses.executorFlosports.url;
-    };
-    executor = {
-      type = "http";
-      url = config.agentHarnesses.executor.url;
-    };
-  };
+  mcpServersFile = (pkgs.formats.json {}).generate "claude-mcp-servers.json" (
+    {
+      figma = {
+        type = "http";
+        url = config.agentHarnesses.figma.url;
+      };
+      executor-flosports = {
+        type = "http";
+        url = config.agentHarnesses.executorFlosports.url;
+      };
+    }
+    // lib.optionalAttrs config.agentHarnesses.executor.enable {
+      executor = {
+        type = "http";
+        url = config.agentHarnesses.executor.url;
+      };
+    }
+  );
 
   # Settings as Nix attrset
   settings = {

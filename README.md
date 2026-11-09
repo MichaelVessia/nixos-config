@@ -282,7 +282,7 @@ Home Manager links `~/.omp/agent/config.yml` to the file under
 the tracked file. Review its Git diff before committing.
 
 Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
-`agentHarnesses.executor.url` and `agentHarnesses.figma.url` as HTTP MCP servers.
+Executor and Figma endpoints from `agentHarnesses` as HTTP MCP servers.
 
 Pi, OMP, Codex, Claude Code, OpenCode, and Cursor use Executor and the
 [Figma remote MCP server](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/).
@@ -333,16 +333,19 @@ with `omp --continue`; a fresh process reads the saved credentials.
 
 ## T3 threads through Executor
 
-Codex, Claude Code, Cursor, Pi, OMP, and OpenCode use two shared MCP entries:
+Codex, Claude Code, Cursor, Pi, OMP, and OpenCode use these shared MCP entries:
 
 - `executor` connects to the personal Executor at
-  `https://executor-mcp.bison-gray.ts.net/mcp`.
+  `https://executor-mcp.bison-gray.ts.net/mcp`. Only framework13 and forge get
+  it (`agentHarnesses.executor.enable` in `users/michaelvessia/home.nix`).
 - `executor-flosports` connects to the FloSports Executor at
-  `https://executor.flosports.tv/mcp`.
+  `https://executor.flosports.tv/mcp` on every host.
 
-Home Manager generates both entries from `modules/programs/agents/options.nix`,
-including on Flomac. Use the personal Executor for remote T3 control. The
-FloSports instance cannot reach these private Tailscale addresses.
+Home Manager generates the entries from `modules/programs/agents/options.nix`.
+OpenCode gets `executor` through `OPENCODE_CONFIG_CONTENT`, because its
+`opencode.json` is shared by every host. Use the personal Executor for remote
+T3 control from framework13 and forge. The FloSports instance cannot reach
+these private Tailscale addresses.
 
 Use Executor's advertised Tailscale origin. The old `executor.lan` alias
 returns OAuth metadata for a different origin, which Codex rejects.
@@ -362,7 +365,8 @@ Each agent needs its Executor login. Executor keeps the remote T3 OAuth
 credentials, so agents need no direct remote T3 MCP entries or separate
 T3 logins. T3 also supplies a local `t3-code` connection for its own environment.
 
-Check the installed Codex configuration and all three connections with:
+On framework13 or forge, check the installed Codex configuration and all three
+connections with:
 
 ```bash
 python3 scripts/check-executor-t3.py

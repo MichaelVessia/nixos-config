@@ -20,6 +20,8 @@
       }
     );
 
+  agentHarnesses.executor.enable = true;
+
   # Preserve existing shares until this device can be inventoried.
   services.syncthing.overrideDevices = false;
   services.syncthing.overrideFolders = false;

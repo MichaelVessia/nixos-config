@@ -48,18 +48,23 @@
   piDir = "${config.home.homeDirectory}/nixos-config/modules/programs/agents/pi";
 
   mcpConfig = (pkgs.formats.json {}).generate "pi-mcp.json" {
-    mcpServers.figma = {
-      url = config.agentHarnesses.figma.url;
-      lifecycle = "lazy";
-    };
-    mcpServers.executor = {
-      url = config.agentHarnesses.executor.url;
-      lifecycle = "lazy";
-    };
-    mcpServers.executor-flosports = {
-      url = config.agentHarnesses.executorFlosports.url;
-      lifecycle = "lazy";
-    };
+    mcpServers =
+      {
+        figma = {
+          url = config.agentHarnesses.figma.url;
+          lifecycle = "lazy";
+        };
+        executor-flosports = {
+          url = config.agentHarnesses.executorFlosports.url;
+          lifecycle = "lazy";
+        };
+      }
+      // lib.optionalAttrs config.agentHarnesses.executor.enable {
+        executor = {
+          url = config.agentHarnesses.executor.url;
+          lifecycle = "lazy";
+        };
+      };
   };
 
   claudeBridgeConfig = (pkgs.formats.json {}).generate "claude-bridge.json" {

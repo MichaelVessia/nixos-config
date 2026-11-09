@@ -34,14 +34,17 @@
     tui = {
       status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
     };
-    mcp_servers = {
-      figma.url = config.agentHarnesses.figma.url;
-      executor-flosports.url = config.agentHarnesses.executorFlosports.url;
-      executor = {
-        url = config.agentHarnesses.executor.url;
-        disabled_tools = ["resume"];
+    mcp_servers =
+      {
+        figma.url = config.agentHarnesses.figma.url;
+        executor-flosports.url = config.agentHarnesses.executorFlosports.url;
+      }
+      // lib.optionalAttrs config.agentHarnesses.executor.enable {
+        executor = {
+          url = config.agentHarnesses.executor.url;
+          disabled_tools = ["resume"];
+        };
       };
-    };
     otel = {
       environment = "dev";
       log_user_prompt = false;
