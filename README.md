@@ -22,8 +22,6 @@ sudo nixos-rebuild switch --flake .#framework13
 sudo darwin-rebuild switch --flake ./hosts/flomac#flomac
 ```
 
-Both the root flake and `hosts/flomac/flake.nix` include the private `floai`
-input. Updating it requires GitHub SSH authentication and flocasts SAML access.
 The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
 Framework13 installs the official T3 Code nightly desktop AppImage through
@@ -153,7 +151,7 @@ monitor.
 (`devops/terraform/env/dev/michaelvessia/`). First boot runs
 `nixos-rebuild switch --flake github:MichaelVessia/nixos-config#dev-machine`
 without GitHub credentials, so the host must not use private inputs such as
-`garage` or `floai`, or sops secrets. Follow the module README for
+`garage`, or sops secrets. Follow the module README for
 first access (Session Manager, then `sudo tailscale up`), and keep Tailscale
 and sshd enabled, or the box becomes unreachable once `bootstrap_access` is off.
 

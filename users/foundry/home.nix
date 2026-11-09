@@ -7,7 +7,7 @@
   imports = [
     ../common.nix
     ../../modules/programs/agents
-    ../../modules/programs/floai.nix
+    ../../modules/programs/pup.nix
     ../../modules/programs/gcloud.nix
     ../../modules/programs/nvf
     ../../modules/programs/git.nix

@@ -12,8 +12,7 @@ HOSTNAME=$(hostname -s)
 # Detect platform and run appropriate rebuild command
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS with nix-darwin (requires sudo). Prefer a host-local flake when
-    # present so private host-only inputs (for example floai on flomac) do not
-    # affect the root flake used by Linux hosts.
+    # present.
     HOST_FLAKE_DIR="$CONFIG_DIR/hosts/$HOSTNAME"
     if [[ -f "$HOST_FLAKE_DIR/flake.nix" ]]; then
         FLAKE_DIR="$HOST_FLAKE_DIR"

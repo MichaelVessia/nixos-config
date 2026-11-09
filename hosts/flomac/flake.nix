@@ -1,5 +1,5 @@
 {
-  description = "flomac nix-darwin configuration with private floai input";
+  description = "flomac nix-darwin configuration";
   nixConfig = {
     extra-substituters = ["https://cache.numtide.com"];
     extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
@@ -38,7 +38,6 @@
       url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    floai.url = "git+ssh://git@github.com/flocasts/floai.git?ref=master";
     subq.url = "github:MichaelVessia/subq";
 
     bun2nix.url = "github:nix-community/bun2nix";

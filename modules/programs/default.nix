@@ -26,7 +26,7 @@
     ./worktrunk.nix
     ./x-to-obsidian.nix
     ./fmcal.nix
-    ./floai.nix
+    ./pup.nix
     ./gcloud.nix
     ./paperless-cli.nix
     ./hass-cli.nix

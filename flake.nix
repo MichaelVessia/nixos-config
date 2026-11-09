@@ -48,7 +48,6 @@
       url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    floai.url = "git+ssh://git@github.com/flocasts/floai.git?ref=master";
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
     worktrunk = {
