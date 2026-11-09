@@ -8,6 +8,8 @@
   imports = [
     ../common.nix
     ../../modules/programs
+    ../../modules/programs/gcloud.nix
+    ../../modules/programs/pup.nix
     ../../modules/secrets/flomac.nix
   ];
 

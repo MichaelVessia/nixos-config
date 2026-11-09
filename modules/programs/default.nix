@@ -26,8 +26,6 @@
     ./worktrunk.nix
     ./x-to-obsidian.nix
     ./fmcal.nix
-    ./pup.nix
-    ./gcloud.nix
     ./paperless-cli.nix
     ./hass-cli.nix
     ./kuma-cli.nix

@@ -72,7 +72,6 @@
       inherit username inputs;
       pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
       enableHomelabSkills = false;
-      enableFloCli = true;
     };
   in {
     darwinConfigurations.flomac = darwin.lib.darwinSystem {

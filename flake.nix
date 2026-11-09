@@ -111,7 +111,6 @@
           inherit inputs;
           inherit pkgs-unstable;
           enableHomelabSkills = true;
-          enableFloCli = false;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -152,7 +151,6 @@
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = true;
-          enableFloCli = false;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -184,7 +182,6 @@
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
-          enableFloCli = true;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -212,7 +209,6 @@
         specialArgs = {
           inherit username inputs pkgs-unstable;
           enableHomelabSkills = false;
-          enableFloCli = true;
         };
       in
         nixpkgs.lib.nixosSystem {
@@ -244,7 +240,6 @@
           inherit inputs;
           pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
           enableHomelabSkills = false;
-          enableFloCli = true;
         };
       in
         darwin.lib.darwinSystem {
