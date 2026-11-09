@@ -14,6 +14,23 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   networking.hostName = "framework13"; # Define your hostname.
 
+  # Forge deploys this host with deploy-rs over Tailscale. Flomac has no access.
+  services.openssh = {
+    enable = true;
+    openFirewall = false;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22];
+  users.users.michaelvessia.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINXfbQ30QBeY6SUElJIU3ZSXo5cdpNkfVfr1PrgdSwlc michaelvessia@forge"
+  ];
+  # deploy-rs copies closures as this user.
+  nix.settings.trusted-users = ["root" "michaelvessia"];
+
   services.pipewire = {
     wireplumber = {
       enable = true;

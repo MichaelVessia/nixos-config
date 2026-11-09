@@ -238,8 +238,7 @@
         };
     };
 
-    # `deploy .#<host>` pushes a host's configuration over SSH. Framework13
-    # runs no sshd, so it applies its own configuration with `reload`.
+    # `deploy .#<host>` pushes a host's configuration over SSH.
     deploy = {
       # Each host builds its own closure, so any machine can deploy any host.
       remoteBuild = true;
@@ -254,6 +253,7 @@
       in {
         foundry = nixosNode "foundry" // {interactiveSudo = true;};
         forge = nixosNode "forge" // {interactiveSudo = true;};
+        framework13 = nixosNode "framework13" // {interactiveSudo = true;};
         dev-machine = nixosNode "dev-machine";
         flomac = {
           hostname = "flomac";

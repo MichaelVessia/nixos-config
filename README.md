@@ -37,14 +37,13 @@ deploy -s --dry-activate .#foundry           # build and show changes only
 
 - `-s` (`--skip-checks`) skips `nix flake check`. The flake defines no deploy
   checks, and the check evaluates every host.
-- Nodes are in `deploy.nodes` in `flake.nix`: foundry, forge, dev-machine, and
-  flomac. Framework13 runs no sshd, so apply it with `reload`. Use `reload` for
-  the machine you are on.
+- Nodes are in `deploy.nodes` in `flake.nix`: foundry, forge, framework13,
+  dev-machine, and flomac. Use `reload` for the machine you are on.
 - The deploying machine evaluates the flake, so only it needs private GitHub
   access (`garage`). Each target builds its own closure (`remoteBuild`), so
   flomac can deploy Linux hosts.
 - deploy-rs logs in as the host's `sshUser` and activates as root. Foundry,
-  forge, and flomac ask for the sudo password. Dev-machine has passwordless sudo.
+  forge, framework13, and flomac ask for the sudo password. Dev-machine has passwordless sudo.
 - If a host stops answering SSH after activation, deploy-rs rolls it back
   (magic rollback). If one host fails in a multi-host run, deploy-rs also rolls
   back the hosts it already deployed in that run.
@@ -55,10 +54,14 @@ be in Nix `trusted-users`. With the current keys:
 | Deploy from | Hosts |
 |---|---|
 | framework13 | foundry, forge, dev-machine |
+| forge | framework13 |
 | flomac | foundry, dev-machine |
 
-Forge trusts its user only after one `reload` on forge applies
-`hosts/forge/default.nix`. Flomac uses Determinate Nix, so its
+Keep forge and framework13 isolated from flomac: do not authorize flomac's key
+on them or give flomac SSH aliases for them. Forge and framework13 trust their
+user and framework13 accepts forge's key (sshd on Tailscale only) only after
+one `reload` on each applies `hosts/<name>/default.nix`. A forge deploy needs
+private GitHub access on forge. Flomac uses Determinate Nix, so its
 `trusted-users` is in `/etc/nix/nix.custom.conf`. Foundry, forge, and
 dev-machine can reach flomac over SSH, but a deploy from them also needs
 private GitHub access there and macOS Remote Login on flomac. Until then, use
