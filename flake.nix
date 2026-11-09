@@ -243,18 +243,20 @@
       # Each host builds its own closure, so any machine can deploy any host.
       remoteBuild = true;
       user = "root";
+      # `groups` names the machines whose SSH key the node accepts, for `fleet`.
       nodes = let
-        nixosNode = name: {
+        nixosNode = name: groups: {
           hostname = name;
           sshUser = "michaelvessia";
+          inherit groups;
           profiles.system.path =
             deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.${name};
         };
       in {
-        foundry = nixosNode "foundry" // {interactiveSudo = true;};
-        forge = nixosNode "forge" // {interactiveSudo = true;};
-        framework13 = nixosNode "framework13" // {interactiveSudo = true;};
-        dev-machine = nixosNode "dev-machine";
+        foundry = nixosNode "foundry" ["from-flomac" "from-framework13"] // {interactiveSudo = true;};
+        forge = nixosNode "forge" ["from-framework13"] // {interactiveSudo = true;};
+        framework13 = nixosNode "framework13" ["from-forge"] // {interactiveSudo = true;};
+        dev-machine = nixosNode "dev-machine" ["from-flomac"];
         flomac = {
           hostname = "flomac";
           sshUser = "michael.vessia";

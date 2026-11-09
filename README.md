@@ -48,6 +48,10 @@ deploy -s --dry-activate .#foundry           # build and show changes only
   (magic rollback). If one host fails in a multi-host run, deploy-rs also rolls
   back the hosts it already deployed in that run.
 
+`fleet` does both steps in one command. It deploys every node whose `groups`
+contain `from-<this host>`, then runs `reload` on this machine. Update a node's
+groups when you change which keys it accepts.
+
 A target must authorize the deploying machine's SSH key, and its SSH user must
 be in Nix `trusted-users`. With the current keys:
 
