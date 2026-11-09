@@ -135,7 +135,7 @@
                          font.pixelSize: Theme.fontSizeSmall
                          color: Theme.surfaceVariantText
                          wrapMode: Text.WordWrap
-    @@ -200,12 +200,19 @@
+    @@ -236,11 +236,18 @@
                              deviceNode: modelData
                              deviceType: "output"
                              showHideButton: true
@@ -152,9 +152,8 @@
     +                            AudioService.setDefaultSinkByName(device.name);
     +                            root.updateDeviceList();
     +                        }
-                         }
 
-                         Item {
+                             DActionButton {
     @@ -348,7 +355,7 @@
 
                          StyledText {
