@@ -4,8 +4,8 @@
   pkgs,
   ...
 }: {
-  # Brave browser - macOS uses Homebrew
-  programs.brave = lib.mkIf pkgs.stdenv.isLinux {
+  # Chromium on Linux; macOS uses Homebrew Brave
+  programs.chromium = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
     extensions = [
       {id = "cnjifjpddelmedmihgijeibhnjfabmlf";} # Obsidian Web Clipper

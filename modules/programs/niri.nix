@@ -407,7 +407,7 @@ in
           # PROGRAM LAUNCHERS
           # ==================
           "Mod+Return".action.spawn = "ghostty";
-          "Mod+B".action.spawn = "brave";
+          "Mod+B".action.spawn = "chromium";
           "Mod+E".action.spawn = "nautilus";
           # Handy transcription toggle (Alt+` with swap)
           "Mod+Grave".action.spawn = ["pkill" "-USR2" "handy"];
