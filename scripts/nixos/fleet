@@ -4,13 +4,14 @@ set -u
 set -o pipefail
 
 # Deploy every host this machine may reach (the "from-<host>" groups in
-# deploy.nodes in flake.nix), then apply this machine.
+# deploy.nodes in flake.nix), then apply this machine. Hosts are independent,
+# so a failed host does not roll back the others; each still rolls itself back.
 CONFIG_DIR="${NIXOS_CONFIG:-$HOME/nixos-config}"
 HOSTNAME=$(hostname -s)
 
 cd "$CONFIG_DIR"
 echo "Deploying hosts in group from-$HOSTNAME..."
-nix develop --command deploy -s . --groups "from-$HOSTNAME"
+nix develop --command deploy -s . --groups "from-$HOSTNAME" --rollback-succeeded false
 
 echo "Applying $HOSTNAME..."
 reload

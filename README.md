@@ -49,7 +49,8 @@ deploy -s --dry-activate .#foundry           # build and show changes only
   back the hosts it already deployed in that run.
 
 `fleet` does both steps in one command. It deploys every node whose `groups`
-contain `from-<this host>`, then runs `reload` on this machine. Update a node's
+contain `from-<this host>`, then runs `reload` on this machine. A failed host
+does not roll back the hosts that succeeded. Update a node's
 groups when you change which keys it accepts.
 
 A target must authorize the deploying machine's SSH key, and its SSH user must
