@@ -11,21 +11,13 @@ HOSTNAME=$(hostname -s)
 
 # Detect platform and run appropriate rebuild command
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS with nix-darwin (requires sudo). Prefer a host-local flake when
-    # present.
-    HOST_FLAKE_DIR="$CONFIG_DIR/hosts/$HOSTNAME"
-    if [[ -f "$HOST_FLAKE_DIR/flake.nix" ]]; then
-        FLAKE_DIR="$HOST_FLAKE_DIR"
-    else
-        FLAKE_DIR="$CONFIG_DIR"
-    fi
-
-    echo "Updating flake inputs in $FLAKE_DIR..."
-    cd "$FLAKE_DIR"
+    # macOS with nix-darwin (requires sudo)
+    echo "Updating flake inputs in $CONFIG_DIR..."
+    cd "$CONFIG_DIR"
     nix flake update
 
     echo "Rebuilding nix-darwin configuration for $HOSTNAME..."
-    sudo darwin-rebuild switch --flake "$FLAKE_DIR#$HOSTNAME"
+    sudo darwin-rebuild switch --flake "$CONFIG_DIR#$HOSTNAME"
 else
     # NixOS
     echo "Updating flake inputs in $CONFIG_DIR..."

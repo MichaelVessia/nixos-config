@@ -23,8 +23,7 @@ source of truth instead of trusting summaries:
 - `nix develop --command alejandra --check $(git ls-files '*.nix')`
 - Do not run `nix eval`, `nix flake check`, or host builds. The user's
   `nh os switch` shows whether the change evaluates and builds.
-- Flake input changes need the matching `flake.lock` update. Flomac also
-  deploys from `hosts/flomac/flake.nix`; keep it aligned (see `README.md`).
+- Flake input changes need the matching `flake.lock` update.
 </important>
 
 <important if="changing secrets">

@@ -18,11 +18,9 @@ Or manually:
 # NixOS
 sudo nixos-rebuild switch --flake .#framework13
 
-# macOS (nix-darwin; flomac deployment entry point)
-sudo darwin-rebuild switch --flake ./hosts/flomac#flomac
+# macOS (nix-darwin)
+sudo darwin-rebuild switch --flake .#flomac
 ```
-
-The flomac deployment entry point uses its own `hosts/flomac/flake.lock`.
 
 Framework13 installs the official T3 Code nightly desktop AppImage through
 Home Manager, pinned by version and checksum in

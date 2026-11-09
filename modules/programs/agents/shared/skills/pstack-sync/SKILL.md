@@ -6,8 +6,8 @@ description: Update the pinned t3-pstack source in nixos-config and check local 
 # Update t3-pstack
 
 1. Read `modules/programs/agents/pstack/README.md` in `~/nixos-config`.
-2. Read upstream release changes. Update the same source commit in `flake.nix`
-   and `hosts/flomac/flake.nix`, then update both lock files.
+2. Read upstream release changes. Update the source commit in `flake.nix`,
+   then update `flake.lock`.
 3. Check that the local panel patch applies. Run the model policy check in the
    README. Preserve session model inheritance, Executor discovery, task completion,
    and native T3 PR watches.
