@@ -286,6 +286,9 @@
     enabledPlugins = {
       "codex@openai-codex" = true;
       "t3-pstack@t3-pstack" = true;
+      # floai's SessionStart hook asks every session to install the flo CLI, which this setup does not use.
+      "floai@synced" = false;
+      "floai@flocasts" = false;
     };
     extraKnownMarketplaces = {
       openai-codex = {
