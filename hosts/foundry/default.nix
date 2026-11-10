@@ -23,9 +23,15 @@
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "no";
+      PermitRootLogin = "prohibit-password";
     };
   };
+
+  # deploy-rs logs in as root from the machines in this node's deploy groups.
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r michaelvessia@framework13"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
+  ];
 
   users.users.${username} = {
     isNormalUser = true;
@@ -122,7 +128,6 @@
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     accept-flake-config = true;
-    trusted-users = ["root" username];
     extra-substituters = ["https://cache.numtide.com"];
     extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
   };

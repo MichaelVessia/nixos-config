@@ -252,18 +252,20 @@
       user = "root";
       # `groups` names the machines whose SSH key the node accepts, for `fleet`.
       nodes = let
+        # NixOS nodes accept root logins by SSH key only, so no sudo prompt.
         nixosNode = name: groups: {
           hostname = name;
-          sshUser = "michaelvessia";
+          sshUser = "root";
           inherit groups;
           profiles.system.path =
             deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.${name};
         };
       in {
-        foundry = nixosNode "foundry" ["from-flomac" "from-framework13"] // {interactiveSudo = true;};
-        forge = nixosNode "forge" ["from-flomac" "from-framework13"] // {interactiveSudo = true;};
-        framework13 = nixosNode "framework13" ["from-forge"] // {interactiveSudo = true;};
-        dev-machine = nixosNode "dev-machine" ["from-flomac"];
+        foundry = nixosNode "foundry" ["from-flomac" "from-framework13"];
+        forge = nixosNode "forge" ["from-flomac" "from-framework13"];
+        framework13 = nixosNode "framework13" ["from-forge"];
+        # Dev-machine has passwordless sudo and no root login.
+        dev-machine = nixosNode "dev-machine" ["from-flomac"] // {sshUser = "michaelvessia";};
         flomac = {
           hostname = "flomac";
           sshUser = "michael.vessia";

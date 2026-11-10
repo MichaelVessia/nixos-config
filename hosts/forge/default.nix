@@ -24,9 +24,15 @@ in {
   # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
   security.pki.certificateFiles = [./portless-ca.crt];
 
-  services.openssh.enable = true;
-  # deploy-rs copies closures as this user.
-  nix.settings.trusted-users = ["root" "michaelvessia"];
+  services.openssh = {
+    enable = true;
+    settings.PermitRootLogin = "prohibit-password";
+  };
+  # deploy-rs logs in as root from the machines in this node's deploy groups.
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r michaelvessia@framework13"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
+  ];
   users.users.michaelvessia = {
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r"

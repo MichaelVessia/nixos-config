@@ -21,15 +21,17 @@
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "no";
+      PermitRootLogin = "prohibit-password";
     };
   };
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22];
   users.users.michaelvessia.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINXfbQ30QBeY6SUElJIU3ZSXo5cdpNkfVfr1PrgdSwlc michaelvessia@forge"
   ];
-  # deploy-rs copies closures as this user.
-  nix.settings.trusted-users = ["root" "michaelvessia"];
+  # deploy-rs logs in as root with the same key.
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINXfbQ30QBeY6SUElJIU3ZSXo5cdpNkfVfr1PrgdSwlc michaelvessia@forge"
+  ];
 
   services.pipewire = {
     wireplumber = {

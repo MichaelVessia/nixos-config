@@ -42,8 +42,10 @@ deploy -s --dry-activate .#foundry           # build and show changes only
 - The deploying machine evaluates the flake, so only it needs private GitHub
   access (`garage`). Each target builds its own closure (`remoteBuild`), so
   flomac can deploy Linux hosts.
-- deploy-rs logs in as the host's `sshUser` and activates as root. Foundry,
-  forge, framework13, and flomac ask for the sudo password. Dev-machine has passwordless sudo.
+- deploy-rs logs in as root by SSH key on foundry, forge, and framework13, so
+  it asks for no password. Dev-machine logs in as `michaelvessia` and has
+  passwordless sudo. Flomac logs in as `michael.vessia` and asks for the sudo
+  password.
 - If a host stops answering SSH after activation, deploy-rs rolls it back
   (magic rollback). If one host fails in a multi-host run, deploy-rs also rolls
   back the hosts it already deployed in that run.
@@ -53,8 +55,10 @@ contain `from-<this host>`, then runs `reload` on this machine. A failed host
 does not roll back the hosts that succeeded. Update a node's
 groups when you change which keys it accepts.
 
-A target must authorize the deploying machine's SSH key, and its SSH user must
-be in Nix `trusted-users`. With the current keys:
+Foundry, forge, and framework13 must authorize the deploying machine's SSH key
+for `root`. Your normal user is not in Nix `trusted-users` on them, because a
+trusted user can get root. On dev-machine and flomac, the SSH user must be in
+`trusted-users`. With the current keys:
 
 | Deploy from | Hosts |
 |---|---|
@@ -67,9 +71,9 @@ Dev-machine deploys nothing. Only flomac and foundry may reach it, and its key
 on flomac is for scrawl captures.
 
 Keep framework13 isolated from flomac: do not authorize flomac's key on it or
-give flomac an SSH alias for it. Forge and framework13 trust their
-user and framework13 accepts forge's key (sshd on Tailscale only) only after
-one `reload` on each applies `hosts/<name>/default.nix`. A forge deploy needs
+give flomac an SSH alias for it. A host accepts root deploys (framework13
+accepts forge's key, with sshd on Tailscale only) only after one `reload` on
+it applies `hosts/<name>/default.nix`. A forge deploy needs
 private GitHub access on forge. Flomac uses Determinate Nix, so its
 `trusted-users` is in `/etc/nix/nix.custom.conf`. Foundry, forge, and
 dev-machine can reach flomac over SSH, but a deploy from them also needs
