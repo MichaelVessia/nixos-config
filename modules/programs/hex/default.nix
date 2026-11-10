@@ -40,6 +40,10 @@ in {
     (lib.mkIf pkgs.stdenv.isLinux {
       programs.hex = {
         enable = true;
+        # Hex's oxc crates need rustc 1.97; stable nixpkgs defaults to 1.95.
+        package = inputs.hex.packages.${pkgs.stdenv.hostPlatform.system}.hex.override {
+          inherit (pkgs.rustPackages_1_97) rustPlatform;
+        };
         autostart = true;
         settings = {
           "dictation_processing.default_mode" = defaultMode;
