@@ -188,6 +188,9 @@ in {
         NIXOS_CONFIG = "$HOME/nixos-config";
         TMPDIR = "$HOME/.cache/tmp";
         NH_FLAKE = "$HOME/nixos-config"; # for nh on all platforms
+        # Garage frame deploy target (CT 126). Its credentials live on the host.
+        FRAME_DOCKER_HOST = "ssh://root@192.168.1.147";
+        FRAME_URL = "http://192.168.1.147:8080";
       }
       // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
         # agent-browser launches Brave instead of its bundled Chromium, so
