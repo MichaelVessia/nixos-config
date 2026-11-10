@@ -13,9 +13,9 @@ why investigators: cursor/grok-4.7 reasoning_effort=high
 why synthesizer: claudeAgent/claude-opus-5-5 effort=high
 reflect tooling: cursor/grok-4.7 reasoning_effort=high
 reflect judgment, divergent, synthesizer: claudeAgent/claude-opus-5-5 effort=high
-arena runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
-arena cross-judge pool: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
+arena runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
+arena cross-judge pool: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
 swarm workers: cursor/grok-4.7 reasoning_effort=high
-architect runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
-interrogate reviewers: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/grok-4.7 reasoning_effort=high
+architect runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
+interrogate reviewers: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
 session hook: on
