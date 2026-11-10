@@ -44,6 +44,13 @@
     };
     x-to-obsidian.url = "github:MichaelVessia/x-to-obsidian";
     fmcal.url = "github:MichaelVessia/fmcal";
+    # Hex builds Linux only; flomac installs the Homebrew cask.
+    hex = {
+      url = "github:anomalyco/hex";
+      # Hex needs the system's glibc to find a Vulkan adapter.
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
     garage = {
       url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";

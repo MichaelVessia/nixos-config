@@ -10,6 +10,7 @@
     ../common.nix
     ../../modules/programs
     ../../modules/programs/niri.nix
+    ../../modules/programs/hex
   ];
 
   home.packages =

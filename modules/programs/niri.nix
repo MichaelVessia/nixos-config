@@ -254,7 +254,6 @@ in
       # Clipboard
       wl-clipboard
       cliphist
-      wtype # for Handy paste on Wayland
 
       # Screenshot/recording tools
       grim
@@ -408,8 +407,8 @@ in
           "Mod+Return".action.spawn = "ghostty";
           "Mod+B".action.spawn = "chromium";
           "Mod+E".action.spawn = "nautilus";
-          # Handy transcription toggle (Alt+` with swap)
-          "Mod+Grave".action.spawn = ["pkill" "-USR2" "handy"];
+          # Hex dictation toggle (Alt+` with swap)
+          "Mod+Grave".action.spawn = ["hex" "dictation" "toggle"];
 
           # ================
           # WINDOW CONTROLS

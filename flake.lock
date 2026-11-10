@@ -605,6 +605,29 @@
         "type": "github"
       }
     },
+    "hex": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794267158,
+        "narHash": "sha256-49wecmyCchpysz9a74G6efLnLP1BdTiRCoNyazkwWlE=",
+        "owner": "anomalyco",
+        "repo": "hex",
+        "rev": "8eb6dacc779e1f918f3955f7cc3c3bb4c712c33f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anomalyco",
+        "repo": "hex",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1071,6 +1094,7 @@
         "garage": "garage",
         "ghostty": "ghostty",
         "grok-bot": "grok-bot",
+        "hex": "hex",
         "home-manager": "home-manager_2",
         "llm-agents": "llm-agents",
         "niri": "niri",

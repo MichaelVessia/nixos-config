@@ -97,7 +97,6 @@
       pkgs-unstable.signal-desktop # Signal expires old builds; keep it on the rolling package set.
       wl-clipboard # clipboard provider for wayland (required for neovim clipboard integration)
       xclip # X11 clipboard provider
-      # Note: ydotool is enabled via programs.ydotool and used by Handy for text input
       iotop # io monitoring
       iftop # network monitoring
       strace # system call monitoring
