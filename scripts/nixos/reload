@@ -5,7 +5,9 @@ set -o pipefail
 
 # Detect platform and run appropriate rebuild command
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    nh darwin switch
+    # nh picks C6DWVF3HJG on flomac, which matches no configuration. Use the
+    # short hostname, as fleet does.
+    nh darwin switch -H "$(hostname -s)"
 else
     nh os switch
 fi
