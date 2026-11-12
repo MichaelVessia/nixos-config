@@ -51,10 +51,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    garage = {
-      url = "git+ssh://git@github.com/MichaelVessia/garage.git?ref=master";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     paperless-cli.url = "github:MichaelVessia/paperless-cli";
     subq.url = "github:MichaelVessia/subq";
     worktrunk = {

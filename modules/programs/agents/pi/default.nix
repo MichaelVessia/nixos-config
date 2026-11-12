@@ -6,7 +6,6 @@
   ...
 }: let
   piPkg = inputs.llm-agents.packages.${pkgs.system}.pi;
-  garagePiExtensions = inputs.garage.packages.${pkgs.system}.pi-extensions;
 
   npmGlobalDir = "${config.home.homeDirectory}/.npm-global";
 
@@ -113,11 +112,6 @@ in {
   home.activation.claudeBridgeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     install -Dm644 ${claudeBridgeConfig} "$HOME/.pi/agent/claude-bridge.json"
   '';
-
-  # Garage is a monorepo, so expose only its isolated Pi extension output
-  # instead of asking Pi's Git package manager to install the repository root.
-  home.file.".pi/agent/extensions/gpt-fast-mode.js".source = "${garagePiExtensions}/extensions/gpt-fast-mode.js";
-  home.file.".pi/agent/extensions/session-model-default.js".source = "${garagePiExtensions}/extensions/session-model-default.js";
 
   # herdr's `integration install pi` drops herdr-agent-state.ts here but
   # refuses to create the dir itself; ensure it exists so the install works.
