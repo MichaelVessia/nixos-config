@@ -17,11 +17,11 @@ by Home Manager. External skill folders remain untouched.
 
 ## Local policy
 
-- `shared/pstack-models.md` follows upstream's split at the stock `medium`
-  budget (`high` start), with Opus kept on code. Opus takes feature,
-  refactoring, and bug-fix code, judgment, prose, and the hardest tasks. Grok
-  4.7 through Cursor takes perf, hillclimb, exploration, tooling, and swarm
-  work. Panels mix Opus, GPT Sol, and Grok. The session hook is on.
+- `shared/pstack-models.md` splits roles across Claude and GPT at the stock
+  `medium` budget (`high` start). Opus takes feature, refactoring, and bug-fix
+  code, judgment, prose, and the hardest tasks. GPT Sol takes perf, hillclimb,
+  tooling, and swarm work. GPT Terra takes fast exploration. Panels mix Opus
+  and Sol. No role uses Cursor. The session hook is on.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,
   full-scope completion, and native T3 PR watches.
 

@@ -3,19 +3,19 @@
 # budget: medium (high)
 feature, refactoring: claudeAgent/claude-opus-5-5 effort=high
 bug-fix: claudeAgent/claude-opus-5-5 effort=high
-perf-issue: cursor/grok-4.7 reasoning_effort=high
-hillclimb: cursor/grok-4.7 reasoning_effort=high
+perf-issue: codex/gpt-6.1-sol reasoningEffort=high
+hillclimb: codex/gpt-6.1-sol reasoningEffort=high
 judgment and prose: claudeAgent/claude-opus-5-5 effort=high
 hardest tasks: claudeAgent/claude-opus-5-5 effort=high
-how explorer: cursor/grok-4.7 reasoning_effort=high
+how explorer: codex/gpt-6.1-terra reasoningEffort=high
 how explainer: claudeAgent/claude-opus-5-5 effort=high
-why investigators: cursor/grok-4.7 reasoning_effort=high
+why investigators: codex/gpt-6.1-terra reasoningEffort=high
 why synthesizer: claudeAgent/claude-opus-5-5 effort=high
-reflect tooling: cursor/grok-4.7 reasoning_effort=high
+reflect tooling: codex/gpt-6.1-sol reasoningEffort=high
 reflect judgment, divergent, synthesizer: claudeAgent/claude-opus-5-5 effort=high
-arena runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
-arena cross-judge pool: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
-swarm workers: cursor/grok-4.7 reasoning_effort=high
-architect runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
-interrogate reviewers: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high, cursor/gemini-4-carbon reasoning_effort=high
+arena runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high
+arena cross-judge pool: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high
+swarm workers: codex/gpt-6.1-sol reasoningEffort=high
+architect runners: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high
+interrogate reviewers: claudeAgent/claude-opus-5-5 effort=high, codex/gpt-6.1-sol reasoningEffort=high
 session hook: on
