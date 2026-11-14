@@ -26,9 +26,9 @@
   agentSkills.personal = [
     "agent-browser"
     "effect-service-design"
-    "gh-comment"
     "herdr"
     "herdr-dispatch"
+    "leaving-pr-comments"
     "pstack-sync"
   ];
 

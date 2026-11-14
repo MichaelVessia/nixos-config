@@ -3,6 +3,11 @@
 - Reply to the user only in ASD-STE100 Simplified Technical English.
 - Be extremely concise, but use correct grammar.
 - Skip em dashes. Use commas, parentheses, or periods.
+- Add no AI attribution to text sent under Michael's name: PR descriptions,
+  commit messages, Slack messages, tickets. No "Drafted by Claude",
+  "AI-assisted" footers or `Co-Authored-By` trailers, and do not copy them from
+  earlier PRs. GitHub comments are the exception: follow the
+  `leaving-pr-comments` skill.
 
 # Code
 
