@@ -22,6 +22,7 @@
     );
 
   agentHarnesses.executor.enable = true;
+  agentHarnesses.cliproxyHub.keyFile = osConfig.sops.secrets.cliproxyapi_access_key.path;
 
   # Preserve existing shares until this device can be inventoried.
   services.syncthing.overrideDevices = false;

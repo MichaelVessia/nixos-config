@@ -23,6 +23,9 @@
 
   scripts.groups = ["file-management" "git" "process-management"];
 
+  # dev-machine has no sops key. Copy the hub client key here by hand.
+  agentHarnesses.cliproxyHub.keyFile = "/home/michaelvessia/.config/cliproxyapi/access-key";
+
   agentSkills.personal = [
     "agent-browser"
     "effect-service-design"

@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   username,
   ...
@@ -64,6 +65,11 @@
     enable = true;
     openFirewall = false;
   };
+
+  # The CLIProxyAPI hub serves every other machine, so foundry never sleeps.
+  systemd.targets = lib.genAttrs ["sleep" "suspend" "hibernate" "hybrid-sleep"] (_: {
+    enable = false;
+  });
 
   services.tailscale = {
     enable = true;

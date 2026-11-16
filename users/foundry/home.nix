@@ -7,6 +7,7 @@
   imports = [
     ../common.nix
     ../../modules/programs/agents
+    ../../modules/programs/cliproxyapi.nix
     ../../modules/programs/pup.nix
     ../../modules/programs/gcloud.nix
     ../../modules/programs/nvf

@@ -1,4 +1,8 @@
-{lib, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   # Only personal hosts reach the homelab Executor.
   options.agentHarnesses.executor.enable = lib.mkEnableOption "the personal Executor MCP server";
 
@@ -18,5 +22,17 @@
     type = lib.types.str;
     default = "https://mcp.figma.com/mcp";
     description = "Figma MCP endpoint shared by configured agent harnesses.";
+  };
+
+  options.agentHarnesses.cliproxyHub.url = lib.mkOption {
+    type = lib.types.str;
+    default = "https://foundry.bison-gray.ts.net:8317";
+    description = "CLIProxyAPI hub that pools the Claude and Codex subscription logins.";
+  };
+
+  options.agentHarnesses.cliproxyHub.keyFile = lib.mkOption {
+    type = lib.types.str;
+    default = "${config.home.homeDirectory}/.config/sops-nix/secrets/cliproxyapi_access_key";
+    description = "File with the hub client access key. The default is the Home Manager sops-nix path.";
   };
 }

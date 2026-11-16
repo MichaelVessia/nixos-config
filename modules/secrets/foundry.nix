@@ -7,5 +7,7 @@
 
     # Declare secrets here (must match keys in secrets/foundry.yaml)
     secrets.flocasts_npm_token = {};
+    secrets.cliproxyapi_management_key = {};
+    secrets.cliproxyapi_access_key.sopsFile = ../../secrets/cliproxy.yaml;
   };
 }

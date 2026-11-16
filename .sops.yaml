@@ -31,6 +31,14 @@ creation_rules:
           - *user_foundry
           - *user_michael_flomac
 
+  # CLIProxyAPI hub client key (every host that uses the hub)
+  - path_regex: secrets/cliproxy\.yaml$
+    key_groups:
+      - age:
+          - *user_michael_framework13
+          - *user_michael_flomac
+          - *user_foundry
+
   # Garage frame deploy (personal machines only; read with `sops exec-env`)
   - path_regex: secrets/frame\.yaml$
     key_groups:

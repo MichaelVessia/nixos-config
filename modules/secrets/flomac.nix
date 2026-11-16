@@ -19,6 +19,7 @@
     secrets.dd_api_key = {};
     secrets.dd_telemetry_api_key = {};
     secrets.rootly_api_key = {};
+    secrets.cliproxyapi_access_key.sopsFile = ../../secrets/cliproxy.yaml;
   };
 
   home.activation.sopsNixLogDirectory = lib.hm.dag.entryBefore ["sops-nix"] ''

@@ -18,11 +18,29 @@
     '';
   };
   sharedInstructions = builtins.readFile ./shared/instructions.md;
+  hub = config.agentHarnesses.cliproxyHub;
+
+  # The cliproxy provider stays inactive in plain `codex`. `codex-hub`, and
+  # T3 Codex instances launched with the same flag, select it.
+  codex-hub = pkgs.writeShellScriptBin "codex-hub" ''
+    exec codex -c model_provider=cliproxy "$@"
+  '';
 
   codexConfig = {
     personality = "pragmatic";
     model = "gpt-6.1-sol";
     model_reasoning_effort = "medium";
+    model_providers.cliproxy = {
+      name = "CLIProxyAPI";
+      base_url = "${hub.url}/v1";
+      wire_api = "responses";
+      requires_openai_auth = false;
+      supports_websockets = true;
+      auth = {
+        command = "${pkgs.coreutils}/bin/cat";
+        args = [hub.keyFile];
+      };
+    };
     features.goals = true;
     marketplaces.t3-pstack = {
       source_type = "local";
@@ -72,7 +90,7 @@
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
   config = {
-    home.packages = [codexPkg];
+    home.packages = [codexPkg codex-hub];
 
     home.file.".codex/AGENTS.md".text = sharedInstructions;
 

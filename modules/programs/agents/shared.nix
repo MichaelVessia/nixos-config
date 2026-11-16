@@ -35,6 +35,7 @@
   # and the per-tool entries onto each other, producing a symlink loop.
   perToolSkillDirs = [
     ".claude/skills"
+    ".claude-hub/skills"
     ".codex/skills"
     ".config/opencode/skills"
     ".cursor/skills"
@@ -91,6 +92,7 @@ in {
       {".agents/skills".enable = false;}
       // perSkillSymlinks ".agents/skills"
       // perSkillSymlinks ".claude/skills"
+      // perSkillSymlinks ".claude-hub/skills"
       // perSkillSymlinks ".codex/skills"
       // perSkillSymlinks ".config/opencode/skills"
       // perSkillSymlinks ".cursor/skills";
