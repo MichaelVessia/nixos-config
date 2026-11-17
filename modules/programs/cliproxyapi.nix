@@ -39,8 +39,9 @@
   authDir = "${config.home.homeDirectory}/.cli-proxy-api";
 
   # T3's usage view groups accounts by email, so two Claude orgs on one login
-  # show as one bar. Each token refresh writes the real email back, so a path
-  # unit sets these labels again after every change.
+  # show as one bar. Each token refresh writes the real email back, so a timer
+  # sets these labels again. A path unit on the auth dir hits the start limit,
+  # because the hub writes kv.db, locks, and logs there all the time.
   emailLabels = {
     "83484a18-ddf6-4634-ad1e-4eac7f1c91e8" = "michael.vessia@personal.ultra";
   };
@@ -117,9 +118,13 @@ in {
     };
   };
 
-  systemd.user.paths.cliproxyapi-relabel = {
-    Unit.Description = "Watch CLIProxyAPI account files";
-    Path.PathChanged = authDir;
-    Install.WantedBy = ["default.target"];
+  systemd.user.timers.cliproxyapi-relabel = {
+    Unit.Description = "Set CLIProxyAPI account email labels every minute";
+    Timer = {
+      OnActiveSec = "0";
+      OnUnitActiveSec = "1min";
+      AccuracySec = "10s";
+    };
+    Install.WantedBy = ["timers.target"];
   };
 }
