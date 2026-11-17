@@ -6,8 +6,9 @@
 - Add no AI attribution to text sent under Michael's name: PR descriptions,
   commit messages, Slack messages, tickets. No "Drafted by Claude",
   "AI-assisted" footers or `Co-Authored-By` trailers, and do not copy them from
-  earlier PRs. GitHub comments are the exception: follow the
-  `leaving-pr-comments` skill.
+  earlier PRs. Exceptions: for GitHub comments, follow the
+  `leaving-pr-comments` skill. When a repository's `AGENTS.md` or PR template
+  requires an AI assistance disclosure, include it as that repository specifies.
 
 # Code
 
