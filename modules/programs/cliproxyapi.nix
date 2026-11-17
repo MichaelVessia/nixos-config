@@ -36,6 +36,32 @@
   };
 
   stateConfig = "${config.xdg.stateHome}/cliproxyapi/config.yaml";
+  authDir = "${config.home.homeDirectory}/.cli-proxy-api";
+
+  # T3's usage view groups accounts by email, so two Claude orgs on one login
+  # show as one bar. Each token refresh writes the real email back, so a path
+  # unit sets these labels again after every change.
+  emailLabels = {
+    "83484a18-ddf6-4634-ad1e-4eac7f1c91e8" = "michael.vessia@personal.ultra";
+  };
+
+  relabel = pkgs.writeShellApplication {
+    name = "cliproxyapi-relabel";
+    runtimeInputs = [pkgs.jq pkgs.coreutils];
+    text = ''
+      labels=${lib.escapeShellArg (builtins.toJSON emailLabels)}
+      for f in ${authDir}/claude-*.json; do
+        [ -e "$f" ] || continue
+        want=$(jq -r --argjson l "$labels" '$l[.organization_uuid // ""] // empty' "$f")
+        [ -n "$want" ] || continue
+        [ "$(jq -r '.email' "$f")" = "$want" ] && continue
+        tmp="$f.relabel.tmp"
+        install -m600 /dev/null "$tmp"
+        jq --arg e "$want" '.email = $e' "$f" > "$tmp"
+        mv "$tmp" "$f"
+      done
+    '';
+  };
 in {
   home.packages = [cliproxyapi];
 
@@ -80,6 +106,20 @@ in {
       Restart = "always";
       RestartSec = 5;
     };
+    Install.WantedBy = ["default.target"];
+  };
+
+  systemd.user.services.cliproxyapi-relabel = {
+    Unit.Description = "Set CLIProxyAPI account email labels";
+    Service = {
+      Type = "oneshot";
+      ExecStart = lib.getExe relabel;
+    };
+  };
+
+  systemd.user.paths.cliproxyapi-relabel = {
+    Unit.Description = "Watch CLIProxyAPI account files";
+    Path.PathChanged = authDir;
     Install.WantedBy = ["default.target"];
   };
 }
