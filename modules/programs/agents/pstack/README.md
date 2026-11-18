@@ -17,12 +17,14 @@ by Home Manager. External skill folders remain untouched.
 
 ## Local policy
 
-- `shared/pstack-models.md` splits roles across Claude and GPT at the stock
-  `medium` budget (`high` start). Opus takes feature, refactoring, and bug-fix
-  code, judgment, and prose. Fable takes perf, hillclimb, and the hardest
-  tasks. GPT Sol takes tooling and swarm work. GPT Terra takes fast
-  exploration. Panels mix Opus and Sol. No role uses Cursor. The session hook
-  is on.
+- `shared/pstack-models.md` splits roles across Claude and GPT. Opus takes
+  feature, refactoring, and bug-fix code, judgment, and prose. Fable takes perf,
+  hillclimb, and the hardest tasks. GPT Sol takes tooling and swarm work. GPT
+  Terra takes fast exploration. Panels mix Opus and Sol. No role uses Cursor.
+  The session hook is on.
+- Effort is mixed. Feature and refactoring code, how explorer and explainer,
+  why investigators, reflect tooling, and swarm workers run at `medium`. Roles
+  that decide, debug, tune, or review run at `high`.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,
   full-scope completion, and native T3 PR watches.
 
