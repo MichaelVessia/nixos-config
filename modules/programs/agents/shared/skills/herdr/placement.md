@@ -1,6 +1,6 @@
 # Local Herdr placement policy
 
-Shared by the `herdr` CLI skill and the `herdr-dispatch` skill. This is placement guidance, not authorization to control Herdr: follow the calling skill's environment and user-request gates first.
+Used by the `herdr` CLI skill. This is placement guidance, not authorization to control Herdr: follow the calling skill's environment and user-request gates first.
 
 ## Choose the requested container
 

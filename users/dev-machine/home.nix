@@ -30,7 +30,6 @@
     "agent-browser"
     "effect-service-design"
     "herdr"
-    "herdr-dispatch"
     "leaving-pr-comments"
     "pstack-sync"
   ];
