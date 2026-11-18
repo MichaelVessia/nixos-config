@@ -243,8 +243,10 @@
 
     # `deploy .#<host>` pushes a host's configuration over SSH.
     deploy = {
-      # Each host builds its own closure, so any machine can deploy any host.
-      remoteBuild = true;
+      # The deploying machine builds each closure and copies it to the target,
+      # so targets never build. `fleet` adds --remote-build on Darwin, which
+      # cannot build Linux closures.
+      remoteBuild = false;
       user = "root";
       # `groups` names the machines whose SSH key the node accepts, for `fleet`.
       nodes = let
@@ -266,6 +268,8 @@
           hostname = "flomac";
           sshUser = "michael.vessia";
           interactiveSudo = true;
+          # Only Darwin can build this closure.
+          remoteBuild = true;
           profiles.system.path =
             deploy-rs.lib.aarch64-darwin.activate.darwin self.darwinConfigurations.flomac;
         };

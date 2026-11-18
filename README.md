@@ -39,9 +39,12 @@ deploy -s --dry-activate .#foundry           # build and show changes only
   checks, and the check evaluates every host.
 - Nodes are in `deploy.nodes` in `flake.nix`: foundry, forge, framework13,
   dev-machine, and flomac. Use `reload` for the machine you are on.
-- The deploying machine evaluates the flake, so only it needs private GitHub
-  access (`garage`). Each target builds its own closure (`remoteBuild`), so
-  flomac can deploy Linux hosts.
+- The deploying machine evaluates the flake and builds each closure, then
+  copies it to the target, so targets never build. Only the deploying machine
+  needs private GitHub access (`garage`). The target's Nix daemon must accept
+  unsigned paths from the SSH user: root, or a user in `trusted-users`.
+- Flomac cannot build Linux closures. Add `--remote-build` when you deploy
+  from flomac (`fleet` does this). Flomac's own node always builds on flomac.
 - deploy-rs logs in as root by SSH key on foundry, forge, and framework13, so
   it asks for no password. Dev-machine logs in as `michaelvessia` and has
   passwordless sudo. Flomac logs in as `michael.vessia` and asks for the sudo
@@ -50,9 +53,12 @@ deploy -s --dry-activate .#foundry           # build and show changes only
   (magic rollback). If one host fails in a multi-host run, deploy-rs also rolls
   back the hosts it already deployed in that run.
 
-`fleet` does both steps in one command. It deploys every node whose `groups`
-contain `from-<this host>`, then runs `reload` on this machine. A failed host
-does not roll back the hosts that succeeded. Update a node's
+`fleet` does both steps in one command. It runs `deploy --test` on every node
+whose `groups` contain `from-<this host>`, which activates the configuration
+without a boot loader change. One `[y/N]` prompt then approves the persistent
+switch on those nodes and `reload` on this machine. If you answer no, the
+tested configurations stay active until the next reboot. A failed host does
+not roll back the hosts that succeeded. Update a node's
 groups when you change which keys it accepts.
 
 Foundry, forge, and framework13 must authorize the deploying machine's SSH key
