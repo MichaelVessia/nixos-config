@@ -47,7 +47,7 @@ listed in [References](#references) before writing an aspect.
 | D1 | Root flake and `hosts/flomac/flake.nix` | Consolidate into the root flake. Delete `hosts/flomac/flake.nix` and its lockfile. Done before the migration. | The flomac flake was created to isolate the private `floai` input (commit `f6c0145`). The root flake has carried `floai` since `92f5537`, so the isolation no longer exists. The two input sets have drifted (`bun2nix` only in flomac; `dgop`, `dms`, `fmcal`, `grok-bot`, `paperless-cli` only in root). One flake removes the drift and the "keep both aligned" rule. |
 | D2 | den pin | `github:denful/den/latest` | `latest` moves only on releases. `main` moves on every merged PR and carries heads-up changes. Update den on purpose, with its lockfile. |
 | D3 | Module system for the flake | flake-parts | `perSystem` gives the dev shell and the nh helper packages without custom merge options. den is a flake-parts module. |
-| D4 | Where leaf module bodies live | Fold each leaf module into an aspect file at the same path. | Out-of-store symlinks (Pi, OMP, OpenCode, Zed) and the DMS snapshot script name `modules/programs/...` paths. Folding in place keeps every one of those paths valid and needs no doc rewrite for data files. |
+| D4 | Where leaf module bodies live | Fold each leaf module into an aspect file at the same path. | Out-of-store symlinks (Pi, OpenCode, Zed) and the DMS snapshot script name `modules/programs/...` paths. Folding in place keeps every one of those paths valid and needs no doc rewrite for data files. |
 | D5 | Unstable packages | Overlay `pkgs.unstable` from `inputs.nixpkgs-unstable.legacyPackages` | Same package set as today (`legacyPackages`, no extra config). `home-manager.useGlobalPkgs = true` makes it visible to Home Manager without a second definition. |
 | D6 | Marker for not-yet-migrated files | `_` prefix on the file name | import-tree ignores any path component that starts with `_`. `git ls-files 'modules/**/_*.nix'` lists remaining work. When the list is empty, the migration is done. |
 
@@ -160,7 +160,6 @@ it. Source files are today's paths.
 | `agents.claude-code` | homeManager | agents | `modules/programs/agents/claude-code/default.nix` |
 | `agents.codex` | homeManager | agents | `modules/programs/agents/codex.nix` |
 | `agents.pi` | homeManager | agents | `modules/programs/agents/pi/default.nix` |
-| `agents.omp` | homeManager | agents | `modules/programs/agents/omp/default.nix` |
 | `agents.opencode` | homeManager | agents | `modules/programs/agents/opencode.nix` |
 | `agents.collie`, `agents.agentsview`, `agents.plannotator` | homeManager | agents | the matching files |
 | `herdr` | homeManager | cli-base | `modules/programs/herdr.nix` |
@@ -819,12 +818,11 @@ from a module included only on Linux does not change its Linux output.
 
 | File | Aspect | Notes |
 |---|---|---|
-| `agents/_default.nix` | `agents` | Declares the option: `homeManager = { lib, ... }: { options.agentHarnesses.executor.url = lib.mkOption {...}; }`. Because this module declares `options`, any config in the same module must sit under `config = {}`. Includes: `agents.skills`, `agents.claude-code`, `agents.codex`, `agents.pi`, `agents.omp`, `agents.opencode`, `agents.collie`, `agents.agentsview`, `agents.plannotator`. |
+| `agents/_default.nix` | `agents` | Declares the option: `homeManager = { lib, ... }: { options.agentHarnesses.executor.url = lib.mkOption {...}; }`. Because this module declares `options`, any config in the same module must sit under `config = {}`. Includes: `agents.skills`, `agents.claude-code`, `agents.codex`, `agents.pi`, `agents.opencode`, `agents.collie`, `agents.agentsview`, `agents.plannotator`. |
 | `agents/_shared.nix` | `agents.skills` (`den.aspects.agents.provides.skills`) | `enableHomelabSkills` module argument becomes flat-form `{ host, config, lib, ... }:` reading `host.homelab`. `imports = [ inputs.agent-skills-nix.homeManagerModules.default ]` uses the file-level `inputs`. Keep the per-skill symlink layout and its comment (AGENTS.md rule). |
 | `agents/claude-code/_default.nix` | `agents.claude-code` | `lib.optionalAttrs pkgs.stdenv.isDarwin` for the floai marketplace stays (one aspect, two platforms). |
 | `agents/_codex.nix` | `agents.codex` | Same darwin guard stays. `inputs.llm-agents` from file scope. |
 | `agents/pi/_default.nix` | `agents.pi` | `piDir` string unchanged (`modules/programs/agents/pi`). `inputs.garage`, `inputs.llm-agents` from file scope. |
-| `agents/omp/_default.nix` | `agents.omp` | `ompDir` unchanged. |
 | `agents/_opencode.nix` | `agents.opencode` | `opencodeDir` unchanged. |
 | `agents/_collie.nix`, `_agentsview.nix`, `_plannotator.nix` | the matching provides | trivial |
 
@@ -919,7 +917,7 @@ Most edits happen in the phase that changes the thing. This phase is the audit.
 
 | Document | Change |
 |---|---|
-| `README.md` | Rewrite "Directory Structure" (section 2.1). Add "Adding a feature", "Adding a host", "Adding a user" recipes (Appendix B). Secrets section as in Phase 5. Keep OMP section; its paths are unchanged. |
+| `README.md` | Rewrite "Directory Structure" (section 2.1). Add "Adding a feature", "Adding a host", "Adding a user" recipes (Appendix B). Secrets section as in Phase 5. |
 | `AGENTS.md`, `CLAUDE.md` | Replace with Appendix A. Keep both files identical. |
 | `docs/initial-setup.md` | No change (keys and age setup are layout-independent). |
 | `hosts/tts-pi/README.md` | No change (`nix build .#images.tts-pi` and the `--target-host` command are unchanged). Confirm after Phase 2. |
@@ -976,7 +974,6 @@ Every tracked `.nix` file and every file the plan touches.
 | `modules/programs/agents/claude-code/default.nix`, `agents/*.md` | rename `_`, fold 4B; md files keep | |
 | `modules/programs/agents/codex.nix`, `opencode.nix`, `collie.nix`, `agentsview.nix`, `plannotator.nix` | rename `_`, fold 4B | |
 | `modules/programs/agents/pi/default.nix` | rename `_`, fold 4B | `settings.json`, `settings-extensions.json` unchanged |
-| `modules/programs/agents/omp/default.nix`, `config.yml` | fold; yml unchanged | |
 | `modules/programs/agents/opencode/*.json` | keep | |
 | `modules/programs/nvf/*.nix` (17) | rename `_`, fold 4C | each contributes to `den.aspects.nvf` |
 | `modules/programs/browsers/default.nix` | delete 4D | |
@@ -1168,8 +1165,8 @@ shared across hosts and users.
   `modules/programs/agents/`.
 - Pi's tracked `settings.json` and `settings-extensions.json` are intentionally
   writable through out-of-store symlinks that point at
-  `~/nixos-config/modules/programs/agents/pi`. The same applies to OMP,
-  OpenCode, and Zed. Do not move those directories. Validate changed JSON with
+  `~/nixos-config/modules/programs/agents/pi`. The same applies to
+  OpenCode and Zed. Do not move those directories. Validate changed JSON with
   `jq empty`.
 - Preserve the per-skill symlink layout in
   `modules/programs/agents/shared.nix`; it intentionally leaves externally

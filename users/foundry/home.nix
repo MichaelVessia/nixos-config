@@ -70,7 +70,6 @@
     age
     ssh-to-age
     inputs.llm-agents.packages.${pkgs.system}.claude-code
-    inputs.llm-agents.packages.${pkgs.system}.omp
     inputs.llm-agents.packages.${pkgs.system}.herdr
     inputs.llm-agents.packages.${pkgs.system}.hunk
   ];

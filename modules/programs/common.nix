@@ -85,7 +85,6 @@
       # codex is installed (wrapped) from modules/programs/agents/codex.nix
       inputs.llm-agents.packages.${pkgs.system}.herdr
       inputs.llm-agents.packages.${pkgs.system}.hunk
-      inputs.llm-agents.packages.${pkgs.system}.omp
       # pi is installed (wrapped) from modules/programs/agents/pi
     ]
     ++ lib.optionals stdenv.isDarwin [

@@ -284,21 +284,9 @@ creates verified private albums without changing originals. It is enabled only
 on homelab-enabled hosts (`framework13`), not `foundry` or `flomac`. Rebuild to
 install it, then start a new agent session to load its catalog entry.
 
-## OMP Configuration
+## Agent MCP servers
 
-OMP uses OpenAI only. Use Herdr for Claude sessions. The tracked
-[OMP configuration](modules/programs/agents/omp/config.yml) defines model roles,
-approval mode, and status-line settings. YOLO mode lets tools run without approval.
-
-Home Manager links `~/.omp/agent/config.yml` to the file under
-`~/nixos-config/modules/programs/agents/omp/`. Keep the checkout at
-`~/nixos-config`. Changes made through `/settings` or `omp config set` update
-the tracked file. Review its Git diff before committing.
-
-Home Manager also generates `~/.omp/agent/mcp.json`, registering the shared
-Executor and Figma endpoints from `agentHarnesses` as HTTP MCP servers.
-
-Pi, OMP, Codex, Claude Code, OpenCode, and Cursor use Executor and the
+Pi, Codex, Claude Code, OpenCode, and Cursor use Executor and the
 [Figma remote MCP server](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/).
 Slack tools use Executor. Figma connects directly because it does not work
 through Executor. Claude Code disables imported claude.ai
@@ -335,19 +323,14 @@ OAuth credentials are local to each harness and are not managed by Nix.
 Use `executor-flosports` in place of `executor` to authorize the work instance.
 For Figma, use the commands below with `figma` in place of `executor`, or
 select Figma in Claude Code.
-Authorize in each harness: `/mcp-auth executor` in Pi, `/mcp reauth executor`
-in OMP, `codex mcp login executor`, `opencode2 mcp auth executor`,
+Authorize in each harness: `/mcp-auth executor` in Pi,
+`codex mcp login executor`, `opencode2 mcp auth executor`,
 `/mcp` → Executor → Authenticate in Claude Code, and
 `cursor-agent mcp login executor` from the T3 project directory for Cursor.
-Run OMP authorization in the
-session that needs access. OMP 18.1.13 caches credentials in memory, and
-`/mcp reload` does not refresh credentials saved by another process. After
-authorizing in a separate OMP process, exit the older session and resume it
-with `omp --continue`; a fresh process reads the saved credentials.
 
 ## T3 threads through Executor
 
-Codex, Claude Code, Cursor, Pi, OMP, and OpenCode use these shared MCP entries:
+Codex, Claude Code, Cursor, Pi, and OpenCode use these shared MCP entries:
 
 - `executor` connects to the personal Executor at
   `https://executor-mcp.bison-gray.ts.net/mcp`. Only framework13 and forge get

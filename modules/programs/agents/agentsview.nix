@@ -7,10 +7,8 @@
   # cursor_secret into it), so we can't declare the whole file. Instead,
   # idempotently manage the lines we care about:
   #
-  # - pi_dirs: agentsview has no native omp support, but omp sessions parse
-  #   as Pi agent type when their dir is listed in pi_dirs
-  #   (kenn-io/agentsview#486). Tilde is not expanded in config values, so
-  #   paths must be absolute.
+  # - pi_dirs: Pi session directories. Tilde is not expanded in config
+  #   values, so paths must be absolute.
   #
   # The awk cleanup also removes the obsolete custom_model_pricing table
   # previously managed here, while preserving agentsview-owned settings.
@@ -32,8 +30,7 @@
         { print }
       ' "$conf" > "$tmp" && mv "$tmp" "$conf"
 
-      printf 'pi_dirs = ["%s", "%s"]\n' \
-        "$HOME/.pi/agent/sessions" "$HOME/.omp/agent/sessions" >> "$conf"
+      printf 'pi_dirs = ["%s"]\n' "$HOME/.pi/agent/sessions" >> "$conf"
     '';
   };
 }

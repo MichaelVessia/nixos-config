@@ -8,7 +8,6 @@
     ./codex.nix
     ./cursor.nix
     ./opencode.nix
-    ./omp
     ./pi
     ./plannotator.nix
     ./claude-code

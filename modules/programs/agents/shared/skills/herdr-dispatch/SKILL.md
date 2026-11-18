@@ -63,12 +63,12 @@ Routing table for pinned models. Match case-insensitively; spaces, hyphens, unde
 | `fable`, `opus`, `sonnet`, `haiku`, with or without `latest` | `claude` | `--model <family> --effort <level> --dangerously-skip-permissions` |
 | Versioned family: `opus 5.5`, `Sonnet 5`, `Haiku 4.5` | `claude` | `--model claude-<family>-<version>`, dots become hyphens |
 | Canonical `claude-*` | `claude` | `--model <as given>` |
-| `5.6 sol`, `5.6 luna`, `5.6 terra` | `omp` | `--model openai-codex/gpt-5.6-<name> --thinking <level>` |
-| `6.1 sol`, `6.1 terra` | `omp` | `--model openai-codex/gpt-6.1-<name> --thinking <level>` |
-| `6.2 sol`, `GPT6.2`, `GPT-6.2`, `Sol` | `omp` | `--model openai-codex/gpt-6.2-sol --thinking <level>` |
-| `6.2 astra`, `Astra` | `omp` | `--model openai-codex/gpt-6.2-astra --thinking <level>` |
+| `5.6 sol`, `5.6 luna`, `5.6 terra` | `codex` | `--model gpt-5.6-<name> -c model_reasoning_effort=<level>` |
+| `6.1 sol`, `6.1 terra` | `codex` | `--model gpt-6.1-<name> -c model_reasoning_effort=<level>` |
+| `6.2 sol`, `GPT6.2`, `GPT-6.2`, `Sol` | `codex` | `--model gpt-6.2-sol -c model_reasoning_effort=<level>` |
+| `6.2 astra`, `Astra` | `codex` | `--model gpt-6.2-astra -c model_reasoning_effort=<level>` |
 
-Levels: Claude Code `--effort low|medium|high|xhigh|max`; OMP `--thinking off|minimal|low|medium|high|xhigh|max`. Claude Code always runs with `--dangerously-skip-permissions`. OMP supports `--approval-mode yolo`; add it only when the user explicitly authorizes bypassing approvals. Never route Claude models through OMP; use Claude Code. Unclear family: ask.
+Levels: Claude Code `--effort low|medium|high|xhigh|max`; Codex `model_reasoning_effort=low|medium|high|xhigh|max`. Claude Code always runs with `--dangerously-skip-permissions`. Codex supports `--dangerously-bypass-approvals-and-sandbox`; add it only when the user explicitly authorizes bypassing approvals. Never route Claude models through Codex; use Claude Code. Unclear family: ask.
 
 ## Handoff
 
