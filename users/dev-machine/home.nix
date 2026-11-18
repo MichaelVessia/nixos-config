@@ -28,7 +28,7 @@
 
   agentSkills.personal = [
     "agent-browser"
-    "effect-service-design"
+    "effect-program-design"
     "herdr"
     "leaving-pr-comments"
     "pstack-sync"
