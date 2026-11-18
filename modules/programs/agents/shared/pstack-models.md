@@ -3,8 +3,8 @@
 # budget: medium (high)
 feature, refactoring: claudeAgent/claude-opus-5-5 effort=high
 bug-fix: claudeAgent/claude-opus-5-5 effort=high
-perf-issue: codex/gpt-6.2-astra reasoningEffort=high
-hillclimb: codex/gpt-6.2-astra reasoningEffort=high
+perf-issue: claudeAgent/claude-fable-5-2 effort=high
+hillclimb: claudeAgent/claude-fable-5-2 effort=high
 judgment and prose: claudeAgent/claude-opus-5-5 effort=high
 hardest tasks: claudeAgent/claude-fable-5-2 effort=high
 how explorer: codex/gpt-6.1-terra reasoningEffort=high
