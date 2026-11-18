@@ -19,9 +19,10 @@ by Home Manager. External skill folders remain untouched.
 
 - `shared/pstack-models.md` splits roles across Claude and GPT at the stock
   `medium` budget (`high` start). Opus takes feature, refactoring, and bug-fix
-  code, judgment, prose, and the hardest tasks. GPT Sol takes perf, hillclimb,
-  tooling, and swarm work. GPT Terra takes fast exploration. Panels mix Opus
-  and Sol. No role uses Cursor. The session hook is on.
+  code, judgment, and prose. Fable takes the hardest tasks. GPT Astra takes perf
+  and hillclimb. GPT Sol takes tooling and swarm work. GPT Terra takes fast
+  exploration. Panels mix Opus and Sol. No role uses Cursor. The session hook
+  is on.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,
   full-scope completion, and native T3 PR watches.
 

@@ -64,8 +64,9 @@ Routing table for pinned models. Match case-insensitively; spaces, hyphens, unde
 | Versioned family: `opus 5.5`, `Sonnet 5`, `Haiku 4.5` | `claude` | `--model claude-<family>-<version>`, dots become hyphens |
 | Canonical `claude-*` | `claude` | `--model <as given>` |
 | `5.6 sol`, `5.6 luna`, `5.6 terra` | `omp` | `--model openai-codex/gpt-5.6-<name> --thinking <level>` |
-| `6.1 sol`, `GPT6.1`, `GPT-6.1` | `omp` | `--model openai-codex/gpt-6.1-sol --thinking <level>` |
-| `6 astra`, `Astra` | `omp` | `--model openai-codex/gpt-6-astra --thinking <level>` |
+| `6.1 sol`, `6.1 terra` | `omp` | `--model openai-codex/gpt-6.1-<name> --thinking <level>` |
+| `6.2 sol`, `GPT6.2`, `GPT-6.2`, `Sol` | `omp` | `--model openai-codex/gpt-6.2-sol --thinking <level>` |
+| `6.2 astra`, `Astra` | `omp` | `--model openai-codex/gpt-6.2-astra --thinking <level>` |
 
 Levels: Claude Code `--effort low|medium|high|xhigh|max`; OMP `--thinking off|minimal|low|medium|high|xhigh|max`. Claude Code always runs with `--dangerously-skip-permissions`. OMP supports `--approval-mode yolo`; add it only when the user explicitly authorizes bypassing approvals. Never route Claude models through OMP; use Claude Code. Unclear family: ask.
 

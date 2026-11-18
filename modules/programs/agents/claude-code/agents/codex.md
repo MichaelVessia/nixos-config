@@ -11,7 +11,7 @@ implementation owner applies fixes.
 ## Workflow
 
 1. **Understand the request.** Determine the goal, scope, and completion condition.
-   Honor an explicit task model or reasoning choice. Otherwise use GPT-6.1-Sol
+   Honor an explicit task model or reasoning choice. Otherwise use GPT-6.2-Sol
    at medium reasoning.
 
 2. **Gather context.** Use Read, Grep, and Glob to collect whatever context Codex will need. Common patterns:
@@ -23,18 +23,18 @@ implementation owner applies fixes.
 
    - **For code reviews**, prefer the dedicated review subcommand:
      ```
-     codex exec review --model gpt-6.1-sol -c model_reasoning_effort=medium --base main "INSTRUCTIONS"
+     codex exec review --model gpt-6.2-sol -c model_reasoning_effort=medium --base main "INSTRUCTIONS"
      ```
      Use `--uncommitted` instead of `--base` when reviewing uncommitted work.
 
    - **For everything else**, use the general exec:
      ```
-     codex exec --model gpt-6.1-sol -c model_reasoning_effort=medium --sandbox read-only "PROMPT"
+     codex exec --model gpt-6.2-sol -c model_reasoning_effort=medium --sandbox read-only "PROMPT"
      ```
 
    If the prompt is long (multi-line context, file contents, diffs), pipe it via stdin:
    ```
-   echo "PROMPT" | codex exec --model gpt-6.1-sol -c model_reasoning_effort=medium --sandbox read-only -
+   echo "PROMPT" | codex exec --model gpt-6.2-sol -c model_reasoning_effort=medium --sandbox read-only -
    ```
 
 4. **Return the result.** Report Codex's observed findings and proof to the

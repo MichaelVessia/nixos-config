@@ -1,7 +1,7 @@
 # Fallback
 
 - If an unpinned Opus implementation assignment cannot launch because Opus is
-  unavailable, use `--kind omp -- --model openai-codex/gpt-6.1-sol --thinking medium`
+  unavailable, use `--kind omp -- --model openai-codex/gpt-6.2-sol --thinking medium`
   once. Confirm the first worker is no longer running. Give the replacement the
   remaining goal, context, scope, and completion condition.
 - An explicit provider, model, or effort pin requires asking before substitution,

@@ -22,7 +22,7 @@
 
   codexConfig = {
     personality = "pragmatic";
-    model = "gpt-6.1-sol";
+    model = "gpt-6.2-sol";
     model_reasoning_effort = "medium";
     model_provider = "cliproxy";
     model_providers.cliproxy = {
