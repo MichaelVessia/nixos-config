@@ -470,88 +470,61 @@
     };
   };
 
-  # `claude-hub` runs in its own config dir, so its OAuth login and sessions
-  # stay separate from the default home. It sends requests through the
-  # CLIProxyAPI hub with the hub's client key instead of a Claude login.
+  # Claude sends requests through the CLIProxyAPI hub with the hub's client
+  # key instead of a Claude login.
   hub = config.agentHarnesses.cliproxyHub;
-  claudeHomes = [
-    {
-      dir = ".claude";
-      stateFile = ".claude.json";
-      inherit settings;
+  claudeSettingsFile = pkgs.writeText "claude-settings.json" (builtins.toJSON (
+    lib.recursiveUpdate settings {
+      env.ANTHROPIC_BASE_URL = hub.url;
+      apiKeyHelper = "${pkgs.coreutils}/bin/cat ${lib.escapeShellArg hub.keyFile}";
     }
-    {
-      dir = ".claude-hub";
-      stateFile = ".claude-hub/.claude.json";
-      settings = lib.recursiveUpdate settings {
-        env.ANTHROPIC_BASE_URL = hub.url;
-        apiKeyHelper = "${pkgs.coreutils}/bin/cat ${lib.escapeShellArg hub.keyFile}";
-      };
-    }
-  ];
-
-  claude-hub = pkgs.writeShellScriptBin "claude-hub" ''
-    export CLAUDE_CONFIG_DIR="$HOME/.claude-hub"
-    exec claude "$@"
-  '';
-
-  installClaudeHome = home: let
-    settingsFile = pkgs.writeText "claude-settings.json" (builtins.toJSON home.settings);
-  in ''
-    rm -f "$HOME/${home.dir}/settings.json"
-    install -Dm644 ${settingsFile} "$HOME/${home.dir}/settings.json"
-  '';
-
-  # Claude stores user- and project-scoped MCP configuration alongside
-  # mutable runtime state in .claude.json. Centralize MCP servers at user
-  # scope and clear project servers while preserving all other state.
-  installClaudeMcpConfig = home: ''
-    config_file="$HOME/${home.stateFile}"
-    temporary_file="$(${pkgs.coreutils}/bin/mktemp)"
-
-    if [ -f "$config_file" ]; then
-      ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} '
-        .mcpServers = $mcpServers[0]
-        | if (.projects | type) == "object"
-          then .projects |= with_entries(
-            .value |= if type == "object" then .mcpServers = {} else . end
-          )
-          else .
-          end
-      ' "$config_file" > "$temporary_file"
-    else
-      ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} \
-        -n '{mcpServers: $mcpServers[0]}' > "$temporary_file"
-    fi
-
-    $DRY_RUN_CMD install -Dm600 "$temporary_file" "$config_file"
-    rm -f "$temporary_file"
-  '';
+  ));
 in {
   config = {
-    home.file = lib.mergeAttrsList (map (home: {
-        "${home.dir}/CLAUDE.md".text = sharedInstructions;
-        "${home.dir}/agents" = {
-          source = ./agents;
-          recursive = true;
-        };
-      })
-      claudeHomes);
+    home.file = {
+      ".claude/CLAUDE.md".text = sharedInstructions;
+      ".claude/agents" = {
+        source = ./agents;
+        recursive = true;
+      };
+    };
 
     # Copy Claude config as a regular file (not symlink)
-    home.activation.claudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] (
-      lib.concatMapStrings installClaudeHome claudeHomes
-    );
+    home.activation.claudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      rm -f "$HOME/.claude/settings.json"
+      install -Dm644 ${claudeSettingsFile} "$HOME/.claude/settings.json"
+    '';
 
-    home.activation.claudeMcpConfig = lib.hm.dag.entryAfter ["claudeConfig"] (
-      lib.concatMapStrings installClaudeMcpConfig claudeHomes
-    );
+    # Claude stores user- and project-scoped MCP configuration alongside
+    # mutable runtime state in ~/.claude.json. Centralize MCP servers at user
+    # scope and clear project servers while preserving all other state.
+    home.activation.claudeMcpConfig = lib.hm.dag.entryAfter ["claudeConfig"] ''
+      config_file="$HOME/.claude.json"
+      temporary_file="$(${pkgs.coreutils}/bin/mktemp)"
+
+      if [ -f "$config_file" ]; then
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} '
+          .mcpServers = $mcpServers[0]
+          | if (.projects | type) == "object"
+            then .projects |= with_entries(
+              .value |= if type == "object" then .mcpServers = {} else . end
+            )
+            else .
+            end
+        ' "$config_file" > "$temporary_file"
+      else
+        ${pkgs.jq}/bin/jq --slurpfile mcpServers ${mcpServersFile} \
+          -n '{mcpServers: $mcpServers[0]}' > "$temporary_file"
+      fi
+
+      $DRY_RUN_CMD install -Dm600 "$temporary_file" "$config_file"
+      rm -f "$temporary_file"
+    '';
 
     # Claude helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
       claude-statusline
       claude-direnv-env
-      claude-hub
       worktree-gc
       dcg
       pkgs.nodejs
