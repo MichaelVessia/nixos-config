@@ -6,7 +6,7 @@
     ./shared.nix
     ./agentsview.nix
     ./codex.nix
-    ./cursor.nix
+    ./grok.nix
     ./opencode.nix
     ./pi
     ./plannotator.nix

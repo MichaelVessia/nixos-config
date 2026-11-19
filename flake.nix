@@ -129,6 +129,7 @@
 
           modules = [
             ./hosts/framework13/default.nix
+            ./modules/grok-requirements.nix
             ./modules/secrets
 
             nixos-hardware.nixosModules.framework-12th-gen-intel
@@ -168,6 +169,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/forge
+            ./modules/grok-requirements.nix
             ./modules/secrets
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
@@ -199,6 +201,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/foundry
+            ./modules/grok-requirements.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -226,6 +229,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/dev-machine
+            ./modules/grok-requirements.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -293,6 +297,7 @@
 
           modules = [
             ./hosts/flomac/default.nix
+            ./modules/grok-requirements.nix
 
             # make home-manager as a module of nix-darwin
             # so that home-manager configuration will be deployed automatically when executing `darwin-rebuild switch`

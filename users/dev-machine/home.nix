@@ -11,7 +11,7 @@
     ../../modules/programs/agents/shared.nix
     ../../modules/programs/agents/claude-code
     ../../modules/programs/agents/codex.nix
-    ../../modules/programs/agents/cursor.nix
+    ../../modules/programs/agents/grok.nix
     ../../modules/programs/gcloud.nix
     ../../modules/programs/git.nix
     ../../modules/programs/shell.nix

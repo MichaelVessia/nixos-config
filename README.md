@@ -286,7 +286,7 @@ install it, then start a new agent session to load its catalog entry.
 
 ## Agent MCP servers
 
-Pi, Codex, Claude Code, OpenCode, and Cursor use Executor and the
+Pi, Codex, Claude Code, OpenCode, and Grok use Executor and the
 [Figma remote MCP server](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/).
 Slack tools use Executor. Figma connects directly because it does not work
 through Executor. Claude Code disables imported claude.ai
@@ -294,30 +294,15 @@ connectors; activation also clears its saved project-scoped MCP servers so
 projects use the user-scoped entries. This does not delete connectors
 from the claude.ai account.
 
-Cursor gets the same Executor, Executor Flosports, and Figma endpoints as
-Claude Code and Codex. Activation replaces `~/.cursor/mcp.json`. The shared
-instructions are always-applied rules in `~/.cursor/rules/`.
+Grok reads Claude Code's setup through its compatibility layer: skills,
+`CLAUDE.md`, MCP servers from `~/.claude.json`, and hooks. Its Cursor
+compatibility is off.
 
 Claude and Codex use the Nix-pinned t3-pstack plugin. Activation installs it
 into their default and configured T3 homes. Personal skills remain separate.
 See [t3-pstack setup](modules/programs/agents/pstack/README.md) for model rules,
 checks, and updates. The upstream plugin supports Claude and Codex in T3;
-Cursor and OpenCode retain shared instructions and personal skills.
-
-T3 runs Cursor through its local SDK and enables the user and project setting
-sources. The SDK loads these MCP entries but cannot start an OAuth login.
-The Cursor module installs `cursor-agent` for this step. On the execution host,
-run the login from the same project directory used by the T3 thread:
-
-```bash
-cursor-agent mcp login executor
-cursor-agent mcp list-tools executor
-```
-
-Cursor stores this authorization under
-`~/.cursor/projects/<project>/mcp-auth.json`. It is local to that host and
-project. Start a new Cursor run in T3 after login. The Cursor desktop app is
-not required.
+Grok and OpenCode retain shared instructions and personal skills.
 
 OAuth credentials are local to each harness and are not managed by Nix.
 Use `executor-flosports` in place of `executor` to authorize the work instance.
@@ -325,12 +310,12 @@ For Figma, use the commands below with `figma` in place of `executor`, or
 select Figma in Claude Code.
 Authorize in each harness: `/mcp-auth executor` in Pi,
 `codex mcp login executor`, `opencode2 mcp auth executor`,
-`/mcp` → Executor → Authenticate in Claude Code, and
-`cursor-agent mcp login executor` from the T3 project directory for Cursor.
+and `/mcp` → Executor → Authenticate in Claude Code. Grok reads Claude Code's
+MCP entries. Authorize them from a Grok session.
 
 ## T3 threads through Executor
 
-Codex, Claude Code, Cursor, Pi, and OpenCode use these shared MCP entries:
+Codex, Claude Code, Grok, Pi, and OpenCode use these shared MCP entries:
 
 - `executor` connects to the personal Executor at
   `https://executor-mcp.bison-gray.ts.net/mcp`. Only framework13 and forge get
