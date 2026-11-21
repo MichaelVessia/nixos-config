@@ -1,6 +1,7 @@
 # t3-pstack
 
-Nix pins [t3-pstack](https://github.com/chhoumann/t3-pstack) in both flakes.
+Nix pins [t3-pstack](https://github.com/chhoumann/t3-pstack) in `flake.nix`
+and `flake.lock`.
 `pstack.nix` installs the upstream CLI and a fixed source tree. Home Manager
 runs the installer after writing Claude and Codex settings. It discovers
 provider homes from local T3 settings and verifies each plugin installation.
@@ -11,20 +12,18 @@ settings use this link, so upgrades do not keep an old store path. Updates use
 Nix, not npm or automatic Git fetches. Run `t3-pstack install` after adding a
 new provider home, and `t3-pstack doctor` to check the installed state.
 
-The plugin supports Claude and Codex in T3. Cursor and OpenCode keep shared
-instructions and personal skills. The old vendored vessia skills are removed
-by Home Manager. External skill folders remain untouched.
+The installer updates Claude Code and Codex homes and Antigravity profiles
+that T3 lists on each machine. Antigravity needs CLI version 1.5.0 or later
+to load the plugin.
 
 ## Local policy
 
 - `shared/pstack-models.md` splits roles across Claude and GPT. Opus takes
-  feature, refactoring, and bug-fix code, judgment, and prose. Fable takes perf,
-  hillclimb, and the hardest tasks. GPT Sol takes tooling and swarm work. GPT
-  Terra takes fast exploration. Panels mix Opus and Sol. No role uses Cursor.
-  The session hook is on.
-- Effort is mixed. Feature and refactoring code, how explorer and explainer,
-  why investigators, reflect tooling, and swarm workers run at `medium`. Roles
-  that decide, debug, tune, or review run at `high`.
+  feature, refactoring, and bug-fix code, judgment, and prose. Fable takes
+  performance work and hillclimb. GPT Sol takes swarm work. Panels mix Opus
+  and Sol. The session hook is on.
+- Feature and refactoring code and swarm workers run at `medium`. Other
+  roles run at `high`.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,
   full-scope completion, and native T3 PR watches.
 
@@ -34,12 +33,15 @@ sheet and activate the configuration.
 - `stable-source.patch` keeps the stable source link in additional Codex homes.
   The Codex CLI otherwise saves the resolved store path, which prevents the
   next Nix pin from reaching those homes.
+- `antigravity-store.patch` gives the owner write permission on copied plugin
+  directories so the next update can remove the old copy.
 
 ## Update and check
 
-Update the same commit in both flakes and their locks. Apply the patch to a
-copy of that upstream source, then run the checks. The install check needs
-Claude and Codex on PATH and uses temporary configuration homes:
+Set the release commit in `flake.nix` and run `nix flake update t3-pstack`.
+Apply both patches to a copy of the upstream source. Remove write permission
+from that copy to match the Nix store. The install check uses temporary homes
+and needs the Claude Code and Codex commands on PATH.
 
 ```sh
 node modules/programs/agents/pstack/check-policy.mjs /path/to/patched/source

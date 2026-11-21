@@ -10,6 +10,7 @@
     chmod -R u+w "$out"
     cd "$out"
     patch -p1 < ${./pstack/stable-source.patch}
+    patch -p1 < ${./pstack/antigravity-store.patch}
   '';
   # A stable path lets each CLI keep its marketplace registration across updates.
   sourcePath = "${config.home.homeDirectory}/.local/share/t3-pstack/source";

@@ -1,0 +1,23 @@
+--- a/tools/install/antigravity.mjs
++++ b/tools/install/antigravity.mjs
+@@ -5,7 +5,7 @@
+ // writes ~/.gemini whatever GEMINI_HOME says, so the installer copies the
+ // plugin tree into each profile itself. The older ACP runtime (1.4.x) that
+ // earlier T3 releases installed loads no plugins or session-start hooks.
+-import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync } from "node:fs";
++import { chmodSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
+ import { dirname, join } from "node:path";
+
+ import { check, pluginIntact, readJson, tempBeside } from "./common.mjs";
+@@ -41,6 +41,11 @@
+   // and files a release dropped do not linger.
+   const fresh = tempBeside(path);
+   cpSync(pluginRoot, fresh, { recursive: true });
++  // Store directories are read-only. Make the copy removable on the next update.
++  chmodSync(fresh, 0o700);
++  for (const entry of readdirSync(fresh, { recursive: true, withFileTypes: true })) {
++    if (entry.isDirectory()) chmodSync(join(entry.parentPath, entry.name), 0o700);
++  }
+   const old = existsSync(path) ? tempBeside(path) : undefined;
+   if (old) renameSync(path, old);
+   renameSync(fresh, path);

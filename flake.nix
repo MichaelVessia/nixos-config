@@ -23,7 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     t3-pstack = {
-      url = "github:chhoumann/t3-pstack/67f446a00cc46e28455bcdec796069c75a809e37";
+      url = "github:chhoumann/t3-pstack/d444bf1dcdff271278b0c3bd35033f7065e047ba";
       flake = false;
     };
     llm-agents.url = "github:numtide/llm-agents.nix";

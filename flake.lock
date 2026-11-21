@@ -1251,17 +1251,17 @@
     "t3-pstack": {
       "flake": false,
       "locked": {
-        "lastModified": 1792698642,
-        "narHash": "sha256-X9C/9pJ97JL3JyfAb93ZF1pmBLtmYssVY9MnKdsz85I=",
+        "lastModified": 1795188723,
+        "narHash": "sha256-TM2IsKKqmxsjMQqoD1OTCMDViT84qK3hgTMwWCbK3O8=",
         "owner": "chhoumann",
         "repo": "t3-pstack",
-        "rev": "67f446a00cc46e28455bcdec796069c75a809e37",
+        "rev": "d444bf1dcdff271278b0c3bd35033f7065e047ba",
         "type": "github"
       },
       "original": {
         "owner": "chhoumann",
         "repo": "t3-pstack",
-        "rev": "67f446a00cc46e28455bcdec796069c75a809e37",
+        "rev": "d444bf1dcdff271278b0c3bd35033f7065e047ba",
         "type": "github"
       }
     },
