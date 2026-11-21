@@ -12,6 +12,7 @@
     ../../modules/programs/agents/options.nix
     ../../modules/programs/agents/shared.nix
     ../../modules/programs/agents/grok.nix
+    ../../modules/programs/agents/antigravity.nix
     ../../modules/programs/agents/plannotator.nix
     ../../modules/programs/niri.nix
     ../../modules/programs/hex
