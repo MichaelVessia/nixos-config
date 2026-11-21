@@ -9,20 +9,24 @@
   imports = [
     ../common.nix
     ../../modules/programs
+    ../../modules/programs/agents/options.nix
+    ../../modules/programs/agents/shared.nix
+    ../../modules/programs/agents/grok.nix
+    ../../modules/programs/agents/plannotator.nix
     ../../modules/programs/niri.nix
     ../../modules/programs/hex
   ];
 
-  home.packages =
-    [inputs.grok-bot.packages.${pkgs.system}.default]
-    ++ pkgs.lib.optional (osConfig.networking.hostName == "framework13") (
-      pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
-        providerPackages = inputs.llm-agents.packages.${pkgs.system}.t3code.providerPackages;
-      }
-    );
+  home.packages = [
+    inputs.grok-bot.packages.${pkgs.system}.default
+    (pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
+      providerPackages = [inputs.llm-agents.packages.${pkgs.system}.grok];
+    })
+  ];
 
   agentHarnesses.executor.enable = true;
-  agentHarnesses.cliproxyHub.keyFile = osConfig.sops.secrets.cliproxyapi_access_key.path;
+  agentHarnesses.cliproxyHub.enable = false;
+  agentHarnesses.pstack.modelsFile = ../../modules/programs/agents/shared/pstack-models-personal.md;
 
   # Preserve existing shares until this device can be inventoried.
   services.syncthing.overrideDevices = false;

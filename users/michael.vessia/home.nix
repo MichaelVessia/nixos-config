@@ -8,6 +8,7 @@
   imports = [
     ../common.nix
     ../../modules/programs
+    ../../modules/programs/agents
     ../../modules/programs/gcloud.nix
     ../../modules/programs/hex
     ../../modules/programs/pup.nix

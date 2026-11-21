@@ -24,7 +24,7 @@
 in {
   home.packages = [installer];
   home.file.".local/share/t3-pstack/source".source = source;
-  home.file.".config/t3-pstack/models.md".source = ./shared/pstack-models.md;
+  home.file.".config/t3-pstack/models.md".source = config.agentHarnesses.pstack.modelsFile;
 
   # Run after writable CLI settings and the source/model links exist. The
   # upstream installer discovers additional provider homes from T3 settings.

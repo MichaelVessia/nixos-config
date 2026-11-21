@@ -18,10 +18,14 @@ to load the plugin.
 
 ## Local policy
 
-- `shared/pstack-models.md` splits roles across Claude and GPT. Opus takes
-  feature, refactoring, and bug-fix code, judgment, and prose. Fable takes
-  performance work and hillclimb. GPT Sol takes swarm work. Panels mix Opus
-  and Sol. The session hook is on.
+- `shared/pstack-models.md` is the default (work) sheet and splits roles across
+  Claude and GPT. Opus takes feature, refactoring, and bug-fix code, judgment,
+  and prose. Fable takes performance work and hillclimb. GPT Sol takes swarm
+  work. Panels mix Opus and Sol. The session hook is on.
+- `shared/pstack-models-personal.md` is used by personal hosts (`framework13`
+  and `forge`) via `agentHarnesses.pstack.modelsFile`. It splits roles across
+  personal Antigravity (`gemini-4-neon`) and Grok (`grok-4.7`) with no Claude
+  or Codex targets.
 - Feature and refactoring code and swarm workers run at `medium`. Other
   roles run at `high`.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,

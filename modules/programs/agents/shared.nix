@@ -37,6 +37,7 @@
     ".claude/skills"
     ".codex/skills"
     ".config/opencode/skills"
+    ".gemini/config/skills"
   ];
 
   perSkillSymlinks = prefix:
@@ -91,6 +92,7 @@ in {
       // perSkillSymlinks ".agents/skills"
       // perSkillSymlinks ".claude/skills"
       // perSkillSymlinks ".codex/skills"
-      // perSkillSymlinks ".config/opencode/skills";
+      // perSkillSymlinks ".config/opencode/skills"
+      // perSkillSymlinks ".gemini/config/skills";
   };
 }

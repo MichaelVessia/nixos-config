@@ -129,7 +129,6 @@
 
           modules = [
             ./hosts/framework13/default.nix
-            ./modules/grok-requirements.nix
             ./modules/secrets
 
             nixos-hardware.nixosModules.framework-12th-gen-intel
@@ -169,7 +168,6 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/forge
-            ./modules/grok-requirements.nix
             ./modules/secrets
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
@@ -264,7 +262,7 @@
         };
       in {
         foundry = nixosNode "foundry" ["from-flomac" "from-framework13"];
-        forge = nixosNode "forge" ["from-flomac" "from-framework13"];
+        forge = nixosNode "forge" ["from-framework13"];
         framework13 = nixosNode "framework13" ["from-forge"];
         # Dev-machine has passwordless sudo and no root login.
         dev-machine = nixosNode "dev-machine" ["from-flomac"] // {sshUser = "michaelvessia";};

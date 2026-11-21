@@ -68,7 +68,7 @@
       obsidian # note-taking and knowledge management
       dbeaver-bin # database management tool
       # Note: whisper-cpp is configured in transcribe.nix
-      # Note: syncthing is configured as a service in syncthing.nix
+      # Note: syncthing is configured in syncthing.nix
 
       # terminal emulators
       tmux
@@ -81,11 +81,9 @@
 
       inputs.llm-agents.packages.${pkgs.system}.agent-browser
       inputs.llm-agents.packages.${pkgs.system}.agentsview
-      inputs.llm-agents.packages.${pkgs.system}.claude-code
-      # codex is installed (wrapped) from modules/programs/agents/codex.nix
+      # claude-code, codex, grok, opencode, and pi are installed by their harness modules
       inputs.llm-agents.packages.${pkgs.system}.herdr
       inputs.llm-agents.packages.${pkgs.system}.hunk
-      # pi is installed (wrapped) from modules/programs/agents/pi
     ]
     ++ lib.optionals stdenv.isDarwin [
       pngpaste # grab images from clipboard

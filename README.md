@@ -70,7 +70,7 @@ trusted user can get root. On dev-machine and flomac, the SSH user must be in
 |---|---|
 | framework13 | foundry, forge |
 | forge | framework13 |
-| flomac | foundry, forge, dev-machine |
+| flomac | foundry, dev-machine |
 | foundry | dev-machine, once foundry has private GitHub access |
 
 Dev-machine deploys nothing. Only flomac and foundry may reach it, and its key
@@ -86,16 +86,17 @@ dev-machine can reach flomac over SSH, but a deploy from them also needs
 private GitHub access there and macOS Remote Login on flomac. Until then, use
 `reload` on flomac.
 
-Framework13 installs the official T3 Code nightly desktop AppImage through
-Home Manager, pinned by version and checksum in
+Framework13 and Forge install the official T3 Code nightly desktop AppImage
+through Home Manager, pinned by version and checksum in
 `modules/programs/t3code-nightly/package.nix`. After rebuilding, launch it
 with `t3code-desktop` or **T3 Code (Nightly)** from the application launcher.
-Coding-agent executables still come from the locked `llm-agents` input.
-In-app automatic updates are disabled because Nix manages the installed
-version; update the package's version and checksum to upgrade.
-Its first-run setup connects to the local backend; remote computers can be
-added from the app. The independently installed nightly server on Foundry is
-unchanged. Forge does not run T3 Code.
+Personal hosts (`framework13` and `forge`) stay separate from the work/hub
+setup (`flomac`, `dev-machine`, `foundry`): they use personal Antigravity and
+direct xAI (`grok login`), with no CLIProxyAPI hub, Claude Code, Codex,
+OpenCode, or Pi. In-app automatic updates are disabled because Nix manages the
+installed desktop version; update the package's version and checksum to
+upgrade. Forge also runs `t3code.service` with `linger` and Tailscale Serve
+so Framework13 can connect to it remotely.
 
 Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
 Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
@@ -126,9 +127,9 @@ On Forge, apply the configuration with
 configured, or import an authenticated machine's built closure as root and use
 `sudo nixos-rebuild switch --store-path <system-store-path>` for the first deployment.
 Tailscale and agent OAuth authorization are separate machine-local steps.
-Forge authorizes the Framework, Foundry, and Flomac SSH public keys. It is not
-a remote agent host, and it does not install the `flo`
-CLI.
+Forge authorizes the Framework and Foundry SSH public keys (not Flomac). It
+enables `linger` and `modules/agent-memory.nix` for `t3code.service`, and it
+does not install the `flo` CLI.
 Forge disables accepted Tailscale subnet routes because it is already on the
 advertised homelab LAN. Accepting that subnet sends LAN replies through
 `tailscale0`, breaking direct SSH access. The Framework keeps route acceptance
@@ -294,9 +295,14 @@ connectors; activation also clears its saved project-scoped MCP servers so
 projects use the user-scoped entries. This does not delete connectors
 from the claude.ai account.
 
-Grok reads Claude Code's setup through its compatibility layer: skills,
-`CLAUDE.md`, MCP servers from `~/.claude.json`, and hooks. Its Cursor
-compatibility is off.
+On work hosts (`cliproxyHub.enable = true`), Grok routes through the
+CLIProxyAPI hub and reads Claude Code's setup through its compatibility layer
+(skills, `CLAUDE.md`, MCP servers from `~/.claude.json`, and hooks). On
+personal hosts (`framework13` and `forge`, `cliproxyHub.enable = false`), Grok
+authenticates directly with xAI (`grok login`), disables Claude compatibility,
+reads `~/.grok/AGENTS.md` and `~/.agents/skills`, and configures the personal
+`executor` MCP natively in `~/.grok/config.toml`. Cursor compatibility is off
+everywhere.
 
 Claude and Codex use the Nix-pinned t3-pstack plugin. Activation installs it
 into their default and configured T3 homes. Personal skills remain separate.
@@ -321,7 +327,8 @@ Codex, Claude Code, Grok, Pi, and OpenCode use these shared MCP entries:
   `https://executor-mcp.bison-gray.ts.net/mcp`. Only framework13 and forge get
   it (`agentHarnesses.executor.enable` in `users/michaelvessia/home.nix`).
 - `executor-flosports` connects to the FloSports Executor at
-  `https://executor.flosports.tv/mcp` on every host.
+  `https://executor.flosports.tv/mcp` on work hosts (`flomac`, `foundry`,
+  `dev-machine`).
 
 Home Manager generates the entries from `modules/programs/agents/options.nix`.
 OpenCode gets `executor` through `OPENCODE_CONFIG_CONTENT`, because its

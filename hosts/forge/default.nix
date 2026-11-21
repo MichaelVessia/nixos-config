@@ -14,13 +14,14 @@ in {
   imports = [
     ./hardware-configuration.nix
     ../../modules/desktop-system.nix
+    ../../modules/agent-memory.nix
     ../../modules/host-metrics.nix
   ];
 
   networking.hostName = "forge";
   system.stateVersion = "26.05";
 
-  # Trust this host's portless CA for floai `mono pitch verify`. `portless trust`
+  # Trust this host's portless CA for local portless HTTPS dev. `portless trust`
   # cannot update the NixOS trust store. Replace the file if ~/.portless/ca.pem changes.
   security.pki.certificateFiles = [./portless-ca.crt];
 
@@ -31,13 +32,13 @@ in {
   # deploy-rs logs in as root from the machines in this node's deploy groups.
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r michaelvessia@framework13"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
   ];
   users.users.michaelvessia = {
+    # Keeps T3 Code's systemd user service running without a login session.
+    linger = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObTdZXSO7j+J+1CKMgpcKvPPhCEZh1c4FT0hNuYTu1r"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP8SJbl7L0SDb3HveKQNN+TAoyq9/aHFEBHm4mBGhfWG foundry"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINhZQaY3xFx3zMord/MUJhPbHur1sVZDkJLNWz9XIZXU michael.vessia@flosports.tv"
     ];
   };
 

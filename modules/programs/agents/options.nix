@@ -24,6 +24,12 @@
     description = "Figma MCP endpoint shared by configured agent harnesses.";
   };
 
+  options.agentHarnesses.cliproxyHub.enable = lib.mkOption {
+    type = lib.types.bool;
+    default = true;
+    description = "Route configured harnesses through the CLIProxyAPI hub instead of direct logins.";
+  };
+
   options.agentHarnesses.cliproxyHub.url = lib.mkOption {
     type = lib.types.str;
     default = "https://foundry.bison-gray.ts.net:8317";
@@ -34,5 +40,11 @@
     type = lib.types.str;
     default = "${config.home.homeDirectory}/.config/sops-nix/secrets/cliproxyapi_access_key";
     description = "File with the hub client access key. The default is the Home Manager sops-nix path.";
+  };
+
+  options.agentHarnesses.pstack.modelsFile = lib.mkOption {
+    type = lib.types.path;
+    default = ./shared/pstack-models.md;
+    description = "t3-pstack model routing sheet installed to ~/.config/t3-pstack/models.md.";
   };
 }

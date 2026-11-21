@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: let
   # Wrapped scripts with explicit deps
@@ -32,7 +33,7 @@
       usage=$(echo "$input" | jq '.context_window.current_usage')
       if [ "$usage" != "null" ]; then
         current=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
-        size=$(echo "$input" | jq '.context_window.context_window_size')
+        size=$(echo "$usage" | jq '.context_window.context_window_size')
         pct=$((current * 100 / size))
         if [ "$pct" -lt 50 ]; then
           color="\033[32m"
@@ -521,8 +522,9 @@ in {
       rm -f "$temporary_file"
     '';
 
-    # Claude helper binaries + dcg in PATH for hooks and manual use
+    # Claude CLI + helper binaries + dcg in PATH for hooks and manual use
     home.packages = [
+      inputs.llm-agents.packages.${pkgs.system}.claude-code
       claude-statusline
       claude-direnv-env
       worktree-gc

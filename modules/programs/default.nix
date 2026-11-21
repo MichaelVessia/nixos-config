@@ -7,7 +7,6 @@
 }: {
   imports = [
     ./browsers
-    ./agents
     ./nvf
     ./common.nix
     ./cmux.nix
