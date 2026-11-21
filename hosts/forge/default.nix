@@ -28,7 +28,7 @@ in {
     hostIp = "192.168.1.24";
     gpu = "nvidia";
     nfs.enable = true;
-    backups.enable = false;
+    backups.enable = true;
   };
 
   # Trust this host's portless CA for local portless HTTPS dev. `portless trust`
