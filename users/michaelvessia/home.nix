@@ -11,6 +11,7 @@
     ../../modules/programs
     ../../modules/programs/agents/options.nix
     ../../modules/programs/agents/shared.nix
+    ../../modules/programs/agents/codex.nix
     ../../modules/programs/agents/grok.nix
     ../../modules/programs/agents/plannotator.nix
     ../../modules/programs/niri.nix
@@ -21,6 +22,7 @@
     inputs.grok-bot.packages.${pkgs.system}.default
     (pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
       providerPackages = [
+        config.agentHarnesses.codex.package
         inputs.llm-agents.packages.${pkgs.system}.grok
         pkgs.nodejs
       ];
