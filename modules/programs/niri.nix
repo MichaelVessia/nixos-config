@@ -408,7 +408,15 @@ in
           "Mod+B".action.spawn = "chromium";
           "Mod+E".action.spawn = "nautilus";
           # Hex dictation toggle (Alt+` with swap)
-          "Mod+Grave".action.spawn = ["hex" "dictation" "toggle"];
+          "Mod+Grave" = {
+            repeat = false;
+            action.spawn = ["hex" "dictation" "toggle"];
+          };
+          # Hex Scrawl/Annotate toggle (Windows+Shift+S with swap)
+          "Alt+Shift+S" = {
+            repeat = false;
+            action.spawn = ["hex" "annotate" "toggle"];
+          };
 
           # ================
           # WINDOW CONTROLS

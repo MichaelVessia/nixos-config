@@ -37,19 +37,45 @@ in {
       '';
     })
 
-    (lib.mkIf pkgs.stdenv.isLinux {
+    (lib.mkIf pkgs.stdenv.isLinux (let
+      # Hex's oxc crates need rustc 1.97; stable nixpkgs defaults to 1.95.
+      hexPackage = inputs.hex.packages.${pkgs.stdenv.hostPlatform.system}.hex.override {
+        inherit (pkgs.rustPackages_1_97) rustPlatform;
+      };
+      hexHotkeyd = pkgs.writeShellApplication {
+        name = "hex-hotkeyd";
+        text = ''
+          exec ${pkgs.python3.withPackages (ps: [ps.evdev])}/bin/python3 ${./hex_hotkeyd.py} "$@"
+        '';
+      };
+    in {
       programs.hex = {
         enable = true;
-        # Hex's oxc crates need rustc 1.97; stable nixpkgs defaults to 1.95.
-        package = inputs.hex.packages.${pkgs.stdenv.hostPlatform.system}.hex.override {
-          inherit (pkgs.rustPackages_1_97) rustPlatform;
-        };
+        package = hexPackage;
         autostart = true;
         settings = {
           "dictation_processing.default_mode" = defaultMode;
           "dictation_processing.modes" = modes;
         };
       };
-    })
+
+      systemd.user.services.hex-hotkeyd = {
+        Unit = {
+          Description = "Hex evdev hold and double-tap hotkey daemon";
+          After = ["graphical-session.target" "hex.service"];
+          PartOf = ["graphical-session.target"];
+        };
+        Service = {
+          Type = "simple";
+          Environment = ["HEX_APPLICATION_SUPPORT_DIR=${config.xdg.dataHome}/hex"];
+          ExecStart = "${hexHotkeyd}/bin/hex-hotkeyd --hex-bin ${hexPackage}/bin/hex";
+          Restart = "on-failure";
+          RestartSec = 3;
+        };
+        Install = {
+          WantedBy = ["graphical-session.target"];
+        };
+      };
+    }))
   ];
 }
