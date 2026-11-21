@@ -417,6 +417,11 @@ in
             repeat = false;
             action.spawn = ["hex" "annotate" "toggle"];
           };
+          # Hex paste last dictation (Windows+Shift+V with swap, Mac Option+Shift+V)
+          "Alt+Shift+V" = {
+            repeat = false;
+            action.spawn = ["hex" "paste-last"];
+          };
 
           # ================
           # WINDOW CONTROLS
