@@ -74,7 +74,7 @@ in {
 
     paths = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = ["/var/lib/homelab-backup-canary"];
+      default = [];
       description = "Filesystem paths included in the homelab restic backup.";
     };
 
@@ -88,6 +88,8 @@ in {
   };
 
   config = lib.mkIf (cfg.enable && backupsCfg.enable) {
+    homelab.backups.paths = ["/var/lib/homelab-backup-canary"];
+
     systemd.tmpfiles.rules = [
       "d /var/lib/homelab-backup-canary 0750 root root -"
       "f+ /var/lib/homelab-backup-canary/README.txt 0640 root root - homelab-restic-canary\\n"

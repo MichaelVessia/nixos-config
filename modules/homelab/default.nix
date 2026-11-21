@@ -9,6 +9,7 @@ in {
   imports = [
     ./nfs.nix
     ./backups.nix
+    ./frame.nix
   ];
 
   options.homelab = {
