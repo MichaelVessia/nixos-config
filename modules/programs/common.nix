@@ -20,6 +20,7 @@
 
       # utils
       bun
+      nodejs # needed by T3 Antigravity ACP runtime and agent tooling
       python3 # needed for claude-code plugins (hookify)
       ripgrep # recursively searches directories for a regex pattern
       ast-grep # structural search and replace

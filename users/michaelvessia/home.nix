@@ -20,7 +20,10 @@
   home.packages = [
     inputs.grok-bot.packages.${pkgs.system}.default
     (pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
-      providerPackages = [inputs.llm-agents.packages.${pkgs.system}.grok];
+      providerPackages = [
+        inputs.llm-agents.packages.${pkgs.system}.grok
+        pkgs.nodejs
+      ];
     })
   ];
 
