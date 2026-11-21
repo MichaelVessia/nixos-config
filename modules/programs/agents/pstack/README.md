@@ -23,9 +23,10 @@ to load the plugin.
   and prose. Fable takes performance work and hillclimb. GPT Sol takes swarm
   work. Panels mix Opus and Sol. The session hook is on.
 - `shared/pstack-models-personal.md` is used by personal hosts (`framework13`
-  and `forge`) via `agentHarnesses.pstack.modelsFile`. It splits roles across
-  personal Antigravity (`gemini-4-neon`) and Grok (`grok-4.7`) with no Claude
-  or Codex targets.
+  and `forge`) via `agentHarnesses.pstack.modelsFile`. The chat model stays
+  Antigravity (`gemini-4-neon`). Worker roles use Codex (`gpt-6.2-sol`) and
+  Grok (`grok-4.7`). Codex takes feature, refactoring, bug-fix, and judgment.
+  Grok takes performance, hillclimb, and swarm. Panels use Codex and Grok.
 - Feature and refactoring code and swarm workers run at `medium`. Other
   roles run at `high`.
 - `shared/instructions.md` keeps Executor discovery, GitHub-only PR work,

@@ -91,12 +91,12 @@ through Home Manager, pinned by version and checksum in
 `modules/programs/t3code-nightly/package.nix`. After rebuilding, launch it
 with `t3code-desktop` or **T3 Code (Nightly)** from the application launcher.
 Personal hosts (`framework13` and `forge`) stay separate from the work/hub
-setup (`flomac`, `dev-machine`, `foundry`): they use personal Antigravity and
-direct xAI (`grok login`), with no CLIProxyAPI hub, Claude Code, Codex,
-OpenCode, or Pi. In-app automatic updates are disabled because Nix manages the
-installed desktop version; update the package's version and checksum to
-upgrade. Forge also runs `t3code.service` with `linger` and Tailscale Serve
-so Framework13 can connect to it remotely.
+setup (`flomac`, `dev-machine`, `foundry`): they use personal Antigravity,
+direct xAI (`grok login`), and direct OpenAI Codex (`codex login`), with no
+CLIProxyAPI hub, Claude Code, OpenCode, or Pi. In-app automatic updates are
+disabled because Nix manages the installed desktop version; update the
+package's version and checksum to upgrade. Forge also runs `t3code.service`
+with `linger` and Tailscale Serve so Framework13 can connect to it remotely.
 
 Flomac installs the Namespace CLI as `namespace-devbox`; `devbox` remains
 Jetify Devbox. After rebuilding, run `namespace-devbox login` to authenticate.
@@ -302,7 +302,10 @@ personal hosts (`framework13` and `forge`, `cliproxyHub.enable = false`), Grok
 authenticates directly with xAI (`grok login`), disables Claude compatibility,
 reads `~/.grok/AGENTS.md` and `~/.agents/skills`, and configures the personal
 `executor` MCP natively in `~/.grok/config.toml`. Cursor compatibility is off
-everywhere.
+everywhere. On personal hosts (`cliproxyHub.enable = false`), Codex also
+authenticates directly (`codex login`) and configures only the personal
+`executor` MCP, skipping the CLIProxyAPI hub, work MCP servers
+(`executor-flosports`, `figma`), and work Datadog telemetry.
 
 Claude and Codex use the Nix-pinned t3-pstack plugin. Activation installs it
 into their default and configured T3 homes. Personal skills remain separate.

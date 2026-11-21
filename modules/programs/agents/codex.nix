@@ -1,3 +1,10 @@
+# When the CLIProxyAPI hub is enabled, Codex routes requests through the hub
+# and configures work MCP servers (Figma, FloSports Executor) and Datadog
+# telemetry.
+#
+# On personal hosts (cliproxyHub.enable = false), Codex authenticates directly
+# to OpenAI (`codex login`), skips the hub provider, work MCP servers, and
+# Datadog telemetry, and keeps only personal MCP entries (Executor).
 {
   config,
   lib,
@@ -20,71 +27,81 @@
   sharedInstructions = builtins.readFile ./shared/instructions.md;
   hub = config.agentHarnesses.cliproxyHub;
 
-  codexConfig = {
-    personality = "pragmatic";
-    model = "gpt-6.2-sol";
-    model_reasoning_effort = "medium";
-    model_provider = "cliproxy";
-    model_providers.cliproxy = {
-      name = "CLIProxyAPI";
-      base_url = "${hub.url}/v1";
-      wire_api = "responses";
-      requires_openai_auth = false;
-      supports_websockets = true;
-      auth = {
-        command = "${pkgs.coreutils}/bin/cat";
-        args = [hub.keyFile];
+  codexConfig =
+    {
+      personality = "pragmatic";
+      model = "gpt-6.2-sol";
+      model_reasoning_effort = "medium";
+      features.goals = true;
+      marketplaces.t3-pstack = {
+        source_type = "local";
+        source = "${config.home.homeDirectory}/.local/share/t3-pstack/source";
       };
-    };
-    features.goals = true;
-    marketplaces.t3-pstack = {
-      source_type = "local";
-      source = "${config.home.homeDirectory}/.local/share/t3-pstack/source";
-    };
-    plugins."t3-pstack@t3-pstack".enabled = true;
-    # Agent shells exit, but the Nx daemon detaches and outlives them.
-    shell_environment_policy.set.NX_DAEMON = "false";
-    tui = {
-      status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
-    };
-    mcp_servers =
-      {
-        figma.url = config.agentHarnesses.figma.url;
-        executor-flosports.url = config.agentHarnesses.executorFlosports.url;
-      }
-      // lib.optionalAttrs config.agentHarnesses.executor.enable {
-        executor = {
-          url = config.agentHarnesses.executor.url;
-          disabled_tools = ["resume"];
+      plugins."t3-pstack@t3-pstack".enabled = true;
+      # Agent shells exit, but the Nx daemon detaches and outlives them.
+      shell_environment_policy.set.NX_DAEMON = "false";
+      tui = {
+        status_line = ["model-with-reasoning" "current-dir" "git-branch" "context-used"];
+      };
+      mcp_servers =
+        lib.optionalAttrs hub.enable {
+          figma.url = config.agentHarnesses.figma.url;
+          executor-flosports.url = config.agentHarnesses.executorFlosports.url;
+        }
+        // lib.optionalAttrs config.agentHarnesses.executor.enable {
+          executor = {
+            url = config.agentHarnesses.executor.url;
+            disabled_tools = ["resume"];
+          };
+        };
+    }
+    // lib.optionalAttrs hub.enable {
+      model_provider = "cliproxy";
+      model_providers.cliproxy = {
+        name = "CLIProxyAPI";
+        base_url = "${hub.url}/v1";
+        wire_api = "responses";
+        requires_openai_auth = false;
+        supports_websockets = true;
+        auth = {
+          command = "${pkgs.coreutils}/bin/cat";
+          args = [hub.keyFile];
         };
       };
-    otel = {
-      environment = "dev";
-      log_user_prompt = false;
-      exporter = {
-        otlp-http = {
-          endpoint = "https://http-intake.logs.datadoghq.com/v1/logs";
-          protocol = "binary";
-          headers = {
-            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
+      otel = {
+        environment = "dev";
+        log_user_prompt = false;
+        exporter = {
+          otlp-http = {
+            endpoint = "https://http-intake.logs.datadoghq.com/v1/logs";
+            protocol = "binary";
+            headers = {
+              "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
+            };
+          };
+        };
+        trace_exporter = {
+          otlp-http = {
+            endpoint = "https://otlp.datadoghq.com/v1/traces";
+            protocol = "binary";
+            headers = {
+              "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
+            };
           };
         };
       };
-      trace_exporter = {
-        otlp-http = {
-          endpoint = "https://otlp.datadoghq.com/v1/traces";
-          protocol = "binary";
-          headers = {
-            "dd-api-key" = "$" + "{DD_TELEMETRY_API_KEY}";
-          };
-        };
-      };
     };
-  };
 
   codexConfigFile = (pkgs.formats.toml {}).generate "codex-config.toml" codexConfig;
 in {
+  options.agentHarnesses.codex.package = lib.mkOption {
+    type = lib.types.package;
+    readOnly = true;
+    description = "Wrapped Codex CLI package.";
+  };
+
   config = {
+    agentHarnesses.codex.package = codexPkg;
     home.packages = [codexPkg];
 
     home.file.".codex/AGENTS.md".text = sharedInstructions;
