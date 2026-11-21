@@ -1,0 +1,193 @@
+{
+  "network": {
+    "domain": "lan",
+    "lanSubnet": "192.168.1.0/24",
+    "iotSubnet": "192.168.3.0/24",
+    "gateway": "192.168.1.1",
+    "otlpAllowlist": [
+      "192.168.1.18",
+      "192.168.1.24",
+      "192.168.1.105",
+      "192.168.1.221",
+      "192.168.1.247"
+    ]
+  },
+  "nas": {
+    "ip": "192.168.1.176",
+    "mounts": {
+      "media": {
+        "export": "/volume1/nfs_media",
+        "mountPoint": "/mnt/synology-media",
+        "readOnly": false
+      },
+      "photo": {
+        "export": "/volume1/photo",
+        "mountPoint": "/mnt/synology-photo",
+        "readOnly": true
+      },
+      "photoUpload": {
+        "export": "/volume1/nfs_immich_uploads",
+        "mountPoint": "/mnt/synology-photo-upload",
+        "readOnly": false
+      },
+      "calibreLibrary": {
+        "export": "/volume1/Books",
+        "mountPoint": "/mnt/synology-calibre-library",
+        "readOnly": false
+      }
+    },
+    "backupMount": {
+      "export": "/volume1/Backups",
+      "mountPoint": "/mnt/synology-backups",
+      "readOnly": false,
+      "b2Replicated": true
+    }
+  },
+  "services": {
+    "caddy": {
+      "port": 80,
+      "httpsPort": 443,
+      "adminPort": 2019,
+      "bind": "lan",
+      "domains": ["caddy.lan"],
+      "owner": "nixos",
+      "milestone": "M6"
+    },
+    "adguard": {
+      "port": 3053,
+      "dnsPort": 53,
+      "bind": "lan",
+      "domains": ["adguard.lan"],
+      "owner": "nixos",
+      "milestone": "M6"
+    },
+    "frame": {
+      "port": 8080,
+      "bind": "lan",
+      "domains": [],
+      "owner": "alchemy-docker",
+      "milestone": "M1"
+    },
+    "executor": {
+      "port": 4788,
+      "bind": "loopback",
+      "domains": ["executor.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M2"
+    },
+    "homepage": {
+      "port": 3000,
+      "bind": "loopback",
+      "domains": ["homepage.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M2"
+    },
+    "uptimekuma": {
+      "port": 3001,
+      "bind": "loopback",
+      "domains": ["uptimekuma.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M2"
+    },
+    "lazylibrarian": {
+      "port": 5299,
+      "bind": "loopback",
+      "domains": [],
+      "owner": "alchemy-docker",
+      "milestone": "M3"
+    },
+    "autocaliweb": {
+      "port": 8083,
+      "bind": "loopback",
+      "domains": ["autocaliweb.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M3"
+    },
+    "sabnzbd": {
+      "port": 7777,
+      "bind": "loopback",
+      "domains": ["sabnzbd.lan"],
+      "owner": "nixos",
+      "milestone": "M3"
+    },
+    "prowlarr": {
+      "port": 9696,
+      "bind": "loopback",
+      "domains": ["prowlarr.lan"],
+      "owner": "nixos",
+      "milestone": "M3"
+    },
+    "sonarr": {
+      "port": 8989,
+      "bind": "loopback",
+      "domains": ["sonarr.lan"],
+      "owner": "nixos",
+      "milestone": "M3"
+    },
+    "radarr": {
+      "port": 7878,
+      "bind": "loopback",
+      "domains": ["radarr.lan"],
+      "owner": "nixos",
+      "milestone": "M3"
+    },
+    "seerr": {
+      "port": 5055,
+      "bind": "loopback",
+      "domains": ["jellyseerr.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M3"
+    },
+    "freshrss": {
+      "port": 8084,
+      "bind": "loopback",
+      "domains": ["freshrss.lan"],
+      "owner": "nixos",
+      "milestone": "M4"
+    },
+    "tubearchivist": {
+      "port": 8085,
+      "bind": "loopback",
+      "domains": ["tubearchivist.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M4"
+    },
+    "jellyfin": {
+      "port": 8096,
+      "bind": "lan",
+      "domains": ["jellyfin.lan"],
+      "owner": "nixos",
+      "milestone": "M4"
+    },
+    "immich": {
+      "port": 2283,
+      "bind": "loopback",
+      "domains": ["immich.lan"],
+      "owner": "nixos",
+      "milestone": "M5"
+    },
+    "signoz": {
+      "port": 3301,
+      "otlpGrpcPort": 4317,
+      "bind": "lan",
+      "domains": ["signoz.lan"],
+      "owner": "nixos",
+      "milestone": "M5"
+    },
+    "homeassistant": {
+      "port": 8123,
+      "bind": "lan",
+      "domains": ["homeassistant.lan", "ha.lan"],
+      "owner": "vm",
+      "milestone": "M7"
+    },
+    "syncthing": {
+      "port": 22000,
+      "uiPort": 8384,
+      "bind": "lan",
+      "domains": ["syncthing.lan"],
+      "owner": "nixos",
+      "milestone": "M8"
+    }
+  }
+}
