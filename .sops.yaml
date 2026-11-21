@@ -45,7 +45,7 @@ creation_rules:
       - age:
           - *user_michael_framework13
 
-  # Homelab secrets (personal machines only; homelab host key will be added in M8)
+  # Homelab secrets (personal machines only; hearth host key will be added in M8)
   - path_regex: secrets/homelab\.yaml$
     key_groups:
       - age:
