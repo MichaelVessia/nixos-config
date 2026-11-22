@@ -91,6 +91,7 @@
         }
         dump_pg homelab-immich-db immich immich /opt/homelab/backups/immich.dump
         dump_pg homelab-freshrss-db freshrss_usr freshrss /opt/homelab/backups/freshrss.dump
+        dump_pg homelab-paperless-db paperless paperless /opt/homelab/backups/paperless.dump
       '';
   };
 in {
@@ -158,6 +159,7 @@ in {
       extraBackupArgs = [
         "--exclude=/opt/homelab/immich/postgres"
         "--exclude=/opt/homelab/freshrss/postgres"
+        "--exclude=/opt/homelab/paperless/postgres"
       ];
       timerConfig = {
         OnCalendar = "03:00";

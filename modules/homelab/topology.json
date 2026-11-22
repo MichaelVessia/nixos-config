@@ -36,6 +36,11 @@
         "export": "/volume1/Books",
         "mountPoint": "/mnt/synology-calibre-library",
         "readOnly": false
+      },
+      "documents": {
+        "export": "/volume1/Documents",
+        "mountPoint": "/mnt/synology-documents",
+        "readOnly": false
       }
     },
     "backupMount": {
@@ -203,6 +208,13 @@
       "bind": "lan",
       "domains": ["syncthing.lan"],
       "owner": "nixos",
+      "milestone": "M8"
+    },
+    "paperless": {
+      "port": 8000,
+      "bind": "loopback",
+      "domains": ["paperless.lan"],
+      "owner": "alchemy-docker",
       "milestone": "M8"
     }
   }

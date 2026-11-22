@@ -108,6 +108,20 @@
       group = "root";
       mode = "0400";
     };
+    homelab_paperless_postgres_password = {
+      dir = "/opt/homelab/paperless/env";
+      dirGroup = "root";
+      file = "postgres-password";
+      group = "root";
+      mode = "0400";
+    };
+    homelab_paperless_env = {
+      dir = "/opt/homelab/paperless/env";
+      dirGroup = "root";
+      file = "paperless.env";
+      group = "root";
+      mode = "0400";
+    };
   };
   installAppEnvFile = name: spec: ''
     ${pkgs.coreutils}/bin/install -d -m 0750 -o root -g ${lib.escapeShellArg spec.dirGroup} ${lib.escapeShellArg spec.dir}
@@ -184,6 +198,13 @@ in {
       "d /opt/homelab/signoz/data - - - -"
       "d /opt/homelab/signoz/conf 0755 root root -"
       "d /opt/homelab/signoz/env 0750 root root -"
+      "d /opt/homelab/paperless 0755 root root -"
+      "d /opt/homelab/paperless/data - - - -"
+      "d /opt/homelab/paperless/media - - - -"
+      "d /opt/homelab/paperless/postgres - - - -"
+      "d /opt/homelab/paperless/redis - - - -"
+      "d /opt/homelab/paperless/export 0755 root root -"
+      "d /opt/homelab/paperless/env 0750 root root -"
       "d /var/lib/homelab 0755 root root -"
       "d /var/lib/homelab/signoz-clickhouse - - - -"
       "d /var/lib/homelab/signoz-zookeeper - - - -"
