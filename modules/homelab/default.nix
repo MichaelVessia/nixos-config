@@ -11,6 +11,9 @@ in {
     ./backups.nix
     ./frame.nix
     ./apps.nix
+    ./caddy.nix
+    ./adguard.nix
+    ./tailscale.nix
   ];
 
   options.homelab = {

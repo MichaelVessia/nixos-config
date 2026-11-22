@@ -31,6 +31,9 @@ in {
     backups.enable = true;
     frame.enable = true;
     apps.enable = true;
+    caddy.enable = true;
+    adguard.enable = true;
+    tailscale.enable = true;
   };
 
   # Trust this host's portless CA for local portless HTTPS dev. `portless trust`

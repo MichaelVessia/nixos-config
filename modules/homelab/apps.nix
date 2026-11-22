@@ -96,6 +96,8 @@ in {
       "d /opt/homelab/immich/postgres - - - -"
       "d /opt/homelab/immich/redis - - - -"
       "d /opt/homelab/immich/env 0750 root root -"
+      "d /opt/homelab/immich-kiosk 0755 root root -"
+      "d /opt/homelab/immich-kiosk/config - - - -"
       "d /opt/homelab/signoz 0755 root root -"
       "d /opt/homelab/signoz/data - - - -"
       "d /opt/homelab/signoz/conf 0755 root root -"
@@ -115,7 +117,10 @@ in {
     homelab.backups.paths = ["/opt/homelab"];
 
     networking.firewall = {
-      allowedTCPPorts = [cfg.topology.services.jellyfin.port];
+      allowedTCPPorts = [
+        cfg.topology.services.jellyfin.port
+        cfg.topology.services.kiosk.port
+      ];
       extraCommands =
         lib.concatMapStrings (rule: ''
           iptables -A nixos-fw ${rule}

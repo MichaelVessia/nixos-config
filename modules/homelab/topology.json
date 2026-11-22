@@ -166,6 +166,13 @@
       "owner": "alchemy-docker",
       "milestone": "M5"
     },
+    "kiosk": {
+      "port": 3011,
+      "bind": "lan",
+      "domains": ["kiosk.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M5"
+    },
     "signoz": {
       "port": 3301,
       "otlpGrpcPort": 4317,
