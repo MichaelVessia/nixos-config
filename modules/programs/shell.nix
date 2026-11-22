@@ -192,6 +192,8 @@ in {
         FRAME_DOCKER_HOST = "ssh://root@192.168.1.24";
         FRAME_URL = "http://192.168.1.24:8080";
         FRAME_SWARM_ADVERTISE_ADDR = "192.168.1.24";
+        HOMELAB_DOCKER_HOST = "ssh://root@192.168.1.24";
+        HOMELAB_HOST_IP = "192.168.1.24";
       }
       // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
         # agent-browser launches Brave instead of its bundled Chromium, so

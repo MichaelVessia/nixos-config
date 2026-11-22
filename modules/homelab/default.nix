@@ -10,6 +10,7 @@ in {
     ./nfs.nix
     ./backups.nix
     ./frame.nix
+    ./apps.nix
   ];
 
   options.homelab = {

@@ -30,6 +30,7 @@ in {
     nfs.enable = true;
     backups.enable = true;
     frame.enable = true;
+    apps.enable = true;
   };
 
   # Trust this host's portless CA for local portless HTTPS dev. `portless trust`
