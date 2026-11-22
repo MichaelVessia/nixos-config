@@ -132,7 +132,7 @@ in {
   };
 
   environment.enableAllTerminfo = true;
-  environment.systemPackages = with pkgs; [curl git jq nano rsync vim];
+  environment.systemPackages = with pkgs; [btrfs-progs curl git jq nano rsync vim];
 
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
