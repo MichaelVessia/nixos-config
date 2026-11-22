@@ -87,7 +87,10 @@ in {
     hostIp = "192.168.1.200";
     gpu = "amd";
     nfs.enable = true;
-    backups.enable = true;
+    backups = {
+      enable = true;
+      healthchecks.enable = true;
+    };
     frame.enable = true;
     apps = {
       enable = true;
