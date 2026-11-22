@@ -69,6 +69,10 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -86,6 +90,7 @@
     sops-nix,
     agent-skills-nix,
     deploy-rs,
+    disko,
     ...
   }: let
     system = "x86_64-linux";
@@ -187,6 +192,23 @@
           ];
         };
 
+      hearth = let
+        username = "michaelvessia";
+        specialArgs = {
+          inherit username inputs pkgs-unstable;
+          enableHomelabSkills = false;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "x86_64-linux";
+          modules = [
+            disko.nixosModules.disko
+            sops-nix.nixosModules.sops
+            ./hosts/hearth
+          ];
+        };
+
       foundry = let
         username = "michaelvessia";
         specialArgs = {
@@ -263,6 +285,7 @@
       in {
         foundry = nixosNode "foundry" ["from-flomac" "from-framework13"];
         forge = nixosNode "forge" ["from-framework13"];
+        hearth = nixosNode "hearth" ["from-framework13" "from-forge"];
         framework13 = nixosNode "framework13" ["from-forge"];
         # Dev-machine has passwordless sudo and no root login.
         dev-machine = nixosNode "dev-machine" ["from-flomac"] // {sshUser = "michaelvessia";};

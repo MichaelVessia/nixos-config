@@ -42,6 +42,10 @@
         hostname = "forge";
         user = "michaelvessia";
       };
+      "hearth" = {
+        hostname = "192.168.1.200";
+        user = "root";
+      };
       "proxmox" = {
         hostname = "192.168.1.200";
         user = "root";

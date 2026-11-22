@@ -15,6 +15,7 @@ in {
     ./homeassistant.nix
     ./adguard.nix
     ./tailscale.nix
+    ./syncthing.nix
   ];
 
   options.homelab = {
