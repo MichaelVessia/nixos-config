@@ -31,7 +31,22 @@ in {
     backups.enable = true;
     frame.enable = true;
     apps.enable = true;
-    caddy.enable = true;
+    caddy = {
+      enable = true;
+      aliasInterface = "enp5s0";
+      legacyAliases = [
+        {
+          ip = "192.168.1.21";
+          port = 8096;
+          upstream = "192.168.1.24:8096";
+        }
+        {
+          ip = "192.168.1.230";
+          port = 3000;
+          upstream = "192.168.1.24:3011";
+        }
+      ];
+    };
     homeassistant = {
       enable = true;
       parentInterface = "enp5s0";

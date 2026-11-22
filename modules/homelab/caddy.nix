@@ -1,11 +1,28 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.homelab;
   caddyCfg = cfg.caddy;
   services = cfg.topology.services;
+  legacyAliasIps = lib.unique (map (alias: alias.ip) caddyCfg.legacyAliases);
+  legacyAliasRules =
+    map (
+      alias: "-d ${lib.escapeShellArg alias.ip} -p tcp --dport ${toString alias.port} -j nixos-fw-accept"
+    )
+    caddyCfg.legacyAliases;
+  legacyAliasVirtualHosts = lib.listToAttrs (map (alias: {
+      name = "http://${alias.ip}:${toString alias.port}";
+      value = {
+        extraConfig = ''
+          bind ${alias.ip}
+          reverse_proxy ${alias.upstream}
+        '';
+      };
+    })
+    caddyCfg.legacyAliases);
   appServices = {
     "homepage.lan" = "homepage";
     "uptimekuma.lan" = "uptimekuma";
@@ -66,9 +83,70 @@ in {
       default = "${cfg.hostIp}:${toString services.haMcp.port}";
       description = "Home Assistant MCP upstream. Set to null to disable the virtual host.";
     };
+
+    aliasInterface = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Ethernet interface that hosts secondary legacyAliases IPv4 addresses (e.g. enp5s0 on forge).";
+    };
+
+    legacyAliases = lib.mkOption {
+      type = lib.types.listOf (lib.types.submodule {
+        options = {
+          ip = lib.mkOption {
+            type = lib.types.str;
+            description = "Secondary IPv4 address to bind on aliasInterface.";
+          };
+          port = lib.mkOption {
+            type = lib.types.port;
+            description = "Plain HTTP listen port on the secondary IP.";
+          };
+          upstream = lib.mkOption {
+            type = lib.types.str;
+            description = "Upstream host:port forwarded by Caddy.";
+          };
+        };
+      });
+      default = [];
+      description = "Legacy Proxmox IP:port aliases kept alive over plain HTTP for hardcoded LAN clients such as TVs.";
+    };
   };
 
   config = lib.mkIf (cfg.enable && caddyCfg.enable) {
+    assertions = [
+      {
+        assertion = caddyCfg.legacyAliases == [] || caddyCfg.aliasInterface != null;
+        message = "homelab.caddy.aliasInterface must be set when homelab.caddy.legacyAliases is non-empty.";
+      }
+    ];
+
+    systemd.services.homelab-legacy-ips = lib.mkIf (caddyCfg.legacyAliases != []) {
+      description = "Configure legacy homelab secondary IPv4 aliases";
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
+      before = ["caddy.service"];
+      wantedBy = ["multi-user.target" "caddy.service"];
+      path = [pkgs.iproute2];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script =
+        lib.concatMapStrings (ip: ''
+          ip addr replace ${lib.escapeShellArg "${ip}/24"} dev ${lib.escapeShellArg caddyCfg.aliasInterface}
+        '')
+        legacyAliasIps;
+      preStop =
+        lib.concatMapStrings (ip: ''
+          ip addr del ${lib.escapeShellArg "${ip}/24"} dev ${lib.escapeShellArg caddyCfg.aliasInterface} 2>/dev/null || true
+        '')
+        legacyAliasIps;
+    };
+
+    systemd.services.caddy = lib.mkIf (caddyCfg.legacyAliases != []) {
+      after = ["homelab-legacy-ips.service"];
+      wants = ["homelab-legacy-ips.service"];
+    };
     services.caddy = {
       enable = true;
       globalConfig = ''
@@ -117,13 +195,28 @@ in {
           };
           "executor.lan" = lib.mkIf (caddyCfg.executorUpstream != null) (proxy caddyCfg.executorUpstream);
           "ha-mcp.lan" = lib.mkIf (caddyCfg.haMcpUpstream != null) (proxy caddyCfg.haMcpUpstream);
-        };
+        }
+        // legacyAliasVirtualHosts;
     };
 
-    networking.firewall.allowedTCPPorts = [
-      services.caddy.port
-      services.caddy.httpsPort
-    ];
+    networking.firewall = {
+      allowedTCPPorts = [
+        services.caddy.port
+        services.caddy.httpsPort
+      ];
+      extraCommands = lib.mkIf (legacyAliasRules != []) (
+        lib.concatMapStrings (rule: ''
+          iptables -A nixos-fw ${rule}
+        '')
+        legacyAliasRules
+      );
+      extraStopCommands = lib.mkIf (legacyAliasRules != []) (
+        lib.concatMapStrings (rule: ''
+          iptables -D nixos-fw ${rule} || true
+        '')
+        legacyAliasRules
+      );
+    };
 
     homelab.backups.paths = ["/var/lib/caddy"];
   };
