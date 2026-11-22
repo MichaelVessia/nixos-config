@@ -44,6 +44,82 @@
       iptables -D DOCKER-USER -p tcp --dport ${otlpPort} -j DROP || true
     fi
   '';
+  appEnvFiles = {
+    homelab_freshrss_postgres_password = {
+      dir = "/opt/homelab/freshrss/env";
+      dirGroup = "root";
+      file = "postgres-password";
+      group = "root";
+      mode = "0400";
+    };
+    homelab_garage_mcp_env = {
+      dir = "/opt/homelab/garage-mcp/env";
+      dirGroup = "65532";
+      file = "garage-mcp.env";
+      group = "65532";
+      mode = "0440";
+    };
+    homelab_ha_mcp_env = {
+      dir = "/opt/homelab/ha-mcp/env";
+      dirGroup = "999";
+      file = "ha-mcp.env";
+      group = "999";
+      mode = "0440";
+    };
+    homelab_homepage_secrets_env = {
+      dir = "/opt/homelab/homepage/env";
+      dirGroup = "root";
+      file = "01-secrets.env";
+      group = "root";
+      mode = "0600";
+    };
+    homelab_homepage_mcp_env = {
+      dir = "/opt/homelab/homepage/env";
+      dirGroup = "root";
+      file = "02-mcp.env";
+      group = "root";
+      mode = "0600";
+    };
+    homelab_immich_env = {
+      dir = "/opt/homelab/immich/env";
+      dirGroup = "root";
+      file = "immich.env";
+      group = "root";
+      mode = "0400";
+    };
+    homelab_immich_postgres_password = {
+      dir = "/opt/homelab/immich/env";
+      dirGroup = "root";
+      file = "postgres-password";
+      group = "root";
+      mode = "0400";
+    };
+    homelab_signoz_env = {
+      dir = "/opt/homelab/signoz/env";
+      dirGroup = "root";
+      file = "signoz.env";
+      group = "root";
+      mode = "0400";
+    };
+    homelab_tubearchivist_env = {
+      dir = "/opt/homelab/tubearchivist/env";
+      dirGroup = "root";
+      file = "tubearchivist.env";
+      group = "root";
+      mode = "0400";
+    };
+  };
+  installAppEnvFile = name: spec: ''
+    ${pkgs.coreutils}/bin/install -d -m 0750 -o root -g ${lib.escapeShellArg spec.dirGroup} ${lib.escapeShellArg spec.dir}
+    (
+      tmp=$(${pkgs.coreutils}/bin/mktemp ${lib.escapeShellArg "${spec.dir}/.${spec.file}.XXXXXX"}) || exit 1
+      trap '${pkgs.coreutils}/bin/rm -f "$tmp"' EXIT
+      ${pkgs.coreutils}/bin/cat ${lib.escapeShellArg config.sops.secrets.${name}.path} > "$tmp" &&
+        ${pkgs.coreutils}/bin/chown ${lib.escapeShellArg "root:${spec.group}"} "$tmp" &&
+        ${pkgs.coreutils}/bin/chmod ${lib.escapeShellArg spec.mode} "$tmp" &&
+        ${pkgs.coreutils}/bin/mv -fT "$tmp" ${lib.escapeShellArg "${spec.dir}/${spec.file}"}
+    )
+  '';
 in {
   options.homelab.apps = {
     enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
@@ -64,7 +140,7 @@ in {
       "d /opt/homelab/garage-mcp 0755 root root -"
       "d /opt/homelab/garage-mcp/env 0750 root 65532 -"
       "d /opt/homelab/ha-mcp 0755 root root -"
-      "d /opt/homelab/ha-mcp/env - - - -"
+      "d /opt/homelab/ha-mcp/env 0750 root 999 -"
       "d /opt/homelab/uptimekuma 0755 root root -"
       "d /opt/homelab/uptimekuma/data 0755 root root -"
       "d /opt/homelab/homepage 0755 root root -"
@@ -115,6 +191,20 @@ in {
       "d /var/cache/homelab/jellyfin - - - -"
       "d /var/cache/homelab/immich-ml - - - -"
     ];
+
+    sops.secrets =
+      lib.mapAttrs (_name: _spec: {
+        sopsFile = cfg.backups.sopsFile;
+        owner = "root";
+        mode = "0400";
+      })
+      appEnvFiles;
+
+    # Install real files into /opt/homelab/*/env/ so Docker directory bind-mounts never see dangling symlinks.
+    system.activationScripts.homelabAppEnvFiles = {
+      deps = ["setupSecrets"];
+      text = lib.concatStringsSep "\n" (lib.mapAttrsToList installAppEnvFile appEnvFiles);
+    };
 
     system.activationScripts.homelabCa = ''
       ${pkgs.coreutils}/bin/install -Dm644 ${../homelab-ca/caddy-local-root.crt} /opt/homelab/ca/caddy-local-root.crt && (
