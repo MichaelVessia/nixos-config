@@ -54,10 +54,9 @@
       send_batch_size = 1024;
     };
   };
-  # During migration, send metrics to forge, which uses a source allowlist.
-  # In M8, move ingestion to hearth.
+  # Send metrics to SigNoz on hearth, which uses a source allowlist.
   exporters.otlp_grpc = {
-    endpoint = "192.168.1.24:4317";
+    endpoint = "192.168.1.200:4317";
     tls.insecure = true;
   };
   service.pipelines.metrics = {

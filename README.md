@@ -318,12 +318,12 @@ Executor v2 CLI sign-in. Sign in once on each host and start new agent
 sessions:
 
 ```bash
-executor login --host https://forge.bison-gray.ts.net:4443
+executor login --host https://hearth.bison-gray.ts.net:4443
 ```
 
 The CLI stores the credential locally. Home Manager configures each client
 to start `executor mcp` with the personal server origin. Use
-`executor whoami --host https://forge.bison-gray.ts.net:4443` to check
+`executor whoami --host https://hearth.bison-gray.ts.net:4443` to check
 the sign-in.
 
 Work hosts use `executor-flosports` at `https://executor.flosports.tv/mcp`.
