@@ -313,66 +313,31 @@ See [t3-pstack setup](modules/programs/agents/pstack/README.md) for model rules,
 checks, and updates. The upstream plugin supports Claude and Codex in T3;
 Grok and OpenCode retain shared instructions and personal skills.
 
-OAuth credentials are local to each harness and are not managed by Nix.
-Use `executor-flosports` in place of `executor` to authorize the work instance.
-For Figma, use the commands below with `figma` in place of `executor`, or
-select Figma in Claude Code.
-Authorize in each harness: `/mcp-auth executor` in Pi,
-`codex mcp login executor`, `opencode2 mcp auth executor`,
-and `/mcp` → Executor → Authenticate in Claude Code. Grok reads Claude Code's
-MCP entries. Authorize them from a Grok session.
-
-## T3 threads through Executor
-
-Codex, Claude Code, Grok, Pi, and OpenCode use these shared MCP entries:
-
-- `executor` connects to the personal Executor at
-  `https://executor-mcp.bison-gray.ts.net/mcp`. Only framework13 and forge get
-  it (`agentHarnesses.executor.enable` in `users/michaelvessia/home.nix`).
-- `executor-flosports` connects to the FloSports Executor at
-  `https://executor.flosports.tv/mcp` on work hosts (`flomac`, `foundry`,
-  `dev-machine`).
-
-Home Manager generates the entries from `modules/programs/agents/options.nix`.
-OpenCode gets `executor` through `OPENCODE_CONFIG_CONTENT`, because its
-`opencode.json` is shared by every host. Use the personal Executor for remote
-T3 control from framework13 and forge. The FloSports instance cannot reach
-these private Tailscale addresses.
-
-Use Executor's advertised Tailscale origin. The old `executor.lan` alias
-returns OAuth metadata for a different origin, which Codex rejects.
-After a rebuild changes the endpoint, authorize `executor` in each harness
-that requests a new login. The authorization commands are listed above.
-
-The personal Executor already stores authenticated, user-owned connections
-for Flomac, dev-machine, and Foundry. Discover their tools through
-Executor's `tools.search`, or inspect
-`tools.executor.coreTools.connections.list({})`. Their tool addresses are:
-
-- `tools.t3_flomac.user.flomac`
-- `tools.t3_dev_machine.user.devMachine`
-- `tools.t3_foundry.user.foundry`
-
-Each agent needs its Executor login. Executor keeps the remote T3 OAuth
-credentials, so agents need no direct remote T3 MCP entries or separate
-T3 logins. T3 also supplies a local `t3-code` connection for its own environment.
-
-On framework13 or forge, check the installed Codex configuration and all three
-connections with:
+On framework13 and Forge, Codex, Antigravity, and Grok use the same local
+Executor v2 CLI sign-in. Sign in once on each host and start new agent
+sessions:
 
 ```bash
-python3 scripts/check-executor-t3.py
+executor login --host https://executor-mcp.bison-gray.ts.net:4443
 ```
 
-The check calls T3 through Executor without starting agent work.
+The CLI stores the credential locally. Home Manager configures each client
+to start `executor mcp` with the personal server origin. Use
+`executor whoami --host https://executor-mcp.bison-gray.ts.net:4443` to check
+the sign-in.
 
-Flomac's Tailscale name is `c6dwvf3hjg`, matching its company-managed Mac name.
-The `flomac` SSH alias uses `c6dwvf3hjg.bison-gray.ts.net`.
+Work hosts use `executor-flosports` at `https://executor.flosports.tv/mcp`.
+Authorize the work connection in each client. Use `/mcp-auth executor-flosports`
+in Pi, `codex mcp login executor-flosports` in Codex, and
+`opencode2 mcp auth executor-flosports` in OpenCode. In Claude Code or Grok,
+open the MCP panel and authenticate the connection.
 
-T3 `0.1.1-nightly.20261020.3411` issues MCP credentials for 30 days and supports
-no refresh-token grant. Renew each T3 connection through Executor's OAuth flow
-before expiry. Keep OAuth credentials in Executor and each client's local
-credential store, outside Nix, Git, chat, and logs.
+## Remote T3 threads
+
+Use the native T3 connection for the current environment. For remote T3,
+discover the target host in the personal Executor. Keep each remote T3 OAuth
+connection in Executor. The FloSports instance cannot reach the private
+Tailscale addresses.
 
 ## Secrets Management
 

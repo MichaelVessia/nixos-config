@@ -7,7 +7,8 @@
   mcpConfig = {
     mcpServers = lib.optionalAttrs config.agentHarnesses.executor.enable {
       executor = {
-        serverUrl = config.agentHarnesses.executor.url;
+        command = lib.getExe config.agentHarnesses.executor.package;
+        args = ["mcp" "--host" config.agentHarnesses.executor.origin];
       };
     };
   };

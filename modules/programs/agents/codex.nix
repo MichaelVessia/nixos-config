@@ -50,7 +50,8 @@
         }
         // lib.optionalAttrs config.agentHarnesses.executor.enable {
           executor = {
-            url = config.agentHarnesses.executor.url;
+            command = lib.getExe config.agentHarnesses.executor.package;
+            args = ["mcp" "--host" config.agentHarnesses.executor.origin];
             disabled_tools = ["resume"];
           };
         };

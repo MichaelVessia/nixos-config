@@ -57,7 +57,8 @@
     }
     // lib.optionalAttrs (!hub.enable && config.agentHarnesses.executor.enable) {
       mcp_servers.executor = {
-        url = config.agentHarnesses.executor.url;
+        command = lib.getExe config.agentHarnesses.executor.package;
+        args = ["mcp" "--host" config.agentHarnesses.executor.origin];
         enabled = true;
       };
     };

@@ -20,6 +20,7 @@
   ];
 
   home.packages = [
+    config.agentHarnesses.executor.package
     inputs.grok-bot.packages.${pkgs.system}.default
     (pkgs.callPackage ../../modules/programs/t3code-nightly/package.nix {
       providerPackages = [

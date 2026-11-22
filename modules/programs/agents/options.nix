@@ -1,15 +1,28 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: {
   # Only personal hosts reach the homelab Executor.
   options.agentHarnesses.executor.enable = lib.mkEnableOption "the personal Executor MCP server";
 
+  options.agentHarnesses.executor.origin = lib.mkOption {
+    type = lib.types.str;
+    default = "https://executor-mcp.bison-gray.ts.net:4443";
+    description = "Origin of the personal Executor server.";
+  };
+
   options.agentHarnesses.executor.url = lib.mkOption {
     type = lib.types.str;
-    default = "https://executor-mcp.bison-gray.ts.net/mcp";
-    description = "Personal Executor MCP endpoint shared by configured agent harnesses.";
+    default = "${config.agentHarnesses.executor.origin}/mcp";
+    description = "Personal Executor MCP endpoint for HTTP clients.";
+  };
+
+  options.agentHarnesses.executor.package = lib.mkOption {
+    type = lib.types.package;
+    default = pkgs.callPackage ./executor-package.nix {};
+    description = "Executor CLI for personal MCP clients that use stdio.";
   };
 
   options.agentHarnesses.executorFlosports.url = lib.mkOption {
