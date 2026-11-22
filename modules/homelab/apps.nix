@@ -120,7 +120,8 @@ in {
       ${pkgs.coreutils}/bin/install -Dm644 ${../homelab-ca/caddy-local-root.crt} /opt/homelab/ca/caddy-local-root.crt && (
         bundle=$(${pkgs.coreutils}/bin/mktemp /opt/homelab/ca/.homelab-ca-bundle.XXXXXX) || exit 1
         trap '${pkgs.coreutils}/bin/rm -f "$bundle"' EXIT
-        ${pkgs.coreutils}/bin/cat ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ${../homelab-ca/caddy-local-root.crt} > "$bundle" &&
+        ${pkgs.gawk}/bin/awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' \
+          ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ${../homelab-ca/caddy-local-root.crt} > "$bundle" &&
           ${pkgs.coreutils}/bin/chmod 0644 "$bundle" &&
           ${pkgs.coreutils}/bin/mv -fT "$bundle" /opt/homelab/ca/homelab-ca-bundle.crt
       )
