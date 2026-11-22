@@ -107,28 +107,28 @@
       "port": 7777,
       "bind": "loopback",
       "domains": ["sabnzbd.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M3"
     },
     "prowlarr": {
       "port": 9696,
       "bind": "loopback",
       "domains": ["prowlarr.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M3"
     },
     "sonarr": {
       "port": 8989,
       "bind": "loopback",
       "domains": ["sonarr.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M3"
     },
     "radarr": {
       "port": 7878,
       "bind": "loopback",
       "domains": ["radarr.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M3"
     },
     "seerr": {
@@ -142,7 +142,7 @@
       "port": 8084,
       "bind": "loopback",
       "domains": ["freshrss.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M4"
     },
     "tubearchivist": {
@@ -156,14 +156,14 @@
       "port": 8096,
       "bind": "lan",
       "domains": ["jellyfin.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M4"
     },
     "immich": {
       "port": 2283,
       "bind": "loopback",
       "domains": ["immich.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M5"
     },
     "signoz": {
@@ -171,7 +171,7 @@
       "otlpGrpcPort": 4317,
       "bind": "lan",
       "domains": ["signoz.lan"],
-      "owner": "nixos",
+      "owner": "alchemy-docker",
       "milestone": "M5"
     },
     "homeassistant": {
