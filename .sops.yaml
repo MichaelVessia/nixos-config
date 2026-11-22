@@ -11,6 +11,9 @@ keys:
   # Foundry key (headless dev box)
   - &user_foundry age18lajvpfr0lyyey0kvr865apxu7mlphs5sgq2jw0lkxuxwn747avq7dtw7x
 
+  # Hearth host key (bare-metal Ryzen homelab server)
+  - &host_hearth age18ud99dl0a4pjx7dz47lxx8cpnrsez8mrp0ffvhccu5x5yythgapqpthv6z
+
 creation_rules:
   # Framework13 secrets
   - path_regex: secrets/framework13\.yaml$
@@ -45,11 +48,12 @@ creation_rules:
       - age:
           - *user_michael_framework13
 
-  # Homelab secrets (personal machines only; hearth host key will be added in M8)
+  # Homelab secrets (personal machines and hearth host only)
   - path_regex: secrets/homelab\.yaml$
     key_groups:
       - age:
           - *user_michael_framework13
+          - *host_hearth
 
   # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$
