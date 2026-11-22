@@ -76,7 +76,7 @@
       "milestone": "M2"
     },
     "homepage": {
-      "port": 3000,
+      "port": 3010,
       "bind": "loopback",
       "domains": ["homepage.lan"],
       "owner": "alchemy-docker",
