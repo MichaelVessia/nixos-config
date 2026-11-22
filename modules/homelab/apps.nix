@@ -19,8 +19,13 @@
     "freshrss"
     "tubearchivist"
     "immich"
+    "signoz"
   ];
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
+  otlpRule = source: "-s ${lib.escapeShellArg source} -p tcp --dport ${toString cfg.topology.services.signoz.otlpGrpcPort} -j nixos-fw-accept";
+  firewallRules =
+    lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices)
+    ++ map otlpRule (cfg.topology.network.otlpAllowlist ++ ["100.64.0.0/10"]);
 in {
   options.homelab.apps = {
     enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
@@ -73,6 +78,13 @@ in {
       "d /opt/homelab/immich/postgres - - - -"
       "d /opt/homelab/immich/redis - - - -"
       "d /opt/homelab/immich/env 0750 root root -"
+      "d /opt/homelab/signoz 0755 root root -"
+      "d /opt/homelab/signoz/data - - - -"
+      "d /opt/homelab/signoz/conf 0755 root root -"
+      "d /opt/homelab/signoz/env 0750 root root -"
+      "d /var/lib/homelab 0755 root root -"
+      "d /var/lib/homelab/signoz-clickhouse - - - -"
+      "d /var/lib/homelab/signoz-zookeeper - - - -"
       "d /var/cache/homelab 0755 root root -"
       "d /var/cache/homelab/jellyfin - - - -"
       "d /var/cache/homelab/immich-ml - - - -"
@@ -86,18 +98,16 @@ in {
 
     networking.firewall = {
       allowedTCPPorts = [cfg.topology.services.jellyfin.port];
-      extraCommands = lib.mkIf (appsCfg.allowExternalCaddyIp != null) (
-        lib.concatMapStrings (service: ''
-          iptables -A nixos-fw ${caddyRule service}
+      extraCommands =
+        lib.concatMapStrings (rule: ''
+          iptables -A nixos-fw ${rule}
         '')
-        caddyServices
-      );
-      extraStopCommands = lib.mkIf (appsCfg.allowExternalCaddyIp != null) (
-        lib.concatMapStrings (service: ''
-          iptables -D nixos-fw ${caddyRule service} || true
+        firewallRules;
+      extraStopCommands =
+        lib.concatMapStrings (rule: ''
+          iptables -D nixos-fw ${rule} || true
         '')
-        caddyServices
-      );
+        firewallRules;
     };
   };
 }

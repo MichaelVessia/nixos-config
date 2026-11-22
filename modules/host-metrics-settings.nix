@@ -54,9 +54,10 @@
       send_batch_size = 1024;
     };
   };
-  # Private LAN ingestion is source-allowlisted on SigNoz CT 124.
+  # During migration, send metrics to forge, which uses a source allowlist.
+  # In M8, move ingestion to hearth.
   exporters.otlp_grpc = {
-    endpoint = "192.168.1.10:4317";
+    endpoint = "192.168.1.24:4317";
     tls.insecure = true;
   };
   service.pipelines.metrics = {
