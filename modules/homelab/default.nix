@@ -12,6 +12,7 @@ in {
     ./frame.nix
     ./apps.nix
     ./caddy.nix
+    ./homeassistant.nix
     ./adguard.nix
     ./tailscale.nix
   ];

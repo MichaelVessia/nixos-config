@@ -32,6 +32,10 @@ in {
     frame.enable = true;
     apps.enable = true;
     caddy.enable = true;
+    homeassistant = {
+      enable = true;
+      parentInterface = "enp5s0";
+    };
     adguard.enable = true;
     tailscale.enable = true;
   };
