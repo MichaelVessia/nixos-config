@@ -22,10 +22,28 @@
     "signoz"
   ];
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
-  otlpRule = source: "-s ${lib.escapeShellArg source} -p tcp --dport ${toString cfg.topology.services.signoz.otlpGrpcPort} -j nixos-fw-accept";
+  otlpPort = toString cfg.topology.services.signoz.otlpGrpcPort;
+  otlpSources = cfg.topology.network.otlpAllowlist ++ ["100.64.0.0/10"];
+  otlpRule = source: "-s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j nixos-fw-accept";
   firewallRules =
     lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices)
-    ++ map otlpRule (cfg.topology.network.otlpAllowlist ++ ["100.64.0.0/10"]);
+    ++ map otlpRule otlpSources;
+  dockerUserOtlpAdd = ''
+    if iptables -L DOCKER-USER -n >/dev/null 2>&1; then
+      iptables -I DOCKER-USER -p tcp --dport ${otlpPort} -j DROP
+      ${lib.concatMapStrings (source: ''
+      iptables -I DOCKER-USER -s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j RETURN
+    '') (otlpSources ++ ["127.0.0.1/32" "172.16.0.0/12"])}
+    fi
+  '';
+  dockerUserOtlpDel = ''
+    if iptables -L DOCKER-USER -n >/dev/null 2>&1; then
+      ${lib.concatMapStrings (source: ''
+      iptables -D DOCKER-USER -s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j RETURN || true
+    '') (otlpSources ++ ["127.0.0.1/32" "172.16.0.0/12"])}
+      iptables -D DOCKER-USER -p tcp --dport ${otlpPort} -j DROP || true
+    fi
+  '';
 in {
   options.homelab.apps = {
     enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
@@ -102,12 +120,14 @@ in {
         lib.concatMapStrings (rule: ''
           iptables -A nixos-fw ${rule}
         '')
-        firewallRules;
+        firewallRules
+        + dockerUserOtlpAdd;
       extraStopCommands =
         lib.concatMapStrings (rule: ''
           iptables -D nixos-fw ${rule} || true
         '')
-        firewallRules;
+        firewallRules
+        + dockerUserOtlpDel;
     };
   };
 }
