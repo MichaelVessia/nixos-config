@@ -33,10 +33,6 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  networking.hosts."192.168.1.252" = [
-    "executor.lan"
-    "signoz.lan"
-  ];
 
   # Set your time zone.
   time.timeZone = "America/New_York";
