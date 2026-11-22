@@ -69,9 +69,16 @@
       "milestone": "M1"
     },
     "executor": {
-      "port": 4788,
+      "port": 4400,
       "bind": "loopback",
       "domains": ["executor.lan"],
+      "owner": "alchemy-docker",
+      "milestone": "M2"
+    },
+    "haMcp": {
+      "port": 8086,
+      "bind": "loopback",
+      "domains": ["ha-mcp.lan"],
       "owner": "alchemy-docker",
       "milestone": "M2"
     },

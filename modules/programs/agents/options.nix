@@ -9,7 +9,8 @@
 
   options.agentHarnesses.executor.origin = lib.mkOption {
     type = lib.types.str;
-    default = "https://executor-mcp.bison-gray.ts.net:4443";
+    # Switch to hearth.bison-gray.ts.net:4443 in M8.
+    default = "https://forge.bison-gray.ts.net:4443";
     description = "Origin of the personal Executor server.";
   };
 

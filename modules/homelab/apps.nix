@@ -59,6 +59,12 @@ in {
     systemd.tmpfiles.rules = [
       "d /opt/homelab 0755 root root -"
       "d /opt/homelab/ca 0755 root root -"
+      "d /opt/homelab/executor 0755 root root -"
+      "d /opt/homelab/executor/data - - - -"
+      "d /opt/homelab/garage-mcp 0755 root root -"
+      "d /opt/homelab/garage-mcp/env 0750 root 65532 -"
+      "d /opt/homelab/ha-mcp 0755 root root -"
+      "d /opt/homelab/ha-mcp/env - - - -"
       "d /opt/homelab/uptimekuma 0755 root root -"
       "d /opt/homelab/uptimekuma/data 0755 root root -"
       "d /opt/homelab/homepage 0755 root root -"
@@ -111,7 +117,13 @@ in {
     ];
 
     system.activationScripts.homelabCa = ''
-      ${pkgs.coreutils}/bin/install -Dm644 ${../homelab-ca/caddy-local-root.crt} /opt/homelab/ca/caddy-local-root.crt
+      ${pkgs.coreutils}/bin/install -Dm644 ${../homelab-ca/caddy-local-root.crt} /opt/homelab/ca/caddy-local-root.crt && (
+        bundle=$(${pkgs.coreutils}/bin/mktemp /opt/homelab/ca/.homelab-ca-bundle.XXXXXX) || exit 1
+        trap '${pkgs.coreutils}/bin/rm -f "$bundle"' EXIT
+        ${pkgs.coreutils}/bin/cat ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ${../homelab-ca/caddy-local-root.crt} > "$bundle" &&
+          ${pkgs.coreutils}/bin/chmod 0644 "$bundle" &&
+          ${pkgs.coreutils}/bin/mv -fT "$bundle" /opt/homelab/ca/homelab-ca-bundle.crt
+      )
     '';
 
     homelab.backups.paths = ["/opt/homelab"];

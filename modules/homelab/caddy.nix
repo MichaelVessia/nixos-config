@@ -57,13 +57,13 @@ in {
 
     executorUpstream = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "192.168.1.86:4788";
+      default = "${cfg.hostIp}:${toString services.executor.port}";
       description = "Executor upstream. Set to null to disable the virtual host.";
     };
 
     haMcpUpstream = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "192.168.1.111:8086";
+      default = "${cfg.hostIp}:${toString services.haMcp.port}";
       description = "Home Assistant MCP upstream. Set to null to disable the virtual host.";
     };
   };
