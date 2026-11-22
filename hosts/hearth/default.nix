@@ -90,6 +90,7 @@ in {
     backups = {
       enable = true;
       healthchecks.enable = true;
+      heartbeat.enable = true;
     };
     frame.enable = true;
     apps = {

@@ -46,6 +46,23 @@
     '';
   };
 
+  heartbeatPing = pkgs.writeShellApplication {
+    name = "homelab-heartbeat-ping";
+    runtimeInputs = [pkgs.coreutils pkgs.curl];
+    text = ''
+      url_file="${config.sops.secrets.homelab_heartbeat_healthchecks_url.path}"
+      if [ ! -r "$url_file" ]; then
+        exit 0
+      fi
+      target="$(tr -d '\r\n' < "$url_file")"
+      target="''${target%/}"
+      if [ -z "$target" ]; then
+        exit 0
+      fi
+      printf 'url = "%s"\n' "$target" | curl -fsS -m 10 --retry 3 -K - >/dev/null
+    '';
+  };
+
   prepareScript = pkgs.writeShellApplication {
     name = "homelab-restic-prepare";
     runtimeInputs = [pkgs.coreutils pkgs.docker pkgs.gnugrep pkgs.util-linux];
@@ -99,6 +116,7 @@ in {
     };
 
     healthchecks.enable = lib.mkEnableOption "Healthchecks.io pings for homelab restic backups";
+    heartbeat.enable = lib.mkEnableOption "5-minute Healthchecks.io host heartbeat timer";
   };
 
   config = lib.mkIf (cfg.enable && backupsCfg.enable) {
@@ -119,6 +137,13 @@ in {
       }
       // lib.optionalAttrs backupsCfg.healthchecks.enable {
         homelab_restic_healthchecks_url = {
+          sopsFile = backupsCfg.sopsFile;
+          owner = "root";
+          mode = "0400";
+        };
+      }
+      // lib.optionalAttrs backupsCfg.heartbeat.enable {
+        homelab_heartbeat_healthchecks_url = {
           sopsFile = backupsCfg.sopsFile;
           owner = "root";
           mode = "0400";
@@ -149,6 +174,26 @@ in {
 
     systemd.services.restic-backups-homelab = lib.mkIf backupsCfg.healthchecks.enable {
       serviceConfig.ExecStopPost = ["-${lib.getExe healthcheckPing} finish"];
+    };
+
+    systemd.services.homelab-heartbeat = lib.mkIf backupsCfg.heartbeat.enable {
+      description = "Ping Healthchecks.io host heartbeat";
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = lib.getExe heartbeatPing;
+      };
+    };
+
+    systemd.timers.homelab-heartbeat = lib.mkIf backupsCfg.heartbeat.enable {
+      description = "Periodic Healthchecks.io host heartbeat";
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnBootSec = "1m";
+        OnUnitActiveSec = "5m";
+        AccuracySec = "15s";
+      };
     };
   };
 }
