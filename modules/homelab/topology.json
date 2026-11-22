@@ -1,6 +1,7 @@
 {
   "network": {
     "domain": "lan",
+    "publicDomain": "home.vessia.net",
     "lanSubnet": "192.168.1.0/24",
     "iotSubnet": "192.168.3.0/24",
     "gateway": "192.168.1.1",

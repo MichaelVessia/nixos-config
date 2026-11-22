@@ -7,6 +7,13 @@
   cfg = config.homelab;
   caddyCfg = cfg.caddy;
   services = cfg.topology.services;
+  publicDomain = caddyCfg.publicDomain;
+  hasPublicDomain = publicDomain != null;
+  acmeDir =
+    if hasPublicDomain
+    then config.security.acme.certs.${publicDomain}.directory
+    else "";
+  acmeTls = "tls ${acmeDir}/fullchain.pem ${acmeDir}/key.pem";
   legacyAliasIps = lib.unique (map (alias: alias.ip) caddyCfg.legacyAliases);
   legacyAliasNatRules =
     lib.concatMap (alias: [
@@ -15,35 +22,90 @@
     ])
     caddyCfg.legacyAliases;
   appServices = {
-    "homepage.lan" = "homepage";
-    "uptimekuma.lan" = "uptimekuma";
-    "lazylibrarian.lan" = "lazylibrarian";
-    "autocaliweb.lan" = "autocaliweb";
-    "freshrss.lan" = "freshrss";
-    "jellyseerr.lan" = "seerr";
-    "jellyfin.lan" = "jellyfin";
-    "radarr.lan" = "radarr";
-    "sonarr.lan" = "sonarr";
-    "prowlarr.lan" = "prowlarr";
-    "sabnzbd.lan" = "sabnzbd";
-    "immich.lan" = "immich";
-    "kiosk.lan" = "kiosk";
-    "tubearchivist.lan" = "tubearchivist";
-    "signoz.lan" = "signoz";
+    "homepage" = "homepage";
+    "uptimekuma" = "uptimekuma";
+    "lazylibrarian" = "lazylibrarian";
+    "autocaliweb" = "autocaliweb";
+    "freshrss" = "freshrss";
+    "jellyseerr" = "seerr";
+    "jellyfin" = "jellyfin";
+    "radarr" = "radarr";
+    "sonarr" = "sonarr";
+    "prowlarr" = "prowlarr";
+    "sabnzbd" = "sabnzbd";
+    "immich" = "immich";
+    "kiosk" = "kiosk";
+    "tubearchivist" = "tubearchivist";
+    "signoz" = "signoz";
   };
-  proxy = upstream: {extraConfig = "reverse_proxy ${upstream}";};
-  proxyWithSelfSignedTls = upstream: {
-    extraConfig = ''
-      reverse_proxy ${upstream} {
-        transport http {
-          tls_insecure_skip_verify
-        }
+  proxyConfig = upstream: "reverse_proxy ${upstream}";
+  proxy = upstream: {extraConfig = proxyConfig upstream;};
+  proxyWithSelfSignedTlsConfig = upstream: ''
+    reverse_proxy ${upstream} {
+      transport http {
+        tls_insecure_skip_verify
       }
-    '';
-  };
+    }
+  '';
+  proxyWithSelfSignedTls = upstream: {extraConfig = proxyWithSelfSignedTlsConfig upstream;};
+  homeAssistantProxyConfig = ''
+    reverse_proxy ${caddyCfg.homeAssistantUpstream} {
+      header_up -X-Forwarded-For
+      header_up -X-Forwarded-Proto
+      header_up -X-Forwarded-Host
+      header_up Host {upstream_hostport}
+      header_up X-Forwarded-For {remote_host}
+      header_up X-Forwarded-Proto https
+    }
+  '';
+  wildcardHandle = name: hosts: body: ''
+    @${name} host ${lib.concatStringsSep " " (map (h: "${h}.${publicDomain}") hosts)}
+    handle @${name} {
+      ${body}
+    }
+  '';
+  publicWildcardHandlers = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      label: service:
+        wildcardHandle label [label] (proxyConfig "${cfg.hostIp}:${toString services.${service}.port}")
+    )
+    appServices
+    ++ [
+      (wildcardHandle "adguard" ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}"))
+      (wildcardHandle "caddy" ["caddy"] ''
+        respond / "Caddy is running." 200
+        respond 404
+      '')
+      (wildcardHandle "unifi" ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1"))
+      (wildcardHandle "synology" ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001"))
+      (wildcardHandle "paperless" ["paperless"] (proxyConfig "${cfg.topology.nas.ip}:8000"))
+      (wildcardHandle "calibre" ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080"))
+      (wildcardHandle "brother" ["brother"] (proxyConfig "192.168.1.28"))
+      (wildcardHandle "syncthing" ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream))
+      (wildcardHandle "homeassistant" ["homeassistant" "ha"] homeAssistantProxyConfig)
+    ]
+    ++ lib.optionals (caddyCfg.executorUpstream != null) [
+      (wildcardHandle "executor" ["executor"] (proxyConfig caddyCfg.executorUpstream))
+    ]
+    ++ lib.optionals (caddyCfg.haMcpUpstream != null) [
+      (wildcardHandle "ha_mcp" ["ha-mcp"] (proxyConfig caddyCfg.haMcpUpstream))
+    ]
+  );
 in {
   options.homelab.caddy = {
     enable = lib.mkEnableOption "homelab reverse proxy (Caddy)";
+
+    publicDomain = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Optional public base domain (e.g. home.vessia.net) served with a Let's Encrypt Cloudflare DNS-01 wildcard certificate alongside *.lan.";
+    };
+
+    acmeEmail = lib.mkOption {
+      type = lib.types.str;
+      default = "michael@vessia.net";
+      description = "Contact email for ACME / Let's Encrypt certificate registration.";
+    };
 
     proxmoxUpstream = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
@@ -111,6 +173,28 @@ in {
       }
     ];
 
+    sops.secrets = lib.mkIf hasPublicDomain {
+      homelab_cloudflare_dns_env = {
+        sopsFile = cfg.backups.sopsFile;
+        owner = "root";
+        mode = "0400";
+      };
+    };
+
+    security.acme = lib.mkIf hasPublicDomain {
+      acceptTerms = true;
+      defaults.email = caddyCfg.acmeEmail;
+      certs.${publicDomain} = {
+        domain = publicDomain;
+        extraDomainNames = ["*.${publicDomain}"];
+        dnsProvider = "cloudflare";
+        dnsResolver = "1.1.1.1:53";
+        environmentFile = config.sops.secrets.homelab_cloudflare_dns_env.path;
+        group = config.services.caddy.group;
+        reloadServices = ["caddy.service"];
+      };
+    };
+
     systemd.services.homelab-legacy-ips = lib.mkIf (caddyCfg.legacyAliases != []) {
       description = "Configure legacy homelab secondary IPv4 aliases";
       after = ["network-online.target"];
@@ -134,10 +218,15 @@ in {
         legacyAliasIps;
     };
 
-    systemd.services.caddy = lib.mkIf (caddyCfg.legacyAliases != []) {
-      after = ["homelab-legacy-ips.service"];
-      wants = ["homelab-legacy-ips.service"];
+    systemd.services.caddy = lib.mkIf (caddyCfg.legacyAliases != [] || hasPublicDomain) {
+      after =
+        lib.optionals (caddyCfg.legacyAliases != []) ["homelab-legacy-ips.service"]
+        ++ lib.optionals hasPublicDomain ["acme-${publicDomain}.service"];
+      wants =
+        lib.optionals (caddyCfg.legacyAliases != []) ["homelab-legacy-ips.service"]
+        ++ lib.optionals hasPublicDomain ["acme-${publicDomain}.service"];
     };
+
     services.caddy = {
       enable = true;
       globalConfig = ''
@@ -153,7 +242,7 @@ in {
       '';
 
       virtualHosts =
-        lib.mapAttrs (_: service: proxy "${cfg.hostIp}:${toString services.${service}.port}") appServices
+        lib.mapAttrs' (label: service: lib.nameValuePair "${label}.lan" (proxy "${cfg.hostIp}:${toString services.${service}.port}")) appServices
         // {
           "adguard.lan" = proxy "127.0.0.1:${toString services.adguard.port}";
           "caddy.lan".extraConfig = ''
@@ -173,19 +262,23 @@ in {
           "syncthing.lan" = proxy caddyCfg.syncthingUpstream;
           "homeassistant.lan" = {
             serverAliases = ["ha.lan"];
-            extraConfig = ''
-              reverse_proxy ${caddyCfg.homeAssistantUpstream} {
-                header_up -X-Forwarded-For
-                header_up -X-Forwarded-Proto
-                header_up -X-Forwarded-Host
-                header_up Host {upstream_hostport}
-                header_up X-Forwarded-For {remote_host}
-                header_up X-Forwarded-Proto https
-              }
-            '';
+            extraConfig = homeAssistantProxyConfig;
           };
           "executor.lan" = lib.mkIf (caddyCfg.executorUpstream != null) (proxy caddyCfg.executorUpstream);
           "ha-mcp.lan" = lib.mkIf (caddyCfg.haMcpUpstream != null) (proxy caddyCfg.haMcpUpstream);
+        }
+        // lib.optionalAttrs hasPublicDomain {
+          "${publicDomain}".extraConfig = ''
+            ${acmeTls}
+            ${proxyConfig "${cfg.hostIp}:${toString services.homepage.port}"}
+          '';
+          "*.${publicDomain}".extraConfig = ''
+            ${acmeTls}
+            ${publicWildcardHandlers}
+            handle {
+              respond 404
+            }
+          '';
         };
     };
 

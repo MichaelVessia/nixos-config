@@ -99,6 +99,7 @@ in {
     };
     caddy = {
       enable = true;
+      publicDomain = "home.vessia.net";
       proxmoxUpstream = null;
       syncthingUpstream = "127.0.0.1:8384";
       aliasInterface = "eno1";
