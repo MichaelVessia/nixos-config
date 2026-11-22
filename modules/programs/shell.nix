@@ -67,6 +67,8 @@ in {
       [ -f "$SECRETS_DIR/kuma_url" ] && export KUMA_URL="$(cat "$SECRETS_DIR/kuma_url")"
       [ -f "$SECRETS_DIR/kuma_username" ] && export KUMA_USERNAME="$(cat "$SECRETS_DIR/kuma_username")"
       [ -f "$SECRETS_DIR/kuma_password" ] && export KUMA_PASSWORD="$(cat "$SECRETS_DIR/kuma_password")"
+      [ -f "$SECRETS_DIR/tailscale_oauth_client_id" ] && export TAILSCALE_OAUTH_CLIENT_ID="$(cat "$SECRETS_DIR/tailscale_oauth_client_id")"
+      [ -f "$SECRETS_DIR/tailscale_oauth_client_secret" ] && export TAILSCALE_OAUTH_CLIENT_SECRET="$(cat "$SECRETS_DIR/tailscale_oauth_client_secret")"
       [ -f "$SECRETS_DIR/flocasts_npm_token" ] && export FLOCASTS_NPM_TOKEN="$(cat "$SECRETS_DIR/flocasts_npm_token")"
       [ -f "$SECRETS_DIR/github_token" ] && export GITHUB_TOKEN="$(cat "$SECRETS_DIR/github_token")"
       [ -f "$SECRETS_DIR/jira_api_token" ] && export JIRA_API_TOKEN="$(cat "$SECRETS_DIR/jira_api_token")"

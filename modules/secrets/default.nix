@@ -20,6 +20,8 @@
     secrets.kuma_url.owner = "michaelvessia";
     secrets.kuma_username.owner = "michaelvessia";
     secrets.kuma_password.owner = "michaelvessia";
+    secrets.tailscale_oauth_client_id.owner = "michaelvessia";
+    secrets.tailscale_oauth_client_secret.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
