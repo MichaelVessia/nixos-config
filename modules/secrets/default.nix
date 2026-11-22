@@ -22,6 +22,8 @@
     secrets.kuma_password.owner = "michaelvessia";
     secrets.tailscale_oauth_client_id.owner = "michaelvessia";
     secrets.tailscale_oauth_client_secret.owner = "michaelvessia";
+    secrets.healthchecks_api_key.owner = "michaelvessia";
+    secrets.unifi_api_key.owner = "michaelvessia";
   };
 
   # ──────────────────────────────────────────────────────────────────────────────
