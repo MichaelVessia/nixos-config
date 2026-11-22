@@ -18,6 +18,7 @@
     "autocaliweb"
     "freshrss"
     "tubearchivist"
+    "immich"
   ];
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
 in {
@@ -27,7 +28,7 @@ in {
     allowExternalCaddyIp = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = "192.168.1.252";
-      description = "Legacy Caddy CT 115 IP permitted to reach M2 through M4 app ports before M6 moves Caddy onto this host. Set to null once Caddy runs locally.";
+      description = "Legacy Caddy CT 115 IP permitted to reach M2 through M5 app ports before M6 moves Caddy onto this host. Set to null once Caddy runs locally.";
     };
   };
 
@@ -68,8 +69,13 @@ in {
       "d /opt/homelab/jellyfin 0755 root root -"
       "d /opt/homelab/jellyfin/data - - - -"
       "d /opt/homelab/jellyfin/etc - - - -"
+      "d /opt/homelab/immich 0755 root root -"
+      "d /opt/homelab/immich/postgres - - - -"
+      "d /opt/homelab/immich/redis - - - -"
+      "d /opt/homelab/immich/env 0750 root root -"
       "d /var/cache/homelab 0755 root root -"
       "d /var/cache/homelab/jellyfin - - - -"
+      "d /var/cache/homelab/immich-ml - - - -"
     ];
 
     system.activationScripts.homelabCa = ''
