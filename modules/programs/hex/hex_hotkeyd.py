@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 from dataclasses import dataclass
 from enum import Enum
 import os
+from pathlib import Path
 import queue
+import re
 import selectors
 import signal
 import subprocess
@@ -47,6 +50,10 @@ class StepResult:
 
 
 VIRTUAL_DEVICE_NAME = "hex-hotkeyd virtual keyboard"
+EV_KEY = 1
+KEY_A = 30
+_SYSFS_INPUT = Path("/sys/class/input")
+_INPUT_WORD_BITS = ctypes.sizeof(ctypes.c_ulong) * 8
 
 
 class HotkeyMachine:
@@ -285,6 +292,35 @@ def _now_ms() -> int:
     return time.monotonic_ns() // 1_000_000
 
 
+def _read_sysfs_bitmap(path: Path) -> int:
+    words = path.read_text(encoding="ascii").split()
+    if not words:
+        raise ValueError("empty input capability bitmap")
+
+    bitmap = 0
+    for word in words:
+        if len(word) > _INPUT_WORD_BITS // 4 or not re.fullmatch(r"[0-9a-fA-F]+", word):
+            raise ValueError("invalid input capability word")
+        bitmap = (bitmap << _INPUT_WORD_BITS) | int(word, 16)
+    return bitmap
+
+
+def sysfs_is_keyboard(path: str, trigger_code: int) -> bool | None:
+    device = _SYSFS_INPUT / Path(path).name / "device"
+    try:
+        name = (device / "name").read_text(encoding="utf-8").removesuffix("\n")
+        event_types = _read_sysfs_bitmap(device / "capabilities" / "ev")
+        keys = _read_sysfs_bitmap(device / "capabilities" / "key")
+    except (OSError, ValueError):
+        return None
+
+    return (
+        name != VIRTUAL_DEVICE_NAME
+        and bool(event_types & (1 << EV_KEY))
+        and all(code >= 0 and (keys >> code) & 1 for code in (trigger_code, KEY_A))
+    )
+
+
 def run_evdev_loop(
     config: HotkeyConfig,
     runner: HexCommandRunner,
@@ -293,8 +329,6 @@ def run_evdev_loop(
 ) -> int:
     import evdev
 
-    ev_key = evdev.ecodes.EV_KEY
-    key_a = 30
     retry_delay_ms = min(100, rescan_ms)
 
     machine = HotkeyMachine(config)
@@ -315,7 +349,7 @@ def run_evdev_loop(
         if uinput is None or not emits:
             return
         for code, value in emits:
-            uinput.write(ev_key, code, value)
+            uinput.write(EV_KEY, code, value)
             uinput.syn()
 
     def dispatch(result: StepResult) -> None:
@@ -327,14 +361,16 @@ def run_evdev_loop(
         if dev.name == VIRTUAL_DEVICE_NAME:
             return False
         caps = dev.capabilities(verbose=False)
-        keys = set(caps.get(ev_key, ()))
-        return config.trigger_code in keys and key_a in keys
+        keys = set(caps.get(EV_KEY, ()))
+        return config.trigger_code in keys and KEY_A in keys
 
     def rescan() -> bool:
         nonlocal next_device_id
         retry_soon = False
         for path in evdev.list_devices():
             if path in devices:
+                continue
+            if sysfs_is_keyboard(path, config.trigger_code) is False:
                 continue
             try:
                 dev = evdev.InputDevice(path)
@@ -397,7 +433,7 @@ def run_evdev_loop(
                 if isinstance(c, int) and 0 < c < evdev.ecodes.KEY_MAX
             )
             try:
-                uinput = evdev.UInput({ev_key: key_codes}, name=VIRTUAL_DEVICE_NAME)
+                uinput = evdev.UInput({EV_KEY: key_codes}, name=VIRTUAL_DEVICE_NAME)
             except OSError as exc:
                 print(
                     f"hex-hotkeyd: uinput unavailable ({exc}); falling back to passive mode",
@@ -431,7 +467,7 @@ def run_evdev_loop(
                 path, dev_id, dev = key.data
                 try:
                     for event in dev.read():
-                        if event.type == ev_key:
+                        if event.type == EV_KEY:
                             dispatch(machine.on_key(dev_id, event.code, event.value, now))
                 except BlockingIOError:
                     continue

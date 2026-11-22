@@ -1,6 +1,25 @@
+from contextlib import redirect_stderr
+import ctypes
+from io import StringIO
+from pathlib import Path
+import signal
+import sys
+from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 import unittest
+from unittest.mock import Mock, call, patch
 
-from hex_hotkeyd import Action, HotkeyConfig, HotkeyMachine, State, StepResult, parse_args
+from hex_hotkeyd import (
+    VIRTUAL_DEVICE_NAME,
+    Action,
+    HotkeyConfig,
+    HotkeyMachine,
+    State,
+    StepResult,
+    parse_args,
+    run_evdev_loop,
+    sysfs_is_keyboard,
+)
 
 DEV_1 = 1
 DEV_2 = 2
@@ -320,6 +339,104 @@ class HotkeyMachineTest(unittest.TestCase):
     def test_parse_args_no_grab_flag(self) -> None:
         self.assertFalse(parse_args([]).no_grab)
         self.assertTrue(parse_args(["--no-grab"]).no_grab)
+
+
+class KeyboardFilterTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.sysfs = Path(self.enterContext(TemporaryDirectory()))
+        self.enterContext(patch("hex_hotkeyd._SYSFS_INPUT", self.sysfs))
+        self.keyboard_keys = (
+            "2000000000000000 40000000"
+            if ctypes.sizeof(ctypes.c_ulong) == 8
+            else "20000000 0 0 40000000"
+        )
+
+    def write_device(
+        self, event: str, keys: str, *, name: str = "Test device", ev: str = "3"
+    ) -> str:
+        device = self.sysfs / event / "device"
+        caps = device / "capabilities"
+        caps.mkdir(parents=True, exist_ok=True)
+        (device / "name").write_text(f"{name}\n")
+        (caps / "ev").write_text(f"{ev}\n")
+        (caps / "key").write_text(f"{keys}\n")
+        return f"/dev/input/{event}"
+
+    def test_multi_word_bitmap_requires_trigger_and_key_a(self) -> None:
+        for keys, expected in (
+            (self.keyboard_keys, True),
+            ("40000000", False),
+            (self.keyboard_keys.removesuffix("40000000") + "0", False),
+        ):
+            with self.subTest(keys=keys):
+                path = self.write_device("event0", keys)
+                self.assertIs(sysfs_is_keyboard(path, TRIGGER), expected)
+
+    def test_single_word_bitmap(self) -> None:
+        path = self.write_device("event0", "40008000")
+        self.assertIs(sysfs_is_keyboard(path, TAB), True)
+
+    def test_missing_ev_key_and_virtual_device_are_rejected(self) -> None:
+        without_ev_key = self.write_device("event0", self.keyboard_keys, ev="5")
+        virtual = self.write_device("event1", self.keyboard_keys, name=VIRTUAL_DEVICE_NAME)
+        self.assertIs(sysfs_is_keyboard(without_ev_key, TRIGGER), False)
+        self.assertIs(sysfs_is_keyboard(virtual, TRIGGER), False)
+
+    def test_missing_or_malformed_sysfs_returns_none(self) -> None:
+        for keys in ("", "xyz 40000000", "-1 40000000", "1_0 40000000", "f" * 17):
+            with self.subTest(keys=keys):
+                path = self.write_device("event0", keys)
+                self.assertIsNone(sysfs_is_keyboard(path, TRIGGER))
+
+        path = self.write_device("event0", self.keyboard_keys, ev="xyz")
+        self.assertIsNone(sysfs_is_keyboard(path, TRIGGER))
+
+        path = self.write_device("event0", self.keyboard_keys)
+        (self.sysfs / "event0/device/capabilities/key").unlink()
+        self.assertIsNone(sysfs_is_keyboard(path, TRIGGER))
+
+    def test_rescan_opens_candidates_and_fallbacks_only(self) -> None:
+        rejected = self.write_device("event0", "40000000")
+        candidate = self.write_device("event1", self.keyboard_keys)
+        fallback = "/dev/input/event2"
+        changed = self.write_device("event3", self.keyboard_keys)
+        keyboard = Mock(fd=10)
+        fallback_keyboard = Mock(fd=11)
+        changed_device = Mock(fd=12)
+        for dev in (keyboard, fallback_keyboard, changed_device):
+            dev.name = "Test device"
+        keyboard.capabilities.return_value = {1: [KEY_A, TRIGGER]}
+        fallback_keyboard.capabilities.return_value = {1: [KEY_A, TRIGGER]}
+        changed_device.capabilities.return_value = {1: [KEY_A]}
+        input_devices = Mock(side_effect={
+            candidate: keyboard,
+            fallback: fallback_keyboard,
+            changed: changed_device,
+        }.__getitem__)
+        evdev = SimpleNamespace(
+            InputDevice=input_devices,
+            list_devices=Mock(return_value=[rejected, candidate, fallback, changed]),
+        )
+
+        with (
+            patch.dict(sys.modules, {"evdev": evdev}),
+            patch("hex_hotkeyd.signal.signal") as register_signal,
+            patch("hex_hotkeyd.selectors.DefaultSelector") as make_selector,
+            patch("hex_hotkeyd.os.set_blocking"),
+            redirect_stderr(StringIO()),
+        ):
+            selector = make_selector.return_value
+
+            def stop_loop(*, timeout: float) -> list:
+                register_signal.call_args.args[1](signal.SIGTERM, None)
+                return []
+
+            selector.select.side_effect = stop_loop
+            self.assertEqual(run_evdev_loop(HotkeyConfig(), Mock(), grab=False), 0)
+
+        self.assertEqual(input_devices.call_args_list, [call(candidate), call(fallback), call(changed)])
+        self.assertEqual([entry.args[0] for entry in selector.register.call_args_list], [10, 11])
+        changed_device.close.assert_called_once_with()
 
 
 if __name__ == "__main__":
