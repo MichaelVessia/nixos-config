@@ -37,6 +37,7 @@
     "kiosk" = "kiosk";
     "tubearchivist" = "tubearchivist";
     "signoz" = "signoz";
+    "paperless" = "paperless";
   };
   proxyConfig = upstream: "reverse_proxy ${upstream}";
   proxy = upstream: {extraConfig = proxyConfig upstream;};
@@ -78,7 +79,6 @@
       '')
       (wildcardHandle "unifi" ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1"))
       (wildcardHandle "synology" ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001"))
-      (wildcardHandle "paperless" ["paperless"] (proxyConfig "${cfg.topology.nas.ip}:8000"))
       (wildcardHandle "calibre" ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080"))
       (wildcardHandle "brother" ["brother"] (proxyConfig "192.168.1.28"))
       (wildcardHandle "syncthing" ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream))
@@ -254,7 +254,6 @@ in {
           "synology.lan" =
             proxyWithSelfSignedTls "https://${cfg.topology.nas.ip}:5001"
             // {serverAliases = ["nas.lan"];};
-          "paperless.lan" = proxy "${cfg.topology.nas.ip}:8000";
           "calibre.lan" = proxy "${cfg.topology.nas.ip}:8080";
           "brother.lan" = proxy "192.168.1.28";
 

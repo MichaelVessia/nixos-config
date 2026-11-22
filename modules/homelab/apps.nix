@@ -20,6 +20,7 @@
     "tubearchivist"
     "immich"
     "signoz"
+    "paperless"
   ];
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
   otlpPort = toString cfg.topology.services.signoz.otlpGrpcPort;
