@@ -18,7 +18,6 @@
           "vers=4.1"
           "_netdev"
           "x-systemd.automount"
-          "x-systemd.idle-timeout=600"
           "bg"
           "nofail"
         ]
