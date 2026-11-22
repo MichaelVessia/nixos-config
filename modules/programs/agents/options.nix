@@ -9,7 +9,7 @@
 
   options.agentHarnesses.executor.origin = lib.mkOption {
     type = lib.types.str;
-    default = "https://hearth.bison-gray.ts.net:4443";
+    default = "https://executor.home.vessia.net";
     description = "Origin of the personal Executor server.";
   };
 

@@ -27,7 +27,7 @@ in {
     serveExecutor = {
       enable = lib.mkOption {
         type = lib.types.bool;
-        default = cfg.apps.enable;
+        default = false;
         description = "Declaratively publish Executor over Tailscale Serve on HTTPS.";
       };
 
