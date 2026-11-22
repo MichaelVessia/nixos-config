@@ -8,6 +8,7 @@
   inherit (lib) escapeShellArg escapeShellArgs mkOption types;
   ovmf = pkgs.OVMF.override {fdSize4MB = true;};
   qmpSocket = "/run/homelab-haos.qmp";
+  consoleSocket = "/run/homelab-haos.console";
   guestRoute = escapeShellArg "${cfg.guestIp}/32";
   usbArgs =
     lib.concatMap (device: [
@@ -20,7 +21,7 @@
     ip route del ${guestRoute} dev ha-host0 2>/dev/null || true
     ip link del ha-tap0 2>/dev/null || true
     ip link del ha-host0 2>/dev/null || true
-    rm -f ${qmpSocket}
+    rm -f ${qmpSocket} ${consoleSocket}
   '';
 in {
   options.homelab.homeassistant = {
@@ -160,20 +161,20 @@ in {
         exec 3<>"$tap"
         exec ${pkgs.qemu_kvm}/bin/qemu-system-x86_64 \
           -name homelab-homeassistant \
-          -machine q35,accel=kvm \
+          -machine pc,accel=kvm \
           -cpu host \
           -smp ${toString cfg.vcpus} \
           -m ${toString cfg.memoryMb} \
           -drive ${escapeShellArg "if=pflash,unit=0,format=raw,readonly=on,file=${ovmf.firmware}"} \
           -drive ${escapeShellArg "if=pflash,unit=1,format=raw,file=${qemuPath cfg.efiVarsPath}"}",size=$vars_size" \
-          -device virtio-scsi-pci,id=scsi0 \
+          -device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x5 \
           -drive ${escapeShellArg "if=none,id=disk0,file=${qemuPath cfg.diskPath},format=${cfg.diskFormat},cache=writeback,aio=threads,discard=unmap"} \
           -device scsi-hd,bus=scsi0.0,drive=disk0,bootindex=1 \
           -netdev tap,id=net0,fd=3 \
-          -device "virtio-net-pci,netdev=net0,mac=$mac" \
+          -device "virtio-net-pci,netdev=net0,bus=pci.0,addr=0x12,mac=$mac" \
           -device qemu-xhci,id=xhci \
           ${escapeShellArgs usbArgs} -qmp unix:${qmpSocket},server=on,wait=off \
-          -display none -serial none -monitor none
+          -display none -serial unix:${consoleSocket},server=on,wait=off -monitor none
       '';
 
       preStop = ''
