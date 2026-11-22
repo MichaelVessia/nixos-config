@@ -8,21 +8,12 @@
   caddyCfg = cfg.caddy;
   services = cfg.topology.services;
   legacyAliasIps = lib.unique (map (alias: alias.ip) caddyCfg.legacyAliases);
-  legacyAliasRules =
-    map (
-      alias: "-d ${lib.escapeShellArg alias.ip} -p tcp --dport ${toString alias.port} -j nixos-fw-accept"
-    )
+  legacyAliasNatRules =
+    lib.concatMap (alias: [
+      "PREROUTING -d ${lib.escapeShellArg alias.ip} -p tcp --dport ${toString alias.port} -j DNAT --to-destination ${lib.escapeShellArg alias.upstream}"
+      "OUTPUT -d ${lib.escapeShellArg alias.ip} -p tcp --dport ${toString alias.port} -j DNAT --to-destination ${lib.escapeShellArg alias.upstream}"
+    ])
     caddyCfg.legacyAliases;
-  legacyAliasVirtualHosts = lib.listToAttrs (map (alias: {
-      name = "http://${alias.ip}:${toString alias.port}";
-      value = {
-        extraConfig = ''
-          bind ${alias.ip}
-          reverse_proxy ${alias.upstream}
-        '';
-      };
-    })
-    caddyCfg.legacyAliases);
   appServices = {
     "homepage.lan" = "homepage";
     "uptimekuma.lan" = "uptimekuma";
@@ -195,8 +186,7 @@ in {
           };
           "executor.lan" = lib.mkIf (caddyCfg.executorUpstream != null) (proxy caddyCfg.executorUpstream);
           "ha-mcp.lan" = lib.mkIf (caddyCfg.haMcpUpstream != null) (proxy caddyCfg.haMcpUpstream);
-        }
-        // legacyAliasVirtualHosts;
+        };
     };
 
     networking.firewall = {
@@ -204,17 +194,17 @@ in {
         services.caddy.port
         services.caddy.httpsPort
       ];
-      extraCommands = lib.mkIf (legacyAliasRules != []) (
+      extraCommands = lib.mkIf (legacyAliasNatRules != []) (
         lib.concatMapStrings (rule: ''
-          iptables -A nixos-fw ${rule}
+          iptables -t nat -I ${rule}
         '')
-        legacyAliasRules
+        legacyAliasNatRules
       );
-      extraStopCommands = lib.mkIf (legacyAliasRules != []) (
+      extraStopCommands = lib.mkIf (legacyAliasNatRules != []) (
         lib.concatMapStrings (rule: ''
-          iptables -D nixos-fw ${rule} || true
+          iptables -t nat -D ${rule} || true
         '')
-        legacyAliasRules
+        legacyAliasNatRules
       );
     };
 

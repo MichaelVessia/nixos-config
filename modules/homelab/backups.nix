@@ -48,7 +48,7 @@
 
   prepareScript = pkgs.writeShellApplication {
     name = "homelab-restic-prepare";
-    runtimeInputs = [pkgs.coreutils pkgs.util-linux];
+    runtimeInputs = [pkgs.coreutils pkgs.docker pkgs.gnugrep pkgs.util-linux];
     text =
       lib.optionalString backupsCfg.healthchecks.enable ''
         ${lib.getExe healthcheckPing} start
@@ -60,6 +60,20 @@
           echo "ERROR: ${nasBackupMount} is not mounted; refusing to write restic repo to local disk." >&2
           exit 1
         fi
+      ''
+      + ''
+        dump_pg() {
+          local container="$1" user="$2" db="$3" out="$4"
+          if docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -qx true; then
+            mkdir -p /opt/homelab/backups
+            chmod 0700 /opt/homelab/backups
+            umask 077
+            docker exec "$container" pg_dump -Fc --no-owner --no-privileges -U "$user" "$db" > "$out.tmp"
+            mv -f "$out.tmp" "$out"
+          fi
+        }
+        dump_pg homelab-immich-db immich immich /opt/homelab/backups/immich.dump
+        dump_pg homelab-freshrss-db freshrss_usr freshrss /opt/homelab/backups/freshrss.dump
       '';
   };
 in {
@@ -116,6 +130,10 @@ in {
       repository = backupsCfg.repository;
       passwordFile = config.sops.secrets.homelab_restic_password.path;
       paths = backupsCfg.paths;
+      extraBackupArgs = [
+        "--exclude=/opt/homelab/immich/postgres"
+        "--exclude=/opt/homelab/freshrss/postgres"
+      ];
       timerConfig = {
         OnCalendar = "03:00";
         Persistent = true;
