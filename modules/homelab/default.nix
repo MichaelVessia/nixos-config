@@ -11,6 +11,7 @@ in {
     ./backups.nix
     ./frame.nix
     ./apps.nix
+    ./github-runner.nix
     ./caddy.nix
     ./homeassistant.nix
     ./adguard.nix
@@ -50,6 +51,8 @@ in {
     users.groups.media = {};
 
     virtualisation.docker.enable = lib.mkDefault true;
+
+    environment.etc."homelab/topology.json".source = ./topology.json;
 
     environment.systemPackages = with pkgs; [
       btrfs-progs

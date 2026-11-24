@@ -97,6 +97,7 @@ in {
       enable = true;
       allowExternalCaddyIp = null;
     };
+    githubRunner.enable = true;
     caddy = {
       enable = true;
       publicDomain = "home.vessia.net";
