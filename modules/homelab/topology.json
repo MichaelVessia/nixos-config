@@ -210,6 +210,12 @@
       "owner": "nixos",
       "milestone": "M8"
     },
+    "maple": {
+      "port": 4318,
+      "bind": "loopback",
+      "domains": ["maple.lan"],
+      "owner": "alchemy-docker"
+    },
     "paperless": {
       "port": 8000,
       "bind": "loopback",

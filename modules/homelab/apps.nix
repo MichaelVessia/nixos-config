@@ -102,6 +102,13 @@
       group = "root";
       mode = "0400";
     };
+    homelab_maple_env = {
+      dir = "/opt/homelab/maple/env";
+      dirGroup = "10001";
+      file = "maple.env";
+      group = "10001";
+      mode = "0440";
+    };
     homelab_tubearchivist_env = {
       dir = "/opt/homelab/tubearchivist/env";
       dirGroup = "root";
@@ -199,6 +206,9 @@ in {
       "d /opt/homelab/signoz/data - - - -"
       "d /opt/homelab/signoz/conf 0755 root root -"
       "d /opt/homelab/signoz/env 0750 root root -"
+      "d /opt/homelab/maple 0755 root root -"
+      "d /opt/homelab/maple/data 0700 10001 10001 -"
+      "d /opt/homelab/maple/env 0750 root 10001 -"
       "d /opt/homelab/paperless 0755 root root -"
       "d /opt/homelab/paperless/data - - - -"
       "d /opt/homelab/paperless/media - - - -"

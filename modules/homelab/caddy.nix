@@ -41,6 +41,23 @@
   };
   proxyConfig = upstream: "reverse_proxy ${upstream}";
   proxy = upstream: {extraConfig = proxyConfig upstream;};
+  mapleUpstream = "127.0.0.1:${toString services.maple.port}";
+  mapleMetricsSources = cfg.topology.network.otlpAllowlist ++ ["100.64.0.0/10"];
+  maplePublicProxy = ''
+    @host_metrics {
+      method POST
+      path /v1/metrics
+      remote_ip ${lib.concatStringsSep " " mapleMetricsSources}
+    }
+    handle @host_metrics {
+      reverse_proxy ${mapleUpstream} {
+        header_up x-maple-ingest-key {env.MAPLE_LOCAL_INGEST_KEY}
+      }
+    }
+    handle {
+      ${proxyConfig mapleUpstream}
+    }
+  '';
   proxyWithSelfSignedTlsConfig = upstream: ''
     reverse_proxy ${upstream} {
       transport http {
@@ -73,6 +90,7 @@
     )
     appServices
     ++ [
+      (wildcardHandle "maple" ["maple"] maplePublicProxy)
       (wildcardHandle "adguard" ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}"))
       (wildcardHandle "caddy" ["caddy"] ''
         respond / "Caddy is running." 200
@@ -175,6 +193,7 @@ in {
     ];
 
     sops.secrets = lib.mkIf hasPublicDomain {
+      homelab_maple_env.restartUnits = ["caddy.service"];
       homelab_cloudflare_dns_env = {
         sopsFile = cfg.backups.sopsFile;
         owner = "root";
@@ -230,6 +249,7 @@ in {
 
     services.caddy = {
       enable = true;
+      environmentFile = lib.mkIf hasPublicDomain config.sops.secrets.homelab_maple_env.path;
       globalConfig = ''
         admin 127.0.0.1:${toString services.caddy.adminPort}
         default_bind ${cfg.hostIp}
@@ -245,6 +265,7 @@ in {
       virtualHosts =
         lib.mapAttrs' (label: service: lib.nameValuePair "${label}.lan" (proxy "${cfg.hostIp}:${toString services.${service}.port}")) appServices
         // {
+          "maple.lan" = proxy mapleUpstream;
           "adguard.lan" = proxy "127.0.0.1:${toString services.adguard.port}";
           "caddy.lan".extraConfig = ''
             respond / "Caddy is running." 200

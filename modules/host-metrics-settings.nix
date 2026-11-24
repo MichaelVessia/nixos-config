@@ -2,7 +2,9 @@
   lib,
   hostName,
   isDarwin ? false,
-}: {
+}: let
+  topology = builtins.fromJSON (builtins.readFile ./homelab/topology.json);
+in {
   receivers.host_metrics = {
     collection_interval = "30s";
     scrapers =
@@ -59,9 +61,12 @@
     endpoint = "192.168.1.200:4317";
     tls.insecure = true;
   };
+  exporters.otlp_http = {
+    endpoint = "https://maple.${topology.network.publicDomain}";
+  };
   service.pipelines.metrics = {
     receivers = ["host_metrics"];
     processors = ["memory_limiter" "resourcedetection" "resource" "batch"];
-    exporters = ["otlp_grpc"];
+    exporters = ["otlp_grpc" "otlp_http"];
   };
 }
