@@ -44,6 +44,7 @@
   proxyWithSelfSignedTlsConfig = upstream: ''
     reverse_proxy ${upstream} {
       transport http {
+        dial_timeout 15s
         tls_insecure_skip_verify
       }
     }
