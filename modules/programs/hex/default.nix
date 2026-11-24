@@ -56,6 +56,7 @@ in {
         settings = {
           "dictation_processing.default_mode" = defaultMode;
           "dictation_processing.modes" = modes;
+          "labs.unload_idle" = true;
         };
       };
 
