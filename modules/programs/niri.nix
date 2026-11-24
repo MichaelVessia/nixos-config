@@ -305,17 +305,20 @@ in
         };
 
         # Layout configuration
-        layout = {
-          gaps = 8;
-
-          # Column widths that can be cycled through
-          preset-column-widths = [
+        layout = let
+          presetProportions = [
             {proportion = 1.0 / 3.0;}
             {proportion = 1.0 / 2.0;}
             {proportion = 2.0 / 3.0;}
             {proportion = 9.0 / 10.0;}
             {proportion = 1.0;}
           ];
+        in {
+          gaps = 8;
+
+          # Column widths and window heights that can be cycled through
+          preset-column-widths = presetProportions;
+          preset-window-heights = presetProportions;
 
           # Default column width
           default-column-width = {proportion = 1.0 / 2.0;};
@@ -467,6 +470,7 @@ in
           "Mod+Shift+Minus".action.set-window-height = "-10%";
           "Mod+Shift+Equal".action.set-window-height = "+10%";
           "Mod+R".action.switch-preset-column-width = [];
+          "Mod+Shift+R".action.switch-preset-window-height = [];
 
           # ================
           # WORKSPACES
