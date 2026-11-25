@@ -1,6 +1,8 @@
 {
+  config,
   lib,
   pkgs,
+  utils,
   username,
   ...
 }: let
@@ -138,6 +140,32 @@ in {
 
   environment.enableAllTerminfo = true;
   environment.systemPackages = with pkgs; [btrfs-progs curl git jq nano rsync vim];
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+  nix.optimise.automatic = true;
+
+  virtualisation.docker.autoPrune = {
+    enable = true;
+    dates = "weekly";
+    flags = ["--all" "--filter=until=168h"];
+  };
+  # The default system prune can delete stopped containers and their images.
+  systemd.services.docker-prune.serviceConfig.ExecStart = lib.mkForce [
+    (utils.escapeSystemdExecArgs (
+      [(lib.getExe config.virtualisation.docker.package) "image" "prune" "--force"]
+      ++ config.virtualisation.docker.autoPrune.flags
+    ))
+  ];
+
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = ["/"];
+  };
 
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
