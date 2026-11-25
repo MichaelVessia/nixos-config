@@ -9,6 +9,7 @@
   services = cfg.topology.services;
   publicDomain = caddyCfg.publicDomain;
   hasPublicDomain = publicDomain != null;
+  nasRedirectTarget = "https://nas.${publicDomain}{uri}";
   traceEnabled = caddyCfg.traceEndpoint != null;
   acmeDir =
     if hasPublicDomain
@@ -210,6 +211,8 @@
           }
         else if hasPublicDomain && service == "tinyauth"
         then route // {extraConfig = "redir https://login.${publicDomain}{uri} 308";}
+        else if hasPublicDomain && service == "synology"
+        then route // {extraConfig = "redir ${nasRedirectTarget} 308";}
         else route
     )
     proxyRoutes
@@ -222,6 +225,12 @@
         wildcardHandle service route.labels (
           if adminClientPaths ? ${service}
           then tinyauthForwardAuth service route.extraConfig
+          else if service == "synology"
+          then ''
+            @synologyAlias host synology.${publicDomain}
+            redir @synologyAlias ${nasRedirectTarget} 308
+            ${route.extraConfig}
+          ''
           else route.extraConfig
         )
     )
