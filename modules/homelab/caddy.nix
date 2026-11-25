@@ -46,7 +46,6 @@
     adguard = ["/control/*"];
     autocaliweb = ["/health" "/opds" "/opds/*"];
     brother = [];
-    calibre = [];
     chaptarr = arrClientPaths;
     freshrss = ["/api/*"];
     maple = ["/health" "/local/status" "/local/query"] ++ mapleOtlpPaths;
@@ -227,7 +226,6 @@
       tinyauth = tracedRoute ["login"] (proxyConfig "127.0.0.1:${toString services.tinyauth.port}");
       unifi = tracedRoute ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1");
       synology = tracedRoute ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001");
-      calibre = tracedRoute ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080");
       brother = tracedRoute ["brother"] (proxyConfig "192.168.1.28");
       syncthing = tracedRoute ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream);
       tubearchivist = tracedRoute ["tubearchivist"] tubeArchivistProxy;
