@@ -23,6 +23,10 @@
 in {
   sops.secrets = {
     homelab_maple_env.restartUnits = ["opentelemetry-collector.service"];
+    homelab_synology_snmp_env = {
+      sopsFile = config.homelab.backups.sopsFile;
+      restartUnits = ["opentelemetry-collector.service"];
+    };
     homelab_unpoller_env = {
       sopsFile = config.homelab.backups.sopsFile;
       restartUnits = ["unpoller.service"];
@@ -47,11 +51,16 @@ in {
     after = ["docker.service" "unpoller.service"];
     wants = ["docker.service" "unpoller.service"];
     serviceConfig = {
-      EnvironmentFile = config.sops.secrets.homelab_maple_env.path;
+      EnvironmentFile = [
+        config.sops.secrets.homelab_maple_env.path
+        config.sops.secrets.homelab_synology_snmp_env.path
+      ];
       SupplementaryGroups = ["docker"];
     };
   };
 
+  # The collector validates at startup, after systemd loads the SNMP credentials.
+  services.opentelemetry-collector.validateConfigFile = lib.mkForce false;
   services.opentelemetry-collector.settings = {
     receivers = {
       docker_stats = {
@@ -74,6 +83,7 @@ in {
           ];
         }
       ];
+      "snmp/synology" = import ./synology-snmp.nix {inherit (topology.nas) ip;};
       journald = {
         directory = "/var/log/journal";
         journalctl_path = "${pkgs.systemd}/bin/journalctl";
@@ -149,6 +159,21 @@ in {
           action = "upsert";
         }
       ];
+      "resource/synology".attributes = [
+        {
+          key = "service.name";
+          value = "synology-nas";
+          action = "upsert";
+        }
+        {
+          key = "host.name";
+          value = "vessia-nas";
+          action = "upsert";
+        }
+      ];
+      "filter/synology".metric_conditions = [
+        ''IsMatch(metric.name, "^synology[.]storage[.]") and not IsMatch(datapoint.attributes["storage.mount"], "^/volume[0-9]+$")''
+      ];
       "filter/journald".log_conditions = [
         ''log.attributes["container.name"] == "homelab-maple"''
         ''log.attributes["systemd.unit"] == "opentelemetry-collector.service"''
@@ -172,6 +197,11 @@ in {
         "metrics/unifi" = {
           receivers = ["prometheus/unifi"];
           processors = ["memory_limiter" "batch"];
+          exporters = ["otlp_http"];
+        };
+        "metrics/synology" = {
+          receivers = ["snmp/synology"];
+          processors = ["memory_limiter" "filter/synology" "resource/synology" "batch"];
           exporters = ["otlp_http"];
         };
         logs = {
