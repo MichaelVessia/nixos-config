@@ -201,6 +201,8 @@ in {
       "d /opt/homelab/jellyfin 0755 root root -"
       "d /opt/homelab/jellyfin/data - - - -"
       "d /opt/homelab/jellyfin/etc - - - -"
+      "d /opt/homelab/music-assistant 0755 root root -"
+      "d /opt/homelab/music-assistant/data 0700 root root -"
       "d /opt/homelab/immich 0755 root root -"
       "d /opt/homelab/immich/postgres - - - -"
       "d /opt/homelab/immich/redis - - - -"

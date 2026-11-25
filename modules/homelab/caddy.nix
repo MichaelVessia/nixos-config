@@ -49,6 +49,7 @@
     freshrss = ["/api/*"];
     lazylibrarian = ["/api"];
     maple = ["/health" "/local/status" "/local/query"] ++ mapleOtlpPaths;
+    musicAssistant = ["/health"];
     prowlarr = arrClientPaths;
     radarr = arrClientPaths;
     sabnzbd = arrClientPaths;
@@ -176,6 +177,21 @@
         labels = ["maple"];
         extraConfig = mapleProxy;
       };
+      musicAssistant = tracedRoute ["music"] ''
+        handle /health {
+          reverse_proxy ${appUpstream services.musicAssistant} {
+            method GET
+            rewrite /info
+            @ready status 200
+            handle_response @ready {
+              respond 204
+            }
+          }
+        }
+        handle {
+          ${proxyConfig (appUpstream services.musicAssistant)}
+        }
+      '';
       adguard = tracedRoute ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}");
       pocket-id = tracedRoute ["auth"] (proxyConfig "127.0.0.1:${toString services.pocketId.port}");
       tinyauth = tracedRoute ["login"] (proxyConfig "127.0.0.1:${toString services.tinyauth.port}");

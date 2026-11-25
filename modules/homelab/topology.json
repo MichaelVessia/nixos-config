@@ -179,6 +179,12 @@
       "owner": "alchemy-docker",
       "milestone": "M4"
     },
+    "musicAssistant": {
+      "port": 8095,
+      "bind": "loopback",
+      "domains": ["music.lan"],
+      "owner": "alchemy-docker"
+    },
     "jellyfin": {
       "port": 8096,
       "bind": "lan",
