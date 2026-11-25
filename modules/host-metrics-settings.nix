@@ -56,17 +56,12 @@ in {
       send_batch_size = 1024;
     };
   };
-  # Send metrics to SigNoz on hearth, which uses a source allowlist.
-  exporters.otlp_grpc = {
-    endpoint = "192.168.1.200:4317";
-    tls.insecure = true;
-  };
   exporters.otlp_http = {
     endpoint = "https://maple.${topology.network.publicDomain}";
   };
   service.pipelines.metrics = {
     receivers = ["host_metrics"];
     processors = ["memory_limiter" "resourcedetection" "resource" "batch"];
-    exporters = ["otlp_grpc" "otlp_http"];
+    exporters = ["otlp_http"];
   };
 }

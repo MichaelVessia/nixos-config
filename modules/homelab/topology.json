@@ -188,14 +188,6 @@
       "owner": "alchemy-docker",
       "milestone": "M5"
     },
-    "signoz": {
-      "port": 3301,
-      "otlpGrpcPort": 4317,
-      "bind": "lan",
-      "domains": ["signoz.lan"],
-      "owner": "alchemy-docker",
-      "milestone": "M5"
-    },
     "homeassistant": {
       "port": 8123,
       "bind": "lan",

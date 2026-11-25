@@ -138,16 +138,8 @@ Forge uses `vaults.deviceName = "forge"` and generates its own Syncthing identit
 Register that identity in `modules/programs/vault-devices.nix` and rebuild peers
 before expecting bidirectional vault synchronization.
 
-Forge and Foundry share `modules/host-metrics.nix`. After rebuilding,
-`opentelemetry-collector.service` sends CPU, memory, filesystem, disk, network,
-paging, load, and process counts to SigNoz every 30 seconds. Forge metrics use
-`host.name=forge` and `service.name=forge-host`; no application logs or traces
-are collected, and no inbound Forge ports are opened.
-The [Forge — Host Overview](https://signoz.lan/dashboard/01a10f26-2585-725a-83c9-1998505cc7c3)
-dashboard mirrors Foundry's 18 panels with Forge-only filters.
-SigNoz CT 124 allows Forge's LAN address (`192.168.1.24`) on TCP 4317 for the
-private-LAN OTLP endpoint `192.168.1.10:4317`. Keep the address stable in DHCP
-or update the ingestion allowlist when it changes.
+Forge uses the shared host metrics collector. In Maple, filter host metrics
+by `host.name=forge` or `service.name=forge-host`.
 
 ### Foundry headless devbox
 
@@ -177,14 +169,8 @@ Foundry joins the tailnet; the shared SSH module defines `ssh foundry` as
 shortcut. The `michaelvessia` user is a Tailscale operator and lingers, so the T3
 Code user service can publish itself with Tailscale Serve.
 
-Foundry's `opentelemetry-collector.service` sends host metrics to SigNoz every
-30 seconds after rebuilding. CPU, memory, filesystem, disk, network, paging,
-load, and process counts use `host.name=foundry` and `service.name=foundry-host`;
-application logs and traces are not collected. In SigNoz, filter host metrics
-by `host.name=foundry`. Collection is outbound-only and opens no Foundry ports.
-The private-LAN OTLP endpoint is `192.168.1.10:4317`; SigNoz CT 124 must allow
-Foundry's LAN address (`192.168.1.18`) through its ingestion firewall. Keep that
-address stable in DHCP or update the allowlist when it changes.
+In Maple, filter Foundry host metrics by `host.name=foundry` or
+`service.name=foundry-host`.
 
 Build from an existing authenticated x86_64 machine:
 
@@ -225,42 +211,18 @@ user has none.
 set `DEVM_AWS_PROFILE`), `devm apply`, and `devm destroy`. Run `devm help` for
 the list. `ssh dev-machine` reaches the box over Tailscale.
 
-## Physical Fleet Dashboard
+## Host metrics in Maple
 
-[Fleet Overview](https://signoz.lan/dashboard/01a10f4f-0265-7d26-81e8-e986cd9fa327)
-covers Forge, Foundry, Framework13, Flomac, the Proxmox node and the Synology NAS.
-It excludes VM/container totals and compares CPU, used RAM, fullest local
-filesystem/storage and physical-interface RX/TX per machine.
+The shared collector sends CPU, memory, filesystem, disk, network, load, and
+process metrics every 30 seconds to Maple over OTLP HTTP at
+`https://maple.home.vessia.net`. Caddy admits sources listed in
+`modules/homelab/topology.json`. The collector sends host metrics without opening
+inbound ports on the monitored hosts.
 
-The inventory always shows all six machines. Collection is `fresh` within two
-minutes, `stale` afterward, or `unmonitored` when no sample exists within the
-30-day retention window. Missing/stale capacity renders `n/a`, never zero.
-Collection freshness is not a device-up probe. The inventory is a **current**
-snapshot even when viewing historical charts. Click a memory-chart datapoint
-for the six host-detail links. Enable the separate Auto Refresh control at
-30 seconds if desired.
-
-Workstation metrics share `modules/host-metrics-settings.nix`. NixOS uses
-`modules/host-metrics.nix`; Flomac uses `modules/host-metrics-darwin.nix` and a
-root launchd daemon with logs in `/var/log/otelcol-host-metrics.log`. Both send
-host metrics every 30 seconds to `192.168.1.10:4317`, without application
-logs/traces. Darwin omits unsupported process-created and paging metrics rather
-than reporting false zeros. Framework13's development VM disables collection
-so it cannot impersonate the physical laptop.
-
-Framework13 and Flomac require the user to rebuild using the commands above
-before their collectors run continuously; bounded foreground runs verified
-both without activating either system. Forge and Foundry already collect
-continuously. CT 124's OTLP-gRPC source allowlist includes Forge `.24`,
-Framework13 `.221`, Flomac `.105` and the Tailscale subnet-router `.247`;
-keep these LAN addresses stable or update `/etc/nftables.conf`.
-
-The NAS's existing Glances deployment has a separate native Prometheus-exporter
-sidecar on `192.168.1.176:9091`, scraped by SigNoz every 30 seconds; the original
-Glances web UI remains on port 61208. Storage represents its data pool.
-Proxmox reuses its existing node API metrics and local/local-lvm storage,
-excluding NAS mounts. That exporter has no node network counter, so Proxmox is
-absent from RX/TX rather than shown as zero.
+NixOS uses `modules/host-metrics.nix`. Flomac uses
+`modules/host-metrics-darwin.nix` and a root launchd daemon with logs in
+`/var/log/otelcol-host-metrics.log`. Darwin omits paging and created-process
+metrics. The Framework13 development VM disables host metrics.
 
 ## Directory Structure
 

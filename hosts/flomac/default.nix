@@ -108,7 +108,7 @@ in {
         sudo --user=${username} --set-home /opt/homebrew/bin/brew trust --tap stablyai/orca >/dev/null
       fi
 
-      # Trust the homelab Caddy CA for internal HTTPS services such as SigNoz.
+      # Trust the homelab Caddy CA for internal HTTPS services such as Maple.
       if ! /usr/bin/security verify-cert -c ${homelabCa} >/dev/null 2>&1; then
         /usr/bin/security add-trusted-cert -d -r trustRoot \
           -k /Library/Keychains/System.keychain ${homelabCa} ||

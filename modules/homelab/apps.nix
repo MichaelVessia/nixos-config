@@ -19,32 +19,10 @@
     "freshrss"
     "tubearchivist"
     "immich"
-    "signoz"
     "paperless"
   ];
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
-  otlpPort = toString cfg.topology.services.signoz.otlpGrpcPort;
-  otlpSources = cfg.topology.network.otlpAllowlist ++ ["100.64.0.0/10"];
-  otlpRule = source: "-s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j nixos-fw-accept";
-  firewallRules =
-    lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices)
-    ++ map otlpRule otlpSources;
-  dockerUserOtlpAdd = ''
-    if iptables -L DOCKER-USER -n >/dev/null 2>&1; then
-      iptables -I DOCKER-USER -p tcp --dport ${otlpPort} -j DROP
-      ${lib.concatMapStrings (source: ''
-      iptables -I DOCKER-USER -s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j RETURN
-    '') (otlpSources ++ ["127.0.0.1/32" "172.16.0.0/12"])}
-    fi
-  '';
-  dockerUserOtlpDel = ''
-    if iptables -L DOCKER-USER -n >/dev/null 2>&1; then
-      ${lib.concatMapStrings (source: ''
-      iptables -D DOCKER-USER -s ${lib.escapeShellArg source} -p tcp --dport ${otlpPort} -j RETURN || true
-    '') (otlpSources ++ ["127.0.0.1/32" "172.16.0.0/12"])}
-      iptables -D DOCKER-USER -p tcp --dport ${otlpPort} -j DROP || true
-    fi
-  '';
+  firewallRules = lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices);
   appEnvFiles = {
     homelab_freshrss_postgres_password = {
       dir = "/opt/homelab/freshrss/env";
@@ -92,13 +70,6 @@
       dir = "/opt/homelab/immich/env";
       dirGroup = "root";
       file = "postgres-password";
-      group = "root";
-      mode = "0400";
-    };
-    homelab_signoz_env = {
-      dir = "/opt/homelab/signoz/env";
-      dirGroup = "root";
-      file = "signoz.env";
       group = "root";
       mode = "0400";
     };
@@ -202,10 +173,6 @@ in {
       "d /opt/homelab/immich/env 0750 root root -"
       "d /opt/homelab/immich-kiosk 0755 root root -"
       "d /opt/homelab/immich-kiosk/config - - - -"
-      "d /opt/homelab/signoz 0755 root root -"
-      "d /opt/homelab/signoz/data - - - -"
-      "d /opt/homelab/signoz/conf 0755 root root -"
-      "d /opt/homelab/signoz/env 0750 root root -"
       "d /opt/homelab/maple 0755 root root -"
       "d /opt/homelab/maple/data 0700 10001 10001 -"
       "d /opt/homelab/maple/env 0750 root 10001 -"
@@ -217,8 +184,6 @@ in {
       "d /opt/homelab/paperless/export 0755 root root -"
       "d /opt/homelab/paperless/env 0750 root root -"
       "d /var/lib/homelab 0755 root root -"
-      "d /var/lib/homelab/signoz-clickhouse - - - -"
-      "d /var/lib/homelab/signoz-zookeeper - - - -"
       "d /var/cache/homelab 0755 root root -"
       "d /var/cache/homelab/jellyfin - - - -"
       "d /var/cache/homelab/immich-ml - - - -"
@@ -260,14 +225,12 @@ in {
         lib.concatMapStrings (rule: ''
           iptables -A nixos-fw ${rule}
         '')
-        firewallRules
-        + dockerUserOtlpAdd;
+        firewallRules;
       extraStopCommands =
         lib.concatMapStrings (rule: ''
           iptables -D nixos-fw ${rule} || true
         '')
-        firewallRules
-        + dockerUserOtlpDel;
+        firewallRules;
     };
   };
 }

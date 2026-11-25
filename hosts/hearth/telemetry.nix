@@ -9,11 +9,10 @@
   mapleEndpoint = "http://127.0.0.1:${toString topology.services.maple.port}";
   caddyOtlpEndpoint = "127.0.0.1:14318";
   dockerGateway = "172.17.0.1";
-  appOtlpGrpcPort = 14317;
   appOtlpHttpPort = 14318;
   nativeTraceServices = ["executor" "frame"];
   caddyTraceServices = lib.filterAttrs (_: service: !(lib.elem service nativeTraceServices)) config.homelab.caddy.traceServices;
-  dockerServiceFamilies = ["immich" "paperless" "freshrss" "tubearchivist" "signoz"];
+  dockerServiceFamilies = ["immich" "paperless" "freshrss" "tubearchivist"];
   unpollerTarget = "127.0.0.1:9130";
   unpollerConfig = (pkgs.formats.json {}).generate "unpoller.json" {
     unifi.defaults = {
@@ -30,7 +29,7 @@
 in {
   networking.firewall.interfaces = {
     docker0.allowedTCPPorts = [appOtlpHttpPort];
-    "br-+".allowedTCPPorts = [appOtlpGrpcPort appOtlpHttpPort];
+    "br-+".allowedTCPPorts = [appOtlpHttpPort];
   };
 
   homelab.caddy.traceEndpoint = "http://${caddyOtlpEndpoint}/v1/traces";
@@ -82,10 +81,7 @@ in {
   services.opentelemetry-collector.settings = {
     receivers = {
       "otlp/caddy".protocols.http.endpoint = caddyOtlpEndpoint;
-      "otlp/apps".protocols = {
-        grpc.endpoint = "${dockerGateway}:${toString appOtlpGrpcPort}";
-        http.endpoint = "${dockerGateway}:${toString appOtlpHttpPort}";
-      };
+      "otlp/apps".protocols.http.endpoint = "${dockerGateway}:${toString appOtlpHttpPort}";
 
       docker_stats = {
         endpoint = "unix:///var/run/docker.sock";

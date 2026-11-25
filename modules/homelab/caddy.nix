@@ -38,7 +38,6 @@
     "kiosk" = "kiosk";
     "frame" = "frame";
     "tubearchivist" = "tubearchivist";
-    "signoz" = "signoz";
     "paperless" = "paperless";
   };
   proxyConfig = upstream: "reverse_proxy ${upstream}";
