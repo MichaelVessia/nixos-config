@@ -102,6 +102,11 @@ in {
     };
   };
 
+  # Deploy from framework13 without copying the nixpkgs source to the Pi.
+  nixpkgs.flake = {
+    setFlakeRegistry = false;
+    setNixPath = false;
+  };
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     trusted-users = ["root" "pi"];
