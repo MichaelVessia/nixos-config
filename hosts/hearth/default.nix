@@ -14,6 +14,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     ./disko.nix
+    ./music-assistant.nix
     ./telemetry.nix
     ./sentinel-dns-sync.nix
     ../../modules/homelab
