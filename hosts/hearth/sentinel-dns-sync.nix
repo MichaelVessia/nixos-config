@@ -13,7 +13,7 @@
         "schema_version", "dns", "filtering", "filters", "whitelist_filters",
         "user_rules", "clients", "querylog", "statistics"
       ])' /var/lib/AdGuardHome/AdGuardHome.yaml |
-        ssh -F /dev/null -o BatchMode=yes -o ConnectTimeout=10 \
+        ssh -T -F /dev/null -o BatchMode=yes -o ConnectTimeout=10 \
           -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${../sentinel/ssh-known-hosts} \
           -i "$CREDENTIALS_DIRECTORY/ssh-key" root@192.168.1.37
     '';
@@ -34,7 +34,7 @@ in {
   systemd.timers.sentinel-dns-sync = {
     wantedBy = ["timers.target"];
     timerConfig = {
-      OnBootSec = "2min";
+      OnActiveSec = "2min";
       OnUnitActiveSec = "10min";
     };
   };
