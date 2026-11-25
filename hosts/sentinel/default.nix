@@ -44,6 +44,10 @@
     };
   });
 in {
+  # The AArch64 NixOS kernel includes the Pi 3B drivers and device tree.
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
+  hardware.deviceTree.name = "broadcom/bcm2837-rpi-3-b.dtb";
+
   boot.supportedFilesystems = {
     zfs = lib.mkForce false;
     btrfs = lib.mkForce false;
