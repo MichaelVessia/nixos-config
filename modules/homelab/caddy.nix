@@ -36,6 +36,7 @@
     "sabnzbd" = "sabnzbd";
     "immich" = "immich";
     "kiosk" = "kiosk";
+    "frame" = "frame";
     "tubearchivist" = "tubearchivist";
     "signoz" = "signoz";
     "paperless" = "paperless";
