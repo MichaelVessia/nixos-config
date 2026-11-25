@@ -39,6 +39,7 @@
     "kiosk" = "kiosk";
     "frame" = "frame";
     "paperless" = "paperless";
+    "teddycloud" = "teddycloud";
   };
   arrClientPaths = ["/api" "/api/*" "/ping" "/feed" "/feed/*"];
   mapleOtlpPaths = ["/v1/metrics" "/v1/logs" "/v1/traces"];
@@ -57,6 +58,7 @@
     sabnzbd = arrClientPaths;
     sonarr = arrClientPaths;
     syncthing = ["/rest/*"];
+    teddycloud = ["/health"];
     tubearchivist = [];
     uptimekuma = ["/api/push/*" "/api/status-page/*" "/status" "/status/*" "/metrics"];
   };
@@ -167,10 +169,29 @@
     request_header @tubeApiToken -Cookie
     ${proxyConfig (appUpstream services.tubearchivist)}
   '';
+  teddycloudProxy = ''
+    handle /health {
+      reverse_proxy ${appUpstream services.teddycloud} {
+        method GET
+        rewrite /web/
+        @ready status 200
+        handle_response @ready {
+          respond 204
+        }
+      }
+    }
+    handle {
+      ${proxyConfig (appUpstream services.teddycloud)}
+    }
+  '';
   proxyRoutes =
     lib.mapAttrs' (
       label: service:
-        lib.nameValuePair service (tracedRoute [label] (proxyConfig (appUpstream services.${service})))
+        lib.nameValuePair service (tracedRoute [label] (
+          if service == "teddycloud"
+          then teddycloudProxy
+          else proxyConfig (appUpstream services.${service})
+        ))
     )
     appServices
     // {

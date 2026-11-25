@@ -46,6 +46,10 @@ in {
         address = "192.168.1.200";
         prefixLength = 24;
       }
+      {
+        address = config.homelab.topology.network.teddycloudMtls.address;
+        prefixLength = 24;
+      }
     ];
     defaultGateway = "192.168.1.1";
     nameservers = ["127.0.0.1" "1.1.1.1"];
