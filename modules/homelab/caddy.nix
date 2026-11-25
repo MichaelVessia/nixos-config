@@ -26,7 +26,6 @@
     "homepage" = "homepage";
     "uptimekuma" = "uptimekuma";
     "lazylibrarian" = "lazylibrarian";
-    "autocaliweb" = "autocaliweb";
     "freshrss" = "freshrss";
     "jellyseerr" = "seerr";
     "jellyfin" = "jellyfin";
@@ -37,33 +36,46 @@
     "immich" = "immich";
     "kiosk" = "kiosk";
     "frame" = "frame";
-    "tubearchivist" = "tubearchivist";
     "paperless" = "paperless";
   };
   arrClientPaths = ["/api" "/api/*" "/ping" "/feed" "/feed/*"];
+  mapleOtlpPaths = ["/v1/metrics" "/v1/logs" "/v1/traces"];
   adminClientPaths = {
     adguard = ["/control/*"];
     autocaliweb = ["/health" "/opds" "/opds/*"];
+    brother = [];
+    calibre = [];
     freshrss = ["/api/*"];
     lazylibrarian = ["/api"];
+    maple = ["/health" "/local/status" "/local/query"] ++ mapleOtlpPaths;
     prowlarr = arrClientPaths;
     radarr = arrClientPaths;
     sabnzbd = arrClientPaths;
     sonarr = arrClientPaths;
     syncthing = ["/rest/*"];
-    tubearchivist = ["/api/*"];
+    tubearchivist = [];
     uptimekuma = ["/api/push/*" "/api/status-page/*" "/status" "/status/*" "/metrics"];
   };
-  adminUiMatcher = paths: "@adminUi not path ${lib.concatStringsSep " " paths}";
+  tubeApiToken = "path('/api/*') && header_regexp('Authorization', '(?i)^Token[ ]+')";
+  tubeApiClient = "path('/api/health/') || (${tubeApiToken}) || (path('/api/*') && method('OPTIONS'))";
+  adminUiMatcher = service: let
+    paths = adminClientPaths.${service};
+  in
+    if service == "tubearchivist"
+    then "@adminUi expression !(${tubeApiClient})"
+    else if paths == []
+    then "@adminUi expression true"
+    else "@adminUi not path ${lib.concatStringsSep " " paths}";
   stripAuthHeaders = ''
     request_header -Remote-User
+    request_header -Remote_User
     request_header -Remote-Name
     request_header -Remote-Email
     request_header -Remote-Groups
     request_header -X-WebAuth-User
   '';
-  tinyauthForwardAuth = paths: body: ''
-    ${adminUiMatcher paths}
+  tinyauthForwardAuth = service: body: ''
+    ${adminUiMatcher service}
     route {
       ${stripAuthHeaders}
       forward_auth @adminUi 127.0.0.1:${toString services.tinyauth.port} {
@@ -82,11 +94,11 @@
   in "${address}:${toString service.port}";
   mapleUpstream = "127.0.0.1:${toString services.maple.port}";
   mapleSources = cfg.topology.network.otlpAllowlist ++ cfg.topology.network.mapleExtraOtlpSources ++ ["100.64.0.0/10"];
-  mapleOtlpPaths = "/v1/metrics /v1/logs /v1/traces";
+  mapleOtlpPathMatcher = "path ${lib.concatStringsSep " " mapleOtlpPaths}";
   mapleProxy = ''
     @allowed_otlp {
       method POST
-      path ${mapleOtlpPaths}
+      ${mapleOtlpPathMatcher}
       remote_ip ${lib.concatStringsSep " " mapleSources}
     }
     handle @allowed_otlp {
@@ -94,7 +106,7 @@
         header_up x-maple-ingest-key {env.MAPLE_LOCAL_INGEST_KEY}
       }
     }
-    @otlp path ${mapleOtlpPaths}
+    @otlp ${mapleOtlpPathMatcher}
     handle @otlp {
       respond 403
     }
@@ -139,6 +151,18 @@
     inherit labels;
     extraConfig = traced body;
   };
+  autoCaliWebProxy = ''
+    # Keep the existing OPDS username for Basic auth clients.
+    @pocketIdMichael header Remote-User michaelvessia
+    request_header @pocketIdMichael Remote-User michael
+    ${proxyConfig (appUpstream services.autocaliweb)}
+  '';
+  tubeArchivistProxy = ''
+    # Token requests must use their API token, even if they carry a session cookie.
+    @tubeApiToken expression ${tubeApiToken}
+    request_header @tubeApiToken -Cookie
+    ${proxyConfig (appUpstream services.tubearchivist)}
+  '';
   proxyRoutes =
     lib.mapAttrs' (
       label: service:
@@ -146,6 +170,7 @@
     )
     appServices
     // {
+      autocaliweb = tracedRoute ["autocaliweb"] autoCaliWebProxy;
       maple = {
         labels = ["maple"];
         extraConfig = mapleProxy;
@@ -158,6 +183,7 @@
       calibre = tracedRoute ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080");
       brother = tracedRoute ["brother"] (proxyConfig "192.168.1.28");
       syncthing = tracedRoute ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream);
+      tubearchivist = tracedRoute ["tubearchivist"] tubeArchivistProxy;
       homeassistant = tracedRoute ["homeassistant" "ha"] homeAssistantProxyConfig;
     }
     // lib.optionalAttrs (caddyCfg.executorUpstream != null) {
@@ -174,7 +200,7 @@
           route
           // {
             extraConfig = ''
-              ${adminUiMatcher adminClientPaths.${service}}
+              ${adminUiMatcher service}
               redir @adminUi https://${builtins.head route.labels}.${publicDomain}{uri} 308
               route {
                 ${stripAuthHeaders}
@@ -195,7 +221,7 @@
       service: route:
         wildcardHandle service route.labels (
           if adminClientPaths ? ${service}
-          then tinyauthForwardAuth adminClientPaths.${service} route.extraConfig
+          then tinyauthForwardAuth service route.extraConfig
           else route.extraConfig
         )
     )
