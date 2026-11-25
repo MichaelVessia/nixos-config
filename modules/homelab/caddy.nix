@@ -87,6 +87,15 @@
       forward_auth @adminUi 127.0.0.1:${toString services.tinyauth.port} {
         uri /api/auth/caddy
         copy_headers Remote-User Remote-Name Remote-Email Remote-Groups
+        ${lib.optionalString (service == "teddycloud") ''
+      @loginRequired {
+        status 401
+        header X-Tinyauth-Location *
+      }
+      handle_response @loginRequired {
+        redir {rp.header.X-Tinyauth-Location} 302
+      }
+    ''}
       }
       ${body}
     }
