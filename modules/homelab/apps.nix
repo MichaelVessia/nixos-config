@@ -66,6 +66,13 @@
       group = "1000";
       mode = "0440";
     };
+    homelab_tinyauth_env = {
+      dir = "/opt/homelab/tinyauth/env";
+      dirGroup = "1000";
+      file = "tinyauth.env";
+      group = "1000";
+      mode = "0440";
+    };
     homelab_immich_env = {
       dir = "/opt/homelab/immich/env";
       dirGroup = "root";
@@ -150,6 +157,9 @@ in {
       "d /opt/homelab/pocket-id 0755 root root -"
       "d /opt/homelab/pocket-id/data 0700 1000 1000 -"
       "d /opt/homelab/pocket-id/env 0750 root 1000 -"
+      "d /opt/homelab/tinyauth 0755 root root -"
+      "d /opt/homelab/tinyauth/data 0700 1000 1000 -"
+      "d /opt/homelab/tinyauth/env 0750 root 1000 -"
       "d /opt/homelab/sabnzbd 0755 root root -"
       "d /opt/homelab/sabnzbd/config - - - -"
       "d /opt/homelab/prowlarr 0755 root root -"
