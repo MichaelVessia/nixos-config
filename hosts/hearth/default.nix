@@ -15,6 +15,7 @@ in {
     ./hardware-configuration.nix
     ./disko.nix
     ./telemetry.nix
+    ./sentinel-dns-sync.nix
     ../../modules/homelab
     ../../modules/homelab-ca/nixos.nix
     ../../modules/host-metrics.nix

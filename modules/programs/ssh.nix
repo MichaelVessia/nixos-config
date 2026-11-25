@@ -46,6 +46,10 @@
         hostname = "192.168.1.200";
         user = "root";
       };
+      "sentinel" = {
+        hostname = "192.168.1.37";
+        user = "pi";
+      };
       "nas" = {
         hostname = "192.168.1.176";
         user = "michaelvessia";

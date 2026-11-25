@@ -14,6 +14,9 @@ keys:
   # Hearth host key (bare-metal Ryzen homelab server)
   - &host_hearth age18ud99dl0a4pjx7dz47lxx8cpnrsez8mrp0ffvhccu5x5yythgapqpthv6z
 
+  # Sentinel host key (Raspberry Pi DNS replica)
+  - &host_sentinel age1myyasn6yljaqxxf2fwm3c8v7rt9ys0pf9l0002hv9c83je8acelq2mhr9y
+
 creation_rules:
   # Framework13 secrets
   - path_regex: secrets/framework13\.yaml$
@@ -54,6 +57,13 @@ creation_rules:
       - age:
           - *user_michael_framework13
           - *host_hearth
+
+  # Sentinel AdGuard Home credentials
+  - path_regex: secrets/sentinel\.yaml$
+    key_groups:
+      - age:
+          - *user_michael_framework13
+          - *host_sentinel
 
   # Shared secrets (accessible from all machines)
   - path_regex: secrets/common\.yaml$

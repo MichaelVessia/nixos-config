@@ -192,6 +192,15 @@
           ];
         };
 
+      sentinel = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          nixos-hardware.nixosModules.raspberry-pi-3
+          sops-nix.nixosModules.sops
+          ./hosts/sentinel
+        ];
+      };
+
       hearth = let
         username = "michaelvessia";
         specialArgs = {
@@ -285,6 +294,14 @@
       in {
         foundry = nixosNode "foundry" ["from-flomac" "from-framework13"];
         forge = nixosNode "forge" ["from-framework13"];
+        sentinel = {
+          hostname = "192.168.1.37";
+          sshUser = "pi";
+          sshOpts = ["-F" "/dev/null"];
+          groups = ["from-framework13"];
+          profiles.system.path =
+            deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sentinel;
+        };
         hearth = nixosNode "hearth" ["from-framework13" "from-forge"];
         framework13 = nixosNode "framework13" ["from-forge"];
         # Dev-machine has passwordless sudo and no root login.
