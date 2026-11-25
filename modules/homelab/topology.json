@@ -104,6 +104,18 @@
       "owner": "alchemy-docker",
       "milestone": "M2"
     },
+    "pocketId": {
+      "port": 1411,
+      "bind": "loopback",
+      "domains": ["auth.lan"],
+      "owner": "alchemy-docker"
+    },
+    "tinyauth": {
+      "port": 3020,
+      "bind": "loopback",
+      "domains": ["login.lan"],
+      "owner": "alchemy-docker"
+    },
     "lazylibrarian": {
       "port": 5299,
       "bind": "loopback",

@@ -59,6 +59,13 @@
       group = "root";
       mode = "0600";
     };
+    homelab_pocketid_env = {
+      dir = "/opt/homelab/pocket-id/env";
+      dirGroup = "1000";
+      file = "pocket-id.env";
+      group = "1000";
+      mode = "0440";
+    };
     homelab_immich_env = {
       dir = "/opt/homelab/immich/env";
       dirGroup = "root";
@@ -140,6 +147,9 @@ in {
       "d /opt/homelab/homepage/config 0755 root root -"
       "d /opt/homelab/homepage/icons 0755 root root -"
       "d /opt/homelab/homepage/env 0750 root root -"
+      "d /opt/homelab/pocket-id 0755 root root -"
+      "d /opt/homelab/pocket-id/data 0700 1000 1000 -"
+      "d /opt/homelab/pocket-id/env 0750 root 1000 -"
       "d /opt/homelab/sabnzbd 0755 root root -"
       "d /opt/homelab/sabnzbd/config - - - -"
       "d /opt/homelab/prowlarr 0755 root root -"

@@ -112,6 +112,8 @@
         extraConfig = mapleProxy;
       };
       adguard = tracedRoute ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}");
+      pocket-id = tracedRoute ["auth"] (proxyConfig "127.0.0.1:${toString services.pocketId.port}");
+      tinyauth = tracedRoute ["login"] ''respond 503'';
       unifi = tracedRoute ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1");
       synology = tracedRoute ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001");
       calibre = tracedRoute ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080");
