@@ -24,6 +24,13 @@
   caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
   firewallRules = lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices);
   appEnvFiles = {
+    homelab_executor_oidc_env = {
+      dir = "/opt/homelab/executor/env";
+      dirGroup = "root";
+      file = "oidc.env";
+      group = "root";
+      mode = "0400";
+    };
     homelab_freshrss_postgres_password = {
       dir = "/opt/homelab/freshrss/env";
       dirGroup = "root";
@@ -175,6 +182,7 @@ in {
       "d /opt/homelab/ca 0755 root root -"
       "d /opt/homelab/executor 0755 root root -"
       "d /opt/homelab/executor/data - - - -"
+      "d /opt/homelab/executor/env 0750 root root -"
       "d /opt/homelab/garage-mcp 0755 root root -"
       "d /opt/homelab/garage-mcp/env 0750 root 65532 -"
       "d /opt/homelab/ha-mcp 0755 root root -"
