@@ -12,6 +12,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     ./disko.nix
+    ./telemetry.nix
     ../../modules/homelab
     ../../modules/homelab-ca/nixos.nix
     ../../modules/host-metrics.nix
