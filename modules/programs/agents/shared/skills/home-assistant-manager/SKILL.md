@@ -3,30 +3,12 @@ name: home-assistant-manager
 description: Configure, diagnose, or deploy the personal Home Assistant instance, including automations and Lovelace dashboards.
 ---
 
-# Home Assistant Manager
+# Home Assistant
 
-Use the local configuration repository and the `homeassistant` SSH alias.
+Home Assistant OS runs in the `homelab-homeassistant` VM on `hearth`. Use `ssh root@hearth` for VM checks and `ssh homeassistant` for guest configuration and HA OS commands. Use `https://homeassistant.home.vessia.net` for the UI.
 
-- REST operations use `hass-cli` with `HASS_SERVER` and `HASS_TOKEN`.
-- HA OS commands require a login shell to load `SUPERVISOR_TOKEN`:
-  `ssh homeassistant "bash -l -c 'ha core check'"`.
-- Check only the credentials and tools needed for the selected operation.
+- Search the personal Executor for Home Assistant and use it for supported application actions. For other REST operations, use `hass-cli` with `HASS_SERVER` and `HASS_TOKEN`.
+- Use the local configuration repository for edits. For Git deployment, HA OS commands, reload decisions, and verification, follow [operations](references/operations.md).
+- For local Lovelace files, dashboard registration, layout, and tablet display, follow [dashboards](references/dashboards.md).
 
-## Select the relevant reference
-
-- Configuration deployment, reload decisions, automation checks, or logs:
-  [operations.md](references/operations.md).
-- Lovelace registration, layout, cards, templates, or tablet display:
-  [dashboards.md](references/dashboards.md).
-
-Command sequences are examples. Apply only steps covered by the user's request.
-For an authorized deployment, check the deployed configuration before reload or
-restart, then verify the affected behavior. Trigger automations only when their
-device or notification effects are within the authorized scope. Prefer state,
-trace, or log inspection otherwise.
-
-Complete requested local changes and relevant checks. For deployment tasks,
-continue through deployment and verification, correcting failures caused by the
-change. Stop when verification passes or further work requires new authority or
-missing credentials. Do not infer commit or push authority from a configuration
-edit request.
+For an authorized deployment, check the deployed configuration before reload or restart. Then verify the affected behavior. Trigger automations only when their device or notification effects are within the authorized scope. Otherwise inspect state, traces, or logs.

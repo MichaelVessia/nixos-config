@@ -255,7 +255,7 @@ in {
 
   # Tailscale MagicDNS is the default resolver and does not know .lan names.
   environment.etc."resolver/lan".text = ''
-    nameserver 192.168.1.109
+    nameserver 192.168.1.200
   '';
 
   # Environment variables

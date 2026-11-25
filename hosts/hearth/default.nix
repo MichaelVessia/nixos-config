@@ -94,16 +94,11 @@ in {
       heartbeat.enable = true;
     };
     frame.enable = true;
-    apps = {
-      enable = true;
-      allowExternalCaddyIp = null;
-    };
+    apps.enable = true;
     githubRunner.enable = true;
     caddy = {
       enable = true;
       publicDomain = "home.vessia.net";
-      proxmoxUpstream = null;
-      syncthingUpstream = "127.0.0.1:8384";
       aliasInterface = "eno1";
       legacyAliases = [
         {

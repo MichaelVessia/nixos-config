@@ -215,10 +215,7 @@
         then route // {extraConfig = "redir ${nasRedirectTarget} 308";}
         else route
     )
-    proxyRoutes
-    // lib.optionalAttrs (caddyCfg.proxmoxUpstream != null) {
-      proxmox = tracedRoute ["proxmox"] (proxyWithSelfSignedTlsConfig caddyCfg.proxmoxUpstream);
-    };
+    proxyRoutes;
   publicWildcardHandlers = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (
       service: route:
@@ -276,15 +273,9 @@ in {
       description = "Contact email for ACME / Let's Encrypt certificate registration.";
     };
 
-    proxmoxUpstream = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = "https://192.168.1.200:8006";
-      description = "Proxmox web interface upstream. Set to null to disable the virtual host.";
-    };
-
     syncthingUpstream = lib.mkOption {
       type = lib.types.str;
-      default = "192.168.1.22:8384";
+      default = "127.0.0.1:${toString cfg.topology.services.syncthing.uiPort}";
       description = "Syncthing web interface upstream.";
     };
 

@@ -46,10 +46,6 @@
         hostname = "192.168.1.200";
         user = "root";
       };
-      "proxmox" = {
-        hostname = "192.168.1.200";
-        user = "root";
-      };
       "nas" = {
         hostname = "192.168.1.176";
         user = "michaelvessia";
@@ -65,6 +61,24 @@
       };
     };
   };
+
+  # The Nix store owner is unmapped in T3 user namespaces.
+  home.file.".ssh/config".enable = false;
+  home.activation.installSshConfig = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    if [[ ! -v DRY_RUN ]]; then
+      (
+        sshDir="$HOME/.ssh"
+        mkdir -p "$sshDir"
+        chmod 0700 "$sshDir"
+
+        tmp="$(mktemp "$sshDir/.config.XXXXXX")"
+        trap 'rm -f "$tmp"' EXIT
+        cat ${config.home.file.".ssh/config".source} > "$tmp"
+        chmod 0600 "$tmp"
+        mv -fT "$tmp" "$sshDir/config"
+      )
+    fi
+  '';
 
   # Enable SSH agent service (Linux only)
   services.ssh-agent.enable = lib.mkDefault pkgs.stdenv.isLinux;

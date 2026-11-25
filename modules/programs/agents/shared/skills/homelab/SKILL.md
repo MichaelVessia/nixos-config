@@ -1,49 +1,25 @@
 ---
 name: homelab
-description: Discovers and routes homelab service work to the correct live source. Use when a user asks about a self-hosted service, its URL, location, health, or an operation whose access path is unclear.
+description: Find a personal homelab service, its URL, or its health. Route application actions and host checks to the correct service or host.
 ---
 
-# Homelab Router
+# Homelab
 
-Use live discovery before relying on remembered IPs, ports, or topology.
+`hearth` (`192.168.1.200`) is the bare-metal NixOS host. Alchemy provisions its Docker apps from `~/projects/homelab-apps`.
 
-## Route the request
-
-| Need | Start here |
+| Task | Where to look |
 | --- | --- |
-| Call an application API or perform an application action | Executor MCP |
-| Find where a service runs, inspect processes, logs, ports, storage, or networking | `proxmox` skill |
-| Check alerts, uptime, or monitoring coverage | `uptime-kuma` skill |
-| Add a service to the dashboard | `homepage-add` skill |
-| Find a friendly hostname or reverse-proxy upstream | Caddy config in Proxmox CT 115 |
-| Confirm the dashboard's service catalog | Homepage config in Proxmox CT 103 |
-| Recover setup history or operational notes | `~/vaults/private/Notes/PROXMOX_SETUP.md` |
+| Application API or action | Search the personal Executor for the service and inspect the tool schema. Use a service skill for the workflow. |
+| Service placement, ports, or routes | Read `~/nixos-config/modules/homelab/topology.json` for topology and `~/nixos-config/modules/homelab/caddy.nix` for proxy routes. |
+| Host, Docker, DNS, networking, or storage | Connect with `ssh root@hearth` and check the live state. |
+| Uptime and alerts | Use the [uptime-kuma](../uptime-kuma/SKILL.md) skill. |
+| Dashboard entries | Use the [homepage-add](../homepage-add/SKILL.md) skill. |
+| Setup history | Read `~/vaults/private/Notes/HOMELAB_SETUP.md`. Confirm current facts against the live system. |
 
-Use a service-specific skill when one exists.
+Prefer `https://<service>.home.vessia.net` when Caddy provides a Let's Encrypt route. Use the configured LAN address if there is no HTTPS route. Verify changes through the service or its Executor integration.
 
-## Discovery loop
-
-1. Identify the service and whether the user wants discovery, diagnosis, or mutation.
-2. Check Executor for a matching integration before inventing a direct API call. Search and describe its tools before invoking one.
-3. If placement or connectivity is unclear, discover the guest through Proxmox, then inspect its IP, listeners, service manager, or containers.
-4. Use Caddy, Homepage, and Uptime Kuma only for the view each owns: routing, catalog, and monitoring.
-5. Consult `PROXMOX_SETUP.md` for context that live systems cannot reveal; verify stale facts against the live system.
-
-Discovery is complete only when the service identity, runtime location, user-facing URL, health signal, and intended access mechanism are known or explicitly marked unavailable.
-
-## Operating rules
-
-- Prefer Executor for supported application operations; do not bypass its policies or approval pauses.
-- Keep discovery read-only until the user authorizes a mutation.
-- Never print credentials or decrypted secret values. Refer to secret and environment variable names only.
-- Verify a mutation through the owning service or Executor, not only through command exit status.
-- After topology changes, update `~/vaults/private/Notes/PROXMOX_SETUP.md`; add or update Homepage and Uptime Kuma only when the change requires them.
-
+Never print credentials or decrypted secret values. Refer to secrets by name.
 
 ## Save notes
 
-Home infrastructure details belong in private. Before writing, check that the
-vault exists and read its `AGENTS.md`. If it is absent, report the pending note
-update without creating a private vault or using brain or flosports instead.
-For general lessons or mixed content, follow [obsidian-save](../obsidian-save/SKILL.md).
-Ask before saving if the destination is ambiguous.
+Save home infrastructure details in the private vault. Read its `AGENTS.md` before you write. After a topology change, update `~/vaults/private/Notes/HOMELAB_SETUP.md`. If the vault is absent, report the pending update. For general lessons or mixed content, follow [obsidian-save](../obsidian-save/SKILL.md). Ask before saving when the destination is ambiguous.

@@ -6,23 +6,6 @@
 }: let
   cfg = config.homelab;
   appsCfg = cfg.apps;
-  caddyServices = [
-    "homepage"
-    "uptimekuma"
-    "sabnzbd"
-    "prowlarr"
-    "sonarr"
-    "radarr"
-    "seerr"
-    "lazylibrarian"
-    "autocaliweb"
-    "freshrss"
-    "tubearchivist"
-    "immich"
-    "paperless"
-  ];
-  caddyRule = service: "-s ${lib.escapeShellArg appsCfg.allowExternalCaddyIp} -p tcp --dport ${toString cfg.topology.services.${service}.port} -j nixos-fw-accept";
-  firewallRules = lib.optionals (appsCfg.allowExternalCaddyIp != null) (map caddyRule caddyServices);
   appEnvFiles = {
     homelab_executor_oidc_env = {
       dir = "/opt/homelab/executor/env";
@@ -166,15 +149,7 @@
     )
   '';
 in {
-  options.homelab.apps = {
-    enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
-
-    allowExternalCaddyIp = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = "192.168.1.252";
-      description = "Legacy Caddy CT 115 IP permitted to reach M2 through M5 app ports before M6 moves Caddy onto this host. Set to null once Caddy runs locally.";
-    };
-  };
+  options.homelab.apps.enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
 
   config = lib.mkIf (cfg.enable && appsCfg.enable) {
     systemd.tmpfiles.rules = [
@@ -275,21 +250,9 @@ in {
 
     homelab.backups.paths = ["/opt/homelab"];
 
-    networking.firewall = {
-      allowedTCPPorts = [
-        cfg.topology.services.jellyfin.port
-        cfg.topology.services.kiosk.port
-      ];
-      extraCommands =
-        lib.concatMapStrings (rule: ''
-          iptables -A nixos-fw ${rule}
-        '')
-        firewallRules;
-      extraStopCommands =
-        lib.concatMapStrings (rule: ''
-          iptables -D nixos-fw ${rule} || true
-        '')
-        firewallRules;
-    };
+    networking.firewall.allowedTCPPorts = [
+      cfg.topology.services.jellyfin.port
+      cfg.topology.services.kiosk.port
+    ];
   };
 }

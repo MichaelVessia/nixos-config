@@ -19,7 +19,6 @@
     "homepage-add"
     "immich-albums"
     "paperless"
-    "proxmox"
     "uptime-kuma"
   ];
   defaultPersonalSkillNames =
