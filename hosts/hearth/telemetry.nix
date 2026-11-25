@@ -37,7 +37,7 @@ in {
     serviceConfig = {
       DynamicUser = true;
       EnvironmentFile = config.sops.secrets.homelab_unpoller_env.path;
-      ExecStart = "${lib.getExe pkgs.unpoller} --config ${unpollerConfig}";
+      ExecStart = "${lib.getExe' pkgs.unpoller "unpoller"} --config ${unpollerConfig}";
       Restart = "on-failure";
       RestartSec = "15s";
     };

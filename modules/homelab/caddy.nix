@@ -64,7 +64,7 @@
   '';
   traced = body: ''
     ${lib.optionalString hasPublicDomain ''
-      @traceable not path /health /health/* /healthz /ready /readyz /api/health /api/health/* /healthcheck
+      @traceable not path_regexp ^/(?:[^/]+/)*(?:health|healthz|ready|readyz|healthcheck)(?:/.*)?$
       tracing @traceable {
         span "{http.request.method} {http.request.host}"
       }
