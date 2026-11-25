@@ -1,5 +1,9 @@
-let
+{lib, ...}: let
   mountOptions = ["compress=zstd" "noatime"];
+  snapshotVolumes = {
+    opt = "/opt";
+    var-lib = "/var/lib";
+  };
 in {
   disko.devices.disk.main = {
     type = "disk";
@@ -36,11 +40,11 @@ in {
                 inherit mountOptions;
               };
               "@var-lib" = {
-                mountpoint = "/var/lib";
+                mountpoint = snapshotVolumes.var-lib;
                 inherit mountOptions;
               };
               "@opt" = {
-                mountpoint = "/opt";
+                mountpoint = snapshotVolumes.opt;
                 inherit mountOptions;
               };
               "@home" = {
@@ -53,4 +57,20 @@ in {
       };
     };
   };
+
+  services.snapper.configs =
+    lib.mapAttrs (_: mountPoint: {
+      SUBVOLUME = mountPoint;
+      TIMELINE_CREATE = true;
+      TIMELINE_CLEANUP = true;
+      TIMELINE_LIMIT_HOURLY = 24;
+      TIMELINE_LIMIT_DAILY = 7;
+      TIMELINE_LIMIT_WEEKLY = 4;
+      TIMELINE_LIMIT_MONTHLY = 0;
+      TIMELINE_LIMIT_YEARLY = 0;
+      NUMBER_CLEANUP = true;
+    })
+    snapshotVolumes;
+
+  systemd.tmpfiles.rules = map (mountPoint: "v ${mountPoint}/.snapshots 0750 root root -") (lib.attrValues snapshotVolumes);
 }

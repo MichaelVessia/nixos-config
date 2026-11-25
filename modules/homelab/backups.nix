@@ -6,8 +6,9 @@
 }: let
   cfg = config.homelab;
   backupsCfg = cfg.backups;
+  resticBackup = config.services.restic.backups.homelab;
   nasBackupMount = cfg.topology.nas.backupMount.mountPoint;
-  usesNasBackupMount = lib.hasPrefix nasBackupMount backupsCfg.repository;
+  usesNasBackupMount = backupsCfg.repository == nasBackupMount || lib.hasPrefix "${nasBackupMount}/" backupsCfg.repository;
 
   healthcheckPing = pkgs.writeShellApplication {
     name = "homelab-restic-healthcheck";
@@ -63,20 +64,27 @@
     '';
   };
 
+  requireNasBackupMount = pkgs.writeShellApplication {
+    name = "homelab-restic-require-nas";
+    runtimeInputs = [pkgs.coreutils pkgs.util-linux];
+    text = ''
+      stat "${nasBackupMount}/." >/dev/null 2>&1 || true
+      if ! findmnt --mountpoint "${nasBackupMount}" --types nfs,nfs4 >/dev/null; then
+        echo "ERROR: ${nasBackupMount} is not mounted over NFS." >&2
+        exit 1
+      fi
+    '';
+  };
+
   prepareScript = pkgs.writeShellApplication {
     name = "homelab-restic-prepare";
-    runtimeInputs = [pkgs.coreutils pkgs.docker pkgs.gnugrep pkgs.util-linux];
+    runtimeInputs = [pkgs.coreutils pkgs.docker pkgs.gnugrep];
     text =
       lib.optionalString backupsCfg.healthchecks.enable ''
         ${lib.getExe healthcheckPing} start
       ''
       + lib.optionalString usesNasBackupMount ''
-        # Trigger systemd automount and refuse to write into an unmounted local directory.
-        ls "${nasBackupMount}" >/dev/null 2>&1 || true
-        if ! mountpoint -q "${nasBackupMount}"; then
-          echo "ERROR: ${nasBackupMount} is not mounted; refusing to write restic repo to local disk." >&2
-          exit 1
-        fi
+        ${lib.getExe requireNasBackupMount}
       ''
       + ''
         dump_pg() {
@@ -157,6 +165,9 @@ in {
       passwordFile = config.sops.secrets.homelab_restic_password.path;
       paths = backupsCfg.paths;
       extraBackupArgs = [
+        "--exclude=/.snapshots"
+        "--exclude=/opt/.snapshots"
+        "--exclude=/var/lib/.snapshots"
         "--exclude=/opt/homelab/immich/postgres"
         "--exclude=/opt/homelab/freshrss/postgres"
         "--exclude=/opt/homelab/paperless/postgres"
@@ -176,6 +187,31 @@ in {
 
     systemd.services.restic-backups-homelab = lib.mkIf backupsCfg.healthchecks.enable {
       serviceConfig.ExecStopPost = ["-${lib.getExe healthcheckPing} finish"];
+    };
+
+    systemd.services.restic-check-homelab = {
+      description = "Check the homelab Restic repository";
+      after = ["network-online.target" "restic-backups-homelab.service"];
+      wants = ["network-online.target"];
+      environment = {
+        RESTIC_REPOSITORY = resticBackup.repository;
+        RESTIC_PASSWORD_FILE = resticBackup.passwordFile;
+      };
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStartPre = lib.mkIf usesNasBackupMount (lib.getExe requireNasBackupMount);
+        ExecStart = "${lib.getExe resticBackup.package} --retry-lock 1h check --read-data-subset=5%%";
+      };
+    };
+
+    systemd.timers.restic-check-homelab = {
+      description = "Monthly homelab Restic repository check";
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnCalendar = "*-*-01 05:00:00";
+        Persistent = true;
+        RandomizedDelaySec = "1h";
+      };
     };
 
     systemd.services.homelab-heartbeat = lib.mkIf backupsCfg.heartbeat.enable {
