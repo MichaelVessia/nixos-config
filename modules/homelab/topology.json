@@ -123,6 +123,12 @@
       "owner": "alchemy-docker",
       "milestone": "M3"
     },
+    "chaptarr": {
+      "port": 8789,
+      "bind": "loopback",
+      "domains": ["chaptarr.lan"],
+      "owner": "alchemy-docker"
+    },
     "autocaliweb": {
       "port": 8083,
       "bind": "loopback",

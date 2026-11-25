@@ -152,6 +152,8 @@ in {
   options.homelab.apps.enable = lib.mkEnableOption "homelab Docker app host preparation (M2+)";
 
   config = lib.mkIf (cfg.enable && appsCfg.enable) {
+    environment.etc."homelab/chaptarr-to-autocaliweb".source = ./chaptarr-to-autocaliweb.sh;
+
     systemd.tmpfiles.rules = [
       "d /opt/homelab 0755 root root -"
       "d /opt/homelab/ca 0755 root root -"
@@ -186,6 +188,8 @@ in {
       "d /opt/homelab/seerr/config - - - -"
       "d /opt/homelab/lazylibrarian 0755 root root -"
       "d /opt/homelab/lazylibrarian/config - - - -"
+      "d /opt/homelab/chaptarr 0755 root root -"
+      "d /opt/homelab/chaptarr/config - - - -"
       "d /opt/homelab/autocaliweb 0755 root root -"
       "d /opt/homelab/autocaliweb/config - - - -"
       "d /opt/homelab/freshrss 0755 root root -"

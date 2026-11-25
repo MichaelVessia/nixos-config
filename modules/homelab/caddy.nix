@@ -27,6 +27,7 @@
     "homepage" = "homepage";
     "uptimekuma" = "uptimekuma";
     "lazylibrarian" = "lazylibrarian";
+    "chaptarr" = "chaptarr";
     "freshrss" = "freshrss";
     "jellyseerr" = "seerr";
     "jellyfin" = "jellyfin";
@@ -46,6 +47,7 @@
     autocaliweb = ["/health" "/opds" "/opds/*"];
     brother = [];
     calibre = [];
+    chaptarr = arrClientPaths;
     freshrss = ["/api/*"];
     lazylibrarian = ["/api"];
     maple = ["/health" "/local/status" "/local/query"] ++ mapleOtlpPaths;
