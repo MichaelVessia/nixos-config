@@ -55,13 +55,17 @@
     uptimekuma = ["/api/push/*" "/api/status-page/*" "/status" "/status/*" "/metrics"];
   };
   adminUiMatcher = paths: "@adminUi not path ${lib.concatStringsSep " " paths}";
+  stripAuthHeaders = ''
+    request_header -Remote-User
+    request_header -Remote-Name
+    request_header -Remote-Email
+    request_header -Remote-Groups
+    request_header -X-WebAuth-User
+  '';
   tinyauthForwardAuth = paths: body: ''
     ${adminUiMatcher paths}
     route {
-      request_header -Remote-User
-      request_header -Remote-Name
-      request_header -Remote-Email
-      request_header -Remote-Groups
+      ${stripAuthHeaders}
       forward_auth @adminUi 127.0.0.1:${toString services.tinyauth.port} {
         uri /api/auth/caddy
         copy_headers Remote-User Remote-Name Remote-Email Remote-Groups
@@ -70,6 +74,12 @@
     }
   '';
   proxyConfig = upstream: "reverse_proxy ${upstream}";
+  appUpstream = service: let
+    address =
+      if service.bind == "loopback"
+      then "127.0.0.1"
+      else cfg.hostIp;
+  in "${address}:${toString service.port}";
   mapleUpstream = "127.0.0.1:${toString services.maple.port}";
   mapleSources = cfg.topology.network.otlpAllowlist ++ cfg.topology.network.mapleExtraOtlpSources ++ ["100.64.0.0/10"];
   mapleOtlpPaths = "/v1/metrics /v1/logs /v1/traces";
@@ -132,7 +142,7 @@
   proxyRoutes =
     lib.mapAttrs' (
       label: service:
-        lib.nameValuePair service (tracedRoute [label] (proxyConfig "${cfg.hostIp}:${toString services.${service}.port}"))
+        lib.nameValuePair service (tracedRoute [label] (proxyConfig (appUpstream services.${service})))
     )
     appServices
     // {
@@ -166,7 +176,10 @@
             extraConfig = ''
               ${adminUiMatcher adminClientPaths.${service}}
               redir @adminUi https://${builtins.head route.labels}.${publicDomain}{uri} 308
-              ${route.extraConfig}
+              route {
+                ${stripAuthHeaders}
+                ${route.extraConfig}
+              }
             '';
           }
         else if hasPublicDomain && service == "tinyauth"
@@ -248,13 +261,13 @@ in {
 
     executorUpstream = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "${cfg.hostIp}:${toString services.executor.port}";
+      default = appUpstream services.executor;
       description = "Executor upstream. Set to null to disable the virtual host.";
     };
 
     haMcpUpstream = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "${cfg.hostIp}:${toString services.haMcp.port}";
+      default = appUpstream services.haMcp;
       description = "Home Assistant MCP upstream. Set to null to disable the virtual host.";
     };
 
@@ -395,7 +408,7 @@ in {
         // lib.optionalAttrs hasPublicDomain {
           "${publicDomain}".extraConfig = ''
             ${acmeTls}
-            ${traced (proxyConfig "${cfg.hostIp}:${toString services.homepage.port}")}
+            ${traced (proxyConfig (appUpstream services.homepage))}
           '';
           "*.${publicDomain}".extraConfig = ''
             ${acmeTls}

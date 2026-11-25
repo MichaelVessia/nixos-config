@@ -17,7 +17,7 @@
         sleep 2
       done
       tailscale serve --bg --https=${toString tsCfg.serveExecutor.httpsPort} \
-        "http://${cfg.hostIp}:${toString cfg.topology.services.executor.port}"
+        "http://127.0.0.1:${toString cfg.topology.services.executor.port}"
     '';
   };
 in {

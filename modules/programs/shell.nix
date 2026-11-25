@@ -198,6 +198,7 @@ in {
         FRAME_SWARM_ADVERTISE_ADDR = "192.168.1.200";
         HOMELAB_DOCKER_HOST = "ssh://root@192.168.1.200";
         HOMELAB_HOST_IP = "192.168.1.200";
+        HOMELAB_BIND_IP = "127.0.0.1";
         HOMELAB_ENABLE_DRI = "true";
       }
       // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {

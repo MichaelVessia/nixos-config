@@ -124,7 +124,10 @@ in {
       ];
     };
     adguard.enable = true;
-    tailscale.enable = true;
+    tailscale = {
+      enable = true;
+      serveExecutor.enable = true;
+    };
     syncthing.enable = true;
     homeassistant = {
       enable = true;

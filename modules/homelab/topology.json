@@ -99,7 +99,7 @@
     },
     "uptimekuma": {
       "port": 3001,
-      "bind": "loopback",
+      "bind": "lan",
       "domains": ["uptimekuma.lan"],
       "owner": "alchemy-docker",
       "milestone": "M2"
