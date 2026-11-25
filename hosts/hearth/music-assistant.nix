@@ -27,25 +27,28 @@ in {
     serviceConfig = {
       Restart = "always";
       RestartSec = "2s";
-      ExecStopPost = "${nft} destroy table ip music_assistant";
+      ExecStopPost = "${nft} destroy table inet music_assistant";
     };
     script = ''
       refresh_rules() {
-        local id
+        local id scope
         id=$(${docker} inspect --type container -f '{{if and .State.Running (eq .HostConfig.NetworkMode "host")}}{{.Id}}{{end}}' ${container} 2>/dev/null) || id=
         if [[ -z "$id" ]]; then
-          ${nft} destroy table ip music_assistant
+          ${nft} destroy table inet music_assistant
           return
         fi
 
+        scope="system.slice/docker-$id.scope"
         # Soloist and SSDP use OS-assigned ports. Match the container's sockets.
         ${nft} -f - <<EOF
-      destroy table ip music_assistant
-      table ip music_assistant {
+      destroy table inet music_assistant
+      table inet music_assistant {
         chain input {
           type filter hook input priority mangle; policy accept;
-          iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} tcp dport $first_port-$last_port socket cgroupv2 level 2 "system.slice/docker-$id.scope" counter meta mark set meta mark | ${mark}
-          iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} udp sport 1900 udp dport $first_port-$last_port socket cgroupv2 level 2 "system.slice/docker-$id.scope" counter meta mark set meta mark | ${mark}
+          iifname "tailscale0" tcp dport { 8097, 8927, $first_port-$last_port } socket cgroupv2 level 2 "$scope" counter drop
+          iifname "tailscale0" udp dport 5353 socket cgroupv2 level 2 "$scope" counter drop
+          iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} tcp dport $first_port-$last_port socket cgroupv2 level 2 "$scope" counter meta mark set meta mark | ${mark}
+          iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} udp sport 1900 udp dport $first_port-$last_port socket cgroupv2 level 2 "$scope" counter meta mark set meta mark | ${mark}
         }
       }
       EOF
