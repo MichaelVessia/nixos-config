@@ -42,7 +42,7 @@
   };
   arrClientPaths = ["/api" "/api/*" "/ping" "/feed" "/feed/*"];
   adminClientPaths = {
-    adguard = ["/control/stats"];
+    adguard = ["/control/*"];
     autocaliweb = ["/health" "/opds" "/opds/*"];
     freshrss = ["/api/*"];
     lazylibrarian = ["/api"];
@@ -50,7 +50,7 @@
     radarr = arrClientPaths;
     sabnzbd = arrClientPaths;
     sonarr = arrClientPaths;
-    syncthing = ["/rest/noauth/health" "/rest/svc/report"];
+    syncthing = ["/rest/*"];
     tubearchivist = ["/api/*"];
     uptimekuma = ["/api/push/*" "/api/status-page/*" "/status" "/status/*" "/metrics"];
   };
