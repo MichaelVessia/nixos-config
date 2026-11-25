@@ -9,6 +9,7 @@
   services = cfg.topology.services;
   publicDomain = caddyCfg.publicDomain;
   hasPublicDomain = publicDomain != null;
+  traceEnabled = caddyCfg.traceEndpoint != null;
   acmeDir =
     if hasPublicDomain
     then config.security.acme.certs.${publicDomain}.directory
@@ -59,11 +60,11 @@
       respond 403
     }
     handle {
-      ${proxyConfig mapleUpstream}
+      ${traced (proxyConfig mapleUpstream)}
     }
   '';
   traced = body: ''
-    ${lib.optionalString hasPublicDomain ''
+    ${lib.optionalString traceEnabled ''
       @traceable not path_regexp ^/(?:[^/]+/)*(?:health|healthz|ready|readyz|healthcheck)(?:/.*)?$
       tracing @traceable {
         span "{http.request.method} {http.request.host}"
@@ -71,7 +72,6 @@
     ''}
     ${body}
   '';
-  proxy = upstream: {extraConfig = traced (proxyConfig upstream);};
   proxyWithSelfSignedTlsConfig = upstream: ''
     reverse_proxy ${upstream} {
       transport http {
@@ -80,7 +80,6 @@
       }
     }
   '';
-  proxyWithSelfSignedTls = upstream: {extraConfig = traced (proxyWithSelfSignedTlsConfig upstream);};
   homeAssistantProxyConfig = ''
     reverse_proxy ${caddyCfg.homeAssistantUpstream} {
       header_up -X-Forwarded-For
@@ -97,34 +96,57 @@
       ${body}
     }
   '';
-  tracedWildcardHandle = name: hosts: body: wildcardHandle name hosts (traced body);
-  publicWildcardHandlers = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (
+  tracedRoute = labels: body: {
+    inherit labels;
+    extraConfig = traced body;
+  };
+  proxyRoutes =
+    lib.mapAttrs' (
       label: service:
-        tracedWildcardHandle label [label] (proxyConfig "${cfg.hostIp}:${toString services.${service}.port}")
+        lib.nameValuePair service (tracedRoute [label] (proxyConfig "${cfg.hostIp}:${toString services.${service}.port}"))
     )
     appServices
+    // {
+      maple = {
+        labels = ["maple"];
+        extraConfig = mapleProxy;
+      };
+      adguard = tracedRoute ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}");
+      unifi = tracedRoute ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1");
+      synology = tracedRoute ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001");
+      calibre = tracedRoute ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080");
+      brother = tracedRoute ["brother"] (proxyConfig "192.168.1.28");
+      syncthing = tracedRoute ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream);
+      homeassistant = tracedRoute ["homeassistant" "ha"] homeAssistantProxyConfig;
+    }
+    // lib.optionalAttrs (caddyCfg.executorUpstream != null) {
+      executor = tracedRoute ["executor"] (proxyConfig caddyCfg.executorUpstream);
+    }
+    // lib.optionalAttrs (caddyCfg.haMcpUpstream != null) {
+      "ha-mcp" = tracedRoute ["ha-mcp"] (proxyConfig caddyCfg.haMcpUpstream);
+    };
+  lanProxyRoutes =
+    proxyRoutes
+    // lib.optionalAttrs (caddyCfg.proxmoxUpstream != null) {
+      proxmox = tracedRoute ["proxmox"] (proxyWithSelfSignedTlsConfig caddyCfg.proxmoxUpstream);
+    };
+  publicWildcardHandlers = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      service: route: wildcardHandle service route.labels route.extraConfig
+    )
+    proxyRoutes
     ++ [
-      (wildcardHandle "maple" ["maple"] mapleProxy)
-      (tracedWildcardHandle "adguard" ["adguard"] (proxyConfig "127.0.0.1:${toString services.adguard.port}"))
       (wildcardHandle "caddy" ["caddy"] ''
         respond / "Caddy is running." 200
         respond 404
       '')
-      (tracedWildcardHandle "unifi" ["unifi"] (proxyWithSelfSignedTlsConfig "https://192.168.1.1"))
-      (tracedWildcardHandle "synology" ["synology" "nas"] (proxyWithSelfSignedTlsConfig "https://${cfg.topology.nas.ip}:5001"))
-      (tracedWildcardHandle "calibre" ["calibre"] (proxyConfig "${cfg.topology.nas.ip}:8080"))
-      (tracedWildcardHandle "brother" ["brother"] (proxyConfig "192.168.1.28"))
-      (tracedWildcardHandle "syncthing" ["syncthing"] (proxyConfig caddyCfg.syncthingUpstream))
-      (tracedWildcardHandle "homeassistant" ["homeassistant" "ha"] homeAssistantProxyConfig)
-    ]
-    ++ lib.optionals (caddyCfg.executorUpstream != null) [
-      (tracedWildcardHandle "executor" ["executor"] (proxyConfig caddyCfg.executorUpstream))
-    ]
-    ++ lib.optionals (caddyCfg.haMcpUpstream != null) [
-      (tracedWildcardHandle "ha_mcp" ["ha-mcp"] (proxyConfig caddyCfg.haMcpUpstream))
     ]
   );
+  routeHosts = domain: routes:
+    lib.concatLists (lib.mapAttrsToList (
+        service: route: map (label: lib.nameValuePair "${label}.${domain}" service) route.labels
+      )
+      routes);
 in {
   options.homelab.caddy = {
     enable = lib.mkEnableOption "homelab reverse proxy (Caddy)";
@@ -133,6 +155,19 @@ in {
       type = lib.types.nullOr lib.types.str;
       default = null;
       description = "Optional public base domain (e.g. home.vessia.net) served with a Let's Encrypt Cloudflare DNS-01 wildcard certificate alongside *.lan.";
+    };
+
+    traceEndpoint = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "OTLP HTTP endpoint for Caddy traces, including the /v1/traces path.";
+    };
+
+    traceServices = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      readOnly = true;
+      internal = true;
+      description = "Canonical service names by proxy hostname.";
     };
 
     acmeEmail = lib.mkOption {
@@ -200,6 +235,13 @@ in {
   };
 
   config = lib.mkIf (cfg.enable && caddyCfg.enable) {
+    homelab.caddy.traceServices = builtins.listToAttrs (
+      routeHosts "lan" lanProxyRoutes
+      ++ lib.optionals hasPublicDomain (
+        routeHosts publicDomain proxyRoutes ++ [(lib.nameValuePair publicDomain "homepage")]
+      )
+    );
+
     assertions = [
       {
         assertion = caddyCfg.legacyAliases == [] || caddyCfg.aliasInterface != null;
@@ -253,27 +295,19 @@ in {
         legacyAliasIps;
     };
 
-    systemd.services.caddy = lib.mkIf (caddyCfg.legacyAliases != [] || hasPublicDomain) {
+    systemd.services.caddy = {
       after =
         lib.optionals (caddyCfg.legacyAliases != []) ["homelab-legacy-ips.service"]
         ++ lib.optionals hasPublicDomain ["acme-${publicDomain}.service"];
       wants =
         lib.optionals (caddyCfg.legacyAliases != []) ["homelab-legacy-ips.service"]
         ++ lib.optionals hasPublicDomain ["acme-${publicDomain}.service"];
-      environment = lib.mkIf hasPublicDomain {
+      environment = lib.mkIf traceEnabled {
         OTEL_SERVICE_NAME = "caddy";
         OTEL_RESOURCE_ATTRIBUTES = "host.name=${config.networking.hostName}";
         OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = "http/protobuf";
-        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = "http://${mapleUpstream}/v1/traces";
+        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = caddyCfg.traceEndpoint;
       };
-      serviceConfig = lib.mkIf hasPublicDomain {
-        RuntimeDirectory = "caddy";
-        EnvironmentFile = lib.mkAfter ["-/run/caddy/maple-traces.env"];
-      };
-      preStart = lib.mkIf hasPublicDomain ''
-        umask 077
-        printf 'OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-maple-ingest-key=%s\n' "$MAPLE_LOCAL_INGEST_KEY" > /run/caddy/maple-traces.env
-      '';
     };
 
     services.caddy = {
@@ -292,30 +326,19 @@ in {
       '';
 
       virtualHosts =
-        lib.mapAttrs' (label: service: lib.nameValuePair "${label}.lan" (proxy "${cfg.hostIp}:${toString services.${service}.port}")) appServices
+        lib.mapAttrs' (
+          _: route:
+            lib.nameValuePair "${builtins.head route.labels}.lan" {
+              serverAliases = map (label: "${label}.lan") (builtins.tail route.labels);
+              inherit (route) extraConfig;
+            }
+        )
+        lanProxyRoutes
         // {
-          "maple.lan".extraConfig = mapleProxy;
-          "adguard.lan" = proxy "127.0.0.1:${toString services.adguard.port}";
           "caddy.lan".extraConfig = ''
             respond / "Caddy is running." 200
             respond 404
           '';
-
-          "unifi.lan" = proxyWithSelfSignedTls "https://192.168.1.1";
-          "synology.lan" =
-            proxyWithSelfSignedTls "https://${cfg.topology.nas.ip}:5001"
-            // {serverAliases = ["nas.lan"];};
-          "calibre.lan" = proxy "${cfg.topology.nas.ip}:8080";
-          "brother.lan" = proxy "192.168.1.28";
-
-          "proxmox.lan" = lib.mkIf (caddyCfg.proxmoxUpstream != null) (proxyWithSelfSignedTls caddyCfg.proxmoxUpstream);
-          "syncthing.lan" = proxy caddyCfg.syncthingUpstream;
-          "homeassistant.lan" = {
-            serverAliases = ["ha.lan"];
-            extraConfig = traced homeAssistantProxyConfig;
-          };
-          "executor.lan" = lib.mkIf (caddyCfg.executorUpstream != null) (proxy caddyCfg.executorUpstream);
-          "ha-mcp.lan" = lib.mkIf (caddyCfg.haMcpUpstream != null) (proxy caddyCfg.haMcpUpstream);
         }
         // lib.optionalAttrs hasPublicDomain {
           "${publicDomain}".extraConfig = ''

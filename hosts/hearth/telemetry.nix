@@ -7,6 +7,9 @@
   topology = config.homelab.topology;
   hostName = config.networking.hostName;
   mapleEndpoint = "http://127.0.0.1:${toString topology.services.maple.port}";
+  caddyOtlpEndpoint = "127.0.0.1:14318";
+  caddyTraceServices = config.homelab.caddy.traceServices;
+  dockerServiceFamilies = ["immich" "paperless" "freshrss" "tubearchivist" "signoz"];
   unpollerTarget = "127.0.0.1:9130";
   unpollerConfig = (pkgs.formats.json {}).generate "unpoller.json" {
     unifi.defaults = {
@@ -21,6 +24,12 @@
     poller.quiet = true;
   };
 in {
+  homelab.caddy.traceEndpoint = "http://${caddyOtlpEndpoint}/v1/traces";
+  systemd.services.caddy = {
+    after = ["opentelemetry-collector.service"];
+    wants = ["opentelemetry-collector.service"];
+  };
+
   sops.secrets = {
     homelab_maple_env.restartUnits = ["opentelemetry-collector.service"];
     homelab_synology_snmp_env = {
@@ -63,6 +72,8 @@ in {
   services.opentelemetry-collector.validateConfigFile = lib.mkForce false;
   services.opentelemetry-collector.settings = {
     receivers = {
+      "otlp/caddy".protocols.http.endpoint = caddyOtlpEndpoint;
+
       docker_stats = {
         endpoint = "unix:///var/run/docker.sock";
         collection_interval = "60s";
@@ -89,7 +100,7 @@ in {
         journalctl_path = "${pkgs.systemd}/bin/journalctl";
         storage = "file_storage";
         convert_message_bytes = true;
-        # Docker uses the journald driver. Keep the container name as the log service.
+        # Docker uses the journald driver.
         operators = [
           {
             type = "add";
@@ -100,13 +111,6 @@ in {
             type = "add";
             field = "resource[\"service.name\"]";
             value = "${hostName}-journal";
-          }
-          {
-            id = "container_service";
-            type = "copy";
-            from = "body.CONTAINER_NAME";
-            to = "resource[\"service.name\"]";
-            "if" = "body.CONTAINER_NAME != nil";
           }
           {
             id = "container_name";
@@ -147,6 +151,41 @@ in {
     };
 
     processors = {
+      "transform/caddy".trace_statements = [
+        {
+          context = "span";
+          conditions = [''resource.attributes["service.name"] == "caddy"''];
+          statements =
+            [
+              ''set(attributes["http.proxy"], "caddy")''
+              ''set(cache["host"], ToLowerCase(attributes["server.address"])) where IsString(attributes["server.address"])''
+            ]
+            ++ lib.mapAttrsToList (
+              host: service: ''set(attributes["service.name"], ${builtins.toJSON service}) where cache["host"] == ${builtins.toJSON host}''
+            )
+            caddyTraceServices;
+        }
+      ];
+      groupbyattrs.keys = ["service.name"];
+      "transform/docker_logs".log_statements = [
+        {
+          context = "log";
+          conditions = [''attributes["container.name"] != nil''];
+          statements =
+            [
+              ''set(attributes["service.name"], attributes["container.name"])''
+              ''replace_pattern(attributes["service.name"], "^homelab-", "")''
+            ]
+            ++ map (
+              service: ''replace_pattern(attributes["service.name"], "^${service}(-.*)?$", "${service}") where IsMatch(attributes["container.name"], "^homelab-")''
+            )
+            dockerServiceFamilies
+            ++ [
+              ''set(attributes["service.name"], "kiosk") where attributes["container.name"] == "homelab-immich-kiosk"''
+              ''set(attributes["service.name"], "frame") where attributes["container.name"] == "garage-frame"''
+            ];
+        }
+      ];
       "resource/docker".attributes = [
         {
           key = "host.name";
@@ -189,6 +228,11 @@ in {
     service = {
       extensions = ["file_storage"];
       pipelines = {
+        traces = {
+          receivers = ["otlp/caddy"];
+          processors = ["memory_limiter" "transform/caddy" "groupbyattrs" "batch"];
+          exporters = ["otlp_http"];
+        };
         "metrics/docker" = {
           receivers = ["docker_stats"];
           processors = ["memory_limiter" "resource/docker" "batch"];
@@ -206,7 +250,7 @@ in {
         };
         logs = {
           receivers = ["journald"];
-          processors = ["memory_limiter" "filter/journald" "batch"];
+          processors = ["memory_limiter" "filter/journald" "transform/docker_logs" "groupbyattrs" "batch"];
           exporters = ["otlp_http"];
         };
       };
