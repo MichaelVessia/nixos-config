@@ -115,13 +115,44 @@
       group = "root";
       mode = "0400";
     };
+    homelab_oidc_clients_env = {
+      dir = "/opt/homelab/paperless/env";
+      dirGroup = "root";
+      file = "oidc.json";
+      group = "root";
+      mode = "0400";
+      render = source: ''
+        ${pkgs.jq}/bin/jq -cRsej '
+          [split("\n")[] | capture("^(?<key>PAPERLESS_OIDC_CLIENT_(?:ID|SECRET))=(?<value>.+)$")]
+          | from_entries
+          | if has("PAPERLESS_OIDC_CLIENT_ID") and has("PAPERLESS_OIDC_CLIENT_SECRET") then
+              {openid_connect: {
+                OAUTH_PKCE_ENABLED: true,
+                APPS: [{
+                  provider_id: "pocket-id",
+                  name: "Pocket ID",
+                  client_id: .PAPERLESS_OIDC_CLIENT_ID,
+                  secret: .PAPERLESS_OIDC_CLIENT_SECRET,
+                  settings: {
+                    server_url: "https://auth.home.vessia.net",
+                    token_auth_method: "client_secret_basic"
+                  }
+                }]
+              }}
+            else error("Missing Paperless OIDC credentials")
+            end
+        ' < ${lib.escapeShellArg source}
+      '';
+    };
   };
-  installAppEnvFile = name: spec: ''
+  installAppEnvFile = name: spec: let
+    render = spec.render or (source: "${pkgs.coreutils}/bin/cat ${lib.escapeShellArg source}");
+  in ''
     ${pkgs.coreutils}/bin/install -d -m 0750 -o root -g ${lib.escapeShellArg spec.dirGroup} ${lib.escapeShellArg spec.dir}
     (
       tmp=$(${pkgs.coreutils}/bin/mktemp ${lib.escapeShellArg "${spec.dir}/.${spec.file}.XXXXXX"}) || exit 1
       trap '${pkgs.coreutils}/bin/rm -f "$tmp"' EXIT
-      ${pkgs.coreutils}/bin/cat ${lib.escapeShellArg config.sops.secrets.${name}.path} > "$tmp" &&
+      (${render config.sops.secrets.${name}.path}) > "$tmp" &&
         ${pkgs.coreutils}/bin/chown ${lib.escapeShellArg "root:${spec.group}"} "$tmp" &&
         ${pkgs.coreutils}/bin/chmod ${lib.escapeShellArg spec.mode} "$tmp" &&
         ${pkgs.coreutils}/bin/mv -fT "$tmp" ${lib.escapeShellArg "${spec.dir}/${spec.file}"}

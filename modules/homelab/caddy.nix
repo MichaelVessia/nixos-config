@@ -40,6 +40,35 @@
     "tubearchivist" = "tubearchivist";
     "paperless" = "paperless";
   };
+  arrClientPaths = ["/api" "/api/*" "/ping" "/feed" "/feed/*"];
+  adminClientPaths = {
+    adguard = ["/control/stats"];
+    autocaliweb = ["/health" "/opds" "/opds/*"];
+    freshrss = ["/api/*"];
+    lazylibrarian = ["/api"];
+    prowlarr = arrClientPaths;
+    radarr = arrClientPaths;
+    sabnzbd = arrClientPaths;
+    sonarr = arrClientPaths;
+    syncthing = ["/rest/noauth/health" "/rest/svc/report"];
+    tubearchivist = ["/api/*"];
+    uptimekuma = ["/api/push/*" "/api/status-page/*" "/status" "/status/*" "/metrics"];
+  };
+  adminUiMatcher = paths: "@adminUi not path ${lib.concatStringsSep " " paths}";
+  tinyauthForwardAuth = paths: body: ''
+    ${adminUiMatcher paths}
+    route {
+      request_header -Remote-User
+      request_header -Remote-Name
+      request_header -Remote-Email
+      request_header -Remote-Groups
+      forward_auth @adminUi 127.0.0.1:${toString services.tinyauth.port} {
+        uri /api/auth/caddy
+        copy_headers Remote-User Remote-Name Remote-Email Remote-Groups
+      }
+      ${body}
+    }
+  '';
   proxyConfig = upstream: "reverse_proxy ${upstream}";
   mapleUpstream = "127.0.0.1:${toString services.maple.port}";
   mapleSources = cfg.topology.network.otlpAllowlist ++ cfg.topology.network.mapleExtraOtlpSources ++ ["100.64.0.0/10"];
@@ -128,13 +157,34 @@
       "ha-mcp" = tracedRoute ["ha-mcp"] (proxyConfig caddyCfg.haMcpUpstream);
     };
   lanProxyRoutes =
+    lib.mapAttrs (
+      service: route:
+        if hasPublicDomain && adminClientPaths ? ${service}
+        then
+          route
+          // {
+            extraConfig = ''
+              ${adminUiMatcher adminClientPaths.${service}}
+              redir @adminUi https://${builtins.head route.labels}.${publicDomain}{uri} 308
+              ${route.extraConfig}
+            '';
+          }
+        else if hasPublicDomain && service == "tinyauth"
+        then route // {extraConfig = "redir https://login.${publicDomain}{uri} 308";}
+        else route
+    )
     proxyRoutes
     // lib.optionalAttrs (caddyCfg.proxmoxUpstream != null) {
       proxmox = tracedRoute ["proxmox"] (proxyWithSelfSignedTlsConfig caddyCfg.proxmoxUpstream);
     };
   publicWildcardHandlers = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (
-      service: route: wildcardHandle service route.labels route.extraConfig
+      service: route:
+        wildcardHandle service route.labels (
+          if adminClientPaths ? ${service}
+          then tinyauthForwardAuth adminClientPaths.${service} route.extraConfig
+          else route.extraConfig
+        )
     )
     proxyRoutes
     ++ [
