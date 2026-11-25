@@ -11,7 +11,7 @@
   dockerGateway = "172.17.0.1";
   appOtlpGrpcPort = 14317;
   appOtlpHttpPort = 14318;
-  nativeTraceServices = ["executor" "frame" "immich"];
+  nativeTraceServices = ["executor" "frame"];
   caddyTraceServices = lib.filterAttrs (_: service: !(lib.elem service nativeTraceServices)) config.homelab.caddy.traceServices;
   dockerServiceFamilies = ["immich" "paperless" "freshrss" "tubearchivist" "signoz"];
   unpollerTarget = "127.0.0.1:9130";
