@@ -8,7 +8,11 @@
   hostName = config.networking.hostName;
   mapleEndpoint = "http://127.0.0.1:${toString topology.services.maple.port}";
   caddyOtlpEndpoint = "127.0.0.1:14318";
-  caddyTraceServices = config.homelab.caddy.traceServices;
+  dockerGateway = "172.17.0.1";
+  appOtlpGrpcPort = 14317;
+  appOtlpHttpPort = 14318;
+  nativeTraceServices = ["executor" "frame" "immich"];
+  caddyTraceServices = lib.filterAttrs (_: service: !(lib.elem service nativeTraceServices)) config.homelab.caddy.traceServices;
   dockerServiceFamilies = ["immich" "paperless" "freshrss" "tubearchivist" "signoz"];
   unpollerTarget = "127.0.0.1:9130";
   unpollerConfig = (pkgs.formats.json {}).generate "unpoller.json" {
@@ -24,6 +28,11 @@
     poller.quiet = true;
   };
 in {
+  networking.firewall.interfaces = {
+    docker0.allowedTCPPorts = [appOtlpHttpPort];
+    "br-+".allowedTCPPorts = [appOtlpGrpcPort appOtlpHttpPort];
+  };
+
   homelab.caddy.traceEndpoint = "http://${caddyOtlpEndpoint}/v1/traces";
   systemd.services.caddy = {
     after = ["opentelemetry-collector.service"];
@@ -73,6 +82,10 @@ in {
   services.opentelemetry-collector.settings = {
     receivers = {
       "otlp/caddy".protocols.http.endpoint = caddyOtlpEndpoint;
+      "otlp/apps".protocols = {
+        grpc.endpoint = "${dockerGateway}:${toString appOtlpGrpcPort}";
+        http.endpoint = "${dockerGateway}:${toString appOtlpHttpPort}";
+      };
 
       docker_stats = {
         endpoint = "unix:///var/run/docker.sock";
@@ -151,6 +164,31 @@ in {
     };
 
     processors = {
+      "transform/app_traces" = {
+        error_mode = "propagate";
+        trace_statements = [
+          {
+            context = "resource";
+            statements = [
+              ''set(attributes["service.name"], "executor") where attributes["service.name"] == "executor-selfhost"''
+              ''delete_matching_keys(attributes, "^process[.]command")''
+            ];
+          }
+          {
+            context = "span";
+            statements = [
+              ''delete_matching_keys(attributes, "^(url[.](full|path|query)|http[.](url|target|request[.]header[.]|response[.]header[.])|db[.](statement|query[.]text)|db[.]query[.]parameter[.]|enduser[.])")''
+              ''set(status.message, "")''
+            ];
+          }
+          {
+            context = "spanevent";
+            statements = [
+              ''keep_keys(attributes, ["exception.type"])''
+            ];
+          }
+        ];
+      };
       "transform/caddy".trace_statements = [
         {
           context = "span";
@@ -228,9 +266,14 @@ in {
     service = {
       extensions = ["file_storage"];
       pipelines = {
-        traces = {
+        "traces/caddy" = {
           receivers = ["otlp/caddy"];
           processors = ["memory_limiter" "transform/caddy" "groupbyattrs" "batch"];
+          exporters = ["otlp_http"];
+        };
+        "traces/apps" = {
+          receivers = ["otlp/apps"];
+          processors = ["memory_limiter" "transform/app_traces" "batch"];
           exporters = ["otlp_http"];
         };
         "metrics/docker" = {
