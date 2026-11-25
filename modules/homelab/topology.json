@@ -120,13 +120,6 @@
       "domains": ["login.lan"],
       "owner": "alchemy-docker"
     },
-    "lazylibrarian": {
-      "port": 5299,
-      "bind": "loopback",
-      "domains": [],
-      "owner": "alchemy-docker",
-      "milestone": "M3"
-    },
     "chaptarr": {
       "port": 8789,
       "bind": "loopback",

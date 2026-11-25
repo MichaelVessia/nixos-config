@@ -186,8 +186,6 @@ in {
       "d /opt/homelab/radarr/config - - - -"
       "d /opt/homelab/seerr 0755 root root -"
       "d /opt/homelab/seerr/config - - - -"
-      "d /opt/homelab/lazylibrarian 0755 root root -"
-      "d /opt/homelab/lazylibrarian/config - - - -"
       "d /opt/homelab/chaptarr 0755 root root -"
       "d /opt/homelab/chaptarr/config - - - -"
       "d /opt/homelab/autocaliweb 0755 root root -"
