@@ -9,6 +9,7 @@
   apiPort = toString config.homelab.topology.services.musicAssistant.port;
   lan = "192.168.1.0/24";
   iot = "192.168.4.0/24";
+  onkyoIp = "192.168.4.95";
   container = "homelab-music-assistant";
   docker = lib.getExe config.virtualisation.docker.package;
   nft = lib.getExe pkgs.nftables;
@@ -31,10 +32,11 @@ in {
     iptables -w -A nixos-fw -i eno1 -s ${lan} -p udp --dport 5353 -j nixos-fw-accept
     iptables -w -A nixos-fw -i eno1 -s ${lan},${iot} -d ${hostIp} -p tcp --dport 8097 -j nixos-fw-accept
     iptables -w -A nixos-fw -i eno1 -s ${lan} -d ${hostIp} -m mark --mark ${mark}/${mark} -j nixos-fw-accept
+    iptables -w -A nixos-fw -i eno1 -s ${onkyoIp} -d ${hostIp} -p udp -m mark --mark ${mark}/${mark} -j nixos-fw-accept
   '';
 
   systemd.services.music-assistant-firewall = {
-    description = "Allow LAN traffic to Music Assistant discovery sockets";
+    description = "Allow discovery and AirPlay timing traffic to Music Assistant sockets";
     wantedBy = ["multi-user.target"];
     after = ["docker.service"];
     requires = ["docker.service"];
@@ -64,6 +66,7 @@ in {
           iifname "tailscale0" udp dport 5353 socket cgroupv2 level 2 "$scope" counter drop
           iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} tcp dport $first_port-$last_port socket cgroupv2 level 2 "$scope" counter meta mark set meta mark | ${mark}
           iifname "eno1" ip saddr ${lan} ip daddr ${hostIp} udp sport 1900 udp dport $first_port-$last_port socket cgroupv2 level 2 "$scope" counter meta mark set meta mark | ${mark}
+          iifname "eno1" ip saddr ${onkyoIp} ip daddr ${hostIp} udp dport $first_port-$last_port socket cgroupv2 level 2 "$scope" counter meta mark set meta mark | ${mark}
         }
       }
       EOF
