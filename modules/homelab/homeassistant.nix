@@ -140,6 +140,8 @@ in {
         mac=${escapeShellArg cfg.macAddress}
         shim_ip=${escapeShellArg cfg.hostShimIp}
         ip link add link "$parent" name ha-host0 type macvlan mode bridge
+        # Use the guest route for ARP replies on the shim. LAN peers must reach the parent NIC.
+        printf '1\n' > /proc/sys/net/ipv4/conf/ha-host0/arp_filter
         ip addr add "$shim_ip/32" dev ha-host0
         ip link set ha-host0 up
         # The route also gives reverse-path filtering the correct ingress interface.
