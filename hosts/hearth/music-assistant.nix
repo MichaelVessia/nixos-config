@@ -5,6 +5,8 @@
   ...
 }: let
   hostIp = config.homelab.hostIp;
+  haIp = config.homelab.homeassistant.guestIp;
+  apiPort = toString config.homelab.topology.services.musicAssistant.port;
   lan = "192.168.1.0/24";
   iot = "192.168.4.0/24";
   container = "homelab-music-assistant";
@@ -13,6 +15,19 @@
   mark = "0x10000000";
 in {
   networking.firewall.extraCommands = ''
+    # Filter before Tailscale's INPUT chain, which accepts tailnet traffic.
+    ${nft} -f - <<EOF
+    destroy table inet music_assistant_api
+    table inet music_assistant_api {
+      chain input {
+        type filter hook input priority mangle; policy accept;
+        iifname "lo" accept
+        iifname "ha-host0" ip saddr ${haIp} ip daddr ${hostIp} tcp dport ${apiPort} accept
+        tcp dport ${apiPort} counter drop
+      }
+    }
+    EOF
+    iptables -w -A nixos-fw -i ha-host0 -s ${haIp} -d ${hostIp} -p tcp --dport ${apiPort} -j nixos-fw-accept
     iptables -w -A nixos-fw -i eno1 -s ${lan} -p udp --dport 5353 -j nixos-fw-accept
     iptables -w -A nixos-fw -i eno1 -s ${lan},${iot} -d ${hostIp} -p tcp --dport 8097 -j nixos-fw-accept
     iptables -w -A nixos-fw -i eno1 -s ${lan} -d ${hostIp} -m mark --mark ${mark}/${mark} -j nixos-fw-accept
